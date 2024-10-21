@@ -1,2 +1,0 @@
-# Homegrown
-WADII Project
