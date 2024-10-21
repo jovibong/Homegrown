@@ -90,7 +90,7 @@
     /* 2 layers */
     background:
         /* Image png*/
-        url('bg_navbar_pic.png') center/cover no-repeat,
+        url('../img/bg_navbar_pic.png') center/cover no-repeat,
 
         /* Gradient underneath */
         linear-gradient(90deg, rgba(82, 95, 225, 1) 0%, rgba(46, 56, 153, 1) 100%);
