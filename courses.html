@@ -1,233 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeGrown Courses</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Custom styles */
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .hero-section {
-            background-color: #f8f9fa;
-            padding: 50px 0;
-            text-align: center;
-        }
-        .course-card {
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            background: #ffffff;
-            margin-bottom: 20px;
-        }
-        .enrollment-section {
-            background-color: #ffe08a;
-            padding: 50px 0;
-        }
-        .enrollment-steps {
-            font-size: 1.2rem;
-            list-style: none;
-            padding: 0;
-        }
-        .enrollment-steps li {
-            margin-bottom: 10px;
-        }
-        .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 30px 0;
-        }
-        .enrollment-section {
-            background-color: #ffe08a; /* Background color */
-            padding: 50px 0;
-        }
-        .enrollment-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .enrollment-title {
-            font-weight: bold;
-            font-size: 2.5rem;
-        }
-        .enrollment-subtitle {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 30px;
-        }
-        .step-box {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .step-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background-color: #f8f9fa;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-        }
-        .step-text {
-            font-size: 1.2rem;
-        }
-        .image-container {
-            text-align: center;
-        }
-        .enrollment-image {
-            max-width: 100%;
-            height: auto;
-            width: 400px; /* Set image width */
-            border-radius: 10px;
-        }
-    </style>
-</head>
-<body>
+    <title>Course Page</title>
 
-    <!-- Header Section -->
-    <header class="bg-dark text-white p-3">
-        <div class="container">
-            <div class="d-flex justify-content-between">
-                <h1>HomeGrown</h1>
-                <nav>
-                    <a href="#" class="text-white mr-3">Home</a>
-                    <a href="#" class="text-white mr-3">Learning</a>
-                    <a href="#" class="text-white mr-3">Teams</a>
-                    <a href="#" class="text-white mr-3">Reviews</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <!--Custom Bootstrap Inspired Stylesheet-->
+    <link href="css/mainmin.css" rel="stylesheet">
+
+    <!--Icons-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!--Navbar and Footer Stylesheet-->
+    <link href="css/navbar_footer_style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar"></div>
 
     <!-- Ongoing Courses Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h2>Ongoing Courses</h2>
-            <p>Keep up the great work! You're on your way to mastering new skills. Complete your courses to unlock your full potential today!</p>
-            <div class="row">
-                <!-- Repeat course cards as needed -->
-                <div class="col-md-4">
-                    <div class="course-card">
-                        <h5>Introduction to Python</h5>
-                        <p>Begin your programming journey with Python. Perfect for beginners!</p>
+    <section class="container py-5">
+        <h2 class="text-primary fw-bold text-center mb-3">Ongoing Courses</h2>
+        <p class="text-center text-muted">Keep up the great work! You’re on your way to mastering new skills. Complete
+            your courses to unlock your potential today.</p>
+        <div class="d-flex justify-content-end">
+            <a href="#" class="btn btn-outline-primary">View All</a>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Introduction to Python</h5>
+                        <p class="card-text">Learn the basics of Python programming language, one of the most popular
+                            languages in the tech industry.</p>
+                        <a href="#" class="btn btn-primary">View Course</a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="course-card">
-                        <h5>Introduction to Python</h5>
-                        <p>Continue your learning with advanced topics in Python.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Introduction to Python</h5>
+                        <p class="card-text">Continue learning Python with more advanced concepts and techniques.</p>
+                        <a href="#" class="btn btn-primary">View Course</a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="course-card">
-                        <h5>Introduction to Python</h5>
-                        <p>Expand your knowledge by diving into complex Python concepts.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Introduction to Python</h5>
+                        <p class="card-text">Finalize your Python journey with projects and real-world applications.</p>
+                        <a href="#" class="btn btn-primary">View Course</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Start a new Course Section -->
-    <section class="bg-light py-5">
-        <div class="container">
-            <h2>Start a new Course Today!</h2>
-            <div class="row">
-                <!-- Repeat course cards as needed -->
-                <div class="col-md-4">
-                    <div class="course-card">
-                        <h5>Color Design</h5>
-                        <p>Learn the basics of color theory and design application.</p>
+    <!-- Start a New Course Section -->
+    <section class="container py-5">
+        <h2 class="text-primary fw-bold text-center mb-3">Start a new Course Today!</h2>
+        <p class="text-center text-muted">Ready to learn something new? Start a new course today and take the first step
+            toward expanding your skills and knowledge!</p>
+        <div class="row mt-4">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Cyber Design</h5>
+                        <p class="card-text">Learn how to design secure systems in the digital era.</p>
+                        <a href="#" class="btn btn-primary">Enroll Now</a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="course-card">
-                        <h5>Language - Mandarin</h5>
-                        <p>Start learning Mandarin, the most spoken language in the world!</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Language - Mandarin</h5>
+                        <p class="card-text">Improve your Mandarin speaking skills for business and everyday use.</p>
+                        <a href="#" class="btn btn-primary">Enroll Now</a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="course-card">
-                        <h5>Introduction to Python</h5>
-                        <p>Master Python with practical exercises and quizzes.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Introduction to Python</h5>
+                        <p class="card-text">Start your programming journey with this Python course for beginners.</p>
+                        <a href="#" class="btn btn-primary">Enroll Now</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-     <!-- Enrollment Section -->
-     <section class="enrollment-section">
+    <!-- Learn New Skills Section -->
+    <section class="container py-5 text-center">
+        <h3 class="text-primary fw-bold mb-3">Learn New Skills on the Go</h3>
+        <p class="text-muted">Study on your mobile device, at your own pace, and master new skills no matter where you
+            are.</p>
+    </section>
+
+    <!-- Effortless Enrollment Section -->
+    <section id="enrollment" class="py-5 bg-secondary">
         <div class="container">
-            <div class="row enrollment-content">
+            <div class="row align-items-center">
                 <!-- Image Column -->
-                <div class="col-md-6 image-container">
-                    <img src="friendly-confident-woman-writing-her-organizer-isolated-white-wall 1.png" alt="Confident Woman" class="enrollment-image">
+                <div class="col-lg-5 text-center position-relative">
+                    <img src="img/student-image.jpg" alt="Student" class="img-fluid">
                 </div>
-                <!-- Text and Steps Column -->
-                <div class="col-md-6">
-                    <h2 class="enrollment-title">Effortless Enrollment</h2>
-                    <p class="enrollment-subtitle">Follow these simple steps to learn something new!</p>
-                    <div class="step-box">
-                        <div class="step-number">01</div>
-                        <div class="step-text">Sign Up</div>
-                    </div>
-                    <div class="step-box">
-                        <div class="step-number">02</div>
-                        <div class="step-text">Choose a Program</div>
-                    </div>
-                    <div class="step-box">
-                        <div class="step-number">03</div>
-                        <div class="step-text">Get a personal mentor</div>
-                    </div>
-                    <div class="step-box">
-                        <div class="step-number">04</div>
-                        <div class="step-text">Finish videos and quizzes</div>
-                    </div>
-                    <div class="step-box">
-                        <div class="step-number">05</div>
-                        <div class="step-text">Claim your certification!</div>
-                    </div>
+                <!-- Text and List Column -->
+                <div class="col-lg-7">
+                    <h2 class="fw-bold mb-3">Effortless Enrollment</h2>
+                    <p class="lead text-dark mb-4">Follow these simple steps to learn something new!</p>
+                    <ul class="list-unstyled">
+                        <li class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm">
+                            <span class="fw-bold me-3">01</span>
+                            <span>Sign Up</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm">
+                            <span class="fw-bold me-3">02</span>
+                            <span>Choose a Program</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm">
+                            <span class="fw-bold me-3">03</span>
+                            <span>Get a personal mentor</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm">
+                            <span class="fw-bold me-3">04</span>
+                            <span>Finish videos and quizzes</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm">
+                            <span class="fw-bold me-3">05</span>
+                            <span>Claim your certification!</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer Section -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Education</h5>
-                    <p>Learn anywhere, anytime with our platform designed for your needs.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>About</h5>
-                    <p>Learn more about our mission and vision.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contact Us</h5>
-                    <p>60 Orchard St, Singapore 789032</p>
-                    <p>Email: support@homegrown.com</p>
-                    <p>Phone: +65-1234-5678</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer Placeholder -->
+    <footer></footer>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!--Axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!--Bootstrap JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!--JS for loading navbar and footer-->
+    <script src="js/navbar_fw.js"></script>
+    <script src="js/footer.js"></script>
 </body>
+
 </html>
