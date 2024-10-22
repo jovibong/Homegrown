@@ -1,0 +1,43 @@
+
+
+<!-- Login Modal (with height adjustments) -->
+<div class="modal fade login-modal" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"> <!-- Centers modal vertically -->
+        <div class="modal-content" style="border-radius: 20px; max-height: 80vh; height: auto; overflow-y: auto;"> <!-- Set max-height and overflow -->
+            <div class="modal-body p-0" style="display: flex; flex-direction: row; height: 100%;"> 
+                <!-- Left Side: Image -->
+                <div class="modal-image" style="flex: 1; background-image: url('your-image-url.png'); background-size: cover; background-position: center; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <!-- Replace 'your-image-url.png' with your actual image path -->
+                </div>
+  
+                <!-- Right Side: Login Form -->
+                <div class="modal-login p-4" style="flex: 1; background-color: #ffffff; border-top-right-radius: 20px; border-bottom-right-radius: 20px;">
+                    <h2 class="mb-4">Welcome!</h2>
+                    <form id="loginForm">
+                        <div class="form-group mb-3">
+                            <label for="email">Email or Phone Number</label>
+                            <input type="text" class="form-control" id="email" placeholder="Enter email or phone number">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter password">
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block w-100">Sign In</button>
+                        <a href="#" class="d-block text-center mt-3">Forgot password?</a>
+                    </form>
+                    <div class="signup-link text-center mt-4">
+                        <p>Don't have an account? <a href="#">Sign up now</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+
+  
+  
