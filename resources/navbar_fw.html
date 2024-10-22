@@ -1,0 +1,79 @@
+<!---start of navbar-->
+<div class="container-fluid bg-custom-blue sticky-top">
+
+    <!-- start row for using grid -->
+    <div class="row">
+
+        <!-- start of nav without sign in/up -->
+        <div class="col-lg-10 col-9 align-items-start">
+            <nav class="navbar navbar-expand-lg ">
+                <div class="container">
+                    <!-- Logo -->
+                    <a class="navbar-brand me-auto" href="#">
+                        <span class="text-light fw-bold">Home</span><span class="text-warning fw-bold">Grown</span>
+                    </a>
+
+                    <!-- hamburger collapsible icon -->
+                    <!-- flex and hamburger menu only for mobile -->
+                    <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around collapsed"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <!-- custom 3 lines for animation for menu -->
+                        <span class="toggler-icon top-bar"></span>
+                        <span class="toggler-icon middle-bar"></span>
+                        <span class="toggler-icon bottom-bar"></span>
+                    </button>
+
+                    <!-- list of links/navs -->
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item mx-3">
+                                <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
+                            </li>
+                            <li class="nav-item mx-3">
+                                <a class="nav-link text-light" href="#">Upskilling</a>
+                            </li>
+                            <li class="nav-item mx-3 d-inline">
+                                <a class="nav-link text-light" href="#">Volunteer</a>
+                            </li>
+                            <li class="nav-item mx-3">
+                                <a class="nav-link text-light" href="#">Events</a>
+                            </li>
+                            <li class="nav-item mx-3">
+                                <a class="nav-link text-light" href="#">Finances</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- end of nav without sign in/up -->
+
+        <!-- start of profile buttons -->
+        <div class="col-lg-2 col-3 d-flex justify-content-end align-items-start">
+            <div class="dropdown">
+                <button class="btn btn-secondary d-flex align-items-center rounded-pill shadow-sm my-2" type="button"
+                    id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="img/user-profile.jpg" alt="User" class="rounded-circle me-2 flex-shrink-0"
+                        style="padding: 4px; width: auto; height: 100%; object-fit: cover;">
+                    <div class="d-flex flex-column text-start">
+                        <span class="fw-bold">Ms User</span>
+                    </div>
+                    <i class="bi bi-caret-down-fill ms-3"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+
+        <!-- end of profile buttons -->
+
+    </div>
+    <!-- end of row -->
+
+</div>
+<!---end of navbar-->
