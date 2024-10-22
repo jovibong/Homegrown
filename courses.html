@@ -15,46 +15,94 @@
 
     <!--Navbar and Footer Stylesheet-->
     <link href="css/navbar_footer_style.css" rel="stylesheet">
+
+    <!--Badge for mentor CSS-->
+    <link rel="stylesheet" href="css/badge_mentor.css">
+
 </head>
 
 <body>
     <!-- Navbar Placeholder -->
     <div id="navbar"></div>
 
-    <!-- Ongoing Courses Section -->
-    <section class="container py-5">
-        <h2 class="text-primary fw-bold text-center mb-3">Ongoing Courses</h2>
-        <p class="text-center text-muted">Keep up the great work! You’re on your way to mastering new skills. Complete
-            your courses to unlock your potential today.</p>
-        <div class="d-flex justify-content-end">
-            <a href="#" class="btn btn-outline-primary">View All</a>
+    <!--Ongoing Courses Section-->
+    <section id="ongoing" class="container py-3">
+        <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Courses</h2>
+        <p class="text-center text-muted mb-0 h5">
+            Keep up the great work! You're on your way to mastering new skills. Complete your courses to unlock your
+            full potential today.
+        </p>
+        <div class="d-flex justify-content-end mb-4">
+            <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                View All <i class="bi bi-play-circle ms-2"></i>
+            </a>
         </div>
-        <div class="row mt-4">
+        <div class="row">
+            <!-- Course Card 1 -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm position-relative">
+                    <div class="mentor-badge">
+                        <span>Mentor Included</span>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Introduction to Python</h5>
-                        <p class="card-text">Learn the basics of Python programming language, one of the most popular
-                            languages in the tech industry.</p>
-                        <a href="#" class="btn btn-primary">View Course</a>
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <div class="text-center mb-2">
+                            <span class="text-warning">
+                                ★★★★☆
+                            </span>
+                            <small class="text-muted d-block">238 Reviews</small>
+                        </div>
+                        <p class="card-text text-muted">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates saepe,
+                            sit id iste libero temporibus harum.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat the above block for more course cards -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative">
+                    <div class="mentor-badge">
+                        <span>Mentor Included</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <div class="text-center mb-2">
+                            <span class="text-warning">
+                                ★★★★☆
+                            </span>
+                            <small class="text-muted d-block">238 Reviews</small>
+                        </div>
+                        <p class="card-text text-muted">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates saepe,
+                            sit id iste libero temporibus harum.
+                        </p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm position-relative">
                     <div class="card-body">
-                        <h5 class="card-title">Introduction to Python</h5>
-                        <p class="card-text">Continue learning Python with more advanced concepts and techniques.</p>
-                        <a href="#" class="btn btn-primary">View Course</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Introduction to Python</h5>
-                        <p class="card-text">Finalize your Python journey with projects and real-world applications.</p>
-                        <a href="#" class="btn btn-primary">View Course</a>
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <div class="text-center mb-2">
+                            <span class="text-warning">
+                                ★★★★☆
+                            </span>
+                            <small class="text-muted d-block">238 Reviews</small>
+                        </div>
+                        <p class="card-text text-muted">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates saepe,
+                            sit id iste libero temporibus harum.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -62,45 +110,88 @@
     </section>
 
     <!-- Start a New Course Section -->
-    <section class="container py-5">
-        <h2 class="text-primary fw-bold text-center mb-3">Start a new Course Today!</h2>
-        <p class="text-center text-muted">Ready to learn something new? Start a new course today and take the first step
-            toward expanding your skills and knowledge!</p>
-        <div class="row mt-4">
+    <section id="new_courses" class="container py-5">
+        <h2 class="text-primary fw-bold text-center mb-3 display-4">Start a New Course Today!</h2>
+        <p class="text-center text-muted mb-4 h5">
+            Ready to learn something new? Start a new course today and take the first step toward expanding your skills and knowledge!
+        </p>
+        <div class="d-flex justify-content-end mb-4">
+            <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                View All <i class="bi bi-play-circle ms-2"></i>
+            </a>
+        </div>
+        <div class="row">
+            <!-- New Course Card 1 -->
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm position-relative">
                     <div class="card-body">
-                        <h5 class="card-title">Cyber Design</h5>
-                        <p class="card-text">Learn how to design secure systems in the digital era.</p>
-                        <a href="#" class="btn btn-primary">Enroll Now</a>
+                        <div class="text-center mb-3">
+                            <i class="bi bi-code-slash fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Cyber Security Basics</h5>
+                        <div class="text-center mb-2">
+                            <span class="text-warning">
+                                ★★★★★
+                            </span>
+                            <small class="text-muted d-block">120 Reviews</small>
+                        </div>
+                        <p class="card-text text-muted">
+                            Learn the essentials of cyber security to protect your digital life and career.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat the above block for more course cards -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative">
+                    <span class="badge badge-mentor position-absolute">Mentor Included</span>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-globe fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Language - Mandarin</h5>
+                        <div class="text-center mb-2">
+                            <span class="text-warning">
+                                ★★★★☆
+                            </span>
+                            <small class="text-muted d-block">89 Reviews</small>
+                        </div>
+                        <p class="card-text text-muted">
+                            Improve your Mandarin speaking skills for business and everyday use.
+                        </p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Language - Mandarin</h5>
-                        <p class="card-text">Improve your Mandarin speaking skills for business and everyday use.</p>
-                        <a href="#" class="btn btn-primary">Enroll Now</a>
+                <div class="card shadow-sm position-relative">
+                    <div class="mentor-badge">
+                        <span>Mentor Included</span>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Introduction to Python</h5>
-                        <p class="card-text">Start your programming journey with this Python course for beginners.</p>
-                        <a href="#" class="btn btn-primary">Enroll Now</a>
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <div class="text-center mb-2">
+                            <span class="text-warning">
+                                ★★★★☆
+                            </span>
+                            <small class="text-muted d-block">238 Reviews</small>
+                        </div>
+                        <p class="card-text text-muted">
+                            Start your programming journey with this Python course for beginners.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    
 
     <!-- Learn New Skills Section -->
     <section class="container py-5 text-center">
-        <h3 class="text-primary fw-bold mb-3">Learn New Skills on the Go</h3>
-        <p class="text-muted">Study on your mobile device, at your own pace, and master new skills no matter where you
+        <h3 class="text-primary fw-bold mb-3 display-4">Learn New Skills on the Go</h3>
+        <p class="text-muted h5">Study on your mobile device, at your own pace, and master new skills no matter where you
             are.</p>
     </section>
 
