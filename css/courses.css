@@ -1,0 +1,108 @@
+/*Triangle button CSS*/
+.triangle-btn {
+    margin: auto;
+    width:25px;
+    height:25px;
+    cursor: pointer;
+    display: inline-block;
+    clip-path: polygon(50% 100%, 0 33%, 100% 33%);
+    border: none;
+}
+
+.triangle-btn.rotate {
+    transform: rotate(180deg);
+    margin-top: 5px;
+} 
+
+.triangle-btn-bg {
+    padding-top: 5px;
+    position: relative;
+    bottom: -40px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+
+/*Timeline CSS*/
+.timeline-container {
+    position: relative;
+    padding: 1rem 0;
+    width: 80%;
+    margin:auto;    
+}
+
+.timeline-line {
+    position: absolute;
+    top: 54%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #ddd;
+    z-index: 0; /* Ensures the line stays behind the circles */
+}
+
+.lesson {
+    position: relative;
+    z-index: 1;
+    padding: 1  rem;
+    border: 2px solid #FFCF59; /* Secondary color border */
+    border-radius: 15px;
+    background-color: transparent;
+    margin: 20px;
+}
+
+.lesson-content {
+    max-width: 150px;
+    margin: auto;
+}
+
+.lesson-item {
+    position: relative;
+    margin-top: 0rem;
+    display: inline-block;
+}
+
+.lesson-item p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.circle {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #ddd;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2; /* Ensures circles are above the line */
+}
+
+.circle.active {
+    background-color: #7b4fdf; /* Highlighted circle */
+}
+
+.you-are-here {
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .timeline-container {
+        padding: 1rem 0;
+    }
+    .lesson {
+        max-width: 100%;
+    }
+}
+
+/*Hover effect*/
+.course-card .card {
+    transition: transform 0.3s, box-shadow 0.3s;   
+}
+
+.course-card .card.hovered {
+    transform: translateY(-15px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+

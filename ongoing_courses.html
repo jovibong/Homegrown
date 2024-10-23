@@ -19,6 +19,8 @@
     <!--Badge for mentor CSS-->
     <link rel="stylesheet" href="css/badge_mentor.css">
 
+    <link rel="stylesheet" href="css/courses.css">
+
 </head>
 
 <body>
@@ -26,19 +28,19 @@
     <div id="navbar"></div>
 
     <!--Back Button and Course Title-->
-    <section id="courses" class="container py-4">
+    <section id="Title" class="container py-4">
         <div class="container mb-4">
             <div class="row align-items-center">
                 <!-- Back Button -->
                 <div class="col-3">
-                    <a href="#" class="btn btn-warning text-dark"><i class="bi bi-arrow-left"></i>
+                    <a href="courses.html" class="btn btn-warning text-dark"><i class="bi bi-arrow-left"></i>
                         <span class="d-none d-lg-inline">Back to all courses</span>
                         <span class="d-inline d-lg-none">Back</span>
-                        </a>
+                    </a>
                 </div>
                 <!-- Title (Centered) -->
                 <div class="col-6 text-center">
-                    <h2 class="text-primary fw-bold mb-0">Ongoing Courses</h2>
+                    <h2 class="text-primary fw-bold mb-0 display-4">Ongoing Courses</h2>
                 </div>
                 <!-- Empty column for spacing/flexibility -->
                 <div class="col-3"></div>
@@ -47,88 +49,133 @@
             <p class="text-center text-muted mt-3">Keep up the great work! You're on your way to mastering new skills.
                 Complete your courses to unlock your full potential today!</p>
         </div>
-        
-
-        <!-- Course Card 1 -->
-        <div class="container my-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body position-relative">
-                    <!-- Mentor Badge -->
-                    <div class="mentor-badge">
-                        <span>Mentor Included</span>
-                    </div>
-        
-                    <div class="row align-items-center">
-                        <!-- Icon and Course Info -->
-                        <div class="col-md-3 text-center mb-3 mb-md-0">
-                            <i class="bi bi-book fs-1 text-primary"></i>
-                            <h5 class="mt-2 fw-bold">Introduction to Python</h5>
-                            <div>
-                                <span class="text-warning">★★★★★</span>
-                                <small class="text-muted d-block">238 Reviews</small>
-                            </div>
-                        </div>
-        
-                        <!-- Progress and Description -->
-                        <div class="col-md-9">
-                            <div class="text-center my-2">
-                                <div class="fw-bold h4">60% complete</div> <!-- Centered text above the progress bar -->
-                                <div class="d-flex justify-content-center my-3">
-                                    <div class="progress" style="width: 80%; height: 15px;">
-                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 60%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates saepe, sit id iste libero temporibus harum optio nam eveniet.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-
-        <!-- Course Card 2 -->
-        <div class="container my-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body position-relative">
-                    <!-- Mentor Badge -->
-                    <div class="mentor-badge">
-                        <span>Mentor Included</span>
-                    </div>
-        
-                    <div class="row align-items-center">
-                        <!-- Icon and Course Info -->
-                        <div class="col-md-3 text-center mb-3 mb-md-0">
-                            <i class="bi bi-book fs-1 text-primary"></i>
-                            <h5 class="mt-2 fw-bold">Introduction to Python</h5>
-                            <div>
-                                <span class="text-warning">★★★★★</span>
-                                <small class="text-muted d-block">238 Reviews</small>
-                            </div>
-                        </div>
-        
-                        <!-- Progress and Description -->
-                        <div class="col-md-9">
-                            <div class="text-center my-2">
-                                <div class="fw-bold h4">60% complete</div> <!-- Centered text above the progress bar -->
-                                <div class="d-flex justify-content-center my-3">
-                                    <div class="progress" style="width: 80%; height: 15px;">
-                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 60%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates saepe, sit id iste libero temporibus harum optio nam eveniet.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </section>
+
+    <section id="app" class="container py-4">
+        <div v-for="course in courses">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body position-relative">
+                    <!-- Mentor Badge -->
+                    <div v-if="course.mentor" class="mentor-badge bg-primary">
+                        <span class="text-black">Mentor Included</span>
+                    </div>
+                    <div class="row align-items-center">
+                        <!-- Icon and Course Info -->
+                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                            <i class="bi bi-book fs-1 text-primary"></i>
+                            <h5 class="mt-2 fw-bold">{{ course.name }}</h5>
+                            <div>
+                                <span class="text-secondary" v-html="getRatingStars(course.rating)"></span>
+                                <small class="text-muted d-block">{{ course.num_reviews }} Reviews</small>
+                            </div>
+                        </div>
+                        <!-- Progress and Description -->
+                        <div class="col-md-9">
+                            <div class="text-center my-2">
+                                <div class="fw-bold h3"><span :ref="'progression' + course.id">0</span>% complete</div>
+                                <div class="d-flex justify-content-center my-3">
+                                    <div class="progress" style="width: 80%; height: 15px;">
+                                        <div class="progress-bar bg-dark" role="progressbar"
+                                            :ref="'courseProgress' + course.id" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <p class="text-muted">{{ course.description }}</p>
+                        </div>
+                        <!-- Collapsible Content -->
+                        <div class="collapse mt-3" :id="'courseDetails' + course.id">
+                            <!-- Lesson Timeline Start -->
+                            <div class="timeline-container mt-4">
+                                <div class="timeline-line d-none d-md-inline"></div>
+                                <div class="row justify-content-center">
+                                    <!-- Lesson 1 -->
+                                    <div class="col-auto lesson d-none d-lg-inline">
+                                        <div class="lesson-content text-center">
+                                            <h6 class="fw-bold">Lesson 1</h6>
+                                            <div class="lesson-item mx-2">
+                                                <p>Video 1</p>
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="lesson-item mx-2">
+                                                <p>Quiz 1</p>
+                                                <div class="circle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Lesson 2 -->
+                                    <div class="col-auto lesson">
+                                        <div class="lesson-content text-center">
+                                            <h6 class="fw-bold">Lesson 2</h6>
+                                            <div class="lesson-item mx-2">
+                                                <p>Video 2</p>
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="lesson-item mx-2">
+                                                <p>Quiz 2</p>
+                                                <div class="circle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Lesson 3 -->
+                                    <div class="col-auto lesson">
+                                        <div class="lesson-content text-center">
+                                            <h6 class="fw-bold">Lesson 3</h6>
+                                            <div class="lesson-item mx-2">
+                                                <p>Video 3</p>
+                                                <div class="circle active"></div>
+                                            </div>
+                                            <div class="lesson-item mx-2">
+                                                <p>Quiz 3</p>
+                                                <div class="circle active"></div>
+                                            </div>
+                                            <div class="you-are-here text-center mt-2">
+                                                <span class="badge bg-primary mb-2">You are here</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Review -->
+                                    <div class="col-auto lesson">
+                                        <div class="lesson-content text-center">
+                                            <h6 class="fw-bold">Review</h6>
+                                            <div class="lesson-item mx-2">
+                                                <p>Review 1</p>
+                                                <div class="circle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lesson Timeline End -->
+                        </div>
+                        <!--Dropdown Button-->
+                        <div class="text-center mt-3">
+                            <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button" data-bs-toggle="collapse"
+                                :data-bs-target="'#courseDetails' + course.id" aria-expanded="false"
+                                :aria-controls="'courseDetails' + course.id" onclick="toggleTriangle(this)">
+                                <i class="triangle-btn bg-secondary"></i>
+                            </button>
+                        </div>
+
+                        <a href="individual_course.html"
+                            class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center col-2 my-4 position-absolute bottom-0 end-0 m-2 text-secondary fw-bold">
+                            Go to course <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 
 
     <!-- Footer Placeholder -->
     <footer></footer>
+
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <!--Axios-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -141,6 +188,118 @@
     <!--JS for loading navbar and footer-->
     <script src="js/navbar_fw.js"></script>
     <script src="js/footer.js"></script>
+
+    <script>
+        // Toggle the triangle rotation when the button is clicked
+
+        function toggleTriangle(event) {
+            const triangle = event.querySelector('.triangle-btn');
+            triangle.classList.toggle('rotate');
+        }
+
+        // Replace with axios code
+        const courses = [
+            {
+                id: 101,
+                name: "Introduction to Python",
+                percentageCompleted: 60,
+                rating: 3.6,
+                num_reviews: 238,
+                description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
+                mentor: true
+            },
+            {
+                id: 102,
+                name: "Web Development with HTML & CSS",
+                percentageCompleted: 45,
+                rating: 4.9,
+                num_reviews: 150,
+                description: "Master the fundamentals of web development by learning HTML and CSS. Build and style your own websites from scratch in this hands-on, beginner-friendly course.",
+                mentor: false
+            },
+            {
+                id: 103,
+                name: "Data Analysis with Excel",
+                percentageCompleted: 80,
+                rating: 4.3,
+                num_reviews: 180,
+                description: "This course covers essential data analysis techniques using Microsoft Excel. Learn how to manage data, use formulas, and create powerful visualizations to analyze information effectively.",
+                mentor: true
+            },
+            {
+                id: 104,
+                name: "JavaScript for Beginners",
+                percentageCompleted: 25,
+                rating: 4.8,
+                num_reviews: 200,
+                description: "This course introduces JavaScript, one of the most popular programming languages for web development. Learn how to make your websites interactive and dynamic through hands-on projects and examples.",
+                mentor: false
+            }
+
+
+        ];
+        const app = Vue.createApp({
+            data() {
+                return {
+                    courses: courses
+                };
+            },
+            methods: {
+                getRatingStars(rating) {
+                    const roundedRating = Math.round(rating * 2) / 2;
+                    let stars = '';
+
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= Math.floor(roundedRating)) {
+                            stars += '<i class="bi bi-star-fill text-warning"></i>';
+                        } else if (i === Math.ceil(roundedRating) && roundedRating % 1 !== 0) {
+                            stars += '<i class="bi bi-star-half text-warning"></i>';
+                        } else {
+                            stars += '<i class="bi bi-star text-warning"></i>';
+                        }
+                    }
+                    return stars;
+                },
+                animateProgress(courseId, targetPercentage) {
+                    this.$nextTick(() => {
+                        // Find the progress bar using the unique reference
+                        animationDuration = 1.3; // change this to change the time in seconds
+                        const progressBar = this.$refs[`courseProgress${courseId}`];
+                        const progression = this.$refs[`progression${courseId}`];
+
+                        // Check if the reference exists and is not undefined
+                        if (progressBar && progressBar[0] && progression) {
+                            // Animate the progress bar width with CSS transition
+                            progressBar[0].style.transition = `width ${animationDuration}s ease`;
+                            progressBar[0].style.width = `${targetPercentage}%`;
+                            let currentPercentage = 0;
+                            const interval = setInterval(() => {
+                                if (currentPercentage >= targetPercentage) {
+                                    clearInterval(interval);
+                                } else {
+                                    currentPercentage++;
+                                    progression[0].innerText = currentPercentage;
+                                }
+                            }, animationDuration * 1000 / targetPercentage);
+                        }
+                    });
+                }
+            },
+            mounted() {
+                // Listen for when the entire window (including all resources) has fully loaded
+                window.onload = () => {
+                    this.courses.forEach(course => {
+                        this.animateProgress(course.id, course.percentageCompleted);
+                    });
+                };
+            }
+        });
+        const vm = app.mount('#app');
+
+
+
+
+    </script>
 </body>
 
 </html>
