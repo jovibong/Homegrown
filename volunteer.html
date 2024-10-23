@@ -20,7 +20,30 @@
     <link rel="stylesheet" href="css/badge_mentor.css">
 
     <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
 
+        .btn-view-info {
+            background-color: #ffd700;
+            color: black;
+            font-weight: bold;
+        }
+
+        .card {
+            position: relative;
+            padding-bottom: 20px; /* Space for the button */
+        }
+        .card-body {
+            height: 100%;
+        }
+
+        .btn-position {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+        }
     </style>
 </head>
 
@@ -92,145 +115,209 @@
     <!---end of navbar-->
 
 
-        <!--Ongoing Mentorships Section-->
-        <section id="mentorship" class="container py-3">
-            <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Courses</h2>
-            <p class="text-center text-muted mb-0 h5 pb-5">
-                Keep up the great work! You're on your way to mastering new skills. Complete your courses to unlock your
-                full potential today.
-            </p>
-            <div class="row">
-                <!-- Course Card 1 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm position-relative">
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="bi bi-book fs-2 text-primary"></i>
-                            </div>
-                            <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
-                            <p class="card-text text-muted">
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
-                                saepe,
-                                sit id iste libero temporibus harum.
-                            </p>
+    <!--Ongoing Mentorships Section-->
+    <section id="mentorship" class="container py-3">
+        <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
+        <p class="text-center text-muted mb-0 h5 pb-5">
+            You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them unlock their full potential with every step they take.
+        </p>
+        <div class="row">
+            <!-- Course Card 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
                         </div>
-                    </div>
-                </div>
-                <!-- Repeat the above block for more course cards -->
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm position-relative">
-                        <div class="mentor-badge">
-                            <span>Mentor Included</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="bi bi-book fs-2 text-primary"></i>
-                            </div>
-                            <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
-                            <p class="card-text text-muted">
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
-                                saepe,
-                                sit id iste libero temporibus harum.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm position-relative">
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="bi bi-book fs-2 text-primary"></i>
-                            </div>
-                            <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
-                            <div class="text-center mb-2">
-                                <span class="text-warning">
-                                    ★★★★☆
-                                </span>
-                                <small class="text-muted d-block">238 Reviews</small>
-                            </div>
-                            <p class="card-text text-muted">
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
-                                saepe,
-                                sit id iste libero temporibus harum.
-                            </p>
-                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <p class="card-text text-muted">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
+                            saepe,
+                            sit id iste libero temporibus harum.
+                        </p>
                     </div>
                 </div>
             </div>
-        </section>
-
-    </body>
-
-
-    <!-- Footer Section -->
-    <footer class="footer-section py-5 bg-dark text-white">
-        <div class="container">
-            <div class="row">
-                <!-- Branding and Description -->
-                <div class="col-md-3">
-                    <h1 class="fw-bold pt-0">Education</h1>
-                    <p class="mb-3">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                        the
-                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of
-                        type and
-                        scrambled it to make a type specimen book.
-                    </p>
-                    <div class="social-icons">
-                        <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-youtube"></i></a>
-                        <a href="#"><i class="bi bi-twitter"></i></a>
+            <!-- Repeat the above block for more course cards -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative">
+                    <div class="mentor-badge">
+                        <span>Mentor Included</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <p class="card-text text-muted">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
+                            saepe,
+                            sit id iste libero temporibus harum.
+                        </p>
                     </div>
                 </div>
-
-                <!-- About Links -->
-                <div class="col-md-3">
-                    <h5 class="fw-bold">About</h5>
-                    <ul class="list-unstyled footer-list">
-                        <li><a href="#">Menu</a></li>
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">News & Blogs</a></li>
-                        <li><a href="#">Help & Supports</a></li>
-                    </ul>
-                </div>
-
-                <!-- Company Links -->
-                <div class="col-md-3">
-                    <h5 class="fw-bold">Company</h5>
-                    <ul class="list-unstyled footer-list">
-                        <li><a href="#">How we work</a></li>
-                        <li><a href="#">Terms of service</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">FAQ</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact Information -->
-                <div class="col-md-3">
-                    <h5 class="fw-bold">Contact Us</h5>
-                    <ul class="list-unstyled">
-                        <li>80 Stamford Rd, Singapore 178902</li>
-                        <li>+1 202-918-2132</li>
-                        <li>education@mail.com</li>
-                        <li>www.education.com</li>
-                    </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-book fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
+                        <p class="card-text text-muted">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
+                            saepe,
+                            sit id iste libero temporibus harum.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </footer>
+    </section>
 
-    <!--Axios Library-->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Available Mentorships Section -->
+    <div class="container py-5">
+        <h2 class="text-primary fw-bold text-center mb-3 display-4">Available Mentorships</h2>
+        <p class="text-center text-muted mb-0 h5 pb-5">
+            Make a lasting impact by becoming a mentor! Share your knowledge, guide others to success, and help them unlock their full potential while growing alongside them.        </p>
+        <div class="row g-4">
+            <!-- large card -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <img src="/placeholder.svg?height=400&width=800" class="card-img-top" alt="Sustainability Management">
+                    <div class="card-body">
+                        <h5 class="card-title">Sustainability Management</h5>
+                        <p class="card-text">Learn about sustainable practices in business and management.</p>
+                    </div>
+                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <!-- small card -->
+                <div class="card h-100">
+                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Communication Techniques">
+                    <div class="card-body">
+                        <h5 class="card-title">Communication Techniques</h5>
+                        <p class="card-text">Improve your communication skills in professional settings.</p>
+                    </div>
+                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Problem Solving">
+                    <div class="card-body">
+                        <h5 class="card-title">Problem Solving</h5>
+                        <p class="card-text">Develop critical thinking and problem-solving abilities.</p>
+                    </div>
+                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Introduction to Python">
+                    <div class="card-body">
+                        <h5 class="card-title">Introduction to Python</h5>
+                        <p class="card-text">Learn the basics of Python programming language.</p>
+                    </div>
+                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Project Management">
+                    <div class="card-body">
+                        <h5 class="card-title">Project Management</h5>
+                        <p class="card-text">Master the skills needed to manage successful projects.</p>
+                    </div>
+                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <img src="/placeholder.svg?height=400&width=800" class="card-img-top" alt="Introduction to Statistics">
+                    <div class="card-body">
+                        <h5 class="card-title">Introduction to Statistics</h5>
+                        <p class="card-text">Understand fundamental statistical concepts and their applications.</p>
+                    </div>
+                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!--Navbar and Footer JS-->
-    <script src="js/footer.js"></script>
-    <script src="js/navbar.js"></script>
+</body>
 
-    <!--Bootstrap JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+
+<!-- Footer Section -->
+<footer class="footer-section py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row">
+            <!-- Branding and Description -->
+            <div class="col-md-3">
+                <h1 class="fw-bold pt-0">Education</h1>
+                <p class="mb-3">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
+                    the
+                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of
+                    type and
+                    scrambled it to make a type specimen book.
+                </p>
+                <div class="social-icons">
+                    <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter"></i></a>
+                </div>
+            </div>
+
+            <!-- About Links -->
+            <div class="col-md-3">
+                <h5 class="fw-bold">About</h5>
+                <ul class="list-unstyled footer-list">
+                    <li><a href="#">Menu</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">News & Blogs</a></li>
+                    <li><a href="#">Help & Supports</a></li>
+                </ul>
+            </div>
+
+            <!-- Company Links -->
+            <div class="col-md-3">
+                <h5 class="fw-bold">Company</h5>
+                <ul class="list-unstyled footer-list">
+                    <li><a href="#">How we work</a></li>
+                    <li><a href="#">Terms of service</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="col-md-3">
+                <h5 class="fw-bold">Contact Us</h5>
+                <ul class="list-unstyled">
+                    <li>80 Stamford Rd, Singapore 178902</li>
+                    <li>+1 202-918-2132</li>
+                    <li>education@mail.com</li>
+                    <li>www.education.com</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!--Axios Library-->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!--Navbar and Footer JS-->
+<script src="js/footer.js"></script>
+<script src="js/navbar.js"></script>
+
+<!--Bootstrap JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
