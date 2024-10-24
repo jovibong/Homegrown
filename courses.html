@@ -20,14 +20,17 @@
     <link rel="stylesheet" href="css/badge_mentor.css">
     <link rel="stylesheet" href="css/courses.css">
 
+    <!--Animation CSS-->
+    <link rel="stylesheet" href="css/animation.css">
+
 </head>
 
 <body>
     <!-- Navbar Placeholder -->
-    <div id="navbar"></div>
+    <div id="navbar" class="fade-in-top"></div>
 
     <!--Ongoing Courses Section-->
-    <section id="app_ongoing" class="container py-3">
+    <section id="app_ongoing" class="container py-3 fade-in-top">
         <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Courses</h2>
         <p class="text-center text-muted mb-0 h5">
             Keep up the great work! You're on your way to mastering new skills. Complete your courses to unlock your
@@ -40,9 +43,8 @@
         </div>
         <div class="row">
             <!-- Ongoing Course Card -->
-            <div v-for="course in ongoing_courses" :key="course.id" class="col-md-4 mb-4 course-card">
-                <div class="card shadow-sm position-relative h-100" @mouseenter="setHover(course.id)"
-                    @mouseleave="removeHover" :class="{ 'hovered': hoveredCourseId === course.id }">
+            <div v-for="course in ongoing_courses" :key="course.id" class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative h-100 hover-animate">
                     <div v-if="course.mentor" class="mentor-badge bg-primary">
                         <span class="text-black">Mentor Included</span>
                     </div>
@@ -65,7 +67,7 @@
     </section>
 
     <!-- Start a New Course Section -->
-    <section id="app_new" class="container py-5">
+    <section id="app_new" class="container py-5 fade-in-top">
         <h2 class="text-primary fw-bold text-center mb-3 display-4">Start a New Course Today!</h2>
         <p class="text-center text-muted mb-4 h5">
             Ready to learn something new? Start a new course today and take the first step toward expanding your skills
@@ -78,25 +80,34 @@
         </div>
         <div class="row">
             <!-- New Course Card -->
-            <div v-for="course in new_courses" :key="course.id" class="col-md-4 mb-4 course-card">
-                <div class="card shadow-sm position-relative h-100" @mouseenter="setHover(course.id)"
-                    @mouseleave="removeHover" :class="{ 'hovered': hoveredCourseId === course.id }">
-                    <div v-if="course.mentor" class="mentor-badge bg-primary">
-                        <span class="text-black">Mentor Included</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="bi bi-code-slash fs-2 text-primary"></i>
+            <div v-for="course in new_courses" :key="course.id" class="col-md-4 mb-4 card-flip">
+                <div class="card shadow-sm position-relative h-100 card-inner">
+                    <div class="card-front">
+                        <div v-if="course.mentor" class="mentor-badge bg-primary">
+                            <span class="text-black">Mentor Included</span>
                         </div>
-                        <h5 class="card-title fw-bold text-center px-2">{{course.name}}</h5>
-                        <div class="text-center mb-2">
-                            <span v-html="getRatingStars(course.rating)" class="text-warning"></span>
-                            <small class="text-muted d-block">{{course.num_reviews}} Reviews</small>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-code-slash fs-2 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold text-center px-2">{{course.name}}</h5>
+                            <div class="text-center mb-2">
+                                <span v-html="getRatingStars(course.rating)" class="text-warning"></span>
+                                <small class="text-muted d-block">{{course.num_reviews}} Reviews</small>
+                            </div>
+                            <p class="card-text text-muted">
+                                {{course.description}}
+                            </p>
                         </div>
-                        <p class="card-text text-muted">
-                            {{course.description}}
-                        </p>
                     </div>
+                    <div class="card-back">
+                        <div class="card-body d-flex align-items-center justify-content-center h-100">
+                            <div class="card-text text-center">
+                                I haven't written anything yet oops
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -104,7 +115,7 @@
 
 
     <!-- Learn New Skills Section -->
-    <section class="container py-5 text-center">
+    <section class="container py-5 text-center fade-in-top">
         <h3 class="text-primary fw-bold mb-3 display-4">Learn New Skills on the Go</h3>
         <p class="text-muted h5">Study on your mobile device, at your own pace, and master new skills no matter where
             you
@@ -114,18 +125,20 @@
     <!-- Effortless Enrollment Section -->
     <section id="enrollment" class="pt-5 bg-secondary">
         <div class="container">
-            <div class="row align-items-center">
+            <div class="row align-items-center py-0 fade-in-top">
                 <!-- Image Column -->
-                <div class="col-lg-5 text-center position-relative">
-                    <img src="img/friendly-confident-woman-writing-her-organizer-isolated-white-wall 1.png" alt="Student" class="img-fluid">
-                </div>
+                <img src="img/friendly-confident-woman-writing-her-organizer-isolated-white-wall 1.png" alt="Student"
+                    class="img-fluid position-relative col-lg-5 text-center d-none d-md-inline">
                 <!-- Text and List Column -->
                 <div id="app_steps" class="col-lg-7">
-                    <h2 class="fw-bold mb-3 display-4">Effortless Enrollment</h2>
+                    <h2 class="fw-bold mb-3 display-5">Effortless Enrollment</h2>
                     <p class="lead text-dark mb-4">Follow these simple steps to learn something new!</p>
                     <ul class="list-unstyled">
-                        <li v-for="step in steps" class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm">
-                            <span class="fw-bold h4 d-flex align-items-center justify-content-center me-3 rounded-circle bg-secondary mb-0" style="width:40px;height:40px">{{count}}</span>
+                        <li v-for="step in steps"
+                            class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm hover-animate hover-less push-in-right">
+                            <span
+                                class="fw-bold h4 d-flex align-items-center justify-content-center me-3 rounded-circle bg-secondary mb-0"
+                                style="width:40px;height:40px">{{count}}</span>
                             <span class="h6 mb-0">{{step}}</span>
                         </li>
                     </ul>
@@ -135,7 +148,7 @@
     </section>
 
     <!-- Footer Placeholder -->
-    <footer></footer>
+    <footer class="fade-in-bottom"></footer>
 
     <!--Axios-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -151,6 +164,9 @@
     <!--JS for loading navbar and footer-->
     <script src="js/navbar_fw.js"></script>
     <script src="js/footer.js"></script>
+
+    <!--Animation JS-->
+    <script src="js/animation.js"></script>
 
     <script>
         // replace with axios code
@@ -245,7 +261,7 @@
             data() {
                 return {
                     ongoing_courses: ongoing_courses,
-                    hoveredCourseId: null
+                    // hoveredCourseId: null
                 };
             },
             methods: {
@@ -264,12 +280,12 @@
                     }
                     return stars;
                 },
-                setHover(courseId) {
-                    this.hoveredCourseId = courseId;
-                },
-                removeHover() {
-                    this.hoveredCourseId = null;
-                },
+                // setHover(courseId) {
+                //     this.hoveredCourseId = courseId;
+                // },
+                // removeHover() {
+                //     this.hoveredCourseId = null;
+                // },
             }
         });
 
@@ -308,11 +324,11 @@
         const app_steps = Vue.createApp({
             data() {
                 return {
-                    steps:['Sign Up',
-                            'Choose a Program',
-                            'Get a personal mentor',
-                            'Finish videos and quizzes',
-                            'Claim your certification!'],
+                    steps: ['Sign Up',
+                        'Choose a Program',
+                        'Get a personal mentor',
+                        'Finish videos and quizzes',
+                        'Claim your certification!'],
                     counter: 0
                 };
             },
