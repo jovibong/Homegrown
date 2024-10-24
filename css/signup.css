@@ -1,3 +1,7 @@
+h2 {
+    color: #525FE1;
+}
+
 /* Modal Dialog Styling */
 .modal-dialog {
     max-width: 80%;  /* Ensure modals have the same width */
