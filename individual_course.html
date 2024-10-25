@@ -20,14 +20,17 @@
 
     <link rel="stylesheet" href="css/courses.css">
 
+    <!--Animations CSS-->
+    <link rel="stylesheet" href="css/animation.css">
+
 </head>
 
 <body>
     <!-- Navbar Placeholder -->
-    <div id="navbar"></div>
+    <div id="navbar" class="fade-in-top"></div>
 
     <!--Back Button and Course Title-->
-    <section id="Title" class="container py-3">
+    <section id="Title" class="container py-3 fade-in-top">
         <div class="container mb-4">
             <div class="row align-items-center">
                 <!-- Back Button -->
@@ -53,27 +56,34 @@
 
     <!--Course Info-->
     <div id="app">
-        <section id="course_info" class="container py-2">
+        <section id="course_info" class="container py-2 fade-in-top">
             <div class="card shadow-sm mb-md-2 mb-3">
                 <div class="card-body position-relative">
                     <div class="row align-items-center">
                         <!-- Icon and Course Info -->
+
                         <div class="col-md-3 text-center mb-3 mb-md-0 h-100">
-                            <i class="bi bi-book fs-1 text-primary"></i>
-                            <div class="d-block">
-                                <span class="text-secondary fs-4" v-html="getRatingStars(course.rating)"></span>
-                                <span class="text-muted d-block fs-4">{{ course.num_reviews }} Reviews</span>
-                            </div>
+                            <a href="#course_reviews" class="text-decoration-none">
+                                <i class="bi bi-book fs-1 text-primary"></i>
+                                <div class="d-block">
+                                    <span class="text-secondary fs-4" v-html="getRatingStars(course.rating)"></span>
+                                    <span class="text-muted d-block fs-4">{{ course.num_reviews }} Reviews</span>
+                                </div>
+                            </a>
                         </div>
+
                         <div class="col-md-8 mb-0 text-md-start text-center">
                             <div class="row my-0 d-flex align-items-center">
                                 <h5 class=" col-md-10 mt-2 fw-bold display-lg-4 display-5">{{ course.name }}</h5>
                                 <div class="text-center col-md-2 my-0 d-md-block d-none">
-                                    <button class="rounded-circle bg-white border border-0" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#lessons_expanded"
-                                        aria-expanded="false" aria-controls="lessons_expanded" @click="toggleChevron">
-                                        <i class="bi bi-chevron-down display-5"></i>
-                                    </button>
+                                    <a :href="expanded ? '#lessons_expanded' : '#'">
+                                        <button class="rounded-circle bg-white border border-0" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#lessons_expanded"
+                                            aria-expanded="false" aria-controls="lessons_expanded"
+                                            @click="toggleChevron">
+                                            <i class="bi bi-chevron-down display-5"></i>
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                             <p class="text-muted">{{ course.description }}</p>
@@ -85,11 +95,13 @@
                     <!-- Progress and Description -->
                     <div class="row">
                         <div class="text-center mt-2 mt-md-0">
-                            <div class="fw-bold h3"><span :ref="'progression' + course.id">0</span>% complete</div>
+                            <div class="fw-bold h3"><span :ref="'progression' + course.id" class="count-animate"
+                                    :data-count-limit="course.percentageCompleted">0</span>% complete</div>
                             <div class="d-flex justify-content-center my-3">
                                 <div class="progress" style="width: 80%; height: 15px;">
-                                    <div class="progress-bar bg-dark" role="progressbar"
-                                        :ref="'courseProgress' + course.id" style="width: 0%;"></div>
+                                    <div class="progress-bar bg-dark progress-animate" role="progressbar"
+                                        :ref="'courseProgress' + course.id"
+                                        :data-progress="course.percentageCompleted + '%'" style="width: 0%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -97,18 +109,20 @@
 
                     <!--Dropdown Button on small screens-->
                     <div class="text-center my-0 d-md-none d-block">
-                        <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#lessons_expanded" aria-expanded="false"
-                            aria-controls="lessons_expanded" @click="toggleTriangle">
-                            <i class="triangle-btn bg-secondary"></i>
-                        </button>
+                        <a :href="expanded ? '#lessons_expanded' : '#app'">
+                            <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#lessons_expanded"
+                                aria-expanded="false" aria-controls="lessons_expanded" @click="toggleTriangle">
+                                <i class="triangle-btn bg-secondary"></i>
+                            </button>
+                        </a>
                     </div>
                 </div>
             </div>
         </section>
 
         <!--Mentor-->
-        <section id="mentor" class="container my-2">
+        <section id="mentor" class="container my-2 fade-in-top">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white text-center fw-bold h4">
                     My Mentor
@@ -139,36 +153,88 @@
         <!--Dropdown items-->
         <div id="lessons_expanded" class="collapse container">
             <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
-                <div class="card shadow-sm mb-md-2 mb-3">
-                    <div class="card-body position-relative">
-                        <h4 class="fw-bold mb-3">{{ lesson.name }}</h4>
-                        <div class="row">
-                            <div v-for="item in lesson.content" :key="item.id" class="col-12">
-                                <div class="d-flex align-items-center p-3 mb-3 bg-light rounded shadow-sm">
-                                    <div class="me-3">
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-secondary text-primary"
-                                            style="width: 50px; height: 50px;">
-                                            <i :class="'bi ' + item.icon"></i>
+                <a href="video_1.html" class="text-decoration-none">
+                    <div class="card shadow-sm mb-md-2 mb-3">
+                        <div class="card-body position-relative">
+                            <h4 class="fw-bold mb-3">{{ lesson.name }}</h4>
+                            <div class="row">
+                                <div v-for="item in lesson.content" :key="item.id" class="col-12">
+                                    <div
+                                        class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less">
+                                        <div class="me-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
+                                                style="width: 60px; height: 60px;">
+                                                <i :class="'bi ' + item.icon + ' h2 pt-2'"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <p class="text-secondary mb-1">{{ formatType(item.typeof) }}</p>
-                                        <p class="fw-bold mb-1">{{ item.name }}</p>
-                                        <p class="text-muted">{{ item.duration }}</p>
+                                        <div>
+                                            <p class="text-primary mb-1">{{ formatType(item.typeof) }}</p>
+                                            <p class="fw-bold mb-1">{{ item.name }}</p>
+                                            <p class="text-muted">{{ item.duration }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
+
+        <!--Reviews section-->
+        <section id="course_reviews" class="container my-5">
+            <!-- Reviews Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Reviews</h2>
+                    <div>
+                        <span class="text-secondary fs-4" v-html="getRatingStars(course.rating)"></span>
+                        <span class="ms-3 fw-bold">{{course.num_reviews}} Reviews</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active font-weight-bold" href="#">New</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link font-weight-bold" href="#">Negative</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link font-weight-bold" href="#">Positive</a>
+                    </li>
+                </ul>
+                <!-- Separate "View All" Button -->
+                <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                    View All <i class="bi bi-play-circle ms-2"></i>
+                </a>
+            </div>
+
+
+            <!-- Reviews List -->
+            <div class="list-group">
+                <!-- Review Card -->
+                <div v-for="review in reviews"
+                    class="list-group-item list-group-item-action d-flex align-items-start push-in-right">
+                    <img :src="review.img" alt="Profile" class="rounded-circle me-3" height="50px" width="50px">
+                    <div>
+                        <h5 class="mb-1">{{review.name}}
+                            <span class="text-secondary fs-6" v-html="getRatingStars(review.rating)"></span>
+                        </h5>
+                        <p class="mb-0">{{review.comments}}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
     </div>
 
 
     <!-- Footer Placeholder -->
-    <footer></footer>
+    <footer class="fade-in-bottom"></footer>
 
     <!--Vue-->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -184,7 +250,50 @@
     <!--JS for loading navbar and footer-->
     <script src="js/navbar_fw.js"></script>
     <script src="js/footer.js"></script>
+
+    <!--Animations JS-->
+    <script src="js/animation.js"></script>
     <script>
+
+        const reviews = [
+            {
+                name: "Johnny Jon",
+                img: "https://via.placeholder.com/50",
+                rating: 4,
+                comments: "This is the best course ever! The instructor was very engaging, and the examples provided were practical and easy to follow. I learned a lot and feel more confident in my skills now."
+            },
+            {
+                name: "Sara Smith",
+                img: "https://via.placeholder.com/50",
+                rating: 5,
+                comments: "Absolutely amazing experience. Highly recommend this course to everyone. The pacing was perfect, and the materials were well-organized. It really helped me understand the complex topics, and the projects were fun and challenging!"
+            },
+            {
+                name: "Michael Brown",
+                img: "https://via.placeholder.com/50",
+                rating: 3,
+                comments: "The course was good, but I expected more depth in some areas. Some of the lessons were a bit too basic, and I would have liked more advanced content. However, the instructor did a great job of explaining things clearly."
+            },
+            {
+                name: "Emily Johnson",
+                img: "https://via.placeholder.com/50",
+                rating: 5,
+                comments: "Great instructor and very well-structured content. I learned a lot! The hands-on exercises were particularly helpful, and the community support was fantastic. This course gave me the confidence to start applying my new skills right away."
+            },
+            {
+                name: "Chris Lee",
+                img: "https://via.placeholder.com/50",
+                rating: 2,
+                comments: "Not what I expected. The material was too basic for me, and I didn’t feel like I got much value from it. It might be good for beginners, but for someone with experience, it felt like a repeat of things I already knew."
+            },
+            {
+                name: "Alex Martinez",
+                img: "https://via.placeholder.com/50",
+                rating: 4,
+                comments: "Very informative, but could use more real-life examples. While the content was solid, I felt that applying the concepts to real-world scenarios would have enhanced my learning experience. Still, it’s a good course overall."
+            }
+        ];
+
 
         const mentor1 = {
             name: "Loretta Liew",
@@ -225,7 +334,8 @@
                     course: course,
                     mentor: mentor1,
                     lessons: lessons,
-                    expanded: false
+                    expanded: false,
+                    reviews: reviews
                 };
             },
             methods: {
@@ -244,60 +354,37 @@
                     }
                     return stars;
                 },
-                animateProgress(courseId, targetPercentage) {
-                    this.$nextTick(() => {
-                        // Find the progress bar using the unique reference
-                        animationDuration = 1.3; // change this to change the time in seconds
-                        const progressBar = this.$refs[`courseProgress${courseId}`];
-                        const progression = this.$refs[`progression${courseId}`];
-
-                        // Check if the reference exists and is not undefined
-                        if (progressBar && progression) {
-                            // Animate the progress bar width with CSS transition
-                            progressBar.style.transition = `width ${animationDuration}s ease`;
-                            progressBar.style.width = `${targetPercentage}%`;
-                            let currentPercentage = 0;
-                            const interval = setInterval(() => {
-                                if (currentPercentage >= targetPercentage) {
-                                    clearInterval(interval);
-                                } else {
-                                    currentPercentage++;
-                                    progression.innerText = currentPercentage;
-                                }
-                            }, animationDuration * 1000 / targetPercentage);
-                        }
-                    });
-                },
                 formatType(type) {
                     return type.charAt(0).toUpperCase() + type.slice(1);
                 },
                 toggleChevron(event) {
                     const button = event.currentTarget;
-                    const chevron = button.querySelector('.bi-chevron-down') || button.querySelector('.bi-chevron-up');
-
-                    if (chevron.classList.contains('bi-chevron-down')) {
+                    if (!this.expanded) {
+                        const chevron = button.querySelector('.bi-chevron-down');
                         chevron.classList.replace('bi-chevron-down', 'bi-chevron-up');
                     } else {
+                        const chevron = button.querySelector('.bi-chevron-up');
                         chevron.classList.replace('bi-chevron-up', 'bi-chevron-down');
                     }
+                    this.expanded = !this.expanded;
+
                 },
                 toggleTriangle(event) {
                     const button = event.currentTarget;
                     const triangle = button.querySelector('.triangle-btn');
 
-                    if (triangle) {
-                        triangle.classList.toggle('rotate');
+                    if (!this.expanded) {
+                        triangle.classList.add('rotate');
                     }
+                    else {
+                        triangle.classList.remove('rotate')
+                    }
+                    this.expanded = !this.expanded;
                 }
 
 
-            },
-            mounted() {
-                // Listen for when the entire window (including all resources) has fully loaded
-                window.onload = () => {
-                    this.animateProgress(course.id, course.percentageCompleted);
-                };
             }
+
         });
         const vm = app.mount('#app');
 

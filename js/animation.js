@@ -1,10 +1,18 @@
+function observeMutations(callback) {
+    const observer = new MutationObserver(callback);
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    return observer;
+}
+
 function animateProgressBars() {
     const progressBars = document.querySelectorAll('.progress-animate');
-    let progressValue = 0;
 
     const appearOptions = {
-        threshold: 0.1, // Adjust this if needed (how much of the element must be visible)
-        rootMargin: "50px 50px 50px 50px" // Adjust this if needed
+        threshold: 0.1,
+        rootMargin: "50px 50px 50px 50px"
     };
 
     const appearOnScroll = new IntersectionObserver((entries, appearOnScroll) => {
@@ -17,23 +25,25 @@ function animateProgressBars() {
                 progressBar.style.transition = "width 1.5s ease-in-out";
                 progressBar.style.width = progressValue;
                 appearOnScroll.unobserve(progressBar);
-                
             }
         });
     }, appearOptions);
 
-    progressBars.forEach(progressBar => {
-        appearOnScroll.observe(progressBar)
-    });
-};
+    function observeProgressBars() {
+        const progressBars = document.querySelectorAll('.progress-animate');
+        progressBars.forEach(progressBar => {
+            appearOnScroll.observe(progressBar);
+        });
+    }
+
+    observeProgressBars();
+    observeMutations(observeProgressBars);
+}
 
 function animateCounters() {
-    // Select all elements with the class 'count-animate'
-    const counters = document.querySelectorAll('.count-animate');
-
     const appearOptions = {
-        threshold: 0.1, // Adjust this if needed (how much of the element must be visible)
-        rootMargin: "50px 50px 50px 50px" // Adjust this if needed
+        threshold: 0.1,
+        rootMargin: "50px 50px 50px 50px"
     };
 
     const appearOnScroll = new IntersectionObserver((entries, appearOnScroll) => {
@@ -41,41 +51,54 @@ function animateCounters() {
             if (!entry.isIntersecting) {
                 return;
             } else {
-
                 const counter = entry.target;
                 const countLimit = parseInt(counter.getAttribute('data-count-limit'), 10);
                 let currentCount = 0;
-                const increment = Math.ceil(countLimit / 100); // Adjust the increment value for speed
-                const duration = 1500; // Total duration for the animation in milliseconds
-                const intervalTime = duration / (countLimit / increment); // Time between increments
 
-                const updateCounter = setInterval(() => {
-                    currentCount += increment;
-                    if (currentCount >= countLimit) {
-                        currentCount = countLimit;
-                        clearInterval(updateCounter);
+                // Animation duration in milliseconds
+                const duration = 1500;
+                const startTime = performance.now();
+
+                function updateCounter(timestamp) {
+                    const elapsed = timestamp - startTime;
+                    // Calculate the progress based on the duration
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Update the current count based on the progress
+                    currentCount = Math.floor(progress * countLimit);
+                    counter.textContent = `${currentCount}`;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = countLimit; // Ensure the final value is correct
                     }
-                    counter.textContent = currentCount;
-                }, intervalTime);
+                }
 
+                // Start the animation
+                requestAnimationFrame(updateCounter);
                 appearOnScroll.unobserve(counter);
-                
             }
         });
     }, appearOptions);
 
-    counters.forEach(counter => {
-        appearOnScroll.observe(counter);
-    });
+    function observeCounters() {
+        // Get counters that are not already observed
+        const counters = document.querySelectorAll('.count-animate:not(.observed)');
+        counters.forEach(counter => {
+            counter.classList.add('observed'); // Mark this counter as observed
+            appearOnScroll.observe(counter);
+        });
+    }
+
+    observeCounters();
+    observeMutations(observeCounters);
 };
+
 
 function animateFade() {
-    const top_faders = document.querySelectorAll(".fade-in-top");
-    const bottom_faders = document.querySelectorAll(".fade-in-bottom");
-
     const appearOptions = {
-        threshold: 0.1, // Adjust this if needed (how much of the element must be visible)
-        rootMargin: "0px 0px -50px 0px" // Adjust this if needed
+        threshold: 0.1,
+        rootMargin: "0px 0px 0px 0px"
     };
 
     const appearOnScroll = new IntersectionObserver((entries, appearOnScroll) => {
@@ -89,18 +112,22 @@ function animateFade() {
         });
     }, appearOptions);
 
-    [...top_faders, ...bottom_faders].forEach(item => {
-        appearOnScroll.observe(item);
-    });
-};
+    function observeFades() {
+        const top_faders = document.querySelectorAll(".fade-in-top");
+        const bottom_faders = document.querySelectorAll(".fade-in-bottom");
+        [...top_faders, ...bottom_faders].forEach(item => {
+            appearOnScroll.observe(item);
+        });
+    }
+
+    observeFades();
+    observeMutations(observeFades);
+}
 
 function animatePush() {
-    const pushers_r = document.querySelectorAll(".push-in-right");
-    const pushers_l = document.querySelectorAll(".push-in-left");
-
     const appearOptions = {
-        threshold: 0.1, // Adjust this if needed (how much of the element must be visible)
-        rootMargin: "50px 50px 50px 50px" // Adjust this if needed
+        threshold: 0.1,
+        rootMargin: "50px 50px 50px 50px"
     };
 
     const appearOnScroll = new IntersectionObserver((entries, appearOnScroll) => {
@@ -114,12 +141,21 @@ function animatePush() {
         });
     }, appearOptions);
 
-    [...pushers_l,...pushers_r].forEach(item => {
-        appearOnScroll.observe(item);
-    });
-};
+    function observePushers() {
+        const pushers_r = document.querySelectorAll(".push-in-right");
+        const pushers_l = document.querySelectorAll(".push-in-left");
+        [...pushers_l, ...pushers_r].forEach(item => {
+            appearOnScroll.observe(item);
+        });
+    }
 
-document.addEventListener('DOMContentLoaded', animateProgressBars);
-document.addEventListener('DOMContentLoaded',animateFade);
-document.addEventListener('DOMContentLoaded',animatePush);
-document.addEventListener('DOMContentLoaded',animateCounters);
+    observePushers();
+    observeMutations(observePushers);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    animateProgressBars();
+    animateFade();
+    animatePush();
+    animateCounters();
+});
