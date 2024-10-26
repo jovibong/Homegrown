@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship</title>
+
+    <!--Custom Bootstrap Inspired Stylesheet-->
+    <link href="css/mainmin.css" rel="stylesheet">
+
+    <!--Icons-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!--Navbar and Footer Stylesheet-->
+    <link href="css/navbar_footer_style.css" rel="stylesheet">
+
+    <!--Badge for mentor CSS-->
+    <link rel="stylesheet" href="css/badge_mentor.css">
+
+    <!--Animation CSS-->
+    <link rel="stylesheet" href="css/animation.css">
+
+    <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .btn-view-info {
+            background-color: #ffd700;
+            color: black;
+            font-weight: bold;
+            font-size: large;
+        }
+
+        .card {
+            position: relative;
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            /* Space for the button */
+        }
+
+        .card-body {
+            height: 100%;
+            flex-grow: 1;
+        }
+
+        .btn-position {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+        }
+
+        .row {
+            align-items: stretch;
+        }
+
+        .badge_notifiction {
+            padding: 0.5em 0.75em;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="container py-5">
+        <h1 class="text-primary fw-bold text-center mb-5 display-4">Volunteer Progress</h1>
+
+        <!-- Mentored Courses Section -->
+        <section class="mb-5">
+            <h2 class="text-primary fw-bold mb-4">Your Mentored Courses</h2>
+            <div class="row g-4">
+                <div v-for="course in mentoredCourses" :key="course.id" class="col-md-4">
+                    <div class="card shadow-sm">
+                        <img :src="course.image" class="card-img-top" :alt="course.name">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ course.name }}</h5>
+                            <p class="card-text text-muted">{{ course.description }}</p>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary badge_notification">
+                                {{ course.mentees }} Mentees
+                            </span>
+                        </div>
+                        <a href="#" class="btn btn-view-info btn-position">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Participating Events Section -->
+        <section class="mb-5">
+            <h2 class="text-primary fw-bold mb-4">Your Participating Events</h2>
+            <div class="row g-4">
+                <div v-for="event in participatingEvents" :key="event.id" class="col-md-4">
+                    <div class="card shadow-sm">
+                        <img :src="event.image" class="card-img-top" :alt="event.name">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ event.name }}</h5>
+                            <p class="card-text text-muted">{{ event.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ event.date }}</small>
+                                <span class="badge bg-success">{{ event.hours }} hours</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-view-info btn-position">Event Details</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overall Volunteer Hours Section -->
+        <section>
+            <h2 class="text-primary fw-bold mb-4">Overall Volunteer Hours</h2>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fw-bold mb-0">Total Hours: {{ totalHours }}</h3>
+                        <button @click="logHours" class="btn btn-primary">Log Hours</button>
+                    </div>
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div class="progress-bar bg-success" role="progressbar" :style="{ width: progressPercentage + '%' }" :aria-valuenow="progressPercentage" aria-valuemin="0" aria-valuemax="100">
+                            {{ progressPercentage }}%
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        You've completed {{ progressPercentage }}% of your {{ yearlyGoal }} hour yearly goal. Keep up the great work!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Log Hours Modal -->
+        <div class="modal fade" id="logHoursModal" tabindex="-1" aria-labelledby="logHoursModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logHoursModalLabel">Log Volunteer Hours</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form @submit.prevent="submitHours">
+                            <div class="mb-3">
+                                <label for="hours" class="form-label">Hours</label>
+                                <input v-model.number="newHours" type="number" class="form-control" id="hours" required min="0.5" step="0.5">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea v-model="description" class="form-control" id="description" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                mentoredCourses: [
+                    { id: 1, name: 'Introduction to Python', description: 'Learn the basics of Python programming', mentees: 3, image: '/placeholder.svg?height=200&width=300' },
+                    { id: 2, name: 'Web Development Fundamentals', description: 'Master HTML, CSS, and JavaScript', mentees: 5, image: '/placeholder.svg?height=200&width=300' },
+                    { id: 3, name: 'Data Analysis with Excel', description: 'Analyze data using Microsoft Excel', mentees: 2, image: '/placeholder.svg?height=200&width=300' },
+                ],
+                participatingEvents: [
+                    { id: 1, name: 'Community Code Workshop', description: 'Teaching coding basics to local students', date: '2023-04-15', hours: 4, image: '/placeholder.svg?height=200&width=300' },
+                    { id: 2, name: 'Tech for Seniors', description: 'Helping seniors learn to use technology', date: '2023-05-01', hours: 3, image: '/placeholder.svg?height=200&width=300' },
+                    { id: 3, name: 'Environmental Data Collection', description: 'Collecting and analyzing local environmental data', date: '2023-05-20', hours: 5, image: '/placeholder.svg?height=200&width=300' },
+                ],
+                totalHours: 45,
+                yearlyGoal: 100,
+                newHours: 0,
+                description: ''
+            },
+            computed: {
+                progressPercentage() {
+                    return Math.min(Math.round((this.totalHours / this.yearlyGoal) * 100), 100);
+                }
+            },
+            methods: {
+                logHours() {
+                    var myModal = new bootstrap.Modal(document.getElementById('logHoursModal'));
+                    myModal.show();
+                },
+                submitHours() {
+                    if (this.newHours > 0) {
+                        this.totalHours += this.newHours;
+                        console.log(`Logged ${this.newHours} hours: ${this.description}`);
+                        this.newHours = 0;
+                        this.description = '';
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('logHoursModal'));
+                        myModal.hide();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+<!--Axios Library-->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!--Navbar and Footer JS-->
+<script src="js/footer.js"></script>
+<script src="js/navbar.js"></script>
+
+<!--Bootstrap JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+<!-- Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+<script>
+    const mentorships = [
+        {
+            id: 101,
+            name: "Introduction to Python",
+            description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
+            mentoring: true,
+            mentees: 2,
+            mentors_required: 2,
+            requirements: ["Basic Python", "Patience with Beginners"],
+            notificationCount: 0
+        },
+        {
+            id: 102,
+            name: "Web Development with HTML & CSS",
+            description: "Master the fundamentals of web development by learning HTML and CSS. Build and style your own websites from scratch in this hands-on, beginner-friendly course.",
+            mentoring: false,
+            mentees: 2,
+            mentors_required: 1,
+            requirements: ["Basic HTML & CSS"],
+            notificationCount: 0
+        },
+        {
+            id: 103,
+            name: "Data Analysis with Excel",
+            description: "This course covers essential data analysis techniques using Microsoft Excel. Learn how to manage data, use formulas, and create powerful visualizations to analyze information effectively.",
+            mentoring: true,
+            mentors_required: 2,
+            requirements: ["Microsoft Excel Proficiency", "Analytical Skills"],
+            notificationCount: 2
+        },
+        {
+            id: 104,
+            name: "JavaScript for Beginners",
+            description: "This course introduces JavaScript, one of the most popular programming languages for web development. Learn how to make your websites interactive and dynamic through hands-on projects and examples.",
+            mentoring: false,
+            mentors_required: 3,
+            requirements: ["Basic JavaScript", "Problem-Solving Skills", "Familiarity with Web Development"],
+            notificationCount: 0
+        },
+        {
+            id: 104,
+            name: "Mandarin Language for Beginners",
+            description: "Learn the basics of Mandarin, including pronunciation, simple phrases, and everyday vocabulary. Perfect for travelers and language enthusiasts.",
+            mentoring: true,
+            mentors_required: 3,
+            requirements: ["Basic Mandarin", "Good Pronunciation", "Patience with Language Learners"],
+            notificationCount: 0
+        },
+        {
+            id: 105,
+            name: "Cyber Security Basics",
+            description: "Understand the fundamentals of cyber security, including how to protect your data and recognize common threats. Ideal for beginners.",
+            mentoring: false,
+            mentors_required: 2,
+            requirements: ["Interest in Cyber Security"],
+            notificationCount: 0
+        },
+        {
+            id: 106,
+            name: "Introduction to JavaScript",
+            description: "Dive into JavaScript programming, one of the core languages for web development. Learn syntax, basic functions, and how to build interactive websites.",
+            mentoring: true,
+            mentors_required: 2,
+            requirements: ["Basic JavaScript", "Logical Thinking", "Experience in Web Development"],
+            notificationCount: 1
+        },
+        {
+            id: 107,
+            name: "Project Management Essentials",
+            description: "Master the essentials of project management, including planning, execution, and risk management. This course is great for aspiring project managers.",
+            mentoring: true,
+            mentors_required: 1,
+            requirements: ["Interest in Project Management", "Strong Communication Skills", "Ability to Multitask"],
+            notificationCount: 0
+        },
+        {
+            id: 108,
+            name: "Graphic Design with Adobe Illustrator",
+            description: "Learn the fundamentals of graphic design using Adobe Illustrator. Perfect for anyone looking to enhance their design skills for professional or personal projects.",
+            mentoring: false,
+            mentors_required: 2,
+            requirements: ["Basic Adobe Illustrator Skills", "Eye For Design"],
+            notificationCount: 0
+        }
+    ];
+
+    const ongoing_app = new Vue({
+        el: '#ongoing_app',
+        data: {
+            mentorships: mentorships,
+        },
+    });
+
+    const new_app = new Vue({
+        el: '#new_app',
+        data: {
+            mentorships: mentorships,
+            selectedCourseId: null
+        },
+        methods: {
+            getImageUrl(course) {
+                // Replace spaces with %20 for URL encoding and select appropriate extension.
+                const formattedName = course.name.replace(/ /g, '%20');
+                const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
+                return `./img/${formattedName}.${extension}`;
+            },
+            openModal(course) {
+                this.selectedCourseId = course.id; // Set the selected course ID
+                const mentorModal = new bootstrap.Modal(document.getElementById('mentorModal'));
+                mentorModal.show(); // Show the modal
+            },
+            submitDocuments() {
+                // Check if a file is selected
+                if (!this.selectedFile) {
+                    alert('Please select a document to submit.');
+                    return;
+                }
+
+                // Logic to handle document submission
+                alert(`Documents submitted for course ID: ${this.selectedCourseId}`);
+
+                // Here you can handle the file upload logic (e.g., using FormData and Axios)
+
+                // Show the toast notification
+                const toast = new bootstrap.Toast(document.getElementById('submitToast'));
+                toast.show();
+
+                // Close the modal after submission
+                const mentorModal = bootstrap.Modal.getInstance(document.getElementById('mentorModal'));
+                mentorModal.hide();
+
+                // Reset the form fields
+                this.comments = '';
+                this.selectedFile = null;
+            }
+        }
+    });
+</script>
+</body>
+
+</html>

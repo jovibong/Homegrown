@@ -19,51 +19,12 @@
     <!--Badge for mentor CSS-->
     <link rel="stylesheet" href="css/badge_mentor.css">
 
+    <!-- volunteer CSS -->
+    <link rel="stylesheet" href="css/volunteer.css">
+
     <!--Animation CSS-->
     <link rel="stylesheet" href="css/animation.css">
 
-    <style>
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .btn-view-info {
-            background-color: #ffd700;
-            color: black;
-            font-weight: bold;
-            font-size: large;
-        }
-
-        .card {
-            position: relative;
-            padding-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            /* Space for the button */
-        }
-
-        .card-body {
-            height: 100%;
-            flex-grow: 1;
-        }
-
-        .btn-position {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-        }
-
-        .row {
-            align-items: stretch;
-        }
-
-        .badge_notifiction {
-            padding: 0.5em 0.75em;
-            font-size: 1.2em;
-        }
-    </style>
 </head>
 
 <body style="background-color: FFCF59;">
@@ -128,8 +89,8 @@
                             <h4 class="fw-semibold"><span class="badge bg-primary"> Mentors Required: {{
                                     course.mentors_required }} </span></h4>
                         </div>
-                        <a href="#" class="btn btn-view-info btn-position" @click="openModal(course)">Be a
-                            Mentor</a>
+                        <button class="btn btn-view-info btn-position m-15" @click="openModal(course)">Be a
+                            Mentor</button>
                     </div>
                 </div>
             </div>
