@@ -111,6 +111,27 @@
             </div>
         </section>
 
+        <!-- Past Events Section -->
+        <section class="mb-5">
+            <h2 class="text-primary fw-bold mb-4">Your Past Events</h2>
+            <div class="row g-4">
+                <div v-for="event in participatingEvents" :key="event.id" class="col-md-4">
+                    <div class="card shadow-sm">
+                        <img :src="event.image" class="card-img-top" :alt="event.name">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ event.name }}</h5>
+                            <p class="card-text text-muted">{{ event.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ event.date }}</small>
+                                <span class="badge bg-success">{{ event.hours }} hours</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-view-info btn-position">Event Details</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Overall Volunteer Hours Section -->
         <section>
             <h2 class="text-primary fw-bold mb-4">Overall Volunteer Hours</h2>
