@@ -19,6 +19,9 @@
     <!--Badge for mentor CSS-->
     <link rel="stylesheet" href="css/badge_mentor.css">
 
+    <!--Animation CSS-->
+    <link rel="stylesheet" href="css/animation.css">
+
     <style>
         .card-img-top {
             height: 200px;
@@ -29,283 +32,137 @@
             background-color: #ffd700;
             color: black;
             font-weight: bold;
+            font-size: large;
         }
 
         .card {
             position: relative;
-            padding-bottom: 20px; /* Space for the button */
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            /* Space for the button */
         }
+
         .card-body {
             height: 100%;
+            flex-grow: 1;
         }
 
         .btn-position {
             position: absolute;
             bottom: 15px;
-            left: 15px;
+            right: 15px;
+        }
+
+        .row {
+            align-items: stretch;
+        }
+
+        .badge_notifiction {
+            padding: 0.5em 0.75em;
+            font-size: 1.2em;
         }
     </style>
 </head>
 
 <body style="background-color: FFCF59;">
 
-    <!---start of navbar-->
-    <div class="container-fluid bg-custom-blue sticky-top">
-
-        <!-- start row for using grid -->
-        <div class="row">
-
-            <!-- start of nav without sign in/up -->
-            <div class="col-lg-10 col-9 align-items-start">
-                <nav class="navbar navbar-expand-lg ">
-                    <div class="container">
-                        <!-- Logo -->
-                        <a class="navbar-brand me-auto" href="#">
-                            <span class="text-light fw-bold">Home</span><span class="text-warning fw-bold">Grown</span>
-                        </a>
-
-                        <!-- hamburger collapsible icon -->
-                        <!-- flex and hamburger menu only for mobile -->
-                        <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around collapsed"
-                            type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <!-- custom 3 lines for animation for menu -->
-                            <span class="toggler-icon top-bar"></span>
-                            <span class="toggler-icon middle-bar"></span>
-                            <span class="toggler-icon bottom-bar"></span>
-                        </button>
-
-                        <!-- list of links/navs -->
-                        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                            <ul class="navbar-nav">
-                                <li class="nav-item mx-3">
-                                    <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
-                                </li>
-                                <li class="nav-item mx-3">
-                                    <a class="nav-link text-light" href="#">Mentorship</a>
-                                </li>
-                                <li class="nav-item mx-3 d-inline">
-                                    <a class="nav-link text-light" href="#">Events</a>
-                                </li>
-                                <li class="nav-item mx-3">
-                                    <a class="nav-link text-light" href="#">Upskilling</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-            <!-- end of nav without sign in/up -->
-
-            <!-- start of sign up/in buttons -->
-            <div class="col-lg-2 col-3 d-flex justify-content-end align-items-start">
-                <nav class="navbar d-flex flex-nowrap">
-                    <!-- if want the sign in to remain as a navlink use class below -->
-                    <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" href="#">Sign In</a>
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" href="#">SIGN UP</a>
-                </nav>
-            </div>
-            <!-- end of sign up/in buttons -->
-
-        </div>
-        <!-- end of row -->
-
-    </div>
-    <!---end of navbar-->
-
-
     <!--Ongoing Mentorships Section-->
-    <section id="mentorship" class="container py-3">
+    <section id="ongoing_app" class="container py-3">
         <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
         <p class="text-center text-muted mb-0 h5 pb-5">
-            You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them unlock their full potential with every step they take.
+            You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them unlock
+            their full potential with every step they take.
         </p>
         <div class="row">
-            <!-- Course Card 1 -->
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm position-relative">
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="bi bi-book fs-2 text-primary"></i>
+            <!-- Mentorship Cards -->
+            <div v-for="course in mentorships" v-if="course.mentoring" :key="course.id" class="col-md-4 mb-4">
+                <div class="card shadow-sm position-relative hover-animate">
+                    <a href="individual_course.html" class="text-decoration-none">
+                        <span v-if="course.notificationCount > 0"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
+                            {{ course.notificationCount }}
+                        </span>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-book fs-2 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold text-center">{{ course.name }}</h5>
+                            <h6 class="text-secondary card-text text-center fst-italic enter-text">click to enter</h6>
+                            <!-- Updated here -->
+                            <p class="card-text text-muted">
+                                {{ course.description }}
+                            </p>
                         </div>
-                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
-                        <p class="card-text text-muted">
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
-                            saepe,
-                            sit id iste libero temporibus harum.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- Repeat the above block for more course cards -->
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm position-relative">
-                    <div class="mentor-badge">
-                        <span>Mentor Included</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="bi bi-book fs-2 text-primary"></i>
-                        </div>
-                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
-                        <p class="card-text text-muted">
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
-                            saepe,
-                            sit id iste libero temporibus harum.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm position-relative">
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="bi bi-book fs-2 text-primary"></i>
-                        </div>
-                        <h5 class="card-title fw-bold text-center">Introduction to Python</h5>
-                        <p class="card-text text-muted">
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error assumenda voluptates
-                            saepe,
-                            sit id iste libero temporibus harum.
-                        </p>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Available Mentorships Section -->
-    <div class="container py-5">
-        <h2 class="text-primary fw-bold text-center mb-3 display-4">Available Mentorships</h2>
-        <p class="text-center text-muted mb-0 h5 pb-5">
-            Make a lasting impact by becoming a mentor! Share your knowledge, guide others to success, and help them unlock their full potential while growing alongside them.        </p>
-        <div class="row g-4">
-            <!-- large card -->
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <img src="/placeholder.svg?height=400&width=800" class="card-img-top" alt="Sustainability Management">
-                    <div class="card-body">
-                        <h5 class="card-title">Sustainability Management</h5>
-                        <p class="card-text">Learn about sustainable practices in business and management.</p>
+    <section id="new_app">
+        <div class="container py-5">
+            <h2 class="text-primary fw-bold text-center mb-3 display-4">Available Mentorships</h2>
+            <p class="text-center text-muted mb-0 h5 pb-5">
+                Make a lasting impact by becoming a mentor! Share your knowledge, guide others to success, and help them
+                unlock their full potential while growing alongside them.
+            </p>
+            <div class="row g-4">
+                <!-- Card Loop -->
+                <div v-for="course in mentorships" v-if="!course.mentoring" :key="course.id" class="col-md-6">
+                    <div class="card d-flex flex-column h-100">
+                        <img :src="getImageUrl(course)" class="card-img-top" :alt="course.name">
+                        <div class="card-body flex-grow-1">
+                            <h5 class="card-title">{{ course.name }}</h5>
+                            <p class="card-text">{{ course.description }}</p>
+                        </div>
+                        <div class="m-3">
+                            <p class="fw-semibold">Requirements:</p>
+                            <ul class="list-unstyled">
+                                <li v-for="requirement in course.requirements" :key="requirement" class="text-muted">
+                                    • {{ requirement }}
+                                </li>
+                            </ul>
+                            <h4 class="fw-semibold"><span class="badge bg-primary"> Mentors Required: {{
+                                    course.mentors_required }} </span></h4>
+                        </div>
+                        <a href="#" class="btn btn-view-info btn-position" @click="openModal(course)">Be a
+                            Mentor</a>
                     </div>
-                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
                 </div>
             </div>
-            <div class="col-md-3">
-                <!-- small card -->
-                <div class="card h-100">
-                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Communication Techniques">
-                    <div class="card-body">
-                        <h5 class="card-title">Communication Techniques</h5>
-                        <p class="card-text">Improve your communication skills in professional settings.</p>
-                    </div>
-                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+        </div>
+    </section>
+
+    <!-- Document Submission Pop-up-->
+    <div class="modal fade" id="mentorModal" tabindex="-1" aria-labelledby="mentorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mentorModalLabel">Submit Supporting Documents</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Problem Solving">
-                    <div class="card-body">
-                        <h5 class="card-title">Problem Solving</h5>
-                        <p class="card-text">Develop critical thinking and problem-solving abilities.</p>
-                    </div>
-                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Introduction to Python">
-                    <div class="card-body">
-                        <h5 class="card-title">Introduction to Python</h5>
-                        <p class="card-text">Learn the basics of Python programming language.</p>
-                    </div>
-                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="/placeholder.svg?height=200&width=400" class="card-img-top" alt="Project Management">
-                    <div class="card-body">
-                        <h5 class="card-title">Project Management</h5>
-                        <p class="card-text">Master the skills needed to manage successful projects.</p>
-                    </div>
-                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <img src="/placeholder.svg?height=400&width=800" class="card-img-top" alt="Introduction to Statistics">
-                    <div class="card-body">
-                        <h5 class="card-title">Introduction to Statistics</h5>
-                        <p class="card-text">Understand fundamental statistical concepts and their applications.</p>
-                    </div>
-                    <a href="#" class="btn btn-view-info btn-position">View Info</a>
+                <div class="modal-body">
+                    <form @submit.prevent="submitDocuments">
+                        <div class="mb-3">
+                            <label for="document" class="form-label">Upload Document</label>
+                            <input type="file" class="form-control" id="document" required @change="handleFileChange">
+                        </div>
+                        <div class="mb-3">
+                            <label for="comments" class="form-label">Additional Comments (Optional)</label>
+                            <textarea class="form-control" id="comments" v-model="comments" rows="3"></textarea>
+                        </div>
+                        <input type="hidden" v-model="selectedCourseId">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
 </body>
-
-
-<!-- Footer Section -->
-<footer class="footer-section py-5 bg-dark text-white">
-    <div class="container">
-        <div class="row">
-            <!-- Branding and Description -->
-            <div class="col-md-3">
-                <h1 class="fw-bold pt-0">Education</h1>
-                <p class="mb-3">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                    the
-                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of
-                    type and
-                    scrambled it to make a type specimen book.
-                </p>
-                <div class="social-icons">
-                    <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="me-2"><i class="bi bi-youtube"></i></a>
-                    <a href="#"><i class="bi bi-twitter"></i></a>
-                </div>
-            </div>
-
-            <!-- About Links -->
-            <div class="col-md-3">
-                <h5 class="fw-bold">About</h5>
-                <ul class="list-unstyled footer-list">
-                    <li><a href="#">Menu</a></li>
-                    <li><a href="#">Features</a></li>
-                    <li><a href="#">News & Blogs</a></li>
-                    <li><a href="#">Help & Supports</a></li>
-                </ul>
-            </div>
-
-            <!-- Company Links -->
-            <div class="col-md-3">
-                <h5 class="fw-bold">Company</h5>
-                <ul class="list-unstyled footer-list">
-                    <li><a href="#">How we work</a></li>
-                    <li><a href="#">Terms of service</a></li>
-                    <li><a href="#">Pricing</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Information -->
-            <div class="col-md-3">
-                <h5 class="fw-bold">Contact Us</h5>
-                <ul class="list-unstyled">
-                    <li>80 Stamford Rd, Singapore 178902</li>
-                    <li>+1 202-918-2132</li>
-                    <li>education@mail.com</li>
-                    <li>www.education.com</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
 
 <!--Axios Library-->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -318,6 +175,149 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
+
+<!-- Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+<script>
+    const mentorships = [
+        {
+            id: 101,
+            name: "Introduction to Python",
+            description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
+            mentoring: true,
+            mentees: 2,
+            mentors_required: 2,
+            requirements: ["Basic Python", "Patience with Beginners"],
+            notificationCount: 0
+        },
+        {
+            id: 102,
+            name: "Web Development with HTML & CSS",
+            description: "Master the fundamentals of web development by learning HTML and CSS. Build and style your own websites from scratch in this hands-on, beginner-friendly course.",
+            mentoring: false,
+            mentees: 2,
+            mentors_required: 1,
+            requirements: ["Basic HTML & CSS"],
+            notificationCount: 0
+        },
+        {
+            id: 103,
+            name: "Data Analysis with Excel",
+            description: "This course covers essential data analysis techniques using Microsoft Excel. Learn how to manage data, use formulas, and create powerful visualizations to analyze information effectively.",
+            mentoring: true,
+            mentors_required: 2,
+            requirements: ["Microsoft Excel Proficiency", "Analytical Skills"],
+            notificationCount: 2
+        },
+        {
+            id: 104,
+            name: "JavaScript for Beginners",
+            description: "This course introduces JavaScript, one of the most popular programming languages for web development. Learn how to make your websites interactive and dynamic through hands-on projects and examples.",
+            mentoring: false,
+            mentors_required: 3,
+            requirements: ["Basic JavaScript", "Problem-Solving Skills", "Familiarity with Web Development"],
+            notificationCount: 0
+        },
+        {
+            id: 104,
+            name: "Mandarin Language for Beginners",
+            description: "Learn the basics of Mandarin, including pronunciation, simple phrases, and everyday vocabulary. Perfect for travelers and language enthusiasts.",
+            mentoring: true,
+            mentors_required: 3,
+            requirements: ["Basic Mandarin", "Good Pronunciation", "Patience with Language Learners"],
+            notificationCount: 0
+        },
+        {
+            id: 105,
+            name: "Cyber Security Basics",
+            description: "Understand the fundamentals of cyber security, including how to protect your data and recognize common threats. Ideal for beginners.",
+            mentoring: false,
+            mentors_required: 2,
+            requirements: ["Interest in Cyber Security"],
+            notificationCount: 0
+        },
+        {
+            id: 106,
+            name: "Introduction to JavaScript",
+            description: "Dive into JavaScript programming, one of the core languages for web development. Learn syntax, basic functions, and how to build interactive websites.",
+            mentoring: true,
+            mentors_required: 2,
+            requirements: ["Basic JavaScript", "Logical Thinking", "Experience in Web Development"],
+            notificationCount: 1
+        },
+        {
+            id: 107,
+            name: "Project Management Essentials",
+            description: "Master the essentials of project management, including planning, execution, and risk management. This course is great for aspiring project managers.",
+            mentoring: true,
+            mentors_required: 1,
+            requirements: ["Interest in Project Management", "Strong Communication Skills", "Ability to Multitask"],
+            notificationCount: 0
+        },
+        {
+            id: 108,
+            name: "Graphic Design with Adobe Illustrator",
+            description: "Learn the fundamentals of graphic design using Adobe Illustrator. Perfect for anyone looking to enhance their design skills for professional or personal projects.",
+            mentoring: false,
+            mentors_required: 2,
+            requirements: ["Basic Adobe Illustrator Skills", "Eye For Design"],
+            notificationCount: 0
+        }
+    ];
+
+    const ongoing_app = new Vue({
+        el: '#ongoing_app',
+        data: {
+            mentorships: mentorships,
+        },
+    });
+
+    const new_app = new Vue({
+        el: '#new_app',
+        data: {
+            mentorships: mentorships,
+            selectedCourseId: null
+        },
+        methods: {
+            getImageUrl(course) {
+                // Replace spaces with %20 for URL encoding and select appropriate extension.
+                const formattedName = course.name.replace(/ /g, '%20');
+                const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
+                return `./img/${formattedName}.${extension}`;
+            },
+            openModal(course) {
+                this.selectedCourseId = course.id; // Set the selected course ID
+                const mentorModal = new bootstrap.Modal(document.getElementById('mentorModal'));
+                mentorModal.show(); // Show the modal
+            },
+            submitDocuments() {
+                // Check if a file is selected
+                if (!this.selectedFile) {
+                    alert('Please select a document to submit.');
+                    return;
+                }
+
+                // Logic to handle document submission
+                alert(`Documents submitted for course ID: ${this.selectedCourseId}`);
+
+                // Here you can handle the file upload logic (e.g., using FormData and Axios)
+
+                // Show the toast notification
+                const toast = new bootstrap.Toast(document.getElementById('submitToast'));
+                toast.show();
+
+                // Close the modal after submission
+                const mentorModal = bootstrap.Modal.getInstance(document.getElementById('mentorModal'));
+                mentorModal.hide();
+
+                // Reset the form fields
+                this.comments = '';
+                this.selectedFile = null;
+            }
+        }
+    });
+</script>
 </body>
 
 </html>

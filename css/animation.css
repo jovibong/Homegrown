@@ -13,6 +13,19 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
+ /* Text appear on hover */
+.enter-text {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    visibility: hidden;
+}
+
+.hover-animate:hover .enter-text {
+    opacity: 1; /* Show the text on hover */
+    visibility: visible; /* Make it visible */
+    transition: opacity 0.3s ease; /* Immediate visibility change */
+}
+
 /* Card flip animation */
 .card-flip {
     perspective: 1000px; /* Gives the 3D effect */
