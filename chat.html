@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+
+    <!--Custom Bootstrap Inspired Stylesheet-->
+    <link href="css/mainmin.css" rel="stylesheet">
+
+    <!--Icons-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!--Navbar and Footer Stylesheet-->
+    <link href="css/navbar_footer_style.css" rel="stylesheet">
+
+    <!--Badge for mentor CSS-->
+    <link rel="stylesheet" href="css/badge_mentor.css">
+    <link rel="stylesheet" href="css/courses.css">
+
+    <!--Animation CSS-->
+    <link rel="stylesheet" href="css/animation.css">
+
+</head>
+
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar" class="fade-in-top"></div>
+    <div id="app" style="height:95vh">
+        <div class="row container-fluid px-0 mx-0 h-100">
+            <section id="chats" class="col-md-4 mb-3 bg-white">
+                <div class="row container-fluid mt-2 fade-in-top">
+                    <div class="col-2 pe-2">
+                        <button class="btn btn-secondary btn-sm my-2" id="hamburgerBtn">
+                            <i class="bi bi-list h4"></i>
+                        </button>
+                    </div>
+                    <div class="col-10 py-2 my-2 rounded-pill border border-black">
+                        Search
+                    </div>
+                </div>
+                <nav class="navbar navbar-expand">
+                    <div class="container-fluid">
+                        <div class id="navbarNav">
+                            <ul class="navbar-nav">
+                                <li class="nav-item me-2">
+                                    <a class="nav-link active" aria-current="page" href="#">All Chats</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Mentors</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <!--Start of template for chat-->
+                <div style="height:80vh; overflow-y: auto;">
+                    <div v-for="(chat,index) in chat_arr"
+                        class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
+                        @click="goToChat(index)" style="cursor: pointer;">
+                        <div class="col-2">
+                            <div class="overflow-hidden rounded-circle border border-black"
+                                style="width: 40px; height: 40px;">
+                                <img :src="chat.chat_img" alt="pic">
+                            </div>
+                        </div>
+                        <div class="col-10 overflow-hidden">
+                            <div class="fw-bold">{{chat.chat_name}}</div>
+                            <div class="text-nowrap">
+                                <span v-if="chat.chat_type == 'group'"
+                                    class="d-inline-block me-1">{{getUserName(getLastConvo(chat))}}: </span>
+                                <span class="text-muted text-nowrap d-inline">{{getLastConvo(chat).message}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End of template for chat-->
+            </section>
+            <section id="conversation" class="col-md-8 bg-secondary px-0 overflow-auto fade-in-right">
+                <div v-if="selected_chat_obj">
+                    <div class="row p-2 bg-primary container-fluid mx-0 mb-4">
+                        <div class="col-1 me-2 d-flex align-items-center">
+                            <div class="overflow-hidden rounded-circle border border-black"
+                                style="width: 40px; height: 40px;">
+                                <img :src="selected_chat_obj.chat_img" alt="pic">
+                            </div>
+                        </div>
+                        <div class="col-auto d-flex align-items-center text-white">
+                            <div>
+                                <div class="row fw-bold">{{selected_chat_obj.chat_name}}</div>
+                                <div v-if="selected_chat_obj.chat_type == 'group'" class="row">
+                                    {{getNumMembers(selected_chat_obj)}} members
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style="height: 80vh; overflow-y: auto;">
+                        <div v-for="conversation in selected_chat_obj.conversations">
+                            <div v-if="conversation.user == user"
+                                class="container-fluid w-100 d-flex justify-content-end">
+                                <p class="bg-white rounded text-end px-3 py-2 d-inline-block">{{conversation.message}}
+                                </p>
+                            </div>
+                            <div v-else
+                                class="container-fluid w-100 d-flex justify-content-start align-items-center my-4">
+                                <span class="overflow-hidden rounded-circle d-inline-block border border-black me-3"
+                                    style="width: 40px; height: 40px;">
+                                    <img :src="getProfilePic(conversation)" alt="pic">
+                                </span>
+                                <span
+                                    class="bg-white rounded px-3 py-2 d-inline-block"><b>{{getUserName(conversation)}}</b><br>{{conversation.message}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    </div>
+
+    <!-- Footer Placeholder -->
+    <footer class="fade-in-bottom"></footer>
+
+    <!--Axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!--Bootstrap JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!--JS for loading navbar and footer-->
+    <script src="js/navbar_fw.js"></script>
+    <script src="js/footer.js"></script>
+
+    <!--Animation JS-->
+    <script src="js/animation.js"></script>
+
+    <script>
+        chats = null;
+        conversations = null;
+        user = "user_001"
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    chat_arr: [],
+                    current_chat: null,
+                    users_arr: null,
+                    selected_chat_obj: null,
+                    user: user
+                };
+            },
+            methods: {
+                fetchUsers() {
+                    axios.get("json/chat.json")
+                        .then(response => {
+                            this.chat_arr = response.data.chats;
+                            this.users_arr = response.data.all_users;
+                        })
+                        .catch(error => {
+                            console.error('There was an error fetching the data:', error);
+                        });
+                },
+                getLastConvo(chat) {
+                    return chat.conversations[chat.conversations.length - 1]
+                },
+                getUserName(conversation) {
+                    return this.users_arr[conversation.user].name;
+                },
+                goToChat(index) {
+                    this.selected_chat_obj = this.chat_arr[index];
+                },
+                getNumMembers(chat) {
+                    return chat.group_members.length;
+                },
+                getProfilePic(conversation) {
+                    return this.users_arr[conversation.user].profile_picture
+                }
+
+
+            },
+            computed: {
+
+            },
+            created() {
+                this.fetchUsers();
+            }
+        });
+
+        const vm = app.mount('#app');
+    </script>
+</body>
+
+</html>
