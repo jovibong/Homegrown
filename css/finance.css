@@ -1,0 +1,47 @@
+/* start of text styles */
+.text-custom-blue{
+    color:  rgba(82, 95, 225, 1);
+}
+
+.text-custom-yellow{
+    color:  rgba(255, 207, 89, 1);
+}
+/* end of text styles */
+
+/* start of summary cards at top */
+.card-custom-summary{
+    background: linear-gradient(90deg, rgba(82, 95, 225, 1) 0%, rgba(46, 56, 153, 1) 100%);
+    color:  rgba(255, 207, 89, 1);
+}
+
+.btn-custom-edit{
+    position: absolute;
+    top:10px;
+    right: 10px;
+}
+
+.btn-custom-edit i:hover{
+    color: red;
+    transform: scale(1.5);
+    transition: 0.2s ease-in-out;
+}
+/* end of summary cards at top */
+
+
+/* start of table  */
+.filter-by{
+    background-color: black;
+    color: white;
+}
+.selected-row {
+    background-color:  #d0e7ff
+}
+/* end of table logs */
+
+/* start of other tools div */
+.yellow-bg-box{
+    background: rgba(255, 207, 89, 1);
+    text-align: center;
+}
+/* end of other tools div */
+
