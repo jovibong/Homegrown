@@ -27,7 +27,7 @@
 
 </head>
 
-<body style="background-color: FFCF59;">
+<body>
 
     <!--Ongoing Mentorships Section-->
     <section id="ongoing_app" class="container py-3">
@@ -40,7 +40,7 @@
             <!-- Mentorship Cards -->
             <div v-for="course in mentorships" v-if="course.mentoring" :key="course.id" class="col-md-4 mb-4">
                 <div class="card shadow-sm position-relative hover-animate">
-                    <a href="individual_course.html" class="text-decoration-none">
+                    <a href="mentorship_course.html" class="text-decoration-none">
                         <span v-if="course.notificationCount > 0"
                             class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
                             {{ course.notificationCount }}
@@ -150,7 +150,7 @@
             mentees: 2,
             mentors_required: 2,
             requirements: ["Basic Python", "Patience with Beginners"],
-            notificationCount: 0
+            notificationCount: 2
         },
         {
             id: 102,
@@ -169,7 +169,7 @@
             mentoring: true,
             mentors_required: 2,
             requirements: ["Microsoft Excel Proficiency", "Analytical Skills"],
-            notificationCount: 2
+            notificationCount: 0
         },
         {
             id: 104,
@@ -187,7 +187,7 @@
             mentoring: true,
             mentors_required: 3,
             requirements: ["Basic Mandarin", "Good Pronunciation", "Patience with Language Learners"],
-            notificationCount: 0
+            notificationCount: 1
         },
         {
             id: 105,
@@ -205,7 +205,7 @@
             mentoring: true,
             mentors_required: 2,
             requirements: ["Basic JavaScript", "Logical Thinking", "Experience in Web Development"],
-            notificationCount: 1
+            notificationCount: 0
         },
         {
             id: 107,
@@ -261,8 +261,6 @@
 
                 // Logic to handle document submission
                 alert(`Documents submitted for course ID: ${this.selectedCourseId}`);
-
-                // Here you can handle the file upload logic (e.g., using FormData and Axios)
 
                 // Show the toast notification
                 const toast = new bootstrap.Toast(document.getElementById('submitToast'));
