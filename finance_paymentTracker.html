@@ -1,3 +1,14 @@
+<!-- NOTE to myself -->
+<!-- rough layout done. MAKE IT DYNAMIC and add animations -->
+<!-- create templates for recurring stuff -->
+<!-- fix navbar later responsiveness (maybe take ref from exercise to recreate smu web) -->
+<!-- maybe need introduce diff colours else might get boring/when scrolling will merge with navbar -->
+<!-- link all the suff to respecive sites. NOTE that some should be a modal pop up -->
+<!-- consider for the diff ways to show the stats rather just boxes. Also for the navigation to diff financial tools. Be creative (look online for inspo) -->
+<!-- consider adding another background for the stats part before table to make it more fun. Maybe some animated one (may cause performance issue but jsut try) -->
+<!-- need to integrate with backend -->
+<!-- once table done, consider if want to have the table in a tile format instead of just list format -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -264,66 +275,69 @@
         <!-- end of table logs -->
 
 
-    <!-- start of other finance tools -->
-    <div class="yellow-bg-box py-5">
-        <div>
-            <h1 class=" display-3 fw-bold text-custom-blue mb-4">Payment Tracker</h1>
-            <div class="row d-flex justify-content-center">
+        <!-- start of other finance tools -->
+        <div class="yellow-bg-box container-fluid py-5">
+            <div>
+                <h1 class=" display-3 fw-bold text-custom-blue mb-4">Finance Tools</h1>
+                <div class="row d-flex justify-content-center">
 
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow position-relative hover-animate">
-                        <a href="#" class="text-decoration-none">
-                            <div class="card-body">
-                                <div class="text-center mb-3">
-                                    <i class="fa fa-university fs-2 text-primary"></i>
+                    <div class="col-md-3 mb-4">
+                        <div class="card shadow position-relative hover-animate">
+                            <a href="#" class="text-decoration-none">
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="fa fa-university fs-2 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-center">Summary</h5>
+                                    <h6 class="text-secondary card-text text-center fst-italic enter-text">click to
+                                        enter</h6>
+                                    <p class="card-text text-muted">
+                                        View your finance in one glance
+                                    </p>
                                 </div>
-                                <h5 class="card-title fw-bold text-center">Summary</h5>
-                                <h6 class="text-secondary card-text text-center fst-italic enter-text">click to enter</h6>
-                                <p class="card-text text-muted">
-                                    View your finance in one glance
-                                </p>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow position-relative hover-animate">
-                        <a href="#" class="text-decoration-none">
-                            <div class="card-body">
-                                <div class="text-center mb-3">
-                                    <i class="fa fa-trophy fs-2 text-primary"></i>
+                    <div class="col-md-3 mb-4">
+                        <div class="card shadow position-relative hover-animate">
+                            <a href="#" class="text-decoration-none">
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="fa fa-trophy fs-2 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-center">Budget Planner</h5>
+                                    <h6 class="text-secondary card-text text-center fst-italic enter-text">click to
+                                        enter</h6>
+                                    <p class="card-text text-muted">
+                                        Plan ahead and reach your goal
+                                    </p>
                                 </div>
-                                <h5 class="card-title fw-bold text-center">Budget Planner</h5>
-                                <h6 class="text-secondary card-text text-center fst-italic enter-text">click to enter</h6>
-                                <p class="card-text text-muted">
-                                    Plan ahead and reach your goal
-                                </p>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow position-relative hover-animate">
-                        <a href="#" class="text-decoration-none">
-                            <div class="card-body">
-                                <div class="text-center mb-3">
-                                    <i class="fa fa-list-alt fs-2 text-primary"></i>
+                    <div class="col-md-3 mb-4">
+                        <div class="card shadow position-relative hover-animate">
+                            <a href="#" class="text-decoration-none">
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="fa fa-list-alt fs-2 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-center">Payment Tracker</h5>
+                                    <h6 class="text-secondary card-text text-center fst-italic enter-text">click to
+                                        enter</h6>
+                                    <p class="card-text text-muted">
+                                        Keep logs for your monthly payment
+                                    </p>
                                 </div>
-                                <h5 class="card-title fw-bold text-center">Payment Tracker</h5>
-                                <h6 class="text-secondary card-text text-center fst-italic enter-text">click to enter</h6>
-                                <p class="card-text text-muted">
-                                    Keep logs for your monthly payment  
-                                </p>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- end of other finance tools -->
+        <!-- end of other finance tools -->
 
 
     </body>
@@ -390,15 +404,15 @@
 
 
     <script>
-    <!-- may need to custom to get stripped table instead so that we can change background (remove the bootstrap one) -->
-    function toggleRowSelection(checkbox) {
-    const row = checkbox.closest("tr");
-    if (checkbox.checked) {
-    row.classList.add("selected-row");
-    } else {
-    row.classList.remove("selected-row");
-    }
-    }
+        <!-- may need to custom to get stripped table instead so that we can change background (remove the bootstrap one) -->
+        function toggleRowSelection(checkbox) {
+            const row = checkbox.closest("tr");
+            if (checkbox.checked) {
+                row.classList.add("selected-row");
+            } else {
+                row.classList.remove("selected-row");
+            }
+        }
     </script>
     <!--Bootstrap JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

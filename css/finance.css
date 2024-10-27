@@ -20,7 +20,7 @@
     right: 10px;
 }
 
-.btn-custom-edit i:hover{
+i:hover{
     color: red;
     transform: scale(1.5);
     transition: 0.2s ease-in-out;
