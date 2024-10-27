@@ -16,9 +16,6 @@
     <!--Navbar and Footer Stylesheet-->
     <link href="css/navbar_footer_style.css" rel="stylesheet">
 
-    <!--Badge for mentor CSS-->
-    <link rel="stylesheet" href="css/badge_mentor.css">
-
     <!-- volunteer CSS -->
     <link rel="stylesheet" href="css/volunteer.css">
 
@@ -28,6 +25,8 @@
 </head>
 
 <body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar"></div>
 
     <!--Ongoing Mentorships Section-->
     <section id="ongoing_app" class="container py-3">
@@ -123,160 +122,161 @@
         </div>
     </div>
 
-</body>
+    <!-- Footer Placeholder -->
+    <footer></footer>
 
-<!--Axios Library-->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 
-<!--Navbar and Footer JS-->
-<script src="js/footer.js"></script>
-<script src="js/navbar.js"></script>
+    <!--Axios Library-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<!--Bootstrap JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
+    <!--Bootstrap JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
-<!-- Vue -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!--Navbar and Footer JS-->
+    <script src="js/navbar.js"></script>
+    <script src="js/footer.js"></script>
 
-<script>
-    const mentorships = [
-        {
-            id: 101,
-            name: "Introduction to Python",
-            description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
-            mentoring: true,
-            mentees: 2,
-            mentors_required: 2,
-            requirements: ["Basic Python", "Patience with Beginners"],
-            notificationCount: 2
-        },
-        {
-            id: 102,
-            name: "Web Development with HTML & CSS",
-            description: "Master the fundamentals of web development by learning HTML and CSS. Build and style your own websites from scratch in this hands-on, beginner-friendly course.",
-            mentoring: false,
-            mentees: 2,
-            mentors_required: 1,
-            requirements: ["Basic HTML & CSS"],
-            notificationCount: 0
-        },
-        {
-            id: 103,
-            name: "Data Analysis with Excel",
-            description: "This course covers essential data analysis techniques using Microsoft Excel. Learn how to manage data, use formulas, and create powerful visualizations to analyze information effectively.",
-            mentoring: true,
-            mentors_required: 2,
-            requirements: ["Microsoft Excel Proficiency", "Analytical Skills"],
-            notificationCount: 0
-        },
-        {
-            id: 104,
-            name: "JavaScript for Beginners",
-            description: "This course introduces JavaScript, one of the most popular programming languages for web development. Learn how to make your websites interactive and dynamic through hands-on projects and examples.",
-            mentoring: false,
-            mentors_required: 3,
-            requirements: ["Basic JavaScript", "Problem-Solving Skills", "Familiarity with Web Development"],
-            notificationCount: 0
-        },
-        {
-            id: 104,
-            name: "Mandarin Language for Beginners",
-            description: "Learn the basics of Mandarin, including pronunciation, simple phrases, and everyday vocabulary. Perfect for travelers and language enthusiasts.",
-            mentoring: true,
-            mentors_required: 3,
-            requirements: ["Basic Mandarin", "Good Pronunciation", "Patience with Language Learners"],
-            notificationCount: 1
-        },
-        {
-            id: 105,
-            name: "Cyber Security Basics",
-            description: "Understand the fundamentals of cyber security, including how to protect your data and recognize common threats. Ideal for beginners.",
-            mentoring: false,
-            mentors_required: 2,
-            requirements: ["Interest in Cyber Security"],
-            notificationCount: 0
-        },
-        {
-            id: 106,
-            name: "Introduction to JavaScript",
-            description: "Dive into JavaScript programming, one of the core languages for web development. Learn syntax, basic functions, and how to build interactive websites.",
-            mentoring: true,
-            mentors_required: 2,
-            requirements: ["Basic JavaScript", "Logical Thinking", "Experience in Web Development"],
-            notificationCount: 0
-        },
-        {
-            id: 107,
-            name: "Project Management Essentials",
-            description: "Master the essentials of project management, including planning, execution, and risk management. This course is great for aspiring project managers.",
-            mentoring: true,
-            mentors_required: 1,
-            requirements: ["Interest in Project Management", "Strong Communication Skills", "Ability to Multitask"],
-            notificationCount: 0
-        },
-        {
-            id: 108,
-            name: "Graphic Design with Adobe Illustrator",
-            description: "Learn the fundamentals of graphic design using Adobe Illustrator. Perfect for anyone looking to enhance their design skills for professional or personal projects.",
-            mentoring: false,
-            mentors_required: 2,
-            requirements: ["Basic Adobe Illustrator Skills", "Eye For Design"],
-            notificationCount: 0
-        }
-    ];
-
-    const ongoing_app = new Vue({
-        el: '#ongoing_app',
-        data: {
-            mentorships: mentorships,
-        },
-    });
-
-    const new_app = new Vue({
-        el: '#new_app',
-        data: {
-            mentorships: mentorships,
-            selectedCourseId: null
-        },
-        methods: {
-            getImageUrl(course) {
-                // Replace spaces with %20 for URL encoding and select appropriate extension.
-                const formattedName = course.name.replace(/ /g, '%20');
-                const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
-                return `./img/${formattedName}.${extension}`;
+    <script>
+        const mentorships = [
+            {
+                id: 101,
+                name: "Introduction to Python",
+                description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
+                mentoring: true,
+                mentees: 2,
+                mentors_required: 2,
+                requirements: ["Basic Python", "Patience with Beginners"],
+                notificationCount: 2
             },
-            openModal(course) {
-                this.selectedCourseId = course.id; // Set the selected course ID
-                const mentorModal = new bootstrap.Modal(document.getElementById('mentorModal'));
-                mentorModal.show(); // Show the modal
+            {
+                id: 102,
+                name: "Web Development with HTML & CSS",
+                description: "Master the fundamentals of web development by learning HTML and CSS. Build and style your own websites from scratch in this hands-on, beginner-friendly course.",
+                mentoring: false,
+                mentees: 2,
+                mentors_required: 1,
+                requirements: ["Basic HTML & CSS"],
+                notificationCount: 0
             },
-            submitDocuments() {
-                // Check if a file is selected
-                if (!this.selectedFile) {
-                    alert('Please select a document to submit.');
-                    return;
-                }
-
-                // Logic to handle document submission
-                alert(`Documents submitted for course ID: ${this.selectedCourseId}`);
-
-                // Show the toast notification
-                const toast = new bootstrap.Toast(document.getElementById('submitToast'));
-                toast.show();
-
-                // Close the modal after submission
-                const mentorModal = bootstrap.Modal.getInstance(document.getElementById('mentorModal'));
-                mentorModal.hide();
-
-                // Reset the form fields
-                this.comments = '';
-                this.selectedFile = null;
+            {
+                id: 103,
+                name: "Data Analysis with Excel",
+                description: "This course covers essential data analysis techniques using Microsoft Excel. Learn how to manage data, use formulas, and create powerful visualizations to analyze information effectively.",
+                mentoring: true,
+                mentors_required: 2,
+                requirements: ["Microsoft Excel Proficiency", "Analytical Skills"],
+                notificationCount: 0
+            },
+            {
+                id: 104,
+                name: "JavaScript for Beginners",
+                description: "This course introduces JavaScript, one of the most popular programming languages for web development. Learn how to make your websites interactive and dynamic through hands-on projects and examples.",
+                mentoring: false,
+                mentors_required: 3,
+                requirements: ["Basic JavaScript", "Problem-Solving Skills", "Familiarity with Web Development"],
+                notificationCount: 0
+            },
+            {
+                id: 104,
+                name: "Mandarin Language for Beginners",
+                description: "Learn the basics of Mandarin, including pronunciation, simple phrases, and everyday vocabulary. Perfect for travelers and language enthusiasts.",
+                mentoring: true,
+                mentors_required: 3,
+                requirements: ["Basic Mandarin", "Good Pronunciation", "Patience with Language Learners"],
+                notificationCount: 1
+            },
+            {
+                id: 105,
+                name: "Cyber Security Basics",
+                description: "Understand the fundamentals of cyber security, including how to protect your data and recognize common threats. Ideal for beginners.",
+                mentoring: false,
+                mentors_required: 2,
+                requirements: ["Interest in Cyber Security"],
+                notificationCount: 0
+            },
+            {
+                id: 106,
+                name: "Introduction to JavaScript",
+                description: "Dive into JavaScript programming, one of the core languages for web development. Learn syntax, basic functions, and how to build interactive websites.",
+                mentoring: true,
+                mentors_required: 2,
+                requirements: ["Basic JavaScript", "Logical Thinking", "Experience in Web Development"],
+                notificationCount: 0
+            },
+            {
+                id: 107,
+                name: "Project Management Essentials",
+                description: "Master the essentials of project management, including planning, execution, and risk management. This course is great for aspiring project managers.",
+                mentoring: true,
+                mentors_required: 1,
+                requirements: ["Interest in Project Management", "Strong Communication Skills", "Ability to Multitask"],
+                notificationCount: 0
+            },
+            {
+                id: 108,
+                name: "Graphic Design with Adobe Illustrator",
+                description: "Learn the fundamentals of graphic design using Adobe Illustrator. Perfect for anyone looking to enhance their design skills for professional or personal projects.",
+                mentoring: false,
+                mentors_required: 2,
+                requirements: ["Basic Adobe Illustrator Skills", "Eye For Design"],
+                notificationCount: 0
             }
-        }
-    });
-</script>
+        ];
+
+        const ongoing_app = new Vue({
+            el: '#ongoing_app',
+            data: {
+                mentorships: mentorships,
+            },
+        });
+
+        const new_app = new Vue({
+            el: '#new_app',
+            data: {
+                mentorships: mentorships,
+                selectedCourseId: null
+            },
+            methods: {
+                getImageUrl(course) {
+                    // Replace spaces with %20 for URL encoding and select appropriate extension.
+                    const formattedName = course.name.replace(/ /g, '%20');
+                    const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
+                    return `./img/${formattedName}.${extension}`;
+                },
+                openModal(course) {
+                    this.selectedCourseId = course.id; // Set the selected course ID
+                    const mentorModal = new bootstrap.Modal(document.getElementById('mentorModal'));
+                    mentorModal.show(); // Show the modal
+                },
+                submitDocuments() {
+                    // Check if a file is selected
+                    if (!this.selectedFile) {
+                        alert('Please select a document to submit.');
+                        return;
+                    }
+
+                    // Logic to handle document submission
+                    alert(`Documents submitted for course ID: ${this.selectedCourseId}`);
+
+                    // Show the toast notification
+                    const toast = new bootstrap.Toast(document.getElementById('submitToast'));
+                    toast.show();
+
+                    // Close the modal after submission
+                    const mentorModal = bootstrap.Modal.getInstance(document.getElementById('mentorModal'));
+                    mentorModal.hide();
+
+                    // Reset the form fields
+                    this.comments = '';
+                    this.selectedFile = null;
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
