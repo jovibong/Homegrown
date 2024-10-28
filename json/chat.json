@@ -34,6 +34,12 @@
                     "timestamp": "2024-10-25T08:45:00Z",
                     "user": "user_001",
                     "message": "We need to finalize the project details."
+                },
+                {
+                    "message_id": "msg_005",
+                    "timestamp": "2024-10-28T08:28:53.772Z",
+                    "user": "user_001",
+                    "message": "any updates?"
                 }
             ]
         },
@@ -49,22 +55,28 @@
             ],
             "conversations": [
                 {
-                    "message_id": "msg_005",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-25T09:00:00Z",
                     "user": "user_004",
                     "message": "Has anyone updated the project files?"
                 },
                 {
-                    "message_id": "msg_006",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-25T09:10:00Z",
                     "user": "user_001",
                     "message": "Not yet, but I'll do it now."
                 },
                 {
-                    "message_id": "msg_007",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-25T09:20:00Z",
                     "user": "user_005",
                     "message": "Thanks, Alice! Let me know when it's done."
+                },
+                {
+                    "message_id": "msg_004",
+                    "timestamp": "2024-10-28T08:27:59.270Z",
+                    "user": "user_001",
+                    "message": "ok"
                 }
             ]
         },
@@ -81,25 +93,25 @@
             "chat_img": "img/img_1",
             "conversations": [
                 {
-                    "message_id": "msg_008",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-25T10:00:00Z",
                     "user": "user_003",
                     "message": "Let's meet for lunch later?"
                 },
                 {
-                    "message_id": "msg_009",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-25T10:05:00Z",
                     "user": "user_005",
                     "message": "Sounds good!"
                 },
                 {
-                    "message_id": "msg_010",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-25T10:10:00Z",
                     "user": "user_002",
                     "message": "Where should we go?"
                 },
                 {
-                    "message_id": "msg_011",
+                    "message_id": "msg_004",
                     "timestamp": "2024-10-25T10:15:00Z",
                     "user": "user_001",
                     "message": "How about the new cafe downtown?"
@@ -118,19 +130,19 @@
             "chat_img": "img/img_1",
             "conversations": [
                 {
-                    "message_id": "msg_012",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-25T11:00:00Z",
                     "user": "user_006",
                     "message": "Don't forget to buy groceries."
                 },
                 {
-                    "message_id": "msg_013",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-25T11:05:00Z",
                     "user": "user_001",
                     "message": "Got it!"
                 },
                 {
-                    "message_id": "msg_014",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-25T11:15:00Z",
                     "user": "user_007",
                     "message": "Can you also get some fruits?"
@@ -145,19 +157,19 @@
             "chat_img": "img/img_1",
             "conversations": [
                 {
-                    "message_id": "msg_015",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-25T12:00:00Z",
                     "user": "user_004",
                     "message": "Are you available for a call?"
                 },
                 {
-                    "message_id": "msg_016",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-25T12:05:00Z",
                     "user": "user_001",
                     "message": "Yes, give me 10 minutes."
                 },
                 {
-                    "message_id": "msg_017",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-25T12:15:00Z",
                     "user": "user_004",
                     "message": "Okay, I'll wait."
@@ -176,13 +188,13 @@
             ],
             "conversations": [
                 {
-                    "message_id": "msg_018",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-25T13:00:00Z",
                     "user": "user_005",
                     "message": "What time are we meeting to study?"
                 },
                 {
-                    "message_id": "msg_019",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-25T13:05:00Z",
                     "user": "user_003",
                     "message": "How about 3 PM at the library?"
@@ -201,121 +213,121 @@
             ],
             "conversations": [
                 {
-                    "message_id": "msg_020",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-26T09:00:00Z",
                     "user": "user_002",
                     "message": "Has anyone reviewed the project requirements?"
                 },
                 {
-                    "message_id": "msg_021",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-26T09:05:00Z",
                     "user": "user_004",
                     "message": "I did. I think we need to add more details to the specs."
                 },
                 {
-                    "message_id": "msg_022",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-26T09:10:00Z",
                     "user": "user_006",
                     "message": "Agreed. We should also clarify the client's requirements."
                 },
                 {
-                    "message_id": "msg_023",
+                    "message_id": "msg_004",
                     "timestamp": "2024-10-26T09:12:00Z",
                     "user": "user_002",
                     "message": "Okay, let's set a meeting to discuss these details."
                 },
                 {
-                    "message_id": "msg_024",
+                    "message_id": "msg_005",
                     "timestamp": "2024-10-26T09:15:00Z",
                     "user": "user_004",
                     "message": "How about 10 AM tomorrow?"
                 },
                 {
-                    "message_id": "msg_025",
+                    "message_id": "msg_006",
                     "timestamp": "2024-10-26T09:20:00Z",
                     "user": "user_006",
                     "message": "That works for me. Let's prepare some notes beforehand."
                 },
                 {
-                    "message_id": "msg_026",
+                    "message_id": "msg_007",
                     "timestamp": "2024-10-26T09:22:00Z",
                     "user": "user_002",
                     "message": "Sounds good. I'll prepare an agenda for the meeting."
                 },
                 {
-                    "message_id": "msg_027",
+                    "message_id": "msg_008",
                     "timestamp": "2024-10-26T09:25:00Z",
                     "user": "user_004",
                     "message": "Great! I'll look over the specs again."
                 },
                 {
-                    "message_id": "msg_028",
+                    "message_id": "msg_009",
                     "timestamp": "2024-10-26T09:30:00Z",
                     "user": "user_006",
                     "message": "I'll focus on the client's requirements and prepare some questions."
                 },
                 {
-                    "message_id": "msg_029",
+                    "message_id": "msg_010",
                     "timestamp": "2024-10-26T09:35:00Z",
                     "user": "user_002",
                     "message": "Perfect. We'll sync up tomorrow."
                 },
                 {
-                    "message_id": "msg_030",
+                    "message_id": "msg_011",
                     "timestamp": "2024-10-26T09:45:00Z",
                     "user": "user_004",
                     "message": "By the way, did we decide on the tools we'll use?"
                 },
                 {
-                    "message_id": "msg_031",
+                    "message_id": "msg_012",
                     "timestamp": "2024-10-26T09:47:00Z",
                     "user": "user_006",
                     "message": "I think we agreed on Figma and Trello for now."
                 },
                 {
-                    "message_id": "msg_032",
+                    "message_id": "msg_013",
                     "timestamp": "2024-10-26T09:50:00Z",
                     "user": "user_002",
                     "message": "Yes, let's stick with those. We can evaluate later if needed."
                 },
                 {
-                    "message_id": "msg_033",
+                    "message_id": "msg_014",
                     "timestamp": "2024-10-26T09:55:00Z",
                     "user": "user_004",
                     "message": "Alright. I'll set up the Trello board."
                 },
                 {
-                    "message_id": "msg_034",
+                    "message_id": "msg_015",
                     "timestamp": "2024-10-26T10:00:00Z",
                     "user": "user_006",
                     "message": "I'll create the Figma file structure."
                 },
                 {
-                    "message_id": "msg_035",
+                    "message_id": "msg_016",
                     "timestamp": "2024-10-26T10:05:00Z",
                     "user": "user_001",
                     "message": "Thanks, everyone. Let's make sure we're all aligned before the meeting."
                 },
                 {
-                    "message_id": "msg_036",
+                    "message_id": "msg_017",
                     "timestamp": "2024-10-26T10:15:00Z",
                     "user": "user_004",
                     "message": "Agreed. I'll also draft some mock-ups."
                 },
                 {
-                    "message_id": "msg_037",
+                    "message_id": "msg_018",
                     "timestamp": "2024-10-26T10:20:00Z",
                     "user": "user_006",
                     "message": "That's a great idea. It'll help us visualize the project."
                 },
                 {
-                    "message_id": "msg_038",
+                    "message_id": "msg_019",
                     "timestamp": "2024-10-26T10:25:00Z",
                     "user": "user_002",
                     "message": "Alright, see you all tomorrow at 10 AM!"
                 },
                 {
-                    "message_id": "msg_039",
+                    "message_id": "msg_020",
                     "timestamp": "2024-10-26T10:30:00Z",
                     "user": "user_001",
                     "message": "See you all then!"
@@ -334,19 +346,19 @@
             ],
             "conversations": [
                 {
-                    "message_id": "msg_040",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-26T11:00:00Z",
                     "user": "user_002",
                     "message": "Does anyone want to join the lunch break today?"
                 },
                 {
-                    "message_id": "msg_041",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-26T11:05:00Z",
                     "user": "user_005",
                     "message": "Sure, I'm in. Where are we going?"
                 },
                 {
-                    "message_id": "msg_042",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-26T11:10:00Z",
                     "user": "user_003",
                     "message": "How about the new sushi place nearby?"
@@ -365,13 +377,13 @@
             ],
             "conversations": [
                 {
-                    "message_id": "msg_043",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-26T14:00:00Z",
                     "user": "user_006",
                     "message": "Is everyone available for dinner tonight?"
                 },
                 {
-                    "message_id": "msg_044",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-26T14:05:00Z",
                     "user": "user_001",
                     "message": "I am! What time?"
@@ -390,19 +402,19 @@
             ],
             "conversations": [
                 {
-                    "message_id": "msg_045",
+                    "message_id": "msg_001",
                     "timestamp": "2024-10-26T15:00:00Z",
                     "user": "user_002",
                     "message": "Are we still on for the movie night tomorrow?"
                 },
                 {
-                    "message_id": "msg_046",
+                    "message_id": "msg_002",
                     "timestamp": "2024-10-26T15:05:00Z",
                     "user": "user_004",
                     "message": "Yes, definitely! Should we order food as well?"
                 },
                 {
-                    "message_id": "msg_047",
+                    "message_id": "msg_003",
                     "timestamp": "2024-10-26T15:10:00Z",
                     "user": "user_005",
                     "message": "I'm thinking pizza would be great!"
