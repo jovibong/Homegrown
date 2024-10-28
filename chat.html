@@ -23,14 +23,19 @@
     <!--Animation CSS-->
     <link rel="stylesheet" href="css/animation.css">
 
+    <style>
+        body {
+            overflow-y: hidden;
+        }
+    </style>
 </head>
 
 <body>
     <!-- Navbar Placeholder -->
     <div id="navbar" class="fade-in-top"></div>
-    <div id="app" style="height:95vh">
+    <div id="app">
         <div class="row container-fluid px-0 mx-0 h-100">
-            <section id="chats" class="col-md-4 mb-3 bg-white">
+            <section id="chats" class="col-md-4 bg-white">
                 <div class="row container-fluid mt-2 fade-in-top">
                     <div class="col-2 pe-2">
                         <button class="btn btn-secondary btn-sm my-2" id="hamburgerBtn">
@@ -56,7 +61,7 @@
                     </div>
                 </nav>
                 <!--Start of template for chat-->
-                <div style="height:80vh; overflow-y: auto;">
+                <div style="height:65vh; overflow-y: auto;">
                     <div v-for="(chat,index) in chat_arr"
                         class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
                         @click="goToChat(index)" style="cursor: pointer;">
@@ -78,13 +83,13 @@
                 </div>
                 <!--End of template for chat-->
             </section>
-            <section id="conversation" class="col-md-8 bg-secondary px-0 overflow-auto fade-in-right">
+            <section id="conversation" class="col-md-8 bg-secondary px-0 fade-in-right" style="height: 90vh;">
                 <div v-if="selected_chat_obj">
                     <div class="row p-2 bg-primary container-fluid mx-0 mb-4">
                         <div class="col-1 me-2 d-flex align-items-center">
                             <div class="overflow-hidden rounded-circle border border-black"
                                 style="width: 40px; height: 40px;">
-                                <img :src="selected_chat_obj.chat_img" alt="pic">
+                                <img :src="selected_chat_obj.chat_img" alt="1">
                             </div>
                         </div>
                         <div class="col-auto d-flex align-items-center text-white">
@@ -97,12 +102,20 @@
                         </div>
 
                     </div>
-                    <div style="height: 80vh; overflow-y: auto;">
-                        <div v-for="conversation in selected_chat_obj.conversations">
+                    <div style="height: 60vh; overflow-y: auto;">
+                        <div v-for="(conversation,index) in selected_chat_obj.conversations" :key="index">
+                            <div v-if="isNewDay(conversation, selected_chat_obj.conversations[index - 1])"
+                                class="container-fluid d-flex justify-content-center p-0">
+                                <span class="badge bg-white text-secondary text-center">
+                                    {{ new Date(conversation.timestamp).toLocaleDateString() }}
+                                </span>
+                            </div>
                             <div v-if="conversation.user == user"
                                 class="container-fluid w-100 d-flex justify-content-end">
-                                <p class="bg-white rounded text-end px-3 py-2 d-inline-block">{{conversation.message}}
-                                </p>
+                                <span
+                                    class="bg-white rounded text-end px-3 py-2 d-inline-block">{{conversation.message}}
+                                    <div class="mt-2 text-end">{{getTime(conversation)}}</div>
+                                </span>
                             </div>
                             <div v-else
                                 class="container-fluid w-100 d-flex justify-content-start align-items-center my-4">
@@ -111,18 +124,47 @@
                                     <img :src="getProfilePic(conversation)" alt="pic">
                                 </span>
                                 <span
-                                    class="bg-white rounded px-3 py-2 d-inline-block"><b>{{getUserName(conversation)}}</b><br>{{conversation.message}}</span>
+                                    class="bg-white rounded px-3 py-2 d-inline-block"><b>{{getUserName(conversation)}}</b><br>{{conversation.message}}
+                                    <div class="mt-2 text-end">{{getTime(conversation)}}</div>
+                                </span>
+
                             </div>
                         </div>
                     </div>
+                    <div class="row container-fluid p-0 m-0 mt-2 d-flex justify-content-center align-items-center">
+                        <div class="rounded-pill col-8 py-2 bg-white d-flex align-items-center">
+                            <div class="row container-fluid d-flex align-items-center">
+                                <div class="col-1">
+                                    <i class="bi bi-emoji-smile me-2 fs-3"></i>
+                                </div>
+                                <div class="col-10">
+                                    <!--Start of message template-->
+                                    <input v-model="message" type="text" placeholder="Message"
+                                        class="form-control border border-0 container-fluid">
+                                    <!--End of message template-->
+                                </div>
+
+                                <div class="col-1">
+                                    <i class="bi bi-paperclip fs-3"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1 rounded-circle bg-primary ms-2 d-flex justify-content-center align-items-center"
+                            style="width: 45px;height: 45px;">
+                            <transition name="icon-transition">
+                                <i v-if="message.trim().length !== 0" class="text-white bi bi-send fs-5"
+                                    @click="sendMessage(message)"></i>
+                            </transition>
+
+                        </div>
+                    </div>
                 </div>
+
+
             </section>
         </div>
     </div>
     </div>
-
-    <!-- Footer Placeholder -->
-    <footer class="fade-in-bottom"></footer>
 
     <!--Axios-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -151,10 +193,10 @@
             data() {
                 return {
                     chat_arr: [],
-                    current_chat: null,
                     users_arr: null,
                     selected_chat_obj: null,
-                    user: user
+                    user: user,
+                    message: ""
                 };
             },
             methods: {
@@ -163,6 +205,7 @@
                         .then(response => {
                             this.chat_arr = response.data.chats;
                             this.users_arr = response.data.all_users;
+                            this.selected_chat_obj = this.chat_arr[1]; //delete this
                         })
                         .catch(error => {
                             console.error('There was an error fetching the data:', error);
@@ -182,7 +225,52 @@
                 },
                 getProfilePic(conversation) {
                     return this.users_arr[conversation.user].profile_picture
+                },
+                getTime(conversation) {
+                    const date = new Date(conversation.timestamp);
+                    const localTime = date.toLocaleString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false // Set to true for 12-hour format if preferred
+                    });
+                    return localTime;
+                },
+                isNewDay(current, previous) {
+                    if (!previous) return true;
+                    const currentDate = new Date(current.timestamp);
+                    const previousDate = new Date(previous.timestamp);
+                    return currentDate.toDateString() !== previousDate.toDateString();
+                },
+                addAnimationClass() {
+                    return {
+                        'pop-on-appear': this.message.trim().length !== 0,
+                        'shrink-on-exit': this.message.trim().length === 0,
+                    };
+                },
+                sendMessage() {
+                    const timestamp = new Date().toISOString();
+                    const last_index = this.selected_chat_obj.conversations.length
+                    const message_id = `msg_${String(last_index).padStart(3, '0')}`
+
+                    // Create a new message object
+                    const new_message = {
+                        message_id: message_id,
+                        chat_id: this.selected_chat_obj.chat_id,
+                        timestamp: timestamp,
+                        user: this.user,
+                        message: this.message.trim(),
+                    };
+                    // Send message to PHP file
+                    axios.post('update_chat.php', new_message)
+                        .then((response => {
+                            this.selected_chat_obj.conversations.push(new_message);
+                            this.message = '';
+                        }))
+                        .catch((error=>{
+                            console.error("Error sending message: ", error);
+                        }));
                 }
+
 
 
             },

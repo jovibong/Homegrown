@@ -145,6 +145,41 @@
     animation-play-state: running; /* Starts the animation when the .show class is added */
 }
 
+/* Enter and exit icon animation */
+.icon-transition-enter-active {
+    animation: popOnAppear 0.2s ease-out;
+}
+
+.icon-transition-leave-active {
+    animation: shrinkOnExit 0.2s ease-in forwards;
+}
+
+@keyframes popOnAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    90% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100%{
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shrinkOnExit {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
 
 /* Progress Bar Animation Styling */
 .progress-animate {
