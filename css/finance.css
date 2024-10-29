@@ -1,12 +1,26 @@
+body {
+    background-color: #e5e5e5;
+}
+
 /* start of text styles */
-.text-custom-blue{
+/* .text-custom-blue{
     color:  rgba(82, 95, 225, 1);
 }
 
 .text-custom-yellow{
     color:  rgba(255, 207, 89, 1);
-}
+} */
 /* end of text styles */
+
+
+/* payment tracker */
+#PaymentTrackerContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch; 
+    align-content: center;
+}
 
 /* start of other tools tabs */
 
@@ -84,35 +98,49 @@ input[type="radio"]:checked+.page {
         transform: translateY(0px);
     }
 }
+
 /* end of other tools tabs */
 
-/* start of summary cards */
-.card-custom-summary{
-    background: linear-gradient(90deg, rgba(82, 95, 225, 1) 0%, rgba(46, 56, 153, 1) 100%);
-    color:  rgba(255, 207, 89, 1);
+/* start of bento tiles */
+.bento-tile {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38);
+    position: relative;
+    padding: 1rem;
 }
 
-.btn-custom-edit{
+/* end of bento tiles */
+
+/* start of summary tiles */
+.btn-bento {
     position: absolute;
-    top:10px;
+    top: 10px;
     right: 10px;
 }
 
-i:hover{
+.title-bento {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+/* i:hover{
     color: red;
     transform: scale(1.5);
     transition: 0.2s ease-in-out;
-}
-/* end of summary cards at top */
+} */
+/* end of summary tiles */
 
 
 /* start of table  */
-.filter-by{
+.filter-by {
     background-color: black;
     color: white;
 }
+
 .selected-row {
-    background-color:  #d0e7ff
+    background-color: #d0e7ff
 }
 
 #logs::-webkit-scrollbar {
@@ -130,7 +158,5 @@ i:hover{
     border-radius: 8px;
     background-color: #363636;
 }
+
 /* end of table logs */
-
-
-
