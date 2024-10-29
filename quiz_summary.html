@@ -138,75 +138,102 @@
                 <b>Questions Review </b>
                 <span class="h3 text-muted">({{questions.length}})</span>
             </div>
-                <div v-for="(question,key) in questions" class="fade-in-bottom my-3 accordion-item" :ref="key" type="button"
-                    data-bs-toggle="collapse" :data-bs-target="'#collapse'+key" aria-expanded="true"
-                    :aria-controls="'collapse'+key">
-                    <div class="card shadow-sm container-fluid row p-0 m-0 hover-animate hover-less">
-                        <div class="card-body row d-flex align-items-center">
-                            <div class="d-none d-md-inline-flex">
-                                <div class="col-1">
-                                    <div class="d-md-inline-flex d-none rounded-circle bg-secondary d-flex align-items-center text-center justify-content-center"
-                                        style="height: 40px;width: 40px;">{{key+1}}
-                                    </div>
-                                </div>
-                                <div class="col-9 d-flex align-items-center">
-                                    {{question.question}}
-                                </div>
-                                <div class="col-2 d-flex justify-content-end">
-                                    <div v-if="question.correct_answer == answers[key]">
-                                        <i class="bi bi-check-circle text-success fs-3"></i>
-                                    </div>
-                                    <div v-else>
-                                        <i class="bi bi-x-circle text-danger fs-3"></i>
-                                    </div>
+            <div v-for="(question,key) in questions" class="fade-in-bottom my-3 accordion-item border border-0"
+                :ref="key" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+key"
+                aria-expanded="true" :aria-controls="'collapse'+key">
+                <div class="card shadow-sm container-fluid p-0 m-0 hover-animate hover-less">
+                    <div class="card-body align-items-center">
+                        <div class="d-none d-md-inline-flex row container-fluid">
+                            <div class="col-1 d-flex align-items-center">
+                                <div class="d-md-inline-flex d-none circle bg-secondary
+                                 d-flex align-items-center text-center justify-content-center p-4 fs-4">{{key+1}}
                                 </div>
                             </div>
-                            <div class="d-inline-flex d-md-none align-items-center">
-                                <div class="col-10">
-                                    <h4 class="m-0 p-0">Question {{key+1}}:
-                                        <span v-if="question.correct_answer == answers[key]" class="text-success ms-2">
-                                            Correct!
-                                        </span>
-                                        <span v-else class="text-danger ms-2">
-                                            Wrong!
-                                        </span>
-                                    </h4>
+                            <div class="col-9 d-flex align-items-center p-0">
+                                {{question.question}}
+                            </div>
+                            <div class="col-2 d-flex justify-content-end">
+                                <div v-if="question.correct_answer == answers[key]">
+                                    <i class="bi bi-check-circle text-success fs-3"></i>
                                 </div>
-                                <div class="col-2">
-                                    <i class="bi bi-chevron-down fs-3"></i>
+                                <div v-else>
+                                    <i class="bi bi-x-circle text-danger fs-3"></i>
                                 </div>
                             </div>
-                            <div :id="'collapse'+key" class="accordion-collapse collapse"
-                                data-bs-parent="#question_review">
-                                <div class="accordion-body">
-                                    Correct Answer: {{question.options[question.correct_answer]}} <br>
-                                    Your Answer: {{question.options[answers[key]]}}
+                        </div>
+                        <div class="d-inline-flex d-md-none align-items-center row container-fluid">
+                            <div class="col-10 p-0">
+                                <h4 class="m-0 p-0">Question {{key+1}}:
+                                    <span v-if="question.correct_answer == answers[key]" class="text-success ms-2">
+                                        Correct
+                                    </span>
+                                    <span v-else class="text-danger ms-2">
+                                        Wrong
+                                    </span>
+                                </h4>
+                            </div>
+                            <div class="col-2">
+                                <i class="bi bi-chevron-down fs-3"></i>
+                            </div>
+                        </div>
+                        <div :id="'collapse'+key" class="row container-fluid accordion-collapse collapse"
+                            data-bs-parent="#question_review">
+                            <div class="accordion-body p-0">
+                                <div class="d-md-none d-inline py-3">{{question.question}}</div>
+                                <div class="row container-fluid px-0 mx-0 d-flex">
+                                    <div class="col-1 p-0"></div>
+                                    <div class="col-md-6 col-11 ps-0">
+                                        <div v-for="(option,option_key) in question.options">
+                                            <div class="row container-fluid rounded-pill d-flex align-items-center my-2 ps-0 pe-3"
+                                                :class="getClass(question,option_key,key)">
+                                                <div class="col-3 circle d-flex align-items-center
+                                                                justify-content-center bg-secondary p-4 fs-4 m-0">
+                                                    {{option_key}}
+                                                </div>
+                                                <div class="col-9">
+                                                    {{option}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-5 col-11">
+                                        <div class="text-muted fw-bold fs-4 row mb-3 ms-2">
+                                            Question Review
+                                        </div>
+                                        <div class="ms-2">{{question.review}}</div>
+                                    </div>
+
                                 </div>
                             </div>
 
                         </div>
-
                     </div>
-                </div>
-        </section>
 
-        <div class="container-fluid row mx-auto my-5">
-            <div class="col-2"></div>
-            <a href="individual_course.html"
-                class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-3 hover-animate py-3">
-                <i class="bi bi-arrow-left me-2"></i>
-                <span class="d-none d-md-inline">Back to course overview</span>
-                <span class="d-inline d-md-none">Course Overview</span>
-            </a>
-            <div class="col-2"></div>
-            <a href="video_1.html"
-                class="btn btn-warning text-dark d-flex align-items-center col-3 justify-content-center hover-animate py-3">
-                <span class="d-none d-md-inline text-end">Continue to next lesson</span>
-                <span class="d-inline d-md-none text-end">Next Lesson</span>
-                <i class="bi bi-arrow-right ms-2"></i>
-            </a>
-        </div>
-        <div class="col-2"></div>
+                </div>
+
+            </div>
+    </div>
+    </section>
+
+    <div class="container-fluid row mx-auto my-5 d-flex justify-content-center">
+        <div class="col-lg-2 col-md-1"></div>
+        <a href="individual_course.html"
+            class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2">
+            <i class="bi bi-arrow-left me-2"></i>
+            <span class="d-none d-md-inline">Back to course overview</span>
+            <span class="d-inline d-md-none">Course Overview</span>
+        </a>
+        <div class="col-md-2"></div>
+        <a href="video_1.html"
+            class="btn btn-warning text-dark d-flex align-items-center col-lg-3 col-md-4 justify-content-center hover-animate py-3 my-2">
+            <span class="d-none d-md-inline text-end">Continue to next lesson</span>
+            <span class="d-inline d-md-none text-end">Next Lesson</span>
+            <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+        <div class="col-lg-2 col-md-1"></div>
+    </div>
+
     </div>
 
 
@@ -248,7 +275,8 @@
                     C: "Python 1.5",
                     D: "Python 4.0"
                 },
-                correct_answer: "B"
+                correct_answer: "B",
+                review: "Python 3.x is the recommended version for new users to install because it is the latest major release with ongoing support and development. Python 2.7, though popular in the past, reached its end-of-life in January 2020, meaning it no longer receives updates or security patches. This shift encourages developers to use Python 3 for new projects and migrate older projects as well. Python 3.x includes numerous improvements and new features such as better Unicode support, new syntax for type hints, and enhanced libraries that make it more efficient and versatile. Consequently, beginners and professionals alike are advised to start with Python 3.x to benefit from the latest advancements in the language."
             },
             {
                 id: 102,
@@ -261,7 +289,8 @@
                     C: "python --version",
                     D: "python --check"
                 },
-                correct_answer: "C"
+                correct_answer: "C",
+                review: "The most reliable way to confirm that Python is correctly installed is by running the command `python --version` in the terminal or command prompt. This command tells Python to display its version number, ensuring it’s installed and accessible from the command line. If Python is not installed or not properly configured in the system's PATH, this command will return an error, indicating that further installation steps may be necessary. The alternatives provided, such as `python --install` and `verify-python`, are not valid commands for this purpose, so using `python --version` is the most straightforward method to verify a successful Python installation."
             },
             {
                 id: 103,
@@ -274,7 +303,8 @@
                     C: "yum",
                     D: "Chocolatey"
                 },
-                correct_answer: "B"
+                correct_answer: "B",
+                review: "On macOS, Homebrew is the preferred package manager for installing software, including Python. Homebrew simplifies the process of downloading, installing, and managing software packages by handling dependencies and ensuring the latest versions are available. macOS does not come with a built-in package manager, so users often install Homebrew to manage software installations easily. Unlike package managers like `apt-get` (typically used on Debian-based Linux distributions) or `yum` (used on Red Hat-based systems), Homebrew was designed specifically for macOS, making it the go-to option for macOS users needing a streamlined installation process for Python and other software."
             },
             {
                 id: 104,
@@ -287,7 +317,8 @@
                     C: "Install Documentation",
                     D: "Install PIP"
                 },
-                correct_answer: "B"
+                correct_answer: "B",
+                review: "When installing Python on your system, selecting the 'Add Python to PATH' option is crucial if you want to access Python from the command line easily. Adding Python to the PATH environment variable allows your system to recognize Python commands from any directory, streamlining the process of running Python scripts or launching the Python interpreter. Without adding Python to PATH, you would need to specify the full path to the Python executable every time you want to use it, which can be cumbersome. Including Python in PATH improves accessibility and ease of use, particularly for those who frequently work with Python from the command line."
             },
             {
                 id: 105,
@@ -300,9 +331,11 @@
                     C: "python --virtual [environment-name]",
                     D: "python make-env [environment-name]"
                 },
-                correct_answer: "A"
+                correct_answer: "A",
+                review: "To create a virtual environment in Python, the `python -m venv [environment-name]` command is used. This command sets up an isolated Python environment, allowing you to install packages and dependencies specific to a project without affecting other projects or the global Python environment. Virtual environments are especially useful in larger projects where different dependencies or versions of libraries are needed. By running `python -m venv` followed by the environment name, Python generates a separate directory with its own copy of the Python interpreter and a site-packages directory for project-specific dependencies. This method helps maintain a clean, organized development setup, making it an essential tool for Python developers."
             }
         ];
+
 
 
         const lesson = {
@@ -333,7 +366,17 @@
                 }
             },
             methods: {
-
+                getClass(question, option_key, key) {
+                    if (option_key == question.correct_answer) {
+                        return "bg-success text-white";
+                    }
+                    else if (option_key == this.answers[key]) {
+                        return "bg-danger text-white";
+                    }
+                    else {
+                        return "bg-white text-black";
+                    }
+                }
             },
             computed: {
                 num_wrong() {
