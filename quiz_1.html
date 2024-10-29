@@ -122,7 +122,7 @@
                 </div>
             </div>
             <a href="quiz_summary.html" v-if="current_question == last_question" class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center
-             m-3 text-secondary fw-bold justify-content-center hover-animate">
+             m-3 text-secondary fw-bold justify-content-center hover-animate" @click="submit_quiz">
                 Go to Quiz Summary <i class="bi bi-arrow-right ms-2"></i>
             </a>
             <button v-else class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center
@@ -255,6 +255,7 @@
                     submitted: false,
                     is_correct: false,
                     score: 0,
+                    answers: []
                 };
             },
             methods: {
@@ -281,6 +282,7 @@
                         this.score += 1;
                     };
                     this.submitted = true;
+                    this.answers[this.answers.length] = this.selected_option;
                 },
                 go_to_next() {
                     this.is_correct = false;
@@ -289,6 +291,11 @@
                     this.current_question ++;
                     this.selected_vote = null;
                 },
+                // change this code to submit the answers to a database instead
+                submit_quiz(){
+                    localStorage.setItem("user_answers", JSON.stringify(this.answers));
+                    localStorage.setItem("user_score",JSON.stringify(this.score));
+                }
             },
             computed:{
                 last_question(){
