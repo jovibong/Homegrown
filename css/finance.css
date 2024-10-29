@@ -106,8 +106,6 @@ input[type="radio"]:checked+.page {
     background-color: white;
     border-radius: 12px;
     box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38);
-    position: relative;
-    padding: 1rem;
 }
 
 /* end of bento tiles */
