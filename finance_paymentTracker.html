@@ -115,14 +115,14 @@
         </div>
         <!-- end of tile + subtitle -->
 
-        <!-- start of summary buttons -->\
+        <!-- start of summary buttons -->
         <!-- NOTE TEMPLATE CAN BE MADE HERE -->
         <div class="container-fluid row d-flex justify-content-center mb-5">
 
             <!-- total earned start -->
-            <div class="col-3">
-                <div class="card card-custom-summary p-relative shadow">
-                    <div class="card-body">
+            <div class="col-xl-3 my-2">
+                <div class="card card-custom-summary p-relative shadow ">
+                    <div class="card-body text-nowrap">
                         <p class="card-text d-block fw-bold">Total earned</p>
                         <a href="#" class="btn btn-custom-edit">
                             <i class='fas fa-edit text-custom-yellow'></i>
@@ -135,7 +135,7 @@
             <!-- total earned end -->
 
             <!-- total earned start -->
-            <div class="col-3">
+            <div class="col-xl-3 col-sm-6 my-2">
                 <div class="card card-custom-summary p-relative shadow">
                     <div class="card-body">
                         <p class="card-text d-block fw-bold">Payday</p>
@@ -152,7 +152,7 @@
 
 
             <!-- total earned start -->
-            <div class="col-3">
+            <div class="col-xl-3 col-sm-6 my-2">
                 <div class="card card-custom-summary p-relative shadow">
                     <div class="card-body">
                         <p class="card-text d-block fw-bold">Late Payments</p>
@@ -170,23 +170,22 @@
         <!-- end of summary buttons -->
 
 
-        <div class=" container row mx-5 ">
+        <div class=" container-fluid row mx-5 d-flex justify-content-start px-0">
             <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
-            <div class="col-6">
+            <div class="col-lg-6 col-* px-0">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Search here..."
+                    <input type="text" class="form-control w-75" placeholder="Search here..."
                         aria-label="Text input with dropdown button">
-                    <select class="form-select filter-by" aria-label="Default select example">
-                        <option selected>Filter by (none)</option>
+                    <select class="form-select filter-by w-25 text-wrap" aria-label="Default select example">
+                        <option selected>Filter by</option>
                         <option value="1">Tilte</option>
                         <option value="2">Amount</option>
                         <option value="3">Status</option>
-                        <option value="3">Date of Payment</option>
+                        <option value="3">Date</option>
                         <option value="3">Image</option>
                     </select>
                 </div>
             </div>
-
         </div>
 
 
@@ -194,8 +193,8 @@
         <!-- start of table logs -->
         <!-- NOTE CAN CREATE TEMPLATE FOR ROW INSERTION -->
         <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
-        <div class="table-responsive mx-5 mb-5">
-            <table class="table table-striped text-center">
+        <div id="logs" class="table-responsive mx-5 mb-5 shadow">
+            <table class="table table-striped text-center mb-0">
                 <!-- table head should be made sticky if long table while scrolling until end of table -->
                 <thead class="table-dark">
                     <tr>
@@ -205,7 +204,7 @@
                         <th scope="col">Amount</th>
                         <th scope="col">Status</th>
                         <th scope="col">Date of Payment</th>
-                        <!-- fill in img link later. NOTE will create a pop up to see img and download if needed -->
+                        <!-- fill in img link later. NOTE will create a pop up/modal to see img and download if needed -->
                         <th scope="col">Image</th>
                         <!-- if some selected, it should show the total number of items selected and the actions should be shown -->
                         <th scope="col"></th>
@@ -266,8 +265,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="7"><a href='#'><i class='fas fa-plus-circle text-dark'
-                                    style="font-size:30px;"></i></a></td>
+                        <td colspan="7"><a href='#'><i class='fas fa-plus-circle text-dark fs-2'></i></a></td>
                     </tr>
                 </tbody>
             </table>
