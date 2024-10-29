@@ -40,6 +40,9 @@
 
     <!--Vue-->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- apexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <!-- Navbar Placeholder -->
@@ -55,8 +58,58 @@
         <!-- start Summary tab nav -->
         <input name="nav" type="radio" id="Summary" checked="checked" />
         <div class="page">
-            <div>
-                <p>fill up</p>
+            <div class="container-fluid">
+                <div class="row my-5 g-5">
+                    <!-- left start -->
+                    <div class="col-6 mt-0">
+                        
+                        <div class="row g-3">
+                            <!-- start of title tile -->
+                            <div class="bento-tile p-5">
+                                <div class="text-center">
+                                    <h1 class=" display-1 fw-bold text-primary">Summary</h1>
+                                    <p class="text-muted">A quick glance at your income and spending</p>
+                                </div>
+                            </div>
+                            <!-- end of title tile -->
+                            <!-- start of add income tile -->
+                            <a href='#' class="text-decoration-none text-light p-0">
+                                <div class="bento-tile bg-success text-light p-5">
+                                    <div class="text-center">
+                                        <h1 class=" display-5 fw-bold">Add Income</h1>
+                                        <i class='fas fa-plus-circle fs-1'></i>
+                                    </div>
+                                </div>
+                            </a>
+                            <!-- end of add income tile -->
+                            <!-- start of add expense tile -->
+                            <a href='#' class="text-decoration-none text-light p-0">
+                                <div class="bento-tile bg-danger text-light p-5">
+                                    <div class="text-center">
+                                        <h1 class=" display-5 fw-bold">Add Expense</h1>
+                                        <i class='fas fa-plus-circle fs-1'></i>
+                                    </div>
+                                </div>
+                            </a>
+                            <!-- end of add expense tile -->
+                            <!-- start of income summary tile -->
+                            <!-- end of income summary tile -->
+
+
+                        </div>
+
+                    </div>
+                    <!-- left end -->
+                    <!-- right start -->
+                    <div class="col-6 bento-tile mt-0 p-3 ">
+                        <div id="chart">
+                            <apexchart type="area"></apexchart>
+                        </div>
+                    </div>
+                    
+                    <!-- right end -->
+                </div>
+
             </div>
         </div>
         <label class="nav" for="Summary">
@@ -71,9 +124,9 @@
         <!-- end Summary tab nav -->
 
         <!-- start BudgetPlanner tab nav -->
-        <input name="nav" type="radio" class="about-radio" id="BudgetPlanner" />
+        <input name="nav" type="radio" id="BudgetPlanner" />
         <div class="page">
-            <div class="page-contents">
+            <div class="container">
                 <p>fill up here too</p>
             </div>
         </div>
@@ -89,11 +142,11 @@
         <!-- end BudgetPlanner tab nav -->
 
         <!-- start PaymentTracker tab nav -->
-        <input name="nav" type="radio" class="contact-radio" id="PaymentTracker" />
+        <input name="nav" type="radio" id="PaymentTracker" />
         <div class="page">
             <div class="container-fluid">
-                <div class="row my-5 g-5" >
-                    <div class="col-6">
+                <div class="row my-5 g-5">
+                    <div class="col-6 mt-0">
                         <div class="row bento-tile p-5">
                             <!-- start of tile + subtitle -->
                             <div class="text-center">
@@ -129,7 +182,7 @@
                     </div>
                     <!-- end of left side -->
 
-                    <div class="col-6 bento-tile p-5">
+                    <div class="col-6 mt-0 bento-tile p-5">
                         <!-- start of payment logs -->
                         <!-- start of search bar -->
                         <div class=" container row d-flex justify-content-start mx-auto">
@@ -344,6 +397,9 @@
     <!--JS for loading navbar and footer-->
     <script src="js/navbar_fw.js"></script>
     <script src="js/footer.js"></script>
+
+    <!-- loading chart -->
+    <script src="js/finance_summary.js"></script>
 </body>
 
 </html>

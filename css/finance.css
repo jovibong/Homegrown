@@ -76,7 +76,6 @@ label.nav {
     grid-column-end: span 3;
     padding: 0px 20px;
     display: flex;
-    align-items: center;
 }
 
 .page-contents>* {
@@ -106,6 +105,28 @@ input[type="radio"]:checked+.page {
     background-color: white;
     border-radius: 12px;
     box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38);
+}
+
+.bento-tile:hover {
+    transform: scale(1.01);
+    transition: 0.5s ease-in-out;
+    outline: 5px solid lightblue;
+}
+
+.bento-stats{
+    position: relative;
+}
+
+.bento-stats-title{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.bento-stats-btn{
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 /* end of bento tiles */
