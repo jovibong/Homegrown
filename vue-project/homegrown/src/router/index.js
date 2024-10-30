@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Finance from '../pages/financePage.vue';
+import Courses from '../pages/coursesPage.vue';
 
 
 const routes = [
@@ -14,6 +15,11 @@ const routes = [
         name: 'financePage',
         component: Finance
     },
+    {
+        path: '/coursesPage',
+        name: 'coursesPage',
+        component: Courses
+    }
 
 ];
 

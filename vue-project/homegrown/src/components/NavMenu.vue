@@ -32,7 +32,7 @@
                                     <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
+                                    <router-link to="/coursesPage" class="nav-link text-light">Upskilling</router-link>
                                 </li>
                                 <li class="nav-item mx-3">
                                     <router-link to="/volunteer" class="nav-link text-light">Volunteer</router-link>
@@ -45,6 +45,9 @@
                                 </li>
                                 <li class="nav-item mx-3">
                                     <router-link to="/financePage" class="nav-link text-light">Finance</router-link>
+                                </li>
+                                <li class="nav-item mx-3">
+                                    <router-link to="/mentorshipPage" class="nav-link text-light">Mentorship</router-link>
                                 </li>
                             </ul>
                         </div>

@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-      <nav-bar /> <!-- Include the header component -->
+      <nav-menu /> <!-- Include the header component -->
       <router-view /> <!-- This is where the current route's component will be rendered -->
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'
+import NavMenu from './components/NavMenu.vue'
 
 export default {
   components: {
-    'nav-bar':NavBar
+    'nav-menu':NavMenu
   }
 }
 </script>
