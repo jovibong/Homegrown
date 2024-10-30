@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Page</title>
+
+    <!--Custom Bootstrap Inspired Stylesheet-->
+    <link href="css/mainmin.css" rel="stylesheet">
+
+    <!--Icons-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!--Navbar and Footer Stylesheet-->
+    <link href="css/navbar_footer_style.css" rel="stylesheet">
+
+    <!--Badge for mentor CSS-->
+    <link rel="stylesheet" href="css/badge_mentor.css">
+    <link rel="stylesheet" href="css/courses.css">
+
+    <!--Animation CSS-->
+    <link rel="stylesheet" href="css/animation.css">
+
+</head>
+
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar" class="fade-in-top"></div>
+
+    <div id="app">
+        <!--Ongoing Courses Section-->
+        <section id="app_ongoing" class="container py-3 fade-in-top">
+            <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Courses</h2>
+            <p class="text-center text-muted mb-0 h5">
+                Keep up the great work! You're on your way to mastering new skills. Complete your courses to unlock your
+                full potential today.
+            </p>
+            <div class="d-flex justify-content-end mb-4">
+                <a href="ongoing_courses.html" class="btn btn-outline-primary d-flex align-items-center">
+                    View All <i class="bi bi-play-circle ms-2"></i>
+                </a>
+            </div>
+            <div class="row">
+                <!-- Ongoing Course Card -->
+                <div v-for="course in ongoing_courses" :key="course.id" class="col-md-4 mb-4">
+                    <div class="card shadow-sm position-relative h-100 hover-animate">
+                        <div v-if="course.mentor" class="mentor-badge bg-primary">
+                            <span class="text-black">Mentor Included</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-book fs-2 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold text-center px-2">{{course.name}}</h5>
+                            <div class="text-center mb-2">
+                                <span v-html="getRatingStars(course.rating)" class="text-warning"></span>
+                                <small class="text-muted d-block">{{course.num_reviews}} Reviews</small>
+                            </div>
+                            <p class="card-text text-muted">
+                                {{course.description}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Start a New Course Section -->
+        <section id="app_new" class="container py-5 fade-in-top">
+            <h2 class="text-primary fw-bold text-center mb-3 display-4">Start a New Course Today!</h2>
+            <p class="text-center text-muted mb-4 h5">
+                Ready to learn something new? Start a new course today and take the first step toward expanding your
+                skills
+                and knowledge!
+            </p>
+            <div class="d-flex justify-content-end mb-4">
+                <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                    View All <i class="bi bi-play-circle ms-2"></i>
+                </a>
+            </div>
+            <div class="row">
+                <!-- New Course Card -->
+                <div v-for="course in new_courses" :key="course.id" class="col-md-4 mb-4 card-flip">
+                    <div class="card shadow-sm position-relative h-100 card-inner">
+                        <div class="card-front">
+                            <div v-if="course.mentor" class="mentor-badge bg-primary">
+                                <span class="text-black">Mentor Included</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-code-slash fs-2 text-primary"></i>
+                                </div>
+                                <h5 class="card-title fw-bold text-center px-2">{{course.name}}</h5>
+                                <div class="text-center mb-2">
+                                    <span v-html="getRatingStars(course.rating)" class="text-warning"></span>
+                                    <small class="text-muted d-block">{{course.num_reviews}} Reviews</small>
+                                </div>
+                                <p class="card-text text-muted">
+                                    {{course.description}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-body d-flex align-items-center justify-content-center h-100">
+                                <div class="card-text text-center">
+                                    I haven't written anything yet oops
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Learn New Skills Section -->
+        <section class="container py-5 text-center fade-in-top">
+            <h3 class="text-primary fw-bold mb-3 display-4">Learn New Skills on the Go</h3>
+            <p class="text-muted h5">Study on your mobile device, at your own pace, and master new skills no matter
+                where
+                you
+                are.</p>
+        </section>
+
+        <!-- Effortless Enrollment Section -->
+        <section id="enrollment" class="pt-5 bg-secondary">
+            <div class="container">
+                <div class="row align-items-center py-0 fade-in-top">
+                    <!-- Image Column -->
+                    <img src="img/friendly-confident-woman-writing-her-organizer-isolated-white-wall 1.png"
+                        alt="Student" class="img-fluid position-relative col-lg-5 text-center d-none d-md-inline">
+                    <!-- Text and List Column -->
+                    <div id="app_steps" class="col-lg-7">
+                        <h2 class="fw-bold mb-3 display-5">Effortless Enrollment</h2>
+                        <p class="lead text-dark mb-4">Follow these simple steps to learn something new!</p>
+                        <ul class="list-unstyled">
+                            <li v-for="step in steps"
+                                class="d-flex align-items-center mb-3 p-3 bg-white rounded shadow-sm push-in-right">
+                                <span
+                                    class="fw-bold h4 d-flex align-items-center justify-content-center me-3 rounded-circle bg-secondary mb-0"
+                                    style="width:40px;height:40px">{{count}}</span>
+                                <span class="h6 mb-0">{{step}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer Placeholder -->
+    <footer class="fade-in-bottom"></footer>
+
+    <!--Axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!--Vue-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!--Bootstrap JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!--JS for loading navbar and footer-->
+    <script src="js/navbar_fw.js"></script>
+    <script src="js/footer.js"></script>
+
+    <!--Animation JS-->
+    <script src="js/animation.js"></script>
+
+    <script>
+        // replace with axios code
+        const ongoing_courses = [
+            {
+                id: 101,
+                name: "Introduction to Python",
+                percentageCompleted: 60,
+                rating: 3.6,
+                num_reviews: 238,
+                description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
+                mentor: true
+            },
+            {
+                id: 102,
+                name: "Web Development with HTML & CSS",
+                percentageCompleted: 45,
+                rating: 4.9,
+                num_reviews: 150,
+                description: "Master the fundamentals of web development by learning HTML and CSS. Build and style your own websites from scratch in this hands-on, beginner-friendly course.",
+                mentor: false
+            },
+            {
+                id: 103,
+                name: "Data Analysis with Excel",
+                percentageCompleted: 80,
+                rating: 4.3,
+                num_reviews: 180,
+                description: "This course covers essential data analysis techniques using Microsoft Excel. Learn how to manage data, use formulas, and create powerful visualizations to analyze information effectively.",
+                mentor: true
+            },
+            {
+                id: 104,
+                name: "JavaScript for Beginners",
+                percentageCompleted: 25,
+                rating: 4.8,
+                num_reviews: 200,
+                description: "This course introduces JavaScript, one of the most popular programming languages for web development. Learn how to make your websites interactive and dynamic through hands-on projects and examples.",
+                mentor: false
+            }];
+
+        const new_courses = [
+            {
+                id: 104,
+                name: "Mandarin Language for Beginners",
+                percentageCompleted: 50,
+                rating: 4.8,
+                num_reviews: 205,
+                description: "Learn the basics of Mandarin, including pronunciation, simple phrases, and everyday vocabulary. Perfect for travelers and language enthusiasts.",
+                mentor: true
+            },
+            {
+                id: 105,
+                name: "Cyber Security Basics",
+                percentageCompleted: 20,
+                rating: 4.6,
+                num_reviews: 120,
+                description: "Understand the fundamentals of cyber security, including how to protect your data and recognize common threats. Ideal for beginners.",
+                mentor: false
+            },
+            {
+                id: 106,
+                name: "Introduction to JavaScript",
+                percentageCompleted: 30,
+                rating: 4.7,
+                num_reviews: 150,
+                description: "Dive into JavaScript programming, one of the core languages for web development. Learn syntax, basic functions, and how to build interactive websites.",
+                mentor: true
+            },
+            {
+                id: 107,
+                name: "Project Management Essentials",
+                percentageCompleted: 65,
+                rating: 4.9,
+                num_reviews: 98,
+                description: "Master the essentials of project management, including planning, execution, and risk management. This course is great for aspiring project managers.",
+                mentor: true
+            },
+            {
+                id: 108,
+                name: "Graphic Design with Adobe Illustrator",
+                percentageCompleted: 40,
+                rating: 4.4,
+                num_reviews: 175,
+                description: "Learn the fundamentals of graphic design using Adobe Illustrator. Perfect for anyone looking to enhance their design skills for professional or personal projects.",
+                mentor: false
+            }
+        ];
+
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    ongoing_courses: ongoing_courses,
+                    new_courses: new_courses,
+                    steps: ['Sign Up',
+                        'Choose a Program',
+                        'Get a personal mentor',
+                        'Finish videos and quizzes',
+                        'Claim your certification!'],
+                    counter: 0
+                };
+            },
+            methods: {
+                getRatingStars(rating) {
+                    const roundedRating = Math.round(rating * 2) / 2;
+                    let stars = '';
+
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= Math.floor(roundedRating)) {
+                            stars += '<i class="bi bi-star-fill text-warning"></i>';
+                        } else if (i === Math.ceil(roundedRating) && roundedRating % 1 !== 0) {
+                            stars += '<i class="bi bi-star-half text-warning"></i>';
+                        } else {
+                            stars += '<i class="bi bi-star text-warning"></i>';
+                        }
+                    }
+                    return stars;
+                },
+            },
+            computed: {
+                count() {
+                    this.counter++;
+                    return this.counter;
+                }
+            }
+        });
+
+        const vm = app.mount('#app');
+    </script>
+</body>
+
+</html>
