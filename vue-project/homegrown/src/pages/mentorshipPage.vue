@@ -11,7 +11,7 @@
                 <!-- Mentorship Cards -->
                 <div v-for="course in ongoingMentorships" :key="course.id" class="col-md-4 mb-4">
                     <div class="card shadow-sm position-relative hover-animate">
-                        <a href="mentorship_course.html" class="text-decoration-none">
+                        <a href="mentorshipCourse.vue" class="text-decoration-none">
                             <span v-if="course.notificationCount > 0"
                                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
                                 {{ course.notificationCount }}
@@ -33,7 +33,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Available Mentorships Section -->
         <section id="new_app">
             <div class="container py-5">
@@ -101,6 +100,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
@@ -186,7 +186,8 @@ export default {
                     mentoring: false,
                     mentors_required: 2,
                     requirements: ["Basic Adobe Illustrator Skills", "Eye For Design"],
-                    notificationCount: 0
+                    notificationCount: 0,
+                    img: "Graphic Design with Adobe Illustrator.png"
                 }
             ],
             selectedCourseId: null
@@ -204,7 +205,8 @@ export default {
         getImageUrl(course) {
             const formattedName = course.name.replace(/ /g, '%20');
             const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
-            return `./img/${formattedName}.${extension}`;
+            console.log(`../img/${formattedName}.${extension}`);
+            return `../img/${formattedName}.${extension}`;
         },
         openModal(course) {
             this.selectedCourseId = course.id;
@@ -233,6 +235,62 @@ export default {
 
 
 <style scoped>
-@import '../css/volunteer.css';
+@import '../css/animation.css';
+body {
+    background-color: #f8f9fa;
+}
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
 
+.btn-view-info {
+    background-color: #ffd700;
+    color: black;
+    font-weight: bold;
+    font-size: large;
+}
+
+.card {
+    position: relative;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Space for the button */
+}
+
+.card-body {
+    height: 100%;
+    flex-grow: 1;
+}
+
+.btn-position {
+    display: block;
+    margin-top: auto;
+    margin: 15px;
+    text-align: center;
+}
+
+.row {
+    align-items: stretch;
+}
+
+.badge_notifiction {
+    padding: 0.5em 0.75em;
+    font-size: 1.2em;
+}
+
+.progress {
+    height: 30px;
+    border-radius: 15px;
+}
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+.btn-primary{
+    background-color: #2e59d9;
+    border-color: #2e59d9;
+}
 </style>

@@ -33,9 +33,6 @@
                     <div class="card-body position-relative">
 
                         <!-- Icon and Course Info -->
-
-
-
                         <div class="row my-0 d-flex align-items-center">
                             <h5 class=" col-md-10 mt-2 fw-bold display-lg-4 display-5">{{ course.name }}</h5>
                             <div class="text-center col-md-2 my-0 d-md-block d-none">
@@ -83,7 +80,7 @@
                                 <div class="row">
                                     <!-- Mentor Image -->
                                     <div class="col-md-3 d-flex justify-content-center">
-                                        <img :src="'img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
+                                        <img :src="'../img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
                                             height="150px" width="150px">
                                     </div>
                                     <!-- Mentor Information -->
@@ -146,10 +143,7 @@ export default {
                 name: "Introduction to Python",
                 rating: 3.6,
                 description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
-                mentees: mentees,
-                lessons: lessons
-            },
-            mentees: [
+                mentees: [
                 {
                     name: "Ravi Kumar",
                     description: "Hello! I'm Ravi Kumar from India, currently working in construction. I’m eager to learn new skills and improve my career prospects, and I enjoy sharing my experiences with others.",
@@ -175,7 +169,7 @@ export default {
                     notificationCount: 1,
                 }
             ],
-            lessons: {
+                lessons: {
                 "L101": {
                     name: "Lesson 1",
                     content: [
@@ -190,6 +184,7 @@ export default {
                         { id: "q_2_1", typeof: "quiz", duration: "10min", name: "Quiz 2: Variables", icon: "bi-lightbulb" }
                     ]
                 }
+            },
             },
             expanded: false,
         };
