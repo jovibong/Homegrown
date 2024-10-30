@@ -10,12 +10,16 @@
 <script>
 import NavMenu from './components/NavMenu.vue'
 import FooterBar from './components/FooterBar.vue'
+import './js/animation.js'
 
 
 export default {
   components: {
     'nav-menu':NavMenu,
     'footer-bar':FooterBar
+  },
+  mounted(){
+
   }
 }
 </script>
@@ -25,4 +29,5 @@ export default {
 @import './css/navbar_footer_style.css';
 @import './css/background-decor.css';
 @import './css/mainmin.css';
+@import './css/animation.css';
 </style>
