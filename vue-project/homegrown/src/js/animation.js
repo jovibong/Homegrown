@@ -136,9 +136,5 @@ function animatePush() {
     observeMutations(() => observePushers(appearOnScroll));
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    animateProgressBars();
-    animateFade();
-    animatePush();
-    animateCounters();
-});
+
+export { animateProgressBars, animateFade, animatePush, animateCounters };
