@@ -2,19 +2,15 @@
   <div id="app">
       <nav-menu /> <!-- Include the header component -->
       <router-view /> <!-- This is where the current route's component will be rendered -->
-      <footer-bar />
   </div>
 </template>
 
 <script>
 import NavMenu from './components/NavMenu.vue'
-import FooterBar from './components/FooterBar.vue'
-
 
 export default {
   components: {
-    'nav-menu':NavMenu,
-    'footer-bar':FooterBar
+    'nav-menu':NavMenu
   }
 }
 </script>
