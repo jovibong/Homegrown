@@ -41,7 +41,7 @@
                                     <a class="nav-link text-light" href="#">Volunteer</a>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <a class="nav-link text-light" href="#">Chat</a>
+                                    <router-link to="/finance" class="nav-link text-light">Finance</router-link>
                                 </li>
                             </ul>
                         </div>
@@ -70,6 +70,6 @@
 
 <script>
 export default {
-
+    
 }
 </script>
