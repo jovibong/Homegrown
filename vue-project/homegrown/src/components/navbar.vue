@@ -44,7 +44,7 @@
                                     <router-link to="/chat" class="nav-link text-light">Chat</router-link>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <router-link to="/finance" class="nav-link text-light">Finance</router-link>
+                                    <router-link to="/financePage" class="nav-link text-light">Finance</router-link>
                                 </li>
                             </ul>
                         </div>

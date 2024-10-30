@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Finance from '../pages/finance.vue';
+import Finance from '../pages/financePage.vue';
 
 
 const routes = [
@@ -10,8 +10,8 @@ const routes = [
     // },
 
     {
-        path: '/finance',
-        name: 'finance',
+        path: '/financePage',
+        name: 'financePage',
         component: Finance
     },
 
