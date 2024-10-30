@@ -1,0 +1,85 @@
+#home {
+    color: #525FE1;
+}
+/* Make the modal full-screen with custom layout */
+.login-modal .modal-dialog {
+    max-width: 80%; 
+    margin: 5% auto; /* Center the modal */
+}
+
+.login-modal .modal-content {
+    border: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.login-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Left section image */
+.modal-image {
+    background-image: url('your-image-url.png'); /* Replace with your actual image URL */
+    background-size: cover;
+    background-position: center;
+    width: 50%;
+}
+
+/* Right section (login form) */
+.modal-login {
+    width: 50%;
+    padding: 50px;
+    background-color:#525FE1;
+    border-radius: 30px;
+}
+
+.modal-login h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #525FE1; /* Same color as the logo */
+}
+
+.form-control {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.btn-primary {
+    background-color: #525FE1;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #525FE1;
+}
+
+.modal-login a {
+    text-decoration: none;
+}
+
+.modal-login .signup-link {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Blur effect for the background */
+.blur-background {
+    filter: blur(3px);  /* Apply a slight blur to the background */
+}
+
+/* Ensure blur is removed when the modal is hidden */
+.modal-backdrop.show + .blur-background {
+    filter: none;
+}
