@@ -203,10 +203,8 @@ export default {
     },
     methods: {
         getImageUrl(course) {
-            const formattedName = course.name.replace(/ /g, '%20');
             const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
-            console.log(`../img/${formattedName}.${extension}`);
-            return `../img/${formattedName}.${extension}`;
+            return require(`../img/${course.name}.${extension}`);
         },
         openModal(course) {
             this.selectedCourseId = course.id;
