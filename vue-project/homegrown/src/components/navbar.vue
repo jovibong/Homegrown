@@ -32,13 +32,16 @@
                                     <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <a class="nav-link text-light" href="#">Mentorship</a>
+                                    <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <a class="nav-link text-light" href="#">Events</a>
+                                    <router-link to="/volunteer" class="nav-link text-light">Volunteer</router-link>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <a class="nav-link text-light" href="#">Volunteer</a>
+                                    <router-link to="/events" class="nav-link text-light">Events</router-link>
+                                </li>
+                                <li class="nav-item mx-3">
+                                    <router-link to="/chat" class="nav-link text-light">Chat</router-link>
                                 </li>
                                 <li class="nav-item mx-3">
                                     <router-link to="/finance" class="nav-link text-light">Finance</router-link>
