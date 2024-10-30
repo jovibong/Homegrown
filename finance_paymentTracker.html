@@ -46,7 +46,7 @@
 </head>
 
 <!-- Navbar Placeholder -->
-<div id="navbar" class="fade-in-top"></div>
+<div id="navbar" ></div>
 
 
 
@@ -72,8 +72,7 @@
 
                     <div class="col-6">
                         <div class="bento-tile  h-100 p-3">
-                            <stats-tile title="Goal" stat="$100,000"
-                                description="By: 01/01/2026"></stats-tile>
+                            <stats-tile title="Goal" stat="$100,000" description="By: 01/01/2026"></stats-tile>
                         </div>
                     </div>
 
@@ -325,73 +324,69 @@
         <!-- start PaymentTracker tab nav -->
         <input name="nav" type="radio" id="PaymentTracker" />
         <div class="page">
-            <div class="container-fluid">
-                <div class="row my-5 g-5">
-                    <div class="col-6 mt-0">
-                        <div class="row bento-tile p-5">
-                            <!-- start of tile + subtitle -->
-                            <div class="text-center">
-                                <h1 class=" display-1 fw-bold text-primary">Payment Tracker</h1>
-                                <p class="text-muted">Keep track of your income and any late payments.</p>
-                            </div>
-                            <!-- end of tile + subtitle -->
-                        </div>
-                        <div class="row mt-3">
-                            <!-- start of summary-->
-                            <!-- total earned start -->
-                            <div class="col-* bento-tile">
-                                <stats-tile title="Total earned" stat="$51,400"
-                                    description="$5,000 per month"></stats-tile>
-                            </div>
-                            <!-- total earned end -->
-
-                            <!-- total earned start -->
-                            <div class="col-* bento-tile">
-                                <stats-tile title="Payday" stat="5 days left"
-                                    description="15th of every Month"></stats-tile>
-                            </div>
-                            <!-- total earned end -->
-
-                            <!-- total earned start -->
-                            <div class="col-* bento-tile">
-                                <stats-tile title="Late Payments" stat="1"
-                                    description="Considered late: >2 days"></stats-tile>
-                            </div>
-                            <!-- total earned end -->
-                            <!-- end of summary-->
-                        </div>
-                    </div>
-                    <!-- end of left side -->
-
-                    <div class="col-6 mt-0 bento-tile p-5">
-                        <!-- start of payment logs -->
-                        <!-- start of search bar -->
-                        <div class=" container row d-flex justify-content-start mx-auto">
-                            <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
-                            <div class="col-* px-0">
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control w-75" placeholder="Search here..."
-                                        aria-label="Text input with dropdown button">
-                                    <select class="form-select filter-by w-25 text-wrap"
-                                        aria-label="Default select example">
-                                        <option value="None" selected>Filter by</option>
-                                        <option value="Tilte">Tilte</option>
-                                        <option value="Amount">Amount</option>
-                                        <option value="Status">Status</option>
-                                        <option value="Date">Date</option>
-                                        <option value="Image">Image</option>
-                                    </select>
+            <div class="container">
+                <div class="row g-3 my-5">
+                    <!-- start left side -->
+                    
+                        <!-- start of header -->
+                        <div class="col-12">
+                            <div
+                                class="text-center bento-tile h-100 p-3 d-flex justify-content-center align-items-center">
+                                <div>
+                                    <h1 class=" display-1 fw-bold text-primary">Summary</h1>
+                                    <p class="text-muted">A quick glance at your income and spending</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- end of search bar -->
-
-
-
-                        <!-- start of table logs -->
-                        <!-- NOTE CAN CREATE TEMPLATE FOR ROW INSERTION -->
-                        <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
-                        <div class="container d-fex justify-content-center align-items-center">
+                        <!-- end of header -->
+                        <!-- start of stats -->
+                        <div class="col-4">
+                            <div class="bento-tile  h-100 w-100 p-3">
+                                <div>
+                                <stats-tile title="Total earned" stat="$51,400"
+                                    description="$5,000 per month"></stats-tile>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bento-tile  h-100 p-3">
+                                <stats-tile title="Payday" stat="5 days left"
+                                    description="15th of every Month"></stats-tile>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bento-tile  h-100 p-3">
+                                <stats-tile title="Late Payments" stat="1"
+                                    description="Considered late: >2 days"></stats-tile>
+                            </div>
+                        </div> 
+                        <!-- end of stats -->
+                    
+                    <!-- end left side -->
+                    <!-- start right side -->
+                    <div class="col-12">
+                        <div class="bento-tile h-100 p-3">
+                            <!-- start of search bar -->
+                            <div class=" container row d-flex justify-content-start mx-auto">
+                                <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
+                                <div class="col-* px-0">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control w-75" placeholder="Search here..."
+                                            aria-label="Text input with dropdown button">
+                                        <select class="form-select filter-by w-25 text-wrap"
+                                            aria-label="Default select example">
+                                            <option value="None" selected>Filter by</option>
+                                            <option value="Tilte">Tilte</option>
+                                            <option value="Amount">Amount</option>
+                                            <option value="Status">Status</option>
+                                            <option value="Date">Date</option>
+                                            <option value="Image">Image</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end of search bar -->
+                            <!-- start of table -->
                             <div class="table-responsive logs-scroll">
                                 <table class="table table-striped text-center mb-0">
                                     <!-- table head should be made sticky if long table while scrolling until end of table -->
@@ -491,10 +486,20 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- end of table -->
+
+
+
                         </div>
-                        <!-- end of table logs -->
-                        <!-- end of payment logs -->
                     </div>
+                    <!-- end right side -->
+
+
+                    <!-- start of table logs -->
+                    <!-- NOTE CAN CREATE TEMPLATE FOR ROW INSERTION -->
+                    <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
+
+
                 </div>
 
 
@@ -518,7 +523,7 @@
 
 
     <!-- Footer Placeholder -->
-    <footer class="fade-in-bottom"></footer>
+    <footer ></footer>
 
 
     <script>
