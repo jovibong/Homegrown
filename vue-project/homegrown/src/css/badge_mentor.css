@@ -1,0 +1,30 @@
+.mentor-badge {
+    position: absolute;
+    top: 23px;
+    right: 23px;
+    width: 120px;
+    height: 120px;
+    background-color: #7b4fdf; /* Purple color for the badge */
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(20%, -20%);
+    z-index: 1;
+    border-radius: 0 5% 0 0;
+    overflow: hidden;
+}
+
+.mentor-badge span {
+    position:absolute;
+    top:18%;
+    left:43%;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    transform: rotate(45deg);
+    text-align: center;
+    white-space: wrap;
+    line-height: 1.2;
+    max-width: 90px; /* Ensure the text fits within the badge */
+}

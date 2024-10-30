@@ -1,0 +1,93 @@
+h2 {
+    color: #525FE1;
+}
+
+/* Modal Dialog Styling */
+.modal-dialog {
+    max-width: 80%;  /* Ensure modals have the same width */
+    margin: 5% auto; /* Center the modal */
+}
+
+/* Modal Content Styling (applies to both login and signup modals) */
+.modal-content {
+    border-radius: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    height: auto;
+}
+
+/* Left Side Image */
+ .sign-up-image {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    width: 50%;  /* Consistent sizing for both modals */
+}
+
+/* Right Side Form for both modals */
+ .sign-up-form {
+    flex: 1;
+    padding: 50px;
+    background-color: #ffffff;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+/* heading style for sign up */
+.sign-up-form h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #3B71CA; /* Use a theme color */
+}
+
+/* Form Control Styling */
+.form-control {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #525FE1;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #3B71CA;
+}
+
+/* Footer Links for both modals */
+ .signup-link, .sign-up-form .signup-link {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Form Terms Link */
+.form-check-label a {
+    text-decoration: none;
+    color: #525FE1;
+}
+
+.form-check-label a:hover {
+    text-decoration: underline;
+}
+
+/* Blur effect for the background */
+.blur-background {
+    filter: blur(3px);  /* Apply a slight blur to the background */
+}
+
+/* Ensure blur is removed when the modal is hidden */
+.modal-backdrop.show + .blur-background {
+    filter: none;
+}
