@@ -1,0 +1,75 @@
+<template>
+    <!---start of navbar-->
+    <div class="container-fluid bg-custom-blue sticky-top">
+
+        <!-- start row for using grid -->
+        <div class="row">
+
+            <!-- start of nav without sign in/up -->
+            <div class="col-lg-10 col-9 align-items-start">
+                <nav class="navbar navbar-expand-lg ">
+                    <div class="container">
+                        <!-- Logo -->
+                        <a class="navbar-brand me-auto" href="#">
+                            <span class="text-light fw-bold">Home</span><span class="text-warning fw-bold">Grown</span>
+                        </a>
+
+                        <!-- hamburger collapsible icon -->
+                        <!-- flex and hamburger menu only for mobile -->
+                        <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around collapsed"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <!-- custom 3 lines for animation for menu -->
+                            <span class="toggler-icon top-bar"></span>
+                            <span class="toggler-icon middle-bar"></span>
+                            <span class="toggler-icon bottom-bar"></span>
+                        </button>
+
+                        <!-- list of links/navs -->
+                        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                            <ul class="navbar-nav">
+                                <li class="nav-item mx-3">
+                                    <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
+                                </li>
+                                <li class="nav-item mx-3">
+                                    <a class="nav-link text-light" href="#">Mentorship</a>
+                                </li>
+                                <li class="nav-item mx-3">
+                                    <a class="nav-link text-light" href="#">Events</a>
+                                </li>
+                                <li class="nav-item mx-3">
+                                    <a class="nav-link text-light" href="#">Volunteer</a>
+                                </li>
+                                <li class="nav-item mx-3">
+                                    <a class="nav-link text-light" href="#">Chat</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <!-- end of nav without sign in/up -->
+
+            <!-- start of sign up/in buttons -->
+            <div class="col-lg-2 col-3 d-flex justify-content-end align-items-start">
+                <nav class="navbar d-flex flex-nowrap">
+                    <!-- if want the sign in to remain as a navlink use class below -->
+                    <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" id="sign-in-btn">Sign In</a>
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" id="sign-up-btn">Sign Up</a>
+                </nav>
+            </div>
+            <!-- end of sign up/in buttons -->
+
+        </div>
+        <!-- end of row -->
+
+    </div>
+    <!---end of navbar-->
+</template>
+
+<script>
+export default {
+
+}
+</script>
