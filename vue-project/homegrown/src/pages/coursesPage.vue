@@ -85,12 +85,12 @@
                 class="card-img h-100"
               />
               <div
-                class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-50 w-100"
+                class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-75 w-100"
               >
                 <div class="container-fluid">
                   <div class="row text-center">
                     <i
-                      class="bi bi-code-slash fs-2 text-primary text-center"
+                      class="bi bi-code-slash text-primary text-center h1 fw-bold text-shadow"
                     ></i>
                   </div>
                   <div class="row text-center">
