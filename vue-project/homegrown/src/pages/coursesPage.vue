@@ -76,8 +76,25 @@
               <div v-if="course.mentor" class="mentor-badge bg-primary">
                 <span class="text-black">Mentor Included</span>
               </div>
-              <div class="card-body">
-                <div class="text-center mb-3">
+              <img :src="course_images[course.id]" :alt="course.name + 'img'" class="card-img h-100">
+              <div class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-50 w-100">
+                <div class="container-fluid">
+                  <div class="row text-center">
+                    <i class="bi bi-code-slash fs-2 text-primary text-center"></i>
+                  </div>
+                  <div class="row text-center">
+                    <h5 class="card-title fw-bold text-center px-2">
+                  {{ course.name }}
+                </h5> 
+                  </div>
+                </div>                               
+              </div>
+            </div>
+            <div class="card-back">
+              <div
+                class="card-body h-100"
+              >
+               <div class="text-center mb-3">
                   <i class="bi bi-code-slash fs-2 text-primary"></i>
                 </div>
                 <h5 class="card-title fw-bold text-center px-2">
@@ -92,13 +109,6 @@
                     >{{ course.num_reviews }} Reviews</small
                   >
                 </div>
-                
-              </div>
-            </div>
-            <div class="card-back">
-              <div
-                class="card-body d-flex align-items-center justify-content-center h-100"
-              >
                 <div class="card-text text-center">
                   <p class="card-text text-muted">
                   {{ course.description }}
@@ -252,7 +262,8 @@ export default {
         "Get a personal mentor",
         "Finish videos and quizzes",
         "Claim your certification!",
-      ]
+      ],
+      course_images: {}
     };
   },
   methods: {
@@ -270,8 +281,15 @@ export default {
         }
       }
       return stars;
-    }
+    },
   },
+  mounted(){
+    var image_counter = 100;
+    this.new_courses.forEach(course =>{
+      this.course_images[course.id] = `https://random.imagecdn.app/500/${image_counter}`;
+      image_counter += 1;
+    })
+  }
 };
 </script>
 
