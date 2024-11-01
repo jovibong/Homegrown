@@ -10,6 +10,7 @@
 <script>
 import NavMenu from './components/NavMenu.vue'
 import FooterBar from './components/FooterBar.vue'
+
 import { animateProgressBars, animateFade, animatePush, animateCounters } from './js/animation.js';
 
 

@@ -83,8 +83,7 @@
                         <form @submit.prevent="submitDocuments">
                             <div class="mb-3">
                                 <label for="document" class="form-label">Upload Document</label>
-                                <input type="file" class="form-control" id="document" required
-                                    @change="handleFileChange">
+                                <input type="file" class="form-control" id="document" required @change="handleFileChange">
                             </div>
                             <div class="mb-3">
                                 <label for="comments" class="form-label">Additional Comments (Optional)</label>
@@ -97,10 +96,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- Toast Notification for Feedback Message -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" ref="toast">
+                <div class="toast-header">
+                    <strong class="me-auto">Submission Successful</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    {{ feedbackMessage }}
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import { Modal, Toast } from 'bootstrap';
 
 export default {
     data() {
@@ -191,7 +204,12 @@ export default {
                     img: "Graphic Design with Adobe Illustrator.png"
                 }
             ],
-            selectedCourseId: null
+            selectedCourseId: null,
+            selectedCourseName: '', // Store course name for feedback
+            comments: '',
+            selectedFile: null,
+            mentorModal: null, // Modal instance
+            feedbackMessage: '', // Toast message
         };
     },
     computed: {
@@ -209,24 +227,36 @@ export default {
         },
         openModal(course) {
             this.selectedCourseId = course.id;
-            this.mentorModal.show(); // Open the modal
+            this.selectedCourseName = course.name; // Store the course name
+            this.mentorModal = new Modal(document.getElementById('mentorModal'), {});
+            this.mentorModal.show();
         },
         submitDocuments() {
             if (!this.selectedFile) {
-                alert('Please select a document to submit.');
+                this.feedbackMessage = 'Please select a document to submit.';
+                this.showToast();
                 return;
             }
 
-            alert(`Documents submitted for course ID: ${this.selectedCourseId}`);
-            this.submitToast.show();  // Show toast notification
-            this.mentorModal.hide();  // Close the modal after submission
+            // Set feedback message with the course name
+            this.feedbackMessage = `Mentorship documents submitted successfully for course: ${this.selectedCourseName}.We will get back to you shortly`;
+            this.showToast();
+
+            if (this.mentorModal) {
+                this.mentorModal.hide();
+            }
 
             // Reset form fields
             this.comments = '';
             this.selectedFile = null;
         },
         handleFileChange(event) {
-            this.selectedFile = event.target.files[0]; // Capture the file selected
+            this.selectedFile = event.target.files[0];
+        },
+        showToast() {
+            const toastEl = this.$refs.toast;
+            const toast = new Toast(toastEl);
+            toast.show();
         }
     }
 }
