@@ -3,6 +3,7 @@ import Finance from '../pages/financePage.vue';
 import Courses from '../pages/coursesPage.vue';
 import Mentorship from '../pages/mentorshipPage.vue';
 import MentorshipCourse from '../pages/mentorshipCourse.vue';
+import TestPage from '../pages/testPage.vue';
 
 
 const routes = [
@@ -32,6 +33,11 @@ const routes = [
         name: 'mentorshipCourse',
         component: MentorshipCourse
     },
+    {
+        path: '/testPage',
+        name: 'testPage',
+        component: TestPage
+    } // to be removed when done
 
 ];
 

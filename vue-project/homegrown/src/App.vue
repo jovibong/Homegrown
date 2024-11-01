@@ -16,7 +16,7 @@ import { animateProgressBars, animateFade, animatePush, animateCounters } from '
 export default {
   components: {
     'nav-menu':NavMenu,
-    'footer-bar':FooterBar
+    'footer-bar':FooterBar,
   },
   mounted(){
     animateProgressBars();
