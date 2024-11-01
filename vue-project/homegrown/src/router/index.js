@@ -3,6 +3,7 @@ import Finance from '../pages/financePage.vue';
 import Courses from '../pages/coursesPage.vue';
 import Mentorship from '../pages/mentorshipPage.vue';
 import MentorshipCourse from '../pages/mentorshipCourse.vue';
+import volunteer from '../pages/volunteerPage.vue';
 import TestPage from '../pages/testPage.vue';
 
 
@@ -29,9 +30,14 @@ const routes = [
         component: Mentorship
     },
     {
-        path: '/mentorship',
+        path: '/mentorshipCourse',
         name: 'mentorshipCourse',
         component: MentorshipCourse
+    },
+    {
+        path: '/volunteerPage',
+        name: 'volunteerPage',
+        component: volunteer
     },
     {
         path: '/testPage',

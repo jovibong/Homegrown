@@ -6,10 +6,12 @@
                 <div class="row align-items-center">
                     <!-- Back Button -->
                     <div class="col-3">
+                        <router-link to="/mentorshipPage" class="nav-link text-light">
                         <a href="Mentorship.html" class="btn btn-warning text-dark"><i class="bi bi-arrow-left"></i>
                             <span class="d-none d-lg-inline">Back to Mentorship</span>
                             <span class="d-inline d-lg-none">Back</span>
                         </a>
+                    </router-link>
                     </div>
                     <!-- Title (Centered) -->
                     <div class="col-6 text-center">

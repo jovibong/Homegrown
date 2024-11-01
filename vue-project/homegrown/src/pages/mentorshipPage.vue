@@ -11,7 +11,7 @@
                 <!-- Mentorship Cards -->
                 <div v-for="course in ongoingMentorships" :key="course.id" class="col-md-4 mb-4">
                     <div class="card shadow-sm position-relative hover-animate">
-                        <a href="mentorshipCourse.vue" class="text-decoration-none">
+                        <router-link to="/mentorshipCourse" class="text-decoration-none">
                             <span v-if="course.notificationCount > 0"
                                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
                                 {{ course.notificationCount }}
@@ -28,7 +28,8 @@
                                     {{ course.description }}
                                 </p>
                             </div>
-                        </a>
+                        
+                    </router-link>
                     </div>
                 </div>
             </div>
