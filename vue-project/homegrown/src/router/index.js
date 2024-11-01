@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Finance from '../pages/financePage.vue';
 import Courses from '../pages/coursesPage.vue';
+import Events from '../pages/eventPage.vue';
 import Mentorship from '../pages/mentorshipPage.vue';
 import MentorshipCourse from '../pages/mentorshipCourse.vue';
 import volunteer from '../pages/volunteerPage.vue';
@@ -24,6 +25,25 @@ const routes = [
         name: 'coursesPage',
         component: Courses
     },
+
+    {
+        path: '/eventPage',
+        name: 'eventPage',
+        component: Events
+    },
+
+    {
+        path: '/eventPage/:id',
+        name: 'eventDetail',
+        component: () => import('../components/eventDetail.vue')
+    },
+
+    {
+        path: '/forum',
+        name: 'eventForum',
+        component: () => import('../pages/forumPage.vue')
+    }
+    ,
     {
         path: '/mentorshipPage',
         name: 'mentorshipPage',
