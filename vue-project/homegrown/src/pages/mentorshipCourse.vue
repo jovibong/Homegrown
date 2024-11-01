@@ -6,12 +6,11 @@
                 <div class="row align-items-center">
                     <!-- Back Button -->
                     <div class="col-3">
-                        <router-link to="/mentorshipPage" class="nav-link text-light">
-                        <a href="Mentorship.html" class="btn btn-warning text-dark"><i class="bi bi-arrow-left"></i>
+                        <router-link to="/mentorshipPage" class="btn btn-warning text-dark">
+                        <i class="bi bi-arrow-left"></i>
                             <span class="d-none d-lg-inline">Back to Mentorship</span>
                             <span class="d-inline d-lg-none">Back</span>
-                        </a>
-                    </router-link>
+                        </router-link>
                     </div>
                     <!-- Title (Centered) -->
                     <div class="col-6 text-center">
@@ -140,12 +139,7 @@
 export default {
     data() {
         return {
-            course: {
-                id: 101,
-                name: "Introduction to Python",
-                rating: 3.6,
-                description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
-                mentees: [
+            mentees: [
                 {
                     name: "Ravi Kumar",
                     description: "Hello! I'm Ravi Kumar from India, currently working in construction. I’m eager to learn new skills and improve my career prospects, and I enjoy sharing my experiences with others.",
@@ -171,6 +165,12 @@ export default {
                     notificationCount: 1,
                 }
             ],
+            course: {
+                id: 101,
+                name: "Introduction to Python",
+                rating: 3.6,
+                description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
+            },
                 lessons: {
                 "L101": {
                     name: "Lesson 1",
@@ -186,7 +186,6 @@ export default {
                         { id: "q_2_1", typeof: "quiz", duration: "10min", name: "Quiz 2: Variables", icon: "bi-lightbulb" }
                     ]
                 }
-            },
             },
             expanded: false,
         };
@@ -242,4 +241,62 @@ export default {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+body {
+    background-color: #f8f9fa;
+}
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.btn-view-info {
+    background-color: #ffd700;
+    color: black;
+    font-weight: bold;
+    font-size: large;
+}
+
+.card {
+    position: relative;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Space for the button */
+}
+
+.card-body {
+    height: 100%;
+    flex-grow: 1;
+}
+
+.btn-position {
+    display: block;
+    margin-top: auto;
+    margin: 15px;
+    text-align: center;
+}
+
+.row {
+    align-items: stretch;
+}
+
+.badge_notifiction {
+    padding: 0.5em 0.75em;
+    font-size: 1.2em;
+}
+
+.progress {
+    height: 30px;
+    border-radius: 15px;
+}
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+.btn-primary{
+    background-color: #2e59d9;
+    border-color: #2e59d9;
+}
+</style>
