@@ -38,7 +38,7 @@
                                     <router-link to="/volunteerPage" class="nav-link text-light">Volunteer</router-link>
                                 </li>
                                 <li class="nav-item mx-3">
-                                    <router-link to="/events" class="nav-link text-light">Events</router-link>
+                                    <router-link to="/eventPage" class="nav-link text-light">Events</router-link>
                                 </li>
                                 <li class="nav-item mx-3">
                                     <router-link to="/chat" class="nav-link text-light">Chat</router-link>

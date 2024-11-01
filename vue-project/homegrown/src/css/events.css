@@ -1,0 +1,127 @@
+.carouselHeaderwidth {
+    width: 100%;
+    max-height: auto;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+  
+.carousel-inner img {
+  object-fit: cover; /* Ensure images cover the area without distortion */
+  object-position: center; /* Center the image */
+  height: 300px; /* Set a fixed height to control cropping */
+}
+
+.title {
+    font-family: 'Poppins';
+    color: #525FE1;
+    font-weight: bold;
+}
+
+.searchBar {
+    padding-left: 30px;
+    border-radius:30px;
+    border:2px solid #525FE1;
+    height: 50px;
+
+}
+
+.event-details {
+  border:2px solid #525FE1;
+  margin-right: 10px;
+  height: 70px;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 1rem;
+    gap: 1rem; /* Adjust spacing between cards as needed */
+  }
+  
+  .scroll-container .card {
+    flex: 0 0 auto; /* Ensure each card stays the same width */
+    width: 200px; /* Set a fixed width for each card */
+  }
+
+  /* trying to style glider */
+
+  .scroll-container::-webkit-scrollbar {
+    height: 8px; /* Scrollbar height for horizontal scroll */
+  }
+  
+  .scroll-container::-webkit-scrollbar-track {
+    background: #eee; /* Scrollbar track color */
+  }
+  
+  .scroll-container::-webkit-scrollbar-thumb {
+    background-color: #525FE1; /* Scrollbar thumb color */
+    border-radius: 10px; /* Rounded scrollbar edges */
+    border: 2px solid #525FE1; /* Adds padding to thumb */
+  }
+
+  /* styles.css or component's <style> section */
+.button {
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+/* Not pressed state */
+.notPressed {
+  background-color: #525FE1; /* Bootstrap primary color */
+  color: white; /* Text color */
+}
+
+/* Pressed state */
+.pressed {
+  border: 1px solid #525FE1;
+  background-color: white; /* Darker shade for pressed effect */
+  color: #525FE1; /* Text color */
+  transform: scale(0.95); /* Slightly shrink the button */
+}
+
+.createEventStyle{
+  border: 2px solid #525FE1;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Grid template for responsive layout - for eventDetails */
+.grid-template {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column by default */
+  gap: 1rem; /* Adjust spacing as needed */
+}
+
+@media (min-width: 768px) {
+  .grid-template {
+      grid-template-columns: repeat(3, 1fr); /* Three equal columns for medium and larger screens */
+  }
+}
+
+#forumCategories {
+  background-color: yellow;
+}
+
+.category {
+  border: 2px solid #525FE1;
+}
+
+.create-enter-active {
+  animation: slide-in 0.3s ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
