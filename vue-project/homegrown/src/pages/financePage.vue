@@ -8,7 +8,7 @@
                 <div class="container">
                     <div class="row g-3 my-5">
 
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div
                                 class="text-center bento-tile h-100 p-3 d-flex justify-content-center align-items-center">
                                 <div>
@@ -18,21 +18,20 @@
                             </div>
                         </div>
 
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="bento-tile  h-100 p-3">
                                 <stats-tile title="Goal" stat="$100,000" description="By: 01/01/2026"></stats-tile>
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <div id="chart"
-                                class="bento-tile p-3">
+                            <div id="chart" class="bento-tile p-3">
                                 <!-- summart chart here -->
                                 <summary-chart />
                             </div>
                         </div>
 
-                        <div class="col-6">
+                        <div class="col-lg-6">
                             <div class="text-center bento-tile bg-success text-light h-100 p-3">
                                 <div>
                                     <h1 class=" display-5 fw-bold">Income</h1>
@@ -137,7 +136,7 @@
                             </div>
                         </div>
 
-                        <div class="col-6">
+                        <div class="col-lg-6">
                             <div class="text-center bento-tile bg-danger text-light h-100 p-3">
                                 <div>
                                     <h1 class=" display-5 fw-bold">Expense</h1>
@@ -281,47 +280,42 @@
             <input name="nav" type="radio" id="PaymentTracker" />
             <div class="page">
                 <div class="container-fluid">
-                    <div class="row my-5 g-5">
-                        <div class="col-6 mt-0">
-                            <div class="row bento-tile p-5">
-                                <!-- start of tile + subtitle -->
-                                <div class="text-center">
-                                    <h1 class=" display-1 fw-bold text-primary">Payment Tracker</h1>
-                                    <p class="text-muted">Keep track of your income and any late payments.</p>
+                    <div class="row my-5 g-3">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12 pb-3">
+                                    <div class="bento-tile h-100">
+                                        <div>
+                                            <h1 class="display-1 fw-bold text-primary">Summary</h1>
+                                            <p class="text-muted">A quick glance at your income and spending</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <!-- end of tile + subtitle -->
                             </div>
-                            <div class="row mt-3">
-                                <!-- start of summary-->
-                                <!-- total earned start -->
-                                <div class="col-* bento-tile">
-                                    <stats-tile title="Total earned" stat="$51,400"
-                                        description="$5,000 per month"></stats-tile>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="bento-tile p-3 h-100">
+                                        <stats-tile title="Total earned" stat="$51,400"
+                                            description="$5,000 per month"></stats-tile>
+                                    </div>
                                 </div>
-                                <!-- total earned end -->
-
-                                <!-- total earned start -->
-                                <div class="col-* bento-tile">
-                                    <stats-tile title="Payday" stat="5 days left"
-                                        description="15th of every Month"></stats-tile>
+                                <div class="col-md-4">
+                                    <div class="bento-tile p-3 h-100">
+                                        <stats-tile title="Payday" stat="5 days left"
+                                            description="15th of every Month"></stats-tile>
+                                    </div>
                                 </div>
-                                <!-- total earned end -->
-
-                                <!-- total earned start -->
-                                <div class="col-* bento-tile">
-                                    <stats-tile title="Late Payments" stat="1"
-                                        description="Considered late: >2 days"></stats-tile>
+                                <div class="col-md-4">
+                                    <div class="bento-tile p-3 h-100">
+                                        <stats-tile title="Late Payments" stat="1"
+                                            description="Considered late: >2 days"></stats-tile>
+                                    </div>
                                 </div>
-                                <!-- total earned end -->
-                                <!-- end of summary-->
                             </div>
                         </div>
-                        <!-- end of left side -->
-
-                        <div class="col-6 mt-0 bento-tile p-5">
-                            <!-- start of payment logs -->
-                            <!-- start of search bar -->
-                            <div class=" container row d-flex justify-content-start mx-auto">
+                        <div class="col-md-6">
+                            <div class="bento-tile h-100 p-3">
+                                <div class=" container row d-flex justify-content-start mx-auto">
                                 <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
                                 <div class="col-* px-0">
                                     <div class="input-group mb-3">
@@ -447,12 +441,9 @@
                                     </table>
                                 </div>
                             </div>
-                            <!-- end of table logs -->
-                            <!-- end of payment logs -->
+                            </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
             <label class="nav" for="PaymentTracker">
@@ -484,11 +475,11 @@ export default {
     },
     components:
     {
-        'stats-tile' : StatsTile,
-        'summary-chart' :SummaryChart
+        'stats-tile': StatsTile,
+        'summary-chart': SummaryChart
 
     }
-    
+
 }
 </script>
 

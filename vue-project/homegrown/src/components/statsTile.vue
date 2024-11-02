@@ -2,20 +2,16 @@
 
     <div>
 
-        <div class="row row-cols-2">
-            <div class="col-* d-flex justify-content-start ">
-                <p class="fw-bold px-3 py-2">{{ title }}</p>
-            </div>
-            <div class="col-* d-flex justify-content-end">
-                <a href="#" class="btn px-3 py-2">
-                    <i class='fas fa-edit text-secondary'></i>
-                </a>
-            </div>
+        <div class="d-flex justify-content-start align-items-center">
+            <span class="fw-bold">{{ title }}</span>
+            <a href="#" class="btn">
+                <i class='fas fa-edit text-secondary'></i>
+            </a>
         </div>
-        <div class="row">
-            <h1 class="text-center text-primary fw-bolder display-3">{{ stat }}</h1>
+        <div>
+            <h1 class="text-center text-primary fw-bolder display-5">{{ stat }}</h1>
         </div>
-        <div class="row">
+        <div>
             <p class="text-center text-muted">{{ description }}</p>
         </div>
 
@@ -29,3 +25,28 @@ export default {
     props: ['title', 'stat', 'description']
 } 
 </script>
+
+<style scoped>
+
+
+
+
+
+.bento-stats-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.btn-bento {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.title-bento {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+</style>
