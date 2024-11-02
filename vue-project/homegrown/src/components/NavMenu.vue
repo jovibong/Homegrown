@@ -61,8 +61,8 @@
                 <nav class="navbar d-flex flex-nowrap">
                     <!-- if want the sign in to remain as a navlink use class below -->
                     <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" id="sign-in-btn">Sign In</a>
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" id="sign-up-btn">Sign Up</a>
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" @click="openLoginModal">Sign In</a>
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" @click="openSignUpModal">Sign Up</a>
                 </nav>
             </div>
             <!-- end of sign up/in buttons -->
@@ -72,10 +72,55 @@
 
     </div>
     <!---end of navbar-->
+    <LoginModal
+    :visible="isLoginModalVisible"
+    @login="handleLogin"
+    @openSignup="switchToSignUpModal"
+    @update:visible="isLoginModalVisible = $event"
+  />
+
+  <SignupModal
+      :visible="isSignUpModalVisible"
+      @signup="handleSignup"
+      @update:visible="isSignUpModalVisible = $event"
+    />
 </template>
 
 <script>
+import LoginModal from './authentication/LoginModal.vue';
+import SignupModal from './authentication/SignupModal.vue';
+
 export default {
-    
+  components: {
+    LoginModal,
+    SignupModal
+  },
+  data() {
+    return {
+      isLoginModalVisible: false,
+      isSignUpModalVisible: false
+    };
+  },
+  methods: {
+    openLoginModal() {
+      this.isLoginModalVisible = true;
+    },
+    openSignUpModal() {
+      this.isSignUpModalVisible = true;
+    },
+    switchToSignUpModal() {
+      this.isLoginModalVisible = false;
+      this.isSignUpModalVisible = true;
+    },
+    handleLogin() {
+      console.log("User has logged in!");
+      this.isLoginModalVisible = false;
+    },
+    handleSignup(userData) {
+      console.log("User has signed up!", userData);
+      this.isSignUpModalVisible = false;
+    }
+  }
 }
 </script>
+
