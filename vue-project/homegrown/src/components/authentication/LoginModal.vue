@@ -53,6 +53,8 @@
 
 <script>
 import { Modal } from "bootstrap";
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/firebase/initialize.js'; // Import Firebase auth instance
 
 export default {
   name: "LoginModal",
@@ -95,13 +97,17 @@ export default {
         this.modalInstance.hide();
       }
     },
-    handleLogin() {
-      if (this.email && this.password) {
-        console.log("Logging in with:", this.email, this.password);
-        this.$emit("login");
+    async handleLogin() {
+      try {
+        // Firebase sign-in
+        const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+        const user = userCredential.user;
+        console.log("Logged in user:", user);
+        this.$emit("login", user); // Emit event with user info if needed
         this.hideModal();
-      } else {
-        alert("Please enter valid credentials");
+      } catch (error) {
+        console.error("Error logging in:", error.message);
+        alert("Login failed: " + error.message);
       }
     },
     openSignup() {
@@ -118,7 +124,7 @@ export default {
     if (this.modalInstance) {
       this.modalInstance.dispose();
     }
-  }
+  },
 };
 </script>
 

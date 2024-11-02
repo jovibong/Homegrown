@@ -90,6 +90,8 @@
   
   <script>
 import { Modal } from "bootstrap";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/firebase/initialize.js'; 
 
 export default {
   name: "SignUpModal",
@@ -133,12 +135,24 @@ export default {
     closeModal() {
       this.$emit("update:visible", false);
     },
-    handleSignup() {
-      // Implement your signup logic here
-      console.log("Signing up");
-      this.$emit("signup");
-      this.hideModal();
-    }
+    async handleSignup() {
+      if (this.password !== this.confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+      
+      try {
+        // Firebase sign-up
+        const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+        const user = userCredential.user;
+        console.log("Signed up user:", user);
+        this.$emit("signup", user); // Emit event with user info if needed
+        this.hideModal();
+      } catch (error) {
+        console.error("Error signing up:", error.message);
+        alert("Signup failed: " + error.message);
+      }
+    },
   },
   mounted() {
     if (this.visible) {
@@ -149,7 +163,8 @@ export default {
     if (this.modalInstance) {
       this.modalInstance.dispose();
     }
-  }
+  },
+  
 };
 </script>
   

@@ -56,18 +56,41 @@
             </div>
             <!-- end of nav without sign in/up -->
 
-            <!-- start of sign up/in buttons -->
-            <div class="col-lg-2 col-3 d-flex justify-content-end align-items-start">
-                <nav class="navbar d-flex flex-nowrap">
+            <!-- profile dropdown and sign in/up buttons using v-if else conditions -->
+            <div class="col-lg-2 col-3 d-flex justify-content-end align-items-center">
+                <div v-if="user" class="profile-dropdown" @click="toggleDropdown">
+                <button class="profile-btn" id="profileDropdownBtn">
+                    <img :src="userPhoto" alt="Profile Picture" class="profile-img" />
+                    <div class="profile-name btn-warning">
+                    <span>{{ user.displayName || 'User' }}</span>
+                    <i :class="isDropdownVisible ? 'arrow-up' : 'arrow-down'"></i>
+                    </div>
+                </button>
+
+                <!-- Dropdown Content -->
+                <div v-if="isDropdownVisible" class="dropdown-content bg-warning" id="dropdownContent">
+                    <div class="dropdown-header">
+                    <img :src="userPhoto" alt="Profile Picture" class="dropdown-img" />
+                    <span class="dropdown-username">{{ user.displayName || 'User' }}</span>
+                    </div>
+                    <hr>
+                    <a href="#" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile Settings</a>
+                    <a href="#" class="dropdown-item"><i class="bi bi-award-fill"></i> Certifications</a>
+                    <hr>
+                    <a href="#" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+                </div>
+                </div>
+
+                <!-- Show Sign In/Up Buttons when User is not logged in -->
+                <nav v-else class="navbar d-flex flex-nowrap">
                     <!-- if want the sign in to remain as a navlink use class below -->
                     <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" @click="openLoginModal">Sign In</a>
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 text-nowrap" @click="openSignUpModal">Sign Up</a>
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openLoginModal">Sign In</a>
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openSignUpModal">Sign Up</a>
                 </nav>
             </div>
-            <!-- end of sign up/in buttons -->
-
         </div>
+        
         <!-- end of row -->
 
     </div>
@@ -87,6 +110,8 @@
 </template>
 
 <script>
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '@/firebase/initialize.js';
 import LoginModal from './authentication/LoginModal.vue';
 import SignupModal from './authentication/SignupModal.vue';
 
@@ -98,8 +123,28 @@ export default {
   data() {
     return {
       isLoginModalVisible: false,
-      isSignUpModalVisible: false
+      isSignUpModalVisible: false,
+      user: null,
+      isDropdownVisible: false // Track dropdown visibility
     };
+  },
+  computed: {
+    userPhoto() {
+      return this.user?.photoURL || 'path/to/default-profile-pic.jpg'; // Fallback to default profile pic if none is provided
+    }
+  },
+  created() {
+    onAuthStateChanged(auth, (user) => {
+      this.user = user ? user : null;
+    });
+  },
+  mounted() {
+    // Listen for clicks on the document to detect clicks outside the dropdown
+    document.addEventListener("click", this.handleClickOutside);
+  },
+  beforeUnmount() {
+    // Clean up the event listener when the component is unmounted
+    document.removeEventListener("click", this.handleClickOutside);
   },
   methods: {
     openLoginModal() {
@@ -119,8 +164,121 @@ export default {
     handleSignup(userData) {
       console.log("User has signed up!", userData);
       this.isSignUpModalVisible = false;
+    },
+    logout() {
+      signOut(auth)
+        .then(() => {
+          console.log("User signed out");
+          this.user = null;
+          this.isDropdownVisible = false;
+        })
+        .catch((error) => {
+          console.error("Error signing out:", error);
+        });
+    },
+    toggleDropdown(event) {
+      // Toggle dropdown visibility
+      this.isDropdownVisible = !this.isDropdownVisible;
+      event.stopPropagation(); // Stop event from closing the dropdown immediately
+    },
+    handleClickOutside(event) {
+      // Only proceed if the dropdown is currently visible
+      if (!this.isDropdownVisible) return;
+
+      // Access the dropdown and button elements by their class names
+      const dropdown = document.querySelector(".dropdown-content");
+      const button = document.querySelector(".profile-btn");
+
+      // Check if the click is outside both dropdown and button
+      if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
+        this.isDropdownVisible = false;
+      }
     }
-  }
-}
+}};
 </script>
+
+<style scoped>
+/* Profile Dropdown container styling */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  background: #FFC107;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.profile-btn:hover {
+  background-color: #e0a106;
+}
+
+/* Profile image */
+.profile-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.arrow-down, .arrow-up {
+  font-size: 0.8rem;
+  margin-left: 6px;
+}
+
+/* Rotate the arrow to face up when dropdown is visible */
+.arrow-up::before {
+  content: "▲";
+  color: black;
+}
+
+.arrow-down::before {
+  content: "▼";
+  color: black;
+}
+
+/* Dropdown content styling */
+.dropdown-content {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px); /* Adds an 8px gap between the button and dropdown */
+  background-color: #FFC107;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  padding: 10px;
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+/* Styling for individual dropdown items */
+.dropdown-content a {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  color: #333;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #e0a106;
+}
+
+/* Icon and text spacing */
+.dropdown-content i {
+  margin-right: 8px;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+
 
