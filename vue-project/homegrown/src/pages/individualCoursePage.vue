@@ -1,26 +1,25 @@
 <template>
   <div class="individualCoursePage">
-    <loading-animation></loading-animation>
     <!--Back Button and Course Title-->
     <section id="Title" class="container py-3 fade-in-top">
       <div class="container mb-4">
         <div class="row align-items-center">
           <!-- Back Button -->
           <div class="col-3">
-            <a href="ongoing_courses.html" class="btn btn-warning text-dark"
+            <router-link
+              to="ongoingCoursesPage"
+              class="btn btn-warning text-dark"
               ><i class="bi bi-arrow-left"></i>
               <span class="d-none d-lg-inline">Back to ongoing courses</span>
               <span class="d-inline d-lg-none">Back</span>
-            </a>
+            </router-link>
           </div>
           <!-- Title (Centered) -->
           <div class="col-6 text-center">
             <h2 class="text-primary fw-bold mb-0 display-4">Ongoing Courses</h2>
           </div>
-          <!-- Empty column for spacing/flexibility -->
           <div class="col-3"></div>
         </div>
-        <!-- Subtitle -->
         <p class="text-center text-muted mt-3">
           Keep up the great work! You're on your way to mastering new skills.
           Complete your courses to unlock your full potential today!
@@ -34,7 +33,6 @@
         <div class="card-body position-relative">
           <div class="row align-items-center">
             <!-- Icon and Course Info -->
-
             <div class="col-md-3 text-center mb-3 mb-md-0 h-100">
               <a href="#course_reviews" class="text-decoration-none">
                 <i class="bi bi-book fs-1 text-primary"></i>
@@ -158,40 +156,38 @@
     <!--Dropdown items-->
     <div id="lessons_expanded" class="collapse container">
       <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
-        <a href="video_1.html" class="text-decoration-none">
-          <div class="card shadow-sm mb-md-2 mb-3">
-            <div class="card-body position-relative">
-              <h4 class="fw-bold mb-3">{{ lesson.name }}</h4>
-              <div class="row">
+        <div class="card shadow-sm mb-md-2 mb-3">
+          <div class="card-body position-relative">
+            <h4 class="fw-bold mb-3">{{ lesson.title }}</h4>
+            <div class="row">
+              <div
+                v-for="item in lesson.lesson_items"
+                :key="item.id"
+                class="col-12"
+              >
                 <div
-                  v-for="item in lesson.content"
-                  :key="item.id"
-                  class="col-12"
+                  class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
                 >
-                  <div
-                    class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
-                  >
-                    <div class="me-3">
-                      <div
-                        class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
-                        style="width: 60px; height: 60px"
-                      >
-                        <i :class="'bi ' + item.icon + ' h2 pt-2'"></i>
-                      </div>
+                  <div class="me-3">
+                    <div
+                      class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
+                      style="width: 60px; height: 60px"
+                    >
+                      <i :class="item.icon" class="h2 pt-2"></i>
                     </div>
-                    <div>
-                      <p class="text-primary mb-1">
-                        {{ formatType(item.typeof) }}
-                      </p>
-                      <p class="fw-bold mb-1">{{ item.name }}</p>
-                      <p class="text-muted">{{ item.duration }}</p>
-                    </div>
+                  </div>
+                  <div>
+                    <p class="text-primary mb-1">
+                      {{ formatType(item.typeof) }}
+                    </p>
+                    <p class="fw-bold mb-1">{{ item.name }}</p>
+                    <p class="text-muted">{{ item.duration }}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </a>
+        </div>
       </div>
     </div>
 
@@ -210,29 +206,9 @@
           </div>
         </div>
       </div>
-
-      <!-- Tabs -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link active font-weight-bold" href="#">New</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link font-weight-bold" href="#">Negative</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link font-weight-bold" href="#">Positive</a>
-          </li>
-        </ul>
-        <!-- Separate "View All" Button -->
-        <a href="#" class="btn btn-outline-primary d-flex align-items-center">
-          View All <i class="bi bi-play-circle ms-2"></i>
-        </a>
-      </div>
-
-      <!-- Reviews List -->
-      <div class="list-group">
-        <!-- Review Card -->
+      <!-- Review List -->
+      <loading-animation v-if="loading"></loading-animation>
+      <div v-else class="list-group">
         <div
           v-for="(review, review_key) in reviews"
           :key="review_key"
@@ -261,9 +237,10 @@
   </div>
 </template>
 
-
 <script>
 import loadingAnimation from "../components/loadingAnimation.vue";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/initialize";
 
 export default {
   components: {
@@ -271,106 +248,92 @@ export default {
   },
   data() {
     return {
-      user: "user_00001", // Target user ID
+      user: "user_00001",
       course: null,
-      loading: true, // Loading state
-      reviews: [
-        {
-          name: "Johnny Jon",
-          img: "https://via.placeholder.com/50",
-          rating: 4,
-          comments:
-            "This is the best course ever! The instructor was very engaging, and the examples provided were practical and easy to follow. I learned a lot and feel more confident in my skills now.",
-        },
-        {
-          name: "Sara Smith",
-          img: "https://via.placeholder.com/50",
-          rating: 5,
-          comments:
-            "Absolutely amazing experience. Highly recommend this course to everyone. The pacing was perfect, and the materials were well-organized. It really helped me understand the complex topics, and the projects were fun and challenging!",
-        },
-        {
-          name: "Michael Brown",
-          img: "https://via.placeholder.com/50",
-          rating: 3,
-          comments:
-            "The course was good, but I expected more depth in some areas. Some of the lessons were a bit too basic, and I would have liked more advanced content. However, the instructor did a great job of explaining things clearly.",
-        },
-        {
-          name: "Emily Johnson",
-          img: "https://via.placeholder.com/50",
-          rating: 5,
-          comments:
-            "Great instructor and very well-structured content. I learned a lot! The hands-on exercises were particularly helpful, and the community support was fantastic. This course gave me the confidence to start applying my new skills right away.",
-        },
-        {
-          name: "Chris Lee",
-          img: "https://via.placeholder.com/50",
-          rating: 2,
-          comments:
-            "Not what I expected. The material was too basic for me, and I didn’t feel like I got much value from it. It might be good for beginners, but for someone with experience, it felt like a repeat of things I already knew.",
-        },
-        {
-          name: "Alex Martinez",
-          img: "https://via.placeholder.com/50",
-          rating: 4,
-          comments:
-            "Very informative, but could use more real-life examples. While the content was solid, I felt that applying the concepts to real-world scenarios would have enhanced my learning experience. Still, it’s a good course overall.",
-        },
-      ],
-      mentor1: {
+      loading: true,
+      reviews: null,
+      mentor: {
         name: "Loretta Liew",
         description:
           "Hi there! I'm Loretta Liew, a dedicated mentor passionate about guiding others in their personal and professional growth. With years of experience, I help individuals achieve their fullest potential and goals.",
         img: "lorettaliew.png",
       },
-      lessons: {
-        L101: {
-          name: "Lesson 1",
-          content: [
-            {
-              id: "vid1_1",
-              typeof: "video",
-              duration: "10min",
-              name: "Video 1: Introduction",
-              icon: "bi-play-fill",
-            },
-            {
-              id: "q_1_1",
-              typeof: "quiz",
-              duration: "10min",
-              name: "Quiz 1: Introduction",
-              icon: "bi-lightbulb",
-            },
-          ],
-        },
-        L102: {
-          name: "Lesson 2",
-          content: [
-            {
-              id: "vid2_1",
-              typeof: "video",
-              duration: "10min",
-              name: "Video 2: Variables",
-              icon: "bi-play-fill",
-            },
-            {
-              id: "q_2_1",
-              typeof: "quiz",
-              duration: "10min",
-              name: "Quiz 2: Variables",
-              icon: "bi-lightbulb",
-            },
-          ],
-        },
-      },
+      lessons: [],
     };
   },
   methods: {
+    async fetchLessons() {
+      try {
+        const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
+        const lessonDocs = await getDocs(lessonsRef);
+
+        const lessonsData = await Promise.all(
+          lessonDocs.docs.map(async (lessonDoc) => {
+            const lessonData = lessonDoc.data();
+
+            // Fetch lesson items for each lesson
+            const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
+            const lessonItemsDocs = await getDocs(lessonItemsRef);
+
+            const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
+              const itemData = itemDoc.data();
+              return {
+                ...itemData,
+                id: itemDoc.id,
+                icon:
+                  itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
+              };
+            });
+
+            return {
+              title: lessonData.title,
+              lesson_items: lessonItemsData,
+            };
+          })
+        );
+
+        this.lessons = lessonsData;
+      } catch (error) {
+        console.error("Error fetching lessons and items:", error);
+      }
+    },
+    async fetchReviewsWithUserDetails() {
+      try {
+        const reviewsRef = collection(db, `courses/${this.course.id}/reviews`);
+        const reviewDocs = await getDocs(reviewsRef);
+
+        const reviewsData = await Promise.all(
+          reviewDocs.docs.map(async (reviewDoc) => {
+            const reviewData = reviewDoc.data();
+            const userRef = doc(db, "users", reviewData.user);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              return {
+                ...reviewData,
+                name: userData.name,
+                img: userData.profile_picture,
+              };
+            } else {
+              console.warn(`User data not found for user: ${reviewData.user}`);
+              return reviewData;
+            }
+          })
+        );
+
+        this.reviews = reviewsData;
+      } catch (error) {
+        console.error("Error fetching reviews and user details:", error);
+      } finally {
+        this.loading = false;
+         console.log("This page has loaded");
+      }
+    },
+
     getRatingStars(rating) {
       const roundedRating = Math.round(rating * 2) / 2;
       let stars = "";
-
       for (let i = 1; i <= 5; i++) {
         if (i <= Math.floor(roundedRating)) {
           stars += '<i class="bi bi-star-fill text-warning"></i>';
@@ -386,22 +349,19 @@ export default {
       return type.charAt(0).toUpperCase() + type.slice(1);
     },
   },
-  mounted() {
-    console.log("This page has loaded");
-    const storedCourse = sessionStorage.getItem("selectedCourse");
+  async mounted() {
+      const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);
-      console.log(this.course);
     } else {
       console.log("No course data found in sessionStorage");
+      return;
     }
+
+    await this.fetchLessons();
+    await this.fetchReviewsWithUserDetails();
   },
 };
 </script>
 
-
-
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>
