@@ -158,14 +158,14 @@
                 </button>
               </div>
 
-              <router-link
-                to="individualCoursePage"
+              <button
+                @click="goToCoursePage(course)"
                 class="btn btn-primary rounded-pill d-inline-flex align-items-center col-3 m-4 position-absolute bottom-0 end-0 m-2 text-secondary fw-bold justify-content-center"
               >
                 <span class="d-md-inline d-none"> Go to course </span>
                 <i class="bi bi-arrow-right ms-md-2 d-none d-md-inline"></i>
                 <i class="bi bi-arrow-right d-inline d-md-none display-4"></i>
-              </router-link>
+              </button>
             </div>
           </div>
         </div>
@@ -189,6 +189,7 @@ export default {
       user: "user_00001", // Target user ID
       ongoing_courses: [],
       loading: true,
+      selected_course: null,
     };
   },
   methods: {
@@ -210,6 +211,12 @@ export default {
         }
       }
       return stars;
+    },
+    goToCoursePage(course) {
+      // Save the course data to sessionStorage
+      sessionStorage.setItem("selectedCourse", JSON.stringify(course));
+      // Navigate to the individual course page without passing parameters
+      this.$router.push({ name: "individualCoursePage" });
     },
     async fetchCourses() {
       try {
