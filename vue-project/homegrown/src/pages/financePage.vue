@@ -27,6 +27,7 @@
                         <div class="col-12">
                             <div id="chart"
                                 class="bento-tile h-100 p-3 d-flex justify-content-center align-items-center">
+                                <!-- summart chart here -->
                                 <summary-chart />
                             </div>
                         </div>
@@ -474,7 +475,7 @@
 
 <script>
 import StatsTile from '../components/statsTile.vue';
-// import SummaryChart from '../components/summaryChart.vue';
+import SummaryChart from '../components/summaryChart.vue';
 
 export default {
 
@@ -484,7 +485,7 @@ export default {
     components:
     {
         'stats-tile' : StatsTile,
-        // 'summary-chart' :SummaryChart
+        'summary-chart' :SummaryChart
 
     }
     

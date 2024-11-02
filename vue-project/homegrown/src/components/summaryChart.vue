@@ -1,14 +1,14 @@
 <template>
     <div>
-        <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+        <apexchart type="line" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>
 
 <script>
-import VueApexCharts from 'vue-apexcharts'
+import VueApexCharts from "vue3-apexcharts";
 
 export default {
-    name: 'SummaryChart',
+    name: 'summary-chart',
     components: {
         apexchart: VueApexCharts,
     },
@@ -16,19 +16,19 @@ export default {
         return {
             series: [
                 {
-                    name: 'TEAM A',
+                    name: 'Current',
                     type: 'area',
                     data: [44, 55, 31, 47, 31, 43, 26, 41, 31, 47, 33]
                 },
                 {
-                    name: 'TEAM B',
+                    name: 'Goal',
                     type: 'line',
-                    data: [55, 69, 45, 61, 43, 54, 37, 52, 44, 61, 43]
+                    data: [100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000]
                 }
             ],
             chartOptions: {
                 chart: {
-                    height: 350,
+                    
                     type: 'line',
                 },
                 stroke: {
