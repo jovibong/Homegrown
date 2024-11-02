@@ -4,7 +4,7 @@
 
         <!-- Volunteer Hour Goals -->
         <section class="mb-5">
-            <h2 class="mb-4 text-primary"><i class="bi bi-flag-fill me-2"></i>Set Your Volunteer Hour Goals</h2>
+            <h2 class="mb-4 text-primary text-start"><i class="bi bi-flag-fill me-2"></i>Set Your Volunteer Hour Goals</h2>
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Current Goal: {{ yearlyGoal }} hours</h3>
@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col text-start">
                             <button @click="showModal" class="btn btn-secondary"><i
                                     class="bi bi-pencil-fill me-2"></i>Set New
                                 Goal</button>
@@ -40,7 +40,7 @@
 
         <!-- Current Mentored Course -->
         <section class="mb-5">
-            <h2 class="mb-4 text-primary"><i class="bi bi-book-fill me-2"></i>Current Mentored Course</h2>
+            <h2 class="mb-4 text-primary text-start"><i class="bi bi-book-fill me-2"></i>Current Mentored Course</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="course in currentMentorships" :key="course.id" class="col">
                     <div class="card h-100 hover-animate">
@@ -61,7 +61,7 @@
 
         <!-- Past Mentorships -->
         <section class="mb-5">
-            <h2 class="mb-4 text-primary"><i class="bi bi-journal-check me-2"></i>Past Mentorships</h2>
+            <h2 class="mb-4 text-primary text-start"><i class="bi bi-journal-check me-2"></i>Past Mentorships</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="course in pastMentorships" :key="course.id" class="col">
                     <div class="card h-100  hover-animate">
@@ -82,7 +82,7 @@
 
         <!-- Upcoming Events -->
         <section class="mb-5">
-            <h2 class="mb-4 text-primary"><i class="bi bi-calendar-event me-2"></i>Upcoming Events</h2>
+            <h2 class="mb-4 text-primary text-start"><i class="bi bi-calendar-event me-2"></i>Upcoming Events</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="event in upcomingEvents" :key="event.id" class="col">
                     <div class="card h-100 hover-animate">
@@ -103,7 +103,7 @@
 
         <!-- Past Events -->
         <section>
-            <h2 class="mb-4 text-primary"><i class="bi bi-calendar-check me-2"></i>Past Events</h2>
+            <h2 class="mb-4 text-primary text-start"><i class="bi bi-calendar-check me-2"></i>Past Events</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="event in pastEvents" :key="event.id" class="col">
                     <div class="card h-100 hover-animate">
@@ -230,6 +230,9 @@ export default {
             return Math.min(Math.round((this.totalHours / this.yearlyGoal) * 100), 100);
         },
         futurePercentage() {
+            if (this.totalHours > this.yearlyGoal) {
+                return 0;
+            }
             if (this.totalHours + this.futureHours > this.yearlyGoal) {
                 return Math.min(Math.round(((this.yearlyGoal - this.totalHours) / this.yearlyGoal) * 100), 100);
             } else {
@@ -289,7 +292,6 @@ body {
     display: block;
     margin-top: auto;
     margin: 15px;
-    text-align: center;
 }
 
 .row {
