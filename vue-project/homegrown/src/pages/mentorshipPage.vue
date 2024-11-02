@@ -265,7 +265,6 @@ export default {
 
 
 <style scoped>
-@import '../css/animation.css';
 body {
     background-color: #f8f9fa;
 }
