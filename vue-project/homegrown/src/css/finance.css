@@ -135,4 +135,17 @@ input[type="radio"]:checked+.page {
     background-color: #363636;
 }
 
+.btn-add {
+    outline: 3px solid black;
+}
+
+.add {
+    color: black;
+}
+
+/* Select the immediate sibling with class `.add` when `.btn-add` is hovered */
+.btn-add:hover .add {
+    color: white;
+}
+
 /* end of table logs */

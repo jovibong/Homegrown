@@ -279,168 +279,175 @@
             <!-- start PaymentTracker tab nav -->
             <input name="nav" type="radio" id="PaymentTracker" />
             <div class="page">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="row my-5 g-3">
-                        <div class="col-md-6">
-                            <div class="row">
-                                <div class="col-md-12 pb-3">
-                                    <div class="bento-tile h-100">
-                                        <div>
-                                            <h1 class="display-1 fw-bold text-primary">Summary</h1>
-                                            <p class="text-muted">A quick glance at your income and spending</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="bento-tile p-3 h-100">
-                                        <stats-tile title="Total earned" stat="$51,400"
-                                            description="$5,000 per month"></stats-tile>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="bento-tile p-3 h-100">
-                                        <stats-tile title="Payday" stat="5 days left"
-                                            description="15th of every Month"></stats-tile>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="bento-tile p-3 h-100">
-                                        <stats-tile title="Late Payments" stat="1"
-                                            description="Considered late: >2 days"></stats-tile>
-                                    </div>
+
+
+                        <div class="col-12">
+                            <div class="bento-tile h-100 p-3">
+                                <div>
+                                    <h1 class="display-1 fw-bold text-primary">Summary</h1>
+                                    <p class="text-muted">A quick glance at your income and spending</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+
+
+                        <div class="col-lg-4">
+                            <div class="bento-tile p-3 h-100">
+                                <stats-tile title="Total earned" stat="$51,400"
+                                    description="$5,000 per month"></stats-tile>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="bento-tile p-3 h-100">
+                                <stats-tile title="Payday" stat="5 days left"
+                                    description="15th of every Month"></stats-tile>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="bento-tile p-3 h-100">
+                                <stats-tile title="Late Payments" stat="1"
+                                    description="Considered late: >2 days"></stats-tile>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12">
                             <div class="bento-tile h-100 p-3">
                                 <div class=" container row d-flex justify-content-start mx-auto">
-                                <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
-                                <div class="col-* px-0">
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control w-75" placeholder="Search here..."
-                                            aria-label="Text input with dropdown button">
-                                        <select class="form-select filter-by w-25 text-wrap"
-                                            aria-label="Default select example">
-                                            <option value="None" selected>Filter by</option>
-                                            <option value="Tilte">Tilte</option>
-                                            <option value="Amount">Amount</option>
-                                            <option value="Status">Status</option>
-                                            <option value="Date">Date</option>
-                                            <option value="Image">Image</option>
-                                        </select>
+                                    <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
+                                    <div class="col-* px-0">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control w-75" placeholder="Search here..."
+                                                aria-label="Text input with dropdown button">
+                                            <select class="form-select filter-by w-25 text-wrap"
+                                                aria-label="Default select example">
+                                                <option value="None" selected>Filter by</option>
+                                                <option value="Tilte">Tilte</option>
+                                                <option value="Amount">Amount</option>
+                                                <option value="Status">Status</option>
+                                                <option value="Date">Date</option>
+                                                <option value="Image">Image</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- end of search bar -->
+                                <!-- end of search bar -->
 
 
 
-                            <!-- start of table logs -->
-                            <!-- NOTE CAN CREATE TEMPLATE FOR ROW INSERTION -->
-                            <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
-                            <div class="container d-fex justify-content-center align-items-center">
-                                <div class="table-responsive logs-scroll">
-                                    <table class="table table-striped text-center mb-0">
-                                        <!-- table head should be made sticky if long table while scrolling until end of table -->
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th scope="col">Select</th>
-                                                <!-- titles should be clickable to view the details if needed -->
-                                                <th scope="col">Title</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Status</th>
-                                                <th scope="col">Date of Payment</th>
-                                                <!-- fill in img link later. NOTE will create a pop up/modal to see img and download if needed -->
-                                                <th scope="col">Image</th>
-                                                <!-- if some selected, it should show the total number of items selected and the actions should be shown -->
-                                                <th scope="col"></th>
+                                <!-- start of table logs -->
+                                <!-- NOTE CAN CREATE TEMPLATE FOR ROW INSERTION -->
+                                <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
+                                <div class="container d-flex justify-content-center align-items-center">
+                                    <div class="table-responsive logs-scroll">
+                                        <table class="table table-striped text-center mb-0">
+                                            <!-- table head should be made sticky if long table while scrolling until end of table -->
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th scope="col">Select</th>
+                                                    <!-- titles should be clickable to view the details if needed -->
+                                                    <th scope="col">Title</th>
+                                                    <th scope="col">Amount</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Date of Payment</th>
+                                                    <!-- fill in img link later. NOTE will create a pop up/modal to see img and download if needed -->
+                                                    <th scope="col">Image</th>
+                                                    <!-- if some selected, it should show the total number of items selected and the actions should be shown -->
+                                                    <th scope="col"></th>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-group-divider">
-                                            <tr>
-                                                <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
-                                                <th scope="row">June Payment</th>
-                                                <td>$5000</td>
-                                                <td><span class="badge rounded-pill text-bg-primary">ON TIME</span></td>
-                                                <td>15/06/2024</td>
-                                                <td><a href='#' class="text-dark">example.png</a></td>
-                                                <td class="text-nowrap">
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-eye'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-trash'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-edit'></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
-                                                <th scope="row">May Payment</th>
-                                                <td>$5000</td>
-                                                <td><span class="badge rounded-pill text-bg-success">Early</span></td>
-                                                <td>10/05/2024</td>
-                                                <td><a href='#' class="text-dark">example.png</a></td>
-                                                <td class="text-nowrap">
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-eye'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-trash'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-edit'></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
-                                                <th scope="row">April Payment</th>
-                                                <td>$5000</td>
-                                                <td><span class="badge rounded-pill text-bg-danger">LATE</span></td>
-                                                <td>20/04/2024</td>
-                                                <td><a href='#' class="text-dark">example.png</a></td>
-                                                <td class="text-nowrap">
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-eye'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-trash'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-edit'></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
-                                                <th scope="row">April Bonus</th>
-                                                <td>$1111</td>
-                                                <td><span class="badge rounded-pill text-bg-success">Bonus</span></td>
-                                                <td>11/04/2024</td>
-                                                <td><a href='#' class="text-dark">example.png</a></td>
-                                                <td class="text-nowrap">
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-eye'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-trash'></i>
-                                                        |</a>
-                                                    <a href='#' class="text-decoration-none text-dark"><i
-                                                            class='fas fa-edit'></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="7"><a href='#'><i
-                                                            class='fas fa-plus-circle text-dark fs-2'></i></a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-group-divider">
+                                                <tr>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <th scope="row">June Payment</th>
+                                                    <td>$5000</td>
+                                                    <td><span class="badge rounded-pill text-bg-primary">ON TIME</span>
+                                                    </td>
+                                                    <td>15/06/2024</td>
+                                                    <td><a href='#' class="text-dark">example.png</a></td>
+                                                    <td class="text-nowrap">
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-eye'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-trash'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-edit'></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <th scope="row">May Payment</th>
+                                                    <td>$5000</td>
+                                                    <td><span class="badge rounded-pill text-bg-success">Early</span>
+                                                    </td>
+                                                    <td>10/05/2024</td>
+                                                    <td><a href='#' class="text-dark">example.png</a></td>
+                                                    <td class="text-nowrap">
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-eye'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-trash'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-edit'></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <th scope="row">April Payment</th>
+                                                    <td>$5000</td>
+                                                    <td><span class="badge rounded-pill text-bg-danger">LATE</span></td>
+                                                    <td>20/04/2024</td>
+                                                    <td><a href='#' class="text-dark">example.png</a></td>
+                                                    <td class="text-nowrap">
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-eye'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-trash'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-edit'></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <th scope="row">April Bonus</th>
+                                                    <td>$1111</td>
+                                                    <td><span class="badge rounded-pill text-bg-success">Bonus</span>
+                                                    </td>
+                                                    <td>11/04/2024</td>
+                                                    <td><a href='#' class="text-dark">example.png</a></td>
+                                                    <td class="text-nowrap">
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-eye'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-trash'></i>
+                                                            |</a>
+                                                        <a href='#' class="text-decoration-none text-dark"><i
+                                                                class='fas fa-edit'></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><button class="btn btn-add btn-outline-dark">
+                                                        <i class='fas fa-plus-circle fs-5 add'></i> <span>Add Logs</span>
+                                                        </button>
+                                                    </td>
+                                                    <td colspan="6">
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -487,4 +494,5 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 @import "../css/finance.css";
+
 </style>
