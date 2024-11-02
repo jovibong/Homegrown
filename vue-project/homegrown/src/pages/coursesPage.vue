@@ -1,5 +1,5 @@
 <template>
-  <div class="coursePage">
+  <div class="coursesPage">
     <!--Ongoing Courses Section-->
     <section id="app_ongoing" class="container py-3 fade-in-top">
       <h2 class="text-primary fw-bold text-center mb-3 display-4">
@@ -243,7 +243,7 @@ export default {
     };
   },
   methods: {
-    getRatingStars(rating) {
+        getRatingStars(rating) {
       const roundedRating = Math.round(rating * 2) / 2;
       let stars = "";
 
@@ -364,50 +364,5 @@ export default {
   line-height: 1.2;
   max-width: 90px; /* Ensure the text fits within the badge */
 }
-/*Triangle button CSS*/
-.triangle-btn {
-  margin: auto;
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
-  display: inline-block;
-  clip-path: polygon(50% 100%, 0 33%, 100% 33%);
-  border: none;
-}
-
-.triangle-btn.rotate {
-  transform: rotate(180deg);
-  margin-top: 5px;
-}
-
-.triangle-btn-bg {
-  padding-top: 5px;
-  position: relative;
-  bottom: -40px;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  border-radius: 50%;
-}
-
-/*Timeline CSS*/
-.timeline-container {
-  position: relative;
-  padding: 1rem 0;
-  width: 80%;
-  margin: auto;
-}
-
-.timeline-line {
-  position: absolute;
-  top: 54%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #ddd;
-  z-index: 0; /* Ensures the line stays behind the circles */
-}
-
-
 
 </style>
