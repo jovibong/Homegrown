@@ -26,7 +26,7 @@
 
                         <div class="col-12">
                             <div id="chart"
-                                class="bento-tile h-100 p-3 d-flex justify-content-center align-items-center">
+                                class="bento-tile p-3">
                                 <!-- summart chart here -->
                                 <summary-chart />
                             </div>
