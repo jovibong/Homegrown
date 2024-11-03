@@ -1,5 +1,5 @@
 <template>
-  <div class="individualCoursePage">
+  <div class="individualCoursePage text-start">
     <!--Back Button and Course Title-->
     <section id="Title" class="container py-3 fade-in-top">
       <div class="container mb-4">
@@ -54,19 +54,13 @@
                   {{ course.name }}
                 </h5>
                 <div class="text-center col-md-2 my-0 d-md-block d-none">
-                  <a :href="expanded ? '#lessons_expanded' : '#'">
-                    <button
-                      class="rounded-circle bg-white border border-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#lessons_expanded"
-                      aria-expanded="false"
-                      aria-controls="lessons_expanded"
-                      @click="toggleChevron"
-                    >
-                      <i class="bi bi-chevron-down display-5"></i>
-                    </button>
-                  </a>
+                  <button
+                    class="rounded-circle bg-white border border-0"
+                    type="button"
+                    @click="toggleAccordion()"
+                  >
+                    <i class="bi bi-chevron-down display-5" :class="{'text-black-50':lessons_loading}" ref="chevron"></i>
+                  </button>
                 </div>
               </div>
               <p class="text-muted">{{ course.description }}</p>
@@ -100,19 +94,13 @@
 
           <!--Dropdown Button on small screens-->
           <div class="text-center my-0 d-md-none d-block">
-            <a :href="expanded ? '#lessons_expanded' : '#app'">
-              <button
-                class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#lessons_expanded"
-                aria-expanded="false"
-                aria-controls="lessons_expanded"
-                @click="toggleTriangle"
-              >
-                <i class="triangle-btn bg-secondary"></i>
-              </button>
-            </a>
+            <button
+              class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg"
+              type="button"
+              @click="toggleAccordion()"
+            >
+              <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'" ref="triangle"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -154,7 +142,7 @@
     </section>
 
     <!--Dropdown items-->
-    <div id="lessons_expanded" class="collapse container">
+    <div class="content container" ref="lessons">
       <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
         <div class="card shadow-sm mb-md-2 mb-3">
           <div class="card-body position-relative">
@@ -259,6 +247,8 @@ export default {
         img: "lorettaliew.png",
       },
       lessons: [],
+      expanded: false,
+      lessons_loading: true,
     };
   },
   methods: {
@@ -295,6 +285,8 @@ export default {
         this.lessons = lessonsData;
       } catch (error) {
         console.error("Error fetching lessons and items:", error);
+      } finally {
+        this.lessons_loading = false;
       }
     },
     async fetchReviewsWithUserDetails() {
@@ -327,7 +319,7 @@ export default {
         console.error("Error fetching reviews and user details:", error);
       } finally {
         this.loading = false;
-         console.log("This page has loaded");
+        console.log("This page has loaded");
       }
     },
 
@@ -348,9 +340,41 @@ export default {
     formatType(type) {
       return type.charAt(0).toUpperCase() + type.slice(1);
     },
+    toggleAccordion() {
+      const triangle = this.$refs["triangle"];
+      console.log(triangle);
+      const chevron = this.$refs["chevron"];
+      console.log(chevron);
+      const lessons = this.$refs["lessons"];
+      console.log(lessons);
+
+      if (this.expanded) {
+        lessons.style.height = "0px";
+        chevron.classList.remove("bi-chevron-up");
+        chevron.classList.add("bi-chevron-down");
+        triangle.classList.remove("rotate");
+      } else {
+        lessons.style.height = lessons.scrollHeight + "px";
+        chevron.classList.remove("bi-chevron-down");
+        chevron.classList.add("bi-chevron-up");
+        triangle.classList.add("rotate");
+
+        const topOffset = 100; // Adjust for desired space at the top
+        const elementPosition =
+          lessons.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - topOffset;
+
+        // Smooth scroll to the position with the offset
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }
+      this.expanded = !this.expanded;
+    },
   },
   async mounted() {
-      const storedCourse = sessionStorage.getItem("selectedCourse");
+    const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);
     } else {
@@ -364,4 +388,36 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.content {
+  height: 0px;
+  overflow: hidden;
+  transition: height 0.5s ease; /* Adjust duration as needed */
+}
+
+/*Triangle button CSS*/
+.triangle-btn {
+  margin: auto;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  display: inline-block;
+  clip-path: polygon(50% 100%, 0 33%, 100% 33%);
+  border: none;
+}
+
+.triangle-btn.rotate {
+  transform: rotate(180deg);
+  margin-top: 5px;
+}
+
+.triangle-btn-bg {
+  padding-top: 5px;
+  position: relative;
+  bottom: -40px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  border-radius: 50%;
+}
+</style>
