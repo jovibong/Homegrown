@@ -10,20 +10,26 @@ const { show, title, stat, description } = defineProps({
 <template>
     <Transition name="modal">
         <div v-if="show" class="modal-mask">
-            <div class="modal-container">
+            <div class="modal-container p-5">
                 <div class="modal-header">
-                    <slot name="header">{{ title }}</slot>
+                    <slot name="header">{{ title }} </slot>
                 </div>
 
-                <div class="modal-body">
-                    <slot name="body">{{ stat  }}</slot>
+                <div class="mb-4">
+                    <form class="needs-validation" novalidate>
+                        
+                            <label for="validationCustom01" class="form-label"></label>
+                            <input type="text" class="form-control" id="validationCustom01" :value="stat" required>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        
+                    </form>
                 </div>
 
                 <div class="modal-footer">
-                    <slot name="footer">
-                        {{description}}
-                        <button class="modal-default-button" @click="$emit('close')">OK</button>
-                    </slot>
+                    {{ description }}
+                    <button class="modal-default-button" @click="$emit('close')">OK</button>
                 </div>
             </div>
         </div>
@@ -45,9 +51,7 @@ const { show, title, stat, description } = defineProps({
 }
 
 .modal-container {
-    width: 300px;
     margin: auto;
-    padding: 20px 30px;
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
@@ -57,10 +61,6 @@ const { show, title, stat, description } = defineProps({
 .modal-header h3 {
     margin-top: 0;
 
-}
-
-.modal-body {
-    margin: 20px 0;
 }
 
 .modal-default-button {

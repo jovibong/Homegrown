@@ -18,7 +18,7 @@ const showModal = ref(false)
                 <!-- use the modal component, pass in the prop -->
                 <modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
                     <template #header>
-                        <h3>{{title}}</h3>
+                        <h2>{{title}}</h2>
                     </template>
                 </modal>
             </Teleport>
