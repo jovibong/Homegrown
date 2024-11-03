@@ -11,7 +11,7 @@ const showModal = ref(false)
 
         <div class="d-flex justify-content-start align-items-center mb-2">
             <span class="fw-bold ps-2">{{ title }}</span>
-            <button class="interact p-2" id="show-modal" @click="showModal = true" >
+            <button class="tile-interact p-2" id="show-modal" @click="showModal = true" >
                 <i class='fas fa-edit'></i>
             </button>
             <Teleport to="body">
@@ -42,17 +42,17 @@ export default {
 </script>
 
 <style scoped>
-/* try to flicker edit when hover over interact. prob is they are not siblings or child */
-.interact {
+/* try to flicker edit when hover over tile-interact. prob is they are not siblings or child */
+.tile-interact {
     color: rgba(255, 207, 89, 1);
     transition: color 0.2s;
 }
 
-.interact:hover {
+.tile-interact:hover {
     color: red;
 }
 
-.interact:active {
+.tile-interact:active {
     color: green;
 }
 
@@ -70,7 +70,7 @@ button {
     }
 
     50% {
-        transform: scale(1.25);
+        transform: scale(1.5);
     }
 
     100% {
@@ -78,7 +78,7 @@ button {
     }
 }
 
-.bento-tile:hover .interact {
+.bento-tile:hover .tile-interact {
 
     animation: pulse 2s 3;
 
