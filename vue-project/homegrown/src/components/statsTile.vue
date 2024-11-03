@@ -16,9 +16,9 @@ const showModal = ref(false)
             </button>
             <Teleport to="body">
                 <!-- use the modal component, pass in the prop -->
-                <modal :show="showModal" @close="showModal = false" :title="title" :stat="stat" :description="description">
+                <modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
                     <template #header>
-                        <h3>Custom Header</h3>
+                        <h3>{{title}}</h3>
                     </template>
                 </modal>
             </Teleport>
