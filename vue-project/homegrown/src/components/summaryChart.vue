@@ -1,23 +1,23 @@
 <template>
     <div id="chart">
         <div class="toolbar">
-            <button id="one_month" @click="updateData('one_month')" :class="{ active: selection === 'one_month' }">
+            <button id="one_month" @click="updateData('one_month')" class="btn-chart m-1 text-primary">
                 1M
             </button>
 
-            <button id="six_months" @click="updateData('six_months')" :class="{ active: selection === 'six_months' }">
+            <button id="six_months" @click="updateData('six_months')" class="btn-chart m-1 text-primary">
                 6M
             </button>
 
-            <button id="one_year" @click="updateData('one_year')" :class="{ active: selection === 'one_year' }">
+            <button id="one_year" @click="updateData('one_year')" class="btn-chart m-1 text-primary">
                 1Y
             </button>
 
-            <button id="ytd" @click="updateData('ytd')" :class="{ active: selection === 'ytd' }">
+            <button id="ytd" @click="updateData('ytd')" class="btn-chart m-1 text-primary">
                 YTD
             </button>
 
-            <button id="all" @click="updateData('all')" :class="{ active: selection === 'all' }">
+            <button id="all" @click="updateData('all')" class="btn-chart m-1 text-primary">
                 ALL
             </button>
         </div>

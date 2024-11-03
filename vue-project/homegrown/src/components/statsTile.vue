@@ -2,17 +2,17 @@
 
     <div>
 
-        <div class="d-flex justify-content-start align-items-center">
-            <span class="fw-bold">{{ title }}</span>
-            <a href="#" class="btn">
-                <i class='fas fa-edit text-secondary'></i>
-            </a>
+        <div class="d-flex justify-content-start align-items-center mb-2">
+            <span class="fw-bold ps-2">{{ title }}</span>
+            <button  class="interact p-2">
+                <i class='fas fa-edit'></i>
+            </button>
         </div>
         <div>
-            <h1 class="text-center text-primary fw-bolder display-5">{{ stat }}</h1>
+            <h1 class="text-center text-primary fw-bolder display-5 edit">{{ stat }}</h1>
         </div>
         <div>
-            <p class="text-center text-muted">{{ description }}</p>
+            <p class="text-center text-muted edit">{{ description }}</p>
         </div>
 
     </div>
@@ -28,25 +28,23 @@ export default {
 
 <style scoped>
 
-
-
-
-
-.bento-stats-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
+.interact {
+    color: rgba(255, 207, 89, 1);
+    transition: color 0.2s;
 }
 
-.btn-bento {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+.interact:hover {
+    color: red;
 }
 
-.title-bento {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+.interact:active {
+    color: green;
 }
+
+button{
+    background: transparent;
+    border: none;
+}
+
+
 </style>
