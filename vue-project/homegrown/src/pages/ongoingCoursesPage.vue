@@ -78,7 +78,7 @@
               </div>
               <!-- Collapsible Content -->
               <div
-                class="collapse mt-3"
+                class="content mt-3"
                 :id="'courseDetails' + course.id"
                 :ref="'courseDetails' + course.id"
               >
@@ -152,11 +152,7 @@
                 <button
                   class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg hover-animate hover-less"
                   type="button"
-                  data-bs-toggle="collapse"
-                  :data-bs-target="'#courseDetails' + course.id"
-                  aria-expanded="false"
-                  :aria-controls="'courseDetails' + course.id"
-                  @click="toggleTriangle($event.currentTarget, course.id)"
+                  @click="toggleAccordion($event.currentTarget, course.id)"
                 >
                   <i class="triangle-btn bg-secondary"></i>
                 </button>
@@ -197,40 +193,18 @@ export default {
     };
   },
   methods: {
-    toggleTriangle(event, courseId) {
-    const triangle = event.querySelector(".triangle-btn");
-    triangle.classList.toggle("rotate");
-    const courseDetails = this.$refs[`courseDetails${courseId}`][0];
+    toggleAccordion(event, courseId) {
+      const triangle = event.querySelector(".triangle-btn");
+      triangle.classList.toggle("rotate");
+      const courseDetails = this.$refs[`courseDetails${courseId}`][0];
 
-    // If `data-bs-toggle` is set, remove it temporarily for custom collapsing behavior
-    if (event.getAttribute("data-bs-toggle") == "collapse") {
-        event.setAttribute("data-bs-toggle", "");
-    } else {
-        // Set the initial height to current scroll height to start the collapse transition
-        courseDetails.style.height = `${courseDetails.scrollHeight}px`;
-        
-        // Trigger reflow to ensure the new height is applied
-        void courseDetails.offsetHeight;
+      if (courseDetails.style.height === courseDetails.scrollHeight + "px") {
+        courseDetails.style.height = "0px";
+      } else {
+        courseDetails.style.height = courseDetails.scrollHeight + "px";
+      }
+    },
 
-        // Set up the collapsing effect
-        courseDetails.style.height = '0px';
-        courseDetails.classList.remove("show");
-        courseDetails.classList.add("collapsing");
-
-        // Handle transition end for cleanup
-        courseDetails.addEventListener('transitionend', () => {
-            // Clean up classes and inline styles after collapsing
-            courseDetails.classList.remove("collapsing");
-            courseDetails.classList.add("collapse");
-            courseDetails.style.height = ''; // Reset inline height
-            event.setAttribute("data-bs-toggle", "collapse"); // Re-enable Bootstrap for expansion
-        }, { once: true });
-
-        // Update aria-expanded to reflect collapsed state
-        event.setAttribute("aria-expanded", false);
-    }
-}
-,
     getRatingStars(rating) {
       const roundedRating = Math.round(rating * 2) / 2;
       let stars = "";
@@ -295,12 +269,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-.collapse,
-.collapsing {
+.content {
+  height: 0px;
   overflow: hidden;
-  transition: height 0.35s ease;
+  transition: height 0.5s ease; /* Adjust duration as needed */
 }
+
 .mentor-badge {
   position: absolute;
   top: 23px;
