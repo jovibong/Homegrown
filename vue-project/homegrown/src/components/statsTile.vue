@@ -11,12 +11,12 @@ const showModal = ref(false)
 
         <div class="d-flex justify-content-start align-items-center mb-2">
             <span class="fw-bold ps-2">{{ title }}</span>
-            <button class="interact p-2" id="show-modal" @click="showModal = true">
+            <button class="interact p-2" id="show-modal" @click="showModal = true" >
                 <i class='fas fa-edit'></i>
             </button>
             <Teleport to="body">
                 <!-- use the modal component, pass in the prop -->
-                <modal :show="showModal" @close="showModal = false">
+                <modal :show="showModal" @close="showModal = false" :title="title" :stat="stat" :description="description">
                     <template #header>
                         <h3>Custom Header</h3>
                     </template>

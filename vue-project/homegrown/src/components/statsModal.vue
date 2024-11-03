@@ -1,7 +1,10 @@
 <script setup>
-const {show} = defineProps({
-    show: Boolean
-})
+const { show, title, stat, description } = defineProps({
+    show: Boolean,
+    title: String,
+    stat: String,
+    description: String,
+});
 </script>
 
 <template>
@@ -9,16 +12,16 @@ const {show} = defineProps({
         <div v-if="show" class="modal-mask">
             <div class="modal-container">
                 <div class="modal-header">
-                    <slot name="header">default header</slot>
+                    <slot name="header">{{ title }}</slot>
                 </div>
 
                 <div class="modal-body">
-                    <slot name="body">default body</slot>
+                    <slot name="body">{{ stat  }}</slot>
                 </div>
 
                 <div class="modal-footer">
                     <slot name="footer">
-                        default footer
+                        {{description}}
                         <button class="modal-default-button" @click="$emit('close')">OK</button>
                     </slot>
                 </div>
@@ -46,14 +49,14 @@ const {show} = defineProps({
     margin: auto;
     padding: 20px 30px;
     background-color: #fff;
-    border-radius: 2px;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
 }
 
 .modal-header h3 {
     margin-top: 0;
-    color: #42b983;
+
 }
 
 .modal-body {
