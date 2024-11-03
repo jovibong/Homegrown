@@ -4,9 +4,9 @@
 
         <div class="d-flex justify-content-start align-items-center mb-2">
             <span class="fw-bold ps-2">{{ title }}</span>
-            <a href="#" class="interact p-2">
+            <button  class="interact p-2">
                 <i class='fas fa-edit'></i>
-            </a>
+            </button>
         </div>
         <div>
             <h1 class="text-center text-primary fw-bolder display-5 edit">{{ stat }}</h1>
@@ -39,6 +39,11 @@ export default {
 
 .interact:active {
     color: green;
+}
+
+button{
+    background: transparent;
+    border: none;
 }
 
 
