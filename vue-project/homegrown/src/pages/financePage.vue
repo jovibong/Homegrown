@@ -253,7 +253,7 @@
                         stroke-linecap="round" stroke-linejoin="round">
                     </svg>
                     <i class="fa fa-university text-primary"></i>
-                    <p class="d-inline">Summary</p>
+                    <p class="d-inline"> Summary</p>
                 </span>
             </label>
             <!-- end Summary tab nav -->
@@ -271,7 +271,7 @@
                         stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
                     </svg>
                     <i class="fa fa-trophy text-primary"></i>
-                    <p class="d-inline">Budget Planner</p>
+                    <p class="d-inline"> Budget Planner</p>
                 </span>
             </label>
             <!-- end BudgetPlanner tab nav -->
@@ -437,7 +437,8 @@
                                                 </tr>
                                                 <tr>
                                                     <td><button class="btn btn-add btn-outline-dark">
-                                                        <i class='fas fa-plus-circle fs-5 add'></i> <span>Add Logs</span>
+                                                            <i class='fas fa-plus-circle fs-5 add'></i> <span>Add
+                                                                Logs</span>
                                                         </button>
                                                     </td>
                                                     <td colspan="6">
@@ -459,7 +460,7 @@
                         stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
                     </svg>
                     <i class="fa fa-list-alt text-primary"></i>
-                    <p class="d-inline">Payment Tracker</p>
+                    <p class="d-inline"> Payment Tracker</p>
                 </span>
             </label>
             <!-- start PaymentTracker tab nav -->
@@ -494,5 +495,4 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 @import "../css/finance.css";
-
 </style>
