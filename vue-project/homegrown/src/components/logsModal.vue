@@ -156,6 +156,17 @@ watch([paymentType, date], () => {
 // const image = ref('')
 const image = 'needToFill.png'
 
+
+// Function to clear all input fields
+function clearFields() {
+    title.value = '';
+    amount.value = '';
+    paymentType.value = '';
+    date.value = '';
+    status.value = ''; // Reset status
+    badgeClass.value = ''; // Reset badgeClass
+}
+
 // to add log to firebase
 async function addLogs() {
 
@@ -167,6 +178,8 @@ async function addLogs() {
         image: image,
         badgeClass: badgeClass.value
     });
+
+    clearFields();
 
     // const logToAdd = {
     //     title: title.value,
