@@ -9,6 +9,7 @@ import OngoingCourses from '../pages/ongoingCoursesPage.vue';
 import IndividualCourse from '../pages/individualCoursePage.vue';
 import VideoPage from '../pages/videoPage.vue';
 import QuizPage from '../pages/quizPage.vue';
+import QuizSummaryPage from '../pages/quizSummaryPage.vue'
 import TestPage from '../pages/testPage.vue';
 
 
@@ -82,6 +83,11 @@ const routes = [
         path: '/quizPage',
         name: 'quizPage',
         component: QuizPage
+    },
+    {
+        path: '/quizSummaryPage',
+        name: 'quizSummaryPage',
+        component: QuizSummaryPage
     },
     {
         path: '/testPage',

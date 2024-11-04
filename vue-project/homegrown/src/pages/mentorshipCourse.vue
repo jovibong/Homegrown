@@ -100,7 +100,7 @@
             </section>
 
             <!--Dropdown items-->
-            <div id="lessons_expanded" class="collapse container">
+            <div v-show="expanded" id="lessons_expanded" class="collapse container">
                 <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
                     <a href="video_1.html" class="text-decoration-none">
                         <div class="card shadow-sm mb-md-2 mb-3">
