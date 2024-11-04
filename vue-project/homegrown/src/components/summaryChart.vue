@@ -412,7 +412,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #app {
     text-align: center;
 }
