@@ -16,6 +16,7 @@ const { show, title, stat, description } = defineProps({
                 </div>
 
                 <div class="mb-4">
+                    <!-- update validation func later -->
                     <form class="needs-validation" novalidate>
                         
                             <label for="validationCustom01" class="form-label"></label>
