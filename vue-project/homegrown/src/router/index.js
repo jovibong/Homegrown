@@ -7,6 +7,8 @@ import MentorshipCourse from '../pages/mentorshipCourse.vue';
 import volunteer from '../pages/volunteerPage.vue';
 import OngoingCourses from '../pages/ongoingCoursesPage.vue';
 import IndividualCourse from '../pages/individualCoursePage.vue';
+import VideoPage from '../pages/videoPage.vue';
+import QuizPage from '../pages/quizPage.vue';
 import TestPage from '../pages/testPage.vue';
 
 
@@ -70,6 +72,16 @@ const routes = [
         path: '/individualCoursePage',
         name: 'individualCoursePage',
         component: IndividualCourse
+    },
+    {
+        path: '/videoPage',
+        name: 'videoPage',
+        component: VideoPage
+    },
+    {
+        path: '/quizPage',
+        name: 'quizPage',
+        component: QuizPage
     },
     {
         path: '/testPage',

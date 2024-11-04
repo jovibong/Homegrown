@@ -1,0 +1,288 @@
+<template>
+  <div>
+    <section id="Title" class="container pt-3 pb-0 fade-in-top">
+      <div class="container mb-4">
+        <div class="row">
+          <!-- Back Button -->
+          <div class="col-2 d-flex align-items-center">
+            <a
+              href="individual_course.html"
+              class="btn btn-warning text-dark d-flex align-items-center"
+            >
+              <i class="bi bi-arrow-left me-1"></i>
+              <span class="d-none d-lg-inline">Back to course overview</span>
+              <span class="d-inline d-lg-none">Back</span>
+            </a>
+          </div>
+          <!-- Course Title Large (Centered) -->
+          <div class="col-8 text-center">
+            <h2 class="text-primary fw-bold mb-0 display-5">
+              {{ course_name }}
+            </h2>
+          </div>
+          <!-- Empty column for spacing/flexibility -->
+          <div class="col-2"></div>
+        </div>
+        <!-- Lesson Name -->
+        <h3 class="text-black display-5 mt-3 text-center">{{ lesson.name }}</h3>
+      </div>
+    </section>
+
+    <section id="content" class="container mb-4">
+      <div class="fade-in-top">
+        <!--Lesson Title -->
+        <h3 class="text-black my-2">{{ lesson.title }}</h3>
+        <!--Lesson Description-->
+        <p v-html="lesson.description"></p>
+      </div>
+    </section>
+
+    <section id="question">
+      <p class="text-center text-muted display-6 mt-5 fade-in-top">
+        Question {{ current_question }}/{{ num_questions }}
+      </p>
+      <h2 class="text-center fade-in-top">
+        {{ lesson.questions[current_question - 1].question }}
+      </h2>
+      <div class="container mt-5 mb-3">
+        <ul class="list-unstyled push-in-right">
+          <li
+            v-for="(option, key) in lesson.questions[current_question - 1]
+              .options"
+            :class="[
+              'd-flex align-items-center mb-3 p-3 rounded hover-animate hover-less border border-1',
+              { 'bg-primary text-white': selected_option === key },
+            ]"
+            @click="select_option(key)"
+            :key="key"
+          >
+            <span
+              class="fw-bold h4 d-flex align-items-center justify-content-center me-3 rounded-circle bg-secondary mb-0"
+              style="width: 40px; height: 40px"
+              >{{ key }}</span
+            >
+            <span class="h6 mb-0">{{ option }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="container w-50 d-flex justify-content-center mb-3">
+        <button
+          v-if="selected_option && !submitted"
+          class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-2 text-secondary fw-bold justify-content-center fade-in-bottom hover-animate"
+          @click="submit_option"
+        >
+          Submit Answer <i class="bi bi-arrow-right ms-2"></i>
+        </button>
+      </div>
+    </section>
+
+    <section
+      v-if="submitted"
+      id="answer-review"
+      class="fade-in-bottom text-center"
+    >
+      <div v-if="is_correct">
+        <h4 class="text-center">You are Correct! Keep up the good work!</h4>
+      </div>
+      <div v-else>
+        <h4 class="text-center">
+          Oh no! Looks like there was some mistake in your work. The correct
+          answer is {{ lesson.questions[current_question - 1].correct_answer }}.
+        </h4>
+      </div>
+      <div
+        class="container w-50 d-flex justify-content-center text-center mt-3 fade-in-top"
+      >
+        <div class="card p-4">
+          <h5 class="mb-3">Rate your experience</h5>
+          <div class="d-flex justify-content-center row">
+            <div class="col-5">
+              <button
+                class="btn btn-md"
+                :class="
+                  selected_vote === 'up' ? 'btn-success' : 'btn-outline-success'
+                "
+                @click="submit_vote('up')"
+              >
+                <i class="bi bi-hand-thumbs-up"></i> Good
+              </button>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-5">
+              <button
+                class="btn btn-md"
+                :class="
+                  selected_vote === 'down' ? 'btn-danger' : 'btn-outline-danger'
+                "
+                @click="submit_vote('down')"
+              >
+                <i class="bi bi-hand-thumbs-down"></i> Bad
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a
+        href="quiz_summary.html"
+        v-if="current_question == last_question"
+        class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-3 text-secondary fw-bold justify-content-center hover-animate"
+        @click="submit_quiz"
+      >
+        Go to Quiz Summary <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+      <button
+        v-else
+        class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-3 text-secondary fw-bold justify-content-center hover-animate"
+        @click="go_to_next"
+      >
+        Continue to next question <i class="bi bi-arrow-right ms-2"></i>
+      </button>
+    </section>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      questions: [
+        {
+          id: 101,
+          question_number: 1,
+          type: "multiple_choice",
+          question:
+            "Which version of Python is recommended for new users to install?",
+          options: {
+            A: "Python 2.7",
+            B: "Python 3.x",
+            C: "Python 1.5",
+            D: "Python 4.0",
+          },
+          correct_answer: "B",
+        },
+        {
+          id: 102,
+          question_number: 2,
+          type: "multiple_choice",
+          question:
+            "What is the best way to verify that Python is correctly installed on your system?",
+          options: {
+            A: "python --install",
+            B: "verify-python",
+            C: "python --version",
+            D: "python --check",
+          },
+          correct_answer: "C",
+        },
+        {
+          id: 103,
+          question_number: 3,
+          type: "multiple_choice",
+          question:
+            "Which package manager is commonly used on macOS to install Python?",
+          options: {
+            A: "apt-get",
+            B: "Homebrew",
+            C: "yum",
+            D: "Chocolatey",
+          },
+          correct_answer: "B",
+        },
+        {
+          id: 104,
+          question_number: 4,
+          type: "multiple_choice",
+          question:
+            "What option should you select during Python installation to make it accessible from the command line?",
+          options: {
+            A: "Install Python for All Users",
+            B: "Add Python to PATH",
+            C: "Install Documentation",
+            D: "Install PIP",
+          },
+          correct_answer: "B",
+        },
+        {
+          id: 105,
+          question_number: 5,
+          type: "multiple_choice",
+          question:
+            "Which command is used to create a virtual environment in Python?",
+          options: {
+            A: "python -m venv [environment-name]",
+            B: "python create-env [environment-name]",
+            C: "python --virtual [environment-name]",
+            D: "python make-env [environment-name]",
+          },
+          correct_answer: "A",
+        },
+      ],
+      lesson: {
+        name: "Lesson 1: Quiz",
+        title: "Installing Python",
+        description: `  
+                Feel free to go back to the lesson if you are unable to answer the questions.
+            `,
+        typeof: "quiz",
+        questions: this.questions,
+        next_name: "Lesson 1: Quiz",
+        rating: 84,
+      },
+      course_name: "Introduction to Python",
+      current_question: 1,
+      num_questions: 5,
+      score: 0,
+      selected_vote: null,
+      selected_option: null,
+      submitted: false,
+      is_correct: false,
+      answers: [],
+    };
+  },
+  methods: {
+    watchvideo() {
+      this.video_watched = true;
+    },
+    submit_vote(vote) {
+      this.selected_vote = vote;
+    },
+
+    select_option(key) {
+      // If the selected option is the same as the clicked option, deselect it
+      if (this.selected_option === key) {
+        this.selected_option = null; // Deselect the option
+      } else {
+        // Otherwise, set the selected option to the clicked key
+        this.selected_option = key;
+      }
+    },
+    submit_option() {
+      let correct_ans =
+        this.lesson.questions[this.current_question - 1].correct_answer;
+      if (correct_ans == this.selected_option) {
+        this.is_correct = true;
+        this.score += 1;
+      }
+      this.submitted = true;
+      this.answers[this.answers.length] = this.selected_option;
+    },
+    go_to_next() {
+      this.is_correct = false;
+      this.submitted = false;
+      this.selected_option = null;
+      this.current_question++;
+      this.selected_vote = null;
+    },
+    // change this code to submit the answers to a database instead
+    submit_quiz() {
+      localStorage.setItem("user_answers", JSON.stringify(this.answers));
+      localStorage.setItem("user_score", JSON.stringify(this.score));
+    },
+  },
+  computed: {
+    last_question() {
+      return this.lesson.questions.length;
+    },
+  },
+};
+</script>
