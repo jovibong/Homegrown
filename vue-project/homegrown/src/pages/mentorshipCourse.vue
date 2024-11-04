@@ -374,6 +374,13 @@ body {
     border-radius: 15px;
 }
 
+.content {
+    height: 0px;
+    overflow: hidden;
+    transition: height 0.5s ease;
+    /* Adjust duration as needed */
+}
+
 
 /*Triangle button CSS*/
 .triangle-btn {
