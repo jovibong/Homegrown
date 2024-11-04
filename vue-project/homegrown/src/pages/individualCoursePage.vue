@@ -59,7 +59,11 @@
                     type="button"
                     @click="toggleAccordion()"
                   >
-                    <i class="bi bi-chevron-down display-5" :class="{'text-black-50':lessons_loading}" ref="chevron"></i>
+                    <i
+                      class="bi bi-chevron-down display-5"
+                      :class="{ 'text-black-50': lessons_loading }"
+                      ref="chevron"
+                    ></i>
                   </button>
                 </div>
               </div>
@@ -99,7 +103,11 @@
               type="button"
               @click="toggleAccordion()"
             >
-              <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'" ref="triangle"></i>
+              <i
+                class="triangle-btn"
+                :class="lessons_loading ? 'bg-primary' : 'bg-secondary'"
+                ref="triangle"
+              ></i>
             </button>
           </div>
         </div>
@@ -153,25 +161,27 @@
                 :key="item.id"
                 class="col-12"
               >
-                <div
-                  class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
-                >
-                  <div class="me-3">
-                    <div
-                      class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
-                      style="width: 60px; height: 60px"
-                    >
-                      <i :class="item.icon" class="h2 pt-2"></i>
+                <router-link :to="item.link" class="text-decoration-none">
+                  <div
+                    class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
+                  >
+                    <div class="me-3">
+                      <div
+                        class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
+                        style="width: 60px; height: 60px"
+                      >
+                        <i :class="item.icon" class="h2 pt-2"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-primary mb-1">
+                        {{ formatType(item.typeof) }}
+                      </p>
+                      <p class="fw-bold mb-1">{{ item.name }}</p>
+                      <p class="text-muted">{{ item.duration }}</p>
                     </div>
                   </div>
-                  <div>
-                    <p class="text-primary mb-1">
-                      {{ formatType(item.typeof) }}
-                    </p>
-                    <p class="fw-bold mb-1">{{ item.name }}</p>
-                    <p class="text-muted">{{ item.duration }}</p>
-                  </div>
-                </div>
+                </router-link>
               </div>
             </div>
           </div>
@@ -272,6 +282,7 @@ export default {
                 id: itemDoc.id,
                 icon:
                   itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
+                link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
               };
             });
 

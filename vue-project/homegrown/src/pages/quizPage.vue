@@ -42,12 +42,12 @@
         Question {{ current_question }}/{{ num_questions }}
       </p>
       <h2 class="text-center fade-in-top">
-        {{ lesson.questions[current_question - 1].question }}
+        {{ questions[current_question - 1].question }}
       </h2>
       <div class="container mt-5 mb-3">
         <ul class="list-unstyled push-in-right">
           <li
-            v-for="(option, key) in lesson.questions[current_question - 1]
+            v-for="(option, key) in questions[current_question - 1]
               .options"
             :class="[
               'd-flex align-items-center mb-3 p-3 rounded hover-animate hover-less border border-1',
@@ -87,7 +87,7 @@
       <div v-else>
         <h4 class="text-center">
           Oh no! Looks like there was some mistake in your work. The correct
-          answer is {{ lesson.questions[current_question - 1].correct_answer }}.
+          answer is {{ questions[current_question - 1].correct_answer }}.
         </h4>
       </div>
       <div
@@ -224,7 +224,6 @@ export default {
                 Feel free to go back to the lesson if you are unable to answer the questions.
             `,
         typeof: "quiz",
-        questions: this.questions,
         next_name: "Lesson 1: Quiz",
         rating: 84,
       },
@@ -258,7 +257,7 @@ export default {
     },
     submit_option() {
       let correct_ans =
-        this.lesson.questions[this.current_question - 1].correct_answer;
+        this.questions[this.current_question - 1].correct_answer;
       if (correct_ans == this.selected_option) {
         this.is_correct = true;
         this.score += 1;
@@ -281,7 +280,7 @@ export default {
   },
   computed: {
     last_question() {
-      return this.lesson.questions.length;
+      return this.questions.length;
     },
   },
 };
