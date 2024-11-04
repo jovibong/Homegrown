@@ -115,14 +115,11 @@
       </div>
       <div
         v-for="(question, key) in questions"
-        class="fade-in-bottom my-3 accordion-item border border-0"
+        class="fade-in-bottom my-3 border border-0"
         :ref="key"
         type="button"
-        data-bs-toggle="collapse"
-        :data-bs-target="'#collapse' + key"
-        aria-expanded="true"
-        :aria-controls="'collapse' + key"
         :key="key"
+        @click="toggleAccordion(key)"
       >
         <div
           class="card shadow-sm container-fluid p-0 m-0 hover-animate hover-less"
@@ -131,7 +128,8 @@
             <div class="d-none d-md-inline-flex row container-fluid">
               <div class="col-1 d-flex align-items-center">
                 <div
-                  class="d-md-inline-flex d-none circle bg-secondary d-flex align-items-center text-center justify-content-center p-4 fs-4"
+                  class="d-md-inline-flex d-none rounded-circle bg-secondary d-flex align-items-center text-center justify-content-center p-4 fs-4"
+                  style="height: 45px; width: 45px"
                 >
                   {{ key + 1 }}
                 </div>
@@ -168,11 +166,11 @@
               </div>
             </div>
             <div
-              :id="'collapse' + key"
-              class="row container-fluid accordion-collapse collapse"
+              :ref="'collapse' + key"
+              class="row container-fluid content"
               data-bs-parent="#question_review"
             >
-              <div class="accordion-body p-0">
+              <div class="p-0">
                 <div class="d-md-none d-inline py-3">
                   {{ question.question }}
                 </div>
@@ -188,7 +186,8 @@
                         :class="getClass(question, option_key, key)"
                       >
                         <div
-                          class="col-3 circle d-flex align-items-center justify-content-center bg-secondary p-4 fs-4 m-0"
+                          class="col-3 rounded-circle d-flex align-items-center justify-content-center bg-secondary p-4 fs-4 m-0"
+                          style="height: 45px; width: 45px"
                         >
                           {{ option_key }}
                         </div>
@@ -216,29 +215,31 @@
 
   <div class="container-fluid row mx-auto my-5 d-flex justify-content-center">
     <div class="col-lg-2 col-md-1"></div>
-    <a
-      href="individual_course.html"
+    <router-link
+      to="individualCoursePage"
       class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2"
     >
       <i class="bi bi-arrow-left me-2"></i>
       <span class="d-none d-md-inline">Back to course overview</span>
       <span class="d-inline d-md-none">Course Overview</span>
-    </a>
+    </router-link>
+
     <div class="col-md-2"></div>
-    <a
-      href="video_1.html"
+    <router-link
+      to="videoPage"
       class="btn btn-warning text-dark d-flex align-items-center col-lg-3 col-md-4 justify-content-center hover-animate py-3 my-2"
     >
       <span class="d-none d-md-inline text-end">Continue to next lesson</span>
       <span class="d-inline d-md-none text-end">Next Lesson</span>
       <i class="bi bi-arrow-right ms-2"></i>
-    </a>
+    </router-link>
+   
     <div class="col-lg-2 col-md-1"></div>
   </div>
 </template>
 
 <script>
-// import { Chart } from 'chart.js' // need to run npm install chart
+import Chart from "chart.js/auto";
 export default {
   data() {
     return {
@@ -352,6 +353,14 @@ export default {
         return "bg-white text-black";
       }
     },
+    toggleAccordion(key) {
+      const collapse_item = this.$refs[`collapse${key}`][0];
+      if (collapse_item.style.height === collapse_item.scrollHeight + "px") {
+        collapse_item.style.height = "0px";
+      } else {
+        collapse_item.style.height = collapse_item.scrollHeight + "px";
+      }
+    },
   },
   computed: {
     num_wrong() {
@@ -374,22 +383,56 @@ export default {
     this.score = JSON.parse(localStorage.getItem("user_score"));
 
     // Create Chart
-    // const ctx = document.getElementById("myChart");
-    // new Chart(ctx, {
-    //   type: "doughnut",
-    //   data: {
-    //     datasets: [
-    //       {
-    //         data: [this.score, this.questions.length - this.score],
-    //         backgroundColor: ["rgb(76, 175, 80)", "rgb(244, 67, 54)"],
-    //         hoverOffset: 4,
-    //       },
-    //     ],
-    //   },
-    //   options: {
-    //     cutout: "65%",
-    //   },
-    // });
+    const ctx = document.getElementById("myChart");
+    const checkChartLoaded = () => {
+      if (typeof Chart !== "undefined") {
+        new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            datasets: [
+              {
+                data: [this.score, this.questions.length - this.score],
+                backgroundColor: ["rgb(76, 175, 80)", "rgb(244, 67, 54)"],
+                hoverOffset: 4,
+              },
+            ],
+          },
+          options: {
+            cutout: "65%",
+          },
+        });
+      } else {
+        // Retry after a short delay if Chart.js is not yet loaded
+        setTimeout(checkChartLoaded, 100);
+      }
+    };
+
+    checkChartLoaded();
   },
 };
 </script>
+
+<style scoped>
+.content {
+  height: 0px;
+  overflow: hidden;
+  transition: height 0.5s ease; /* Adjust duration as needed */
+}
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.correct-dot {
+  background-color: #4caf50;
+  /* Green for Correct */
+}
+
+.missed-dot {
+  background-color: #f44336;
+  /* Red for Missed */
+}
+</style>

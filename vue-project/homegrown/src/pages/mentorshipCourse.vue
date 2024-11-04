@@ -7,7 +7,7 @@
                     <!-- Back Button -->
                     <div class="col-3">
                         <router-link to="/mentorshipPage" class="btn btn-warning text-dark">
-                        <i class="bi bi-arrow-left"></i>
+                            <i class="bi bi-arrow-left"></i>
                             <span class="d-none d-lg-inline">Back to Mentorship</span>
                             <span class="d-inline d-lg-none">Back</span>
                         </router-link>
@@ -27,115 +27,123 @@
 
         </section>
 
-        <!--Course Info-->
-        <div id="app">
-            <section id="course_info" class="container py-2 fade-in-top">
-                <div class="card shadow-sm mb-md-2 mb-3">
-                    <div class="card-body position-relative">
+        <section v-if="course" id="course_info" class="container py-2 fade-in-top">
+            <div class="card shadow-sm mb-md-2 mb-3">
+                <div class="card-body position-relative">
 
-                        <!-- Icon and Course Info -->
-                        <div class="row my-0 d-flex align-items-center">
-                            <h5 class=" col-md-10 mt-2 fw-bold display-lg-4 display-5">{{ course.name }}</h5>
-                            <div class="text-center col-md-2 my-0 d-md-block d-none">
-                                <a :href="expanded ? '#lessons_expanded' : '#'">
-                                    <button class="rounded-circle bg-white border border-0" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#lessons_expanded"
-                                        aria-expanded="false" aria-controls="lessons_expanded" @click="toggleChevron">
-                                        <i class="bi bi-chevron-down display-5"></i>
-                                    </button>
-                                </a>
-                            </div>
+                    <!-- Icon -->
+                    <div class="row my-0 d-flex align-items-center">
+                        <h5 class=" col-md-10 mt-2 fw-bold display-lg-4 display-5">{{ course.name }}</h5>
+                        <div class="text-center col-md-2 my-0 d-md-block d-none">
+
+                            <button class="rounded-circle bg-white border border-0" type="button"
+                                @click="toggleAccordion()">
+                                <i class="bi bi-chevron-down display-5" :class="{ 'text-black-50': lessons_loading }"
+                                    ref="chevron"></i>
+                            </button>
                         </div>
+
                         <p class="text-muted">{{ course.description }}</p>
 
-
-                        <!--Dropdown Button on small screens-->
-                        <div class="text-center my-0 d-md-none d-block">
-                            <a :href="expanded ? '#lessons_expanded' : '#app'">
-                                <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg"
-                                    type="button" data-bs-toggle="collapse" data-bs-target="#lessons_expanded"
-                                    aria-expanded="false" aria-controls="lessons_expanded" @click="toggleTriangle">
-                                    <i class="triangle-btn bg-secondary"></i>
-                                </button>
-                            </a>
-                        </div>
                     </div>
-                </div>
-            </section>
 
-            <!--Mentor-->
-            <section id="Mentee" class="container my-2 fade-in-top">
-                <div class="row">
-                    <div v-for="mentee in mentees" :key="mentee.name" class="col-md-6 mb-4">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-primary text-white text-center fw-bold h4">
-                                {{ mentee.name }}
-                                <!-- Notification Badge -->
-                                <span v-if="mentee.notificationCount > 0"
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                    style="transform: translate(-50%, -50%);">
-                                    {{ mentee.notificationCount }}
-                                </span>
-                            </div>
-                            <div class="card-body d-flex align-items-center">
-                                <div class="row">
-                                    <!-- Mentor Image -->
-                                    <div class="col-md-3 d-flex justify-content-center">
-                                        <img :src="'../img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
-                                            height="150px" width="150px">
-                                    </div>
-                                    <!-- Mentor Information -->
-                                    <div class="col-md-9 text-md-start text-center">
-                                        <p class="text-muted">{{ mentee.description }}</p>
-                                        <!-- Ask for Help Button -->
-                                        <a href="#" class="btn btn-primary d-inline-flex align-items-center">
-                                            Chat <i class="bi bi-arrow-right ms-2"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <!--Dropdown Button on small screens-->
+                    <div class="text-center my-0 d-md-none d-block">
+                        <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button"
+                            @click="toggleAccordion()">
+                            <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'"
+                                ref="triangle"></i>
+                        </button>
                     </div>
-                </div>
-            </section>
-
-            <!--Dropdown items-->
-            <div v-show="expanded" id="lessons_expanded" class="collapse container">
-                <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
-                    <a href="video_1.html" class="text-decoration-none">
-                        <div class="card shadow-sm mb-md-2 mb-3">
-                            <div class="card-body position-relative">
-                                <h4 class="fw-bold mb-3">{{ lesson.name }}</h4>
-                                <div class="row">
-                                    <div v-for="item in lesson.content" :key="item.id" class="col-12">
-                                        <div
-                                            class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less">
-                                            <div class="me-3">
-                                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
-                                                    style="width: 60px; height: 60px;">
-                                                    <i :class="'bi ' + item.icon + ' h2 pt-2'"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p class="text-primary mb-1">{{ formatType(item.typeof) }}</p>
-                                                <p class="fw-bold mb-1">{{ item.name }}</p>
-                                                <p class="text-muted">{{ item.duration }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
                 </div>
             </div>
+        </section>
 
+        <!--Mentor-->
+        <section id="Mentee" class="container my-2 fade-in-top">
+            <div class="row">
+                <div v-for="mentee in mentees" :key="mentee.name" class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white text-center fw-bold h4">
+                            {{ mentee.name }}
+                            <!-- Notification Badge -->
+                            <span v-if="mentee.notificationCount > 0"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="transform: translate(-50%, -50%);">
+                                {{ mentee.notificationCount }}
+                            </span>
+                        </div>
+                        <div class="card-body d-flex align-items-center">
+                            <div class="row">
+                                <!-- Mentor Image -->
+                                <div class="col-md-3 d-flex justify-content-center">
+                                    <img :src="'../img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
+                                        height="150px" width="150px">
+                                </div>
+                                <!-- Mentor Information -->
+                                <div class="col-md-9 text-md-start text-center">
+                                    <p class="text-muted">{{ mentee.description }}</p>
+                                    <!-- Ask for Help Button -->
+                                    <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                                        Chat <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <div class="content container" ref="lessons">
+            <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
+                <div class="card shadow-sm mb-md-2 mb-3">
+                    <div class="card-body position-relative">
+                        <h4 class="fw-bold mb-3">{{ lesson.title }}</h4>
+                        <div class="row">
+                            <div v-for="item in lesson.lesson_items" :key="item.id" class="col-12">
+                                <router-link :to="item.link" class="text-decoration-none">
+                                    <div
+                                        class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less">
+                                        <div class="me-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
+                                                style="width: 60px; height: 60px">
+                                                <i :class="item.icon" class="h2 pt-2"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p class="text-primary mb-1">
+                                                {{ formatType(item.typeof) }}
+                                            </p>
+                                            <p class="fw-bold mb-1">{{ item.name }}</p>
+                                            <p class="text-muted">{{ item.duration }}</p>
+                                        </div>
+                                    </div>
+                                </router-link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Dropdown Button on small screens-->
+        <div class="text-center my-0 d-md-none d-block">
+            <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button"
+                @click="toggleAccordion()">
+                <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'" ref="triangle"></i>
+            </button>
         </div>
     </div>
+
+
+
 </template>
 
 <script>
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+
 export default {
     data() {
         return {
@@ -165,36 +173,88 @@ export default {
                     notificationCount: 1,
                 }
             ],
-            course: {
-                id: 101,
-                name: "Introduction to Python",
-                rating: 3.6,
-                description: "Learn the basics of Python programming, including syntax, data types, and how to create simple applications. This course is perfect for beginners with no prior coding experience.",
-            },
-                lessons: {
-                "L101": {
-                    name: "Lesson 1",
-                    content: [
-                        { id: "vid1_1", typeof: "video", duration: "10min", name: "Video 1: Introduction", icon: "bi-play-fill" },
-                        { id: "q_1_1", typeof: "quiz", duration: "10min", name: "Quiz 1: Introduction", icon: "bi-lightbulb" }
-                    ]
-                },
-                "L102": {
-                    name: "Lesson 2",
-                    content: [
-                        { id: "vid2_1", typeof: "video", duration: "10min", name: "Video 2: Variables", icon: "bi-play-fill" },
-                        { id: "q_2_1", typeof: "quiz", duration: "10min", name: "Quiz 2: Variables", icon: "bi-lightbulb" }
-                    ]
-                }
-            },
+            course: null,
+            lessons: [],
             expanded: false,
+            lessons_loading: true,
         };
     },
     methods: {
+        async fetchLessons() {
+            try {
+                const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
+                const lessonDocs = await getDocs(lessonsRef);
+
+                const lessonsData = await Promise.all(
+                    lessonDocs.docs.map(async (lessonDoc) => {
+                        const lessonData = lessonDoc.data();
+
+                        // Fetch lesson items for each lesson
+                        const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
+                        const lessonItemsDocs = await getDocs(lessonItemsRef);
+
+                        const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
+                            const itemData = itemDoc.data();
+                            return {
+                                ...itemData,
+                                id: itemDoc.id,
+                                icon:
+                                    itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
+                                link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
+                            };
+                        });
+
+                        return {
+                            title: lessonData.title,
+                            lesson_items: lessonItemsData,
+                        };
+                    })
+                );
+
+                this.lessons = lessonsData;
+            } catch (error) {
+                console.error("Error fetching lessons and items:", error);
+            } finally {
+                this.lessons_loading = false;
+            }
+        },
+        async fetchReviewsWithUserDetails() {
+            try {
+                const reviewsRef = collection(db, `courses/${this.course.id}/reviews`);
+                const reviewDocs = await getDocs(reviewsRef);
+
+                const reviewsData = await Promise.all(
+                    reviewDocs.docs.map(async (reviewDoc) => {
+                        const reviewData = reviewDoc.data();
+                        const userRef = doc(db, "users", reviewData.user);
+                        const userDoc = await getDoc(userRef);
+
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            return {
+                                ...reviewData,
+                                name: userData.name,
+                                img: userData.profile_picture,
+                            };
+                        } else {
+                            console.warn(`User data not found for user: ${reviewData.user}`);
+                            return reviewData;
+                        }
+                    })
+                );
+
+                this.reviews = reviewsData;
+            } catch (error) {
+                console.error("Error fetching reviews and user details:", error);
+            } finally {
+                this.loading = false;
+                console.log("This page has loaded");
+            }
+        },
+
         getRatingStars(rating) {
             const roundedRating = Math.round(rating * 2) / 2;
-            let stars = '';
-
+            let stars = "";
             for (let i = 1; i <= 5; i++) {
                 if (i <= Math.floor(roundedRating)) {
                     stars += '<i class="bi bi-star-fill text-warning"></i>';
@@ -209,33 +269,54 @@ export default {
         formatType(type) {
             return type.charAt(0).toUpperCase() + type.slice(1);
         },
-        toggleChevron(event) {
-            const button = event.currentTarget;
-            if (!this.expanded) {
-                const chevron = button.querySelector('.bi-chevron-down');
-                chevron.classList.replace('bi-chevron-down', 'bi-chevron-up');
+        toggleAccordion() {
+            const triangle = this.$refs["triangle"];
+            console.log(triangle);
+            const chevron = this.$refs["chevron"];
+            console.log(chevron);
+            const lessons = this.$refs["lessons"];
+            console.log(lessons);
+
+            if (this.expanded) {
+                lessons.style.height = "0px";
+                chevron.classList.remove("bi-chevron-up");
+                chevron.classList.add("bi-chevron-down");
+                triangle.classList.remove("rotate");
             } else {
-                const chevron = button.querySelector('.bi-chevron-up');
-                chevron.classList.replace('bi-chevron-up', 'bi-chevron-down');
+                lessons.style.height = lessons.scrollHeight + "px";
+                chevron.classList.remove("bi-chevron-down");
+                chevron.classList.add("bi-chevron-up");
+                triangle.classList.add("rotate");
+
+                const topOffset = 100; // Adjust for desired space at the top
+                const elementPosition =
+                    lessons.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - topOffset;
+
+                // Smooth scroll to the position with the offset
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth",
+                });
             }
             this.expanded = !this.expanded;
-
         },
-        toggleTriangle(event) {
-            const button = event.currentTarget;
-            const triangle = button.querySelector('.triangle-btn');
+    },
+    async mounted() {
+        const storedCourse = sessionStorage.getItem("selectedCourse");
+        if (storedCourse) {
+            this.course = JSON.parse(storedCourse);
+        } else {
+            console.log("No course data found in sessionStorage");
+            return;
+        }
 
-            if (!this.expanded) {
-                triangle.classList.add('rotate');
-            }
-            else {
-                triangle.classList.remove('rotate')
-            }
-            this.expanded = !this.expanded;
-        },
+        await this.fetchLessons();
+        await this.fetchReviewsWithUserDetails();
+    },
 
 
-    }
+
 }
 
 
@@ -245,6 +326,7 @@ export default {
 body {
     background-color: #f8f9fa;
 }
+
 .card-img-top {
     height: 200px;
     object-fit: cover;
@@ -291,12 +373,31 @@ body {
     height: 30px;
     border-radius: 15px;
 }
-.btn-primary {
-    background-color: #4e73df;
-    border-color: #4e73df;
+
+
+/*Triangle button CSS*/
+.triangle-btn {
+    margin: auto;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: inline-block;
+    clip-path: polygon(50% 100%, 0 33%, 100% 33%);
+    border: none;
 }
-.btn-primary{
-    background-color: #2e59d9;
-    border-color: #2e59d9;
+
+.triangle-btn.rotate {
+    transform: rotate(180deg);
+    margin-top: 5px;
+}
+
+.triangle-btn-bg {
+    padding-top: 5px;
+    position: relative;
+    bottom: -40px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-radius: 50%;
 }
 </style>
