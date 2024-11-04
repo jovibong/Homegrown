@@ -381,7 +381,7 @@
             computed: {
                 num_wrong() {
                     return this.questions.length - this.score;
-                },
+                },  
                 improvement() {
                     return Math.round((this.score / this.questions.length) / this.previous_quiz_score * 100 - 100, 0);
                 },

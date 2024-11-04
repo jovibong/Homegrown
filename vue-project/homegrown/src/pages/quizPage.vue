@@ -5,14 +5,11 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <a
-              href="individual_course.html"
-              class="btn btn-warning text-dark d-flex align-items-center"
-            >
+            <router-link to="individualCoursePage" class="btn btn-warning text-dark d-flex align-items-center">
               <i class="bi bi-arrow-left me-1"></i>
               <span class="d-none d-lg-inline">Back to course overview</span>
               <span class="d-inline d-lg-none">Back</span>
-            </a>
+            </router-link>
           </div>
           <!-- Course Title Large (Centered) -->
           <div class="col-8 text-center">
