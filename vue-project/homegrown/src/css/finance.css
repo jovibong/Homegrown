@@ -113,10 +113,6 @@ input[type="radio"]:checked+.page {
 
 
 /* start of table  */
-.filter-by {
-    background-color: black;
-    color: white;
-}
 
 .selected-row {
     background-color: #d0e7ff
@@ -139,17 +135,10 @@ input[type="radio"]:checked+.page {
 }
 
 .btn-add {
-    outline: 3px solid black;
-}
-
-.add {
-    color: black;
+    outline: 3px solid black;   
 }
 
 /* Select the immediate sibling with class `.add` when `.btn-add` is hovered */
-.btn-add:hover .add {
-    color: white;
-}
 
 /* end of table logs */
 

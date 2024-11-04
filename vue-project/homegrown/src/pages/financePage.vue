@@ -284,10 +284,10 @@
 
 
                         <div class="col-12">
-                            <div class="bento-tile h-100 p-3">
+                            <div class="bento-tile h-100 p-3 text-center">
                                 <div>
-                                    <h1 class="display-1 fw-bold text-primary">Summary</h1>
-                                    <p class="text-muted">A quick glance at your income and spending</p>
+                                    <h1 class="display-1 fw-bold text-primary">Payment Tracker</h1>
+                                    <p class="text-muted">Keep track of your income and any late payments</p>
                                 </div>
                             </div>
                         </div>
@@ -315,30 +315,7 @@
 
                         <div class="col-12">
                             <div class="bento-tile h-100 p-3">
-                                <div class=" container row d-flex justify-content-start mx-auto">
-                                    <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
-                                    <div class="col-* px-0">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control w-75" placeholder="Search here..."
-                                                aria-label="Text input with dropdown button">
-                                            <select class="form-select filter-by w-25 text-wrap"
-                                                aria-label="Default select example">
-                                                <option value="None" selected>Filter by</option>
-                                                <option value="Tilte">Tilte</option>
-                                                <option value="Amount">Amount</option>
-                                                <option value="Status">Status</option>
-                                                <option value="Date">Date</option>
-                                                <option value="Image">Image</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end of search bar -->
-
-
-
                                 <!-- start of table logs -->
-                                <!-- NOTE CAN CREATE TEMPLATE FOR ROW INSERTION -->
                                 <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
                                 <payment-logs></payment-logs>
                                 

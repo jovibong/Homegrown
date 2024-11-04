@@ -413,7 +413,7 @@ export default {
 </script>
 
 <style scoped>
-#app {
+#chart {
     text-align: center;
 }
 
