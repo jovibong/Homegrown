@@ -1,9 +1,3 @@
-<script setup>
-const { show } = defineProps({
-    show: Boolean,
-});
-</script>
-
 <template>
     <Transition name="modal">
         <div v-if="show" class="modal-mask">
@@ -14,51 +8,42 @@ const { show } = defineProps({
 
                 <div class="container ">
                     <!-- update validation func later -->
-                    <form class="row g-3 needs-validation" novalidate>
-                        
+                    <form class="row g-3 needs-validation" novalidate @submit.prevent="addLogs()">
+
                         <div class="col-md-6">
-                            <label for="validationCustom01" class="form-label">Title</label>
+                            <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
-                                required>
+                                required v-model="title">
                             <div class="invalid-feedback">
                                 Please enter a title.
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
-                            <label for="validationCustom05" class="form-label">Payment Date</label>
-                            <input type="date" class="form-control" id="validationCustom05" required>
+                            <label for="validationCustom05" class="form-label mt-4">Payment Date</label>
+                            <input type="date" class="form-control" id="validationCustom05" required v-model="date">
                             <div class="invalid-feedback">
                                 Please provide a date.
                             </div>
                             <span id="dateHelpBlock" class="form-text text-muted">According to slip/transaction</span>
                         </div>
-                        
+
                         <div class="col-md-6">
-                            <label for="validationCustomUsername" class="form-label">Amount</label>
+                            <label for="validationCustomUsername" class="form-label mt-4">Amount</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">SGD$</span>
                                 <input type="number" class="form-control" id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" placeholder="Enter payment amount" required>
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter payment amount" required
+                                    v-model="amount">
                                 <div class="invalid-feedback">
                                     Please enter a valid number.
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
-                            <label for="validationCustom03" class="form-label">Payment Slip</label>
-                            <div class="input-group has-validation">
-                                <input type="file" class="form-control" id="validationCustom03" required>
-                            </div>
-                            <div class="invalid-feedback">
-                                Please provide an image of payment slip.
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label for="validationCustom04" class="form-label">Payment Type</label>
-                            <select class="form-select" id="validationCustom04" required>
+                            <label for="validationCustom04" class="form-label mt-4">Payment Type</label>
+                            <select class="form-select" id="validationCustom04" required v-model="paymentType">
                                 <option selected disabled value="">Select...</option>
                                 <option value="bonus">Bonus</option>
                                 <option value="monthly pay">Monthly Pay</option>
@@ -67,7 +52,19 @@ const { show } = defineProps({
                                 Please select one.
                             </div>
                         </div>
-                        
+
+                        <div class="col-12 ">
+                            <!-- <label for="validationCustom03" class="form-label mt-4">Payment Slip</label>
+                            <div class="input-group has-validation">
+                                <input type="file" class="form-control" id="validationCustom03" required>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide an image of payment slip.
+                            </div> -->
+                        </div>
+
+
+
                         <div class="col-12">
                             <div class="form-check">
                                 <input class="form-check-input border-1 border-dark" type="checkbox" value=""
@@ -87,12 +84,109 @@ const { show } = defineProps({
                 <div class="modal-footer">
                     <button class="btn btn-danger m-3" type="button" @click="$emit('close')">Cancel</button>
                     <!-- add addlogs fucntion here -->
-                    <button class="btn btn-success" type="submit" @click="() => {  $emit('close'); }">Add log</button>
+                    <button class="btn btn-success" type="submit" @click="() => { $emit('close'); addLogs(); }">Add
+                        log</button>
                 </div>
             </div>
         </div>
     </Transition>
 </template>
+
+<script setup>
+import { ref, watch } from 'vue'
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+
+// toggle model
+const { show } = defineProps({
+    show: Boolean,
+});
+
+// create log
+
+// title
+const title = ref('')
+
+// amount
+const amount = ref('')
+
+// paymentType, date, status, and badgeClass
+const paymentType = ref('')
+const date = ref('')
+const status = ref('')
+const badgeClass = ref('')
+
+// Watchers for paymentType and date to set `status` and `badgeClass`
+watch([paymentType, date], () => {
+    // Update status based on paymentType and date
+    if (paymentType.value === 'bonus') {
+        status.value = 'BONUS';
+    } else if (paymentType.value === 'monthly pay') {
+        const paymentDay = 15;
+        const processDate = new Date(date.value);
+        const day = processDate.getDate();
+
+        if (day > paymentDay) {
+            status.value = 'LATE';
+        } else if (day < paymentDay) {
+            status.value = 'EARLY';
+        } else {
+            status.value = 'ON TIME';
+        }
+    }
+
+    // Update badgeClass based on status
+    switch (status.value) {
+        case 'BONUS':
+        case 'EARLY':
+            badgeClass.value = "text-bg-success";
+            break;
+        case 'ON TIME':
+            badgeClass.value = "text-bg-primary";
+            break;
+        case 'LATE':
+            badgeClass.value = "text-bg-danger";
+            break;
+        default:
+            console.log(`status not processed!`);
+    }
+});
+
+// need to figure out for image
+// const image = ref('')
+const image = 'needToFill.png'
+
+// to add log to firebase
+async function addLogs() {
+
+    await addDoc(collection(db, 'finance'), {
+        title: title.value,
+        amount: amount.value,
+        status: status.value,
+        date: Timestamp.fromDate(new Date(date.value)),
+        image: image,
+        badgeClass: badgeClass.value
+    });
+
+    // const logToAdd = {
+    //     title: title.value,
+    //     amount: amount.value,
+    //     status: status.value,
+    //     date: date.value,
+    //     image: image,
+    //     badgeClass: badgeClass.value
+    // }
+}
+
+
+
+
+
+
+// onMounted(() => {
+//     console.log('mounted')
+// })
+</script>
 
 <style>
 .modal-mask {
@@ -113,11 +207,13 @@ const { show } = defineProps({
 .modal-container {
     width: 90%;
     max-width: 600px;
-    max-height: 80vh; /* Limit height to 80% of viewport */
+    max-height: 80vh;
+    /* Limit height to 80% of viewport */
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
     transition: all 0.3s ease;
     padding-top: 0px;
 }
