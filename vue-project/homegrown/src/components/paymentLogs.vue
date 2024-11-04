@@ -1,3 +1,10 @@
+<script setup>
+import Modal from './logsModal.vue'
+import { ref } from 'vue'
+
+const showModal = ref(false)
+</script>
+
 <template>
     <div class="row g-3 mx-auto px-0 mb-3 d-flex justify-content-between">
         <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
@@ -6,7 +13,7 @@
                 <input type="text" class="form-control  border-right-0   border-dark" placeholder="Search here..."
                     aria-label="Text input with dropdown button">
                 <select class="form-select  text-nowrap  border-dark fw-bold" aria-label="Default select example">
-                    <option value="None" selected>  Filter by </option>
+                    <option value="None" selected> Filter by </option>
                     <option value="Tilte">Tilte</option>
                     <option value="Amount">Amount</option>
                     <option value="Status">Status</option>
@@ -16,11 +23,19 @@
             </div>
         </div>
         <div class=" col-sm-3 d-flex justify-content-end px-0">
-            <button class="btn btn-outline-dark btn-add w-100">
+            <button class="btn btn-outline-dark btn-add w-100" id="show-modal" @click="showModal = true">
                 <i class='fas fa-plus-circle fs-5'></i>
                 <span> Add Logs</span>
             </button>
-        </div> 
+            <Teleport to="body">
+                <!-- use the modal component, pass in the prop -->
+                <logs-modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
+                    <template #header>
+                        <h2>This is actual header</h2>
+                    </template>
+                </logs-modal>
+            </Teleport>
+        </div>
     </div>
 
     <!-- end of search bar -->
@@ -64,6 +79,10 @@
 
 <script>
 export default {
+    components:
+    {
+        'logs-modal': Modal,
+    },
     data() {
         return {
             // Sample data for the table rows
