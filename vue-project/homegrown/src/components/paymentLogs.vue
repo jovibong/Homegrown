@@ -31,7 +31,7 @@ const showModal = ref(false)
                 <!-- use the modal component, pass in the prop -->
                 <logs-modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
                     <template #header>
-                        <h2>This is actual header</h2>
+                        <h2>Add Payment Log</h2>
                     </template>
                 </logs-modal>
             </Teleport>
