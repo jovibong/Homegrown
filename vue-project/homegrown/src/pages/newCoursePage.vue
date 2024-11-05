@@ -74,6 +74,7 @@
                 </div>
               </div>
               <p class="text-muted">{{ course.description }}</p>
+              <add-button class="mt-5" initialText="Add Course" clickedText="Course Added" :loading="course_add_loading"></add-button>
             </div>
           </div>
 
@@ -220,10 +221,12 @@
 import loadingAnimation from "../components/loadingAnimation.vue";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
+import addButton from "../components/addButton.vue";
 
 export default {
   components: {
     loadingAnimation,
+    addButton
   },
   data() {
     return {
@@ -240,6 +243,7 @@ export default {
       lessons: [],
       expanded: false,
       lessons_loading: true,
+      course_add_loading: true,
     };
   },
   methods: {
@@ -364,6 +368,11 @@ export default {
 
     await this.fetchLessons();
     await this.fetchReviewsWithUserDetails();
+
+    // delete this later
+    setTimeout(()=>{
+        this.course_add_loading = false;
+    },3000)
   },
 };
 </script>
