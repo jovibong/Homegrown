@@ -28,12 +28,16 @@
             <h2 class="mb-4">Welcome!</h2>
             <form @submit.prevent="handleLogin">
               <div class="form-group mb-3">
-                <label for="email">Email or Phone Number</label>
+                <label for="email" class="bold-label">Email or Phone Number</label>
                 <input type="text" class="form-control" v-model="email" placeholder="Enter email or phone number" />
               </div>
               <div class="form-group mb-3">
-                <label for="password">Password</label>
+                <label for="password" class="bold-label">Password</label>
                 <input type="password" class="form-control" v-model="password" placeholder="Enter password" />
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" v-model="rememberMe" />
+                <label class="form-check-label" for="rememberMe">Remember me</label>
               </div>
               <button type="submit" class="btn btn-primary btn-block w-100">Sign In</button>
             </form>
@@ -86,14 +90,22 @@ export default {
         this.modalInstance = new Modal(this.$refs.loginModal);
         this.$refs.loginModal.addEventListener("hidden.bs.modal", () => {
           this.$emit("update:visible", false);
+          this.resetForm(); // Clear form when modal is closed
         });
       }
       this.modalInstance.show();
+      this.resetForm(); // Clear form each time modal opens
     },
     hideModal() {
       if (this.modalInstance) {
         this.modalInstance.hide();
       }
+      this.$emit("update:visible", false);
+    },
+    resetForm() {
+      // Clear all input fields
+      this.email = '';
+      this.password = '';
     },
     async handleLogin() {
       try {
@@ -102,6 +114,18 @@ export default {
         const user = userCredential.user;
         console.log("Logged in user:", user);
 
+        // Check the "Remember Me" preference and save accordingly
+        if (this.rememberMe) {
+          // Save "Remember Me" state and user data in localStorage
+          localStorage.setItem('rememberMe', true);
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          // Save user data in sessionStorage for the session only
+          sessionStorage.setItem('user', JSON.stringify(user));
+          localStorage.removeItem('rememberMe'); // Clear "Remember Me" from local storage
+        }
+
+        // Emit event with user info if needed
         // Emit login event to parent if needed
         this.$emit('login', { user: user, rememberMe: this.rememberMe });
 
@@ -172,6 +196,10 @@ export default {
 .signup-link a {
     color: #525FE1;
     text-decoration: underline;
+}
+
+.bold-label {
+    font-weight: bold;
 }
 </style>
 

@@ -36,6 +36,9 @@
               class="modal-signup p-4"
               style="flex: 1; background-color: #ffffff; border-top-right-radius: 20px; border-bottom-right-radius: 20px;"
             >
+            <div>
+              <span class="fw-bold" id="home">Home</span><span class="text-warning fw-bold">Grown</span><br /><br />
+            </div>
               <h2 class="mb-4 text-center">Create Your Account</h2>
               <form @submit.prevent="handleSignup">
                 <div class="form-group mb-3">
@@ -151,6 +154,7 @@ export default {
         // Add event listener to reset visibility on close
         this.$refs.signupModal.addEventListener("hidden.bs.modal", () => {
           this.$emit("update:visible", false);
+          this.resetForm(); // Reset form when modal is closed
         });
       }
       this.modalInstance.show();
@@ -159,9 +163,19 @@ export default {
       if (this.modalInstance) {
         this.modalInstance.hide();
       }
+      this.$emit("update:visible", false);
     },
     closeModal() {
       this.$emit("update:visible", false);
+      this.resetForm(); // Reset form when modal is closed via close button
+    },
+    resetForm() {
+      // Clear all input fields
+      this.email = '';
+      this.password = '';
+      this.confirmPassword = '';
+      this.username = '';
+      this.userType = '';
     },
     async handleSignup() {
       if (this.password !== this.confirmPassword) {
@@ -259,6 +273,10 @@ export default {
 
 .form-check-label {
   font-size: 16px;
+}
+
+#home {
+  color: #525FE1;
 }
   </style>
   
