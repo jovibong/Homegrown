@@ -94,8 +94,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
 import { db } from "../firebase/initialize";
+import { getAuth } from 'firebase/auth';
 
 // toggle model
 const { show } = defineProps({
@@ -169,26 +170,39 @@ function clearFields() {
 
 // to add log to firebase
 async function addLogs() {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-    await addDoc(collection(db, 'finance'), {
+    if (!user) {
+        console.log("No user is logged in");
+        clearFields();
+        return;
+    }
+
+    const userId = user.uid;
+    const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+    const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+
+    // Check if the user document exists
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+    if (!userDocSnapshot.exists()) {
+        await addDoc(collection(db, 'finance'), { userId: userId });
+    }
+
+    // Add the log to the user's paymentlogs subcollection
+    await addDoc(paymentLogsCollectionRef, {
         title: title.value,
         amount: amount.value,
-        status: status.value,
+        statusPayment: status.value,
         date: Timestamp.fromDate(new Date(date.value)),
         image: image,
         badgeClass: badgeClass.value
     });
 
+    // Clear input fields after adding the log
     clearFields();
-
-    // const logToAdd = {
-    //     title: title.value,
-    //     amount: amount.value,
-    //     status: status.value,
-    //     date: date.value,
-    //     image: image,
-    //     badgeClass: badgeClass.value
-    // }
 }
 
 
