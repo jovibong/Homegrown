@@ -1,10 +1,3 @@
-<script setup>
-import Modal from './logsModal.vue'
-import { ref } from 'vue'
-
-const showModal = ref(false)
-</script>
-
 <template>
     <div class="row g-3 mx-auto px-0 mb-3 d-flex justify-content-between">
         <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
@@ -53,13 +46,13 @@ const showModal = ref(false)
                     <th scope="col"></th>
                 </tr>
             </thead>
-            <tbody class="table-group-divider">
+            <tbody class="table-group-divider" v-if="hasLogs">
                 <tr v-for="(row, index) in tableData" :key="index" :class="{ 'selected-row': isSelected(index) }">
                     <td>
                         <input type="checkbox" @change="toggleRowSelection(index)" :checked="isSelected(index)" />
                     </td>
                     <th scope="row">{{ row.title }}</th>
-                    <td>{{ row.amount }}</td>
+                    <td>${{ row.amount }}</td>
                     <td>
                         <span class="badge rounded-pill" :class="row.badgeClass">{{ row.status }}</span>
                     </td>
@@ -72,10 +65,86 @@ const showModal = ref(false)
                     </td>
                 </tr>
             </tbody>
+            <tbody class="table-group-divider" v-if="!hasLogs">
+                <tr>
+                    <td colspan="7" class=" fw-bold text-center">No Entries yet!</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
 </template>
+
+
+<script setup>
+import Modal from './logsModal.vue'
+import { onMounted, ref } from 'vue'
+// import { ref, watch } from 'vue'
+// import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot  } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+import { getAuth } from 'firebase/auth';
+
+const showModal = ref(false)
+const hasLogs = ref(true)
+const tableData = ref([]) 
+
+function formatDate(timestamp) {
+    // Convert the Firebase Timestamp to a JavaScript Date
+    const date = timestamp.toDate();
+
+    // Extract day, month, and year
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    // Return formatted date as dd/mm/yyyy
+    return `${day}/${month}/${year}`;
+}
+
+onMounted(async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+        console.log("No user is logged in");
+        return;
+    }
+
+    const userId = user.uid;
+    const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+    const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+
+    // Check if the user document exists
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+    if (!userDocSnapshot.exists()) {
+        hasLogs.value = false;
+    }
+
+
+    const unsubscribe = onSnapshot(paymentLogsCollectionRef, (querySnapshot) => {
+        const logs = [];
+        querySnapshot.forEach((doc) => {
+            logs.push({
+                title: doc.data().title,
+                amount: doc.data().amount,
+                status: doc.data().statusPayment,
+                date:  formatDate(doc.data().date),
+                image: doc.data().image,
+                badgeClass: doc.data().badgeClass
+            });
+        });
+        tableData.value = logs; // Update tableData with fetched logs
+
+        // Check if there are any logs
+        hasLogs.value = tableData.value.length > 0;
+    });
+
+})
+</script>
+
 
 <script>
 export default {
@@ -85,13 +154,13 @@ export default {
     },
     data() {
         return {
-            // Sample data for the table rows
-            tableData: [
-                { title: 'June Payment', amount: '$5000', status: 'ON TIME', date: '15/06/2024', image: 'example.png', badgeClass: 'text-bg-primary' },
-                { title: 'May Payment', amount: '$5000', status: 'EARLY', date: '10/05/2024', image: 'example.png', badgeClass: 'text-bg-success' },
-                { title: 'April Payment', amount: '$5000', status: 'LATE', date: '20/04/2024', image: 'example.png', badgeClass: 'text-bg-danger' },
-                { title: 'April Bonus', amount: '$1111', status: 'BONUS', date: '11/04/2024', image: 'example.png', badgeClass: 'text-bg-success' },
-            ],
+            // // Sample data for the table rows
+            // tableData: [
+            //     { title: 'June Payment', amount: '$5000', status: 'ON TIME', date: '15/06/2024', image: 'example.png', badgeClass: 'text-bg-primary' },
+            //     { title: 'May Payment', amount: '$5000', status: 'EARLY', date: '10/05/2024', image: 'example.png', badgeClass: 'text-bg-success' },
+            //     { title: 'April Payment', amount: '$5000', status: 'LATE', date: '20/04/2024', image: 'example.png', badgeClass: 'text-bg-danger' },
+            //     { title: 'April Bonus', amount: '$1111', status: 'BONUS', date: '11/04/2024', image: 'example.png', badgeClass: 'text-bg-success' },
+            // ],
             selectedRows: [], // Array to hold the selected row indices
         };
     },
@@ -119,5 +188,9 @@ export default {
     /* Change this to your desired highlight color */
     color: white;
     /* Optional: Change text color for better contrast */
+}
+
+td, th {
+    vertical-align: middle;
 }
 </style>
