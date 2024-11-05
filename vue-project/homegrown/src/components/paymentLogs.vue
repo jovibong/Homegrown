@@ -24,10 +24,13 @@
                 <!-- use the modal component, pass in the prop -->
                 <logs-modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
                     <template #header>
-                        <h2>Add Payment Log</h2>
+                        <div class="w-100">
+                            <h2>Add Payment Log</h2>
+                            <hr>
+                        </div>
                     </template>
                 </logs-modal>
-            </Teleport>
+            </Teleport> 
         </div>
     </div>
 

@@ -2,14 +2,14 @@
     <Transition name="modal">
         <div v-if="show" class="modal-mask">
             <div class="modal-container p-5 w-1">
-                <div class="modal-header mb-5">
+                <div class="modal-header">
                     <slot name="header">this is header default </slot>
                 </div>
 
                 <div class="container ">
                     <!-- update validation func later -->
                     <form class="row g-3 needs-validation" novalidate @submit.prevent="addLogs()">
-                        <p>test</p>
+                        
                         <div class="col-md-6">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
@@ -38,19 +38,6 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="validationCustomUsername" class="form-label mt-4">Amount</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text" id="inputGroupPrepend">SGD$</span>
-                                <input type="number" class="form-control" id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" placeholder="Enter payment amount" required
-                                    v-model="amount">
-                                <div class="invalid-feedback">
-                                    Please enter a valid number.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
                             <label for="validationCustom04" class="form-label mt-4">Payment Type</label>
                             <select class="form-select" id="validationCustom04" required v-model="paymentType">
                                 <option selected disabled value="">Select...</option>
@@ -62,6 +49,21 @@
                             </div>
                         </div>
 
+                        <div class="col-md-12">
+                            <label for="validationCustomUsername" class="form-label mt-4">Amount</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text" id="inputGroupPrepend">SGD$</span>
+                                <input type="number" class="form-control" id="validationCustomUsername"
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
+                                    v-model="amount">
+                                <div class="invalid-feedback">
+                                    Please enter a valid number.
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
                         <div class="col-12 ">
                             <!-- <label for="validationCustom03" class="form-label mt-4">Payment Slip</label>
                             <div class="input-group has-validation">
@@ -70,6 +72,7 @@
                             <div class="invalid-feedback">
                                 Please provide an image of payment slip.
                             </div> -->
+                            <hr>
                         </div>
 
 
