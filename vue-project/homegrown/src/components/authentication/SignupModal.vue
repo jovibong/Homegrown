@@ -78,6 +78,29 @@
                     required
                   />
                 </div>
+
+                <!-- User Type Toggle Group -->
+                <div class="form-group mb-3 d-flex align-items-center">
+                  <label class="bold-label me-3 mb-0">Sign Up as:</label>
+                  <div class="btn-group" role="group">
+                    <button
+                      type="button"
+                      :class="{'btn': true, 'btn-outline-primary': userType !== 'worker', 'btn-primary': userType === 'worker'}"
+                      @click="userType = 'worker'"
+                    >
+                      Worker
+                    </button>
+                    <button
+                      type="button"
+                      :class="{'btn': true, 'btn-outline-primary': userType !== 'volunteer', 'btn-primary': userType === 'volunteer'}"
+                      @click="userType = 'volunteer'"
+                    >
+                      Volunteer
+                    </button>
+                  </div>
+                </div>
+
+
   
                 <button type="submit" class="btn btn-primary btn-block w-100" @click="signUp">Sign Up</button>
               </form>
@@ -104,11 +127,12 @@ export default {
   },
   data() {
     return {
-      imageUrl: "your-image-url.png",
+      imageUrl: require('@/img/solo_man.jpg'),
       modalInstance: null,
       email: '',
       password: '',
-      username: '' // Add an input field for username in the template
+      username: '', // Add an input field for username in the template
+      userType: '', // Store user type (worker or volunteer)
     };
   },
   watch: {
@@ -144,7 +168,10 @@ export default {
         alert("Passwords do not match");
         return;
       }
-      
+      if (!this.userType) {
+          alert("Please select either 'Worker' or 'Volunteer' to sign up.");
+          return;
+      }
       try {
         // Firebase sign-up
         const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
@@ -156,6 +183,7 @@ export default {
         await setDoc(doc(db, 'profiles', user.uid), {
           username: this.username,
           email: this.email,
+          userType: this.userType // Save the selected user type
         });
 
         console.log("Signed up user:", user);
@@ -222,5 +250,15 @@ export default {
   .btn-primary:hover {
     background-color: #335E9A; /* Slightly darker shade for hover effect */
   }
+
+  .form-check-input {
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
+}
+
+.form-check-label {
+  font-size: 16px;
+}
   </style>
   
