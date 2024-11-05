@@ -111,25 +111,31 @@
 export default {
   data() {
     return {
-      lesson: {
-        name: "Lesson 1: Video",
-        title: "Installing Python - Your First Step into Python Programming",
-        description: `Welcome to the first lesson of your Python programming journey! In this lesson, we will cover the essential steps to get Python up and running on your computer. Whether you're using Windows, macOS, or Linux, the installation process is straightforward and will prepare you for all the coding exercises and projects ahead.
-            <br><br>
-            <b>What You'll Learn:</b> <br>
-            Before you can start writing your first Python code, it's crucial to have the right tools set up. This lesson walks you through downloading and installing Python, ensuring you have the latest version suitable for your operating system. We'll also introduce you to IDEs (Integrated Development Environments) and text editors that can make coding in Python much easier and more efficient. By the end of this lesson, you'll be ready to write and execute Python scripts on your computer.
-            `,
-        typeof: "video",
-        link: "https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU&index=1",
-        next_name: "Lesson 1: Quiz",
-        rating: 86,
-      },
-      course_name: "Introduction to Python",
+      lesson: {},
+      course_name: "",
       video_watched: false,
       selected_vote: null,
       image:
         "https://plus.unsplash.com/premium_photo-1661964187664-e26f70e1a224?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y29kaW5nJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D",
     };
+  },
+  mounted() {
+    // Retrieve the selected lesson item from sessionStorage
+    const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
+    if (storedLessonItem) {
+      this.lesson = JSON.parse(storedLessonItem);
+    } else {
+      console.warn("No selected lesson item found in sessionStorage.");
+    }
+
+    // Retrieve the course name from sessionStorage
+    const storedCourse = sessionStorage.getItem("selectedCourse");
+    if (storedCourse) {
+      const course = JSON.parse(storedCourse);
+      this.course_name = course.name;
+    } else {
+      console.warn("No selected course found in sessionStorage.");
+    }
   },
   methods: {
     watchvideo() {
@@ -141,3 +147,4 @@ export default {
   },
 };
 </script>
+

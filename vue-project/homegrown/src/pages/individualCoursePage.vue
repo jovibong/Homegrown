@@ -171,6 +171,7 @@
                   :class="{
                     'pointer-events-none': !item.completed && !item.latest, // Disable click if not completed or latest
                   }"
+                  @click.prevent="handleLessonItemClick(item)"
                 >
                   <div
                     :class="[
@@ -483,6 +484,15 @@ export default {
         console.error("Error fetching mentor details:", error);
       } finally {
         this.mentor_loading = false;
+      }
+    },
+    handleLessonItemClick(item) {
+      // Store the clicked lesson item in sessionStorage
+      sessionStorage.setItem("selectedLessonItem", JSON.stringify(item));
+
+      // Navigate to the route
+      if (item.completed || item.latest) {
+        this.$router.push(item.link);
       }
     },
   },

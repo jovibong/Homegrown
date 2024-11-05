@@ -37,14 +37,17 @@
       </div>
     </section>
 
-    <section id="question">
+    <section id="question" v-if="questions.length > 0">
       <p class="text-center text-muted display-6 mt-5 fade-in-top">
         Question {{ current_question }}/{{ num_questions }}
       </p>
-      <h2 class="text-center fade-in-top">
+      <h2
+        class="text-center fade-in-top"
+        v-if="questions[current_question - 1]"
+      >
         {{ questions[current_question - 1].question }}
       </h2>
-      <div class="container mt-5 mb-3">
+      <div class="container mt-5 mb-3" v-if="questions[current_question - 1]">
         <ul class="list-unstyled push-in-right">
           <li
             v-for="(option, key) in questions[current_question - 1].options"
@@ -63,15 +66,6 @@
             <span class="h6 mb-0">{{ option }}</span>
           </li>
         </ul>
-      </div>
-      <div class="container w-50 d-flex justify-content-center mb-3">
-        <button
-          v-if="selected_option && !submitted"
-          class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-2 text-secondary fw-bold justify-content-center fade-in-bottom hover-animate"
-          @click="submit_option"
-        >
-          Submit Answer <i class="bi bi-arrow-right ms-2"></i>
-        </button>
       </div>
     </section>
 
@@ -142,92 +136,15 @@
 </template>
 
 <script>
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase/initialize"; // Adjust the path as needed
 export default {
   data() {
     return {
-      questions: [
-        {
-          id: 101,
-          question_number: 1,
-          type: "multiple_choice",
-          question:
-            "Which version of Python is recommended for new users to install?",
-          options: {
-            A: "Python 2.7",
-            B: "Python 3.x",
-            C: "Python 1.5",
-            D: "Python 4.0",
-          },
-          correct_answer: "B",
-        },
-        {
-          id: 102,
-          question_number: 2,
-          type: "multiple_choice",
-          question:
-            "What is the best way to verify that Python is correctly installed on your system?",
-          options: {
-            A: "python --install",
-            B: "verify-python",
-            C: "python --version",
-            D: "python --check",
-          },
-          correct_answer: "C",
-        },
-        {
-          id: 103,
-          question_number: 3,
-          type: "multiple_choice",
-          question:
-            "Which package manager is commonly used on macOS to install Python?",
-          options: {
-            A: "apt-get",
-            B: "Homebrew",
-            C: "yum",
-            D: "Chocolatey",
-          },
-          correct_answer: "B",
-        },
-        {
-          id: 104,
-          question_number: 4,
-          type: "multiple_choice",
-          question:
-            "What option should you select during Python installation to make it accessible from the command line?",
-          options: {
-            A: "Install Python for All Users",
-            B: "Add Python to PATH",
-            C: "Install Documentation",
-            D: "Install PIP",
-          },
-          correct_answer: "B",
-        },
-        {
-          id: 105,
-          question_number: 5,
-          type: "multiple_choice",
-          question:
-            "Which command is used to create a virtual environment in Python?",
-          options: {
-            A: "python -m venv [environment-name]",
-            B: "python create-env [environment-name]",
-            C: "python --virtual [environment-name]",
-            D: "python make-env [environment-name]",
-          },
-          correct_answer: "A",
-        },
-      ],
-      lesson: {
-        name: "Lesson 1: Quiz",
-        title: "Installing Python",
-        description: `  
-                Feel free to go back to the lesson if you are unable to answer the questions.
-            `,
-        typeof: "quiz",
-        next_name: "Lesson 1: Quiz",
-        rating: 84,
-      },
-      course_name: "Introduction to Python",
+      questions: [],
+      lesson: {},
+      course_name: "",
+      course: null,
       current_question: 1,
       num_questions: 5,
       score: 0,
@@ -277,11 +194,55 @@ export default {
       localStorage.setItem("user_answers", JSON.stringify(this.answers));
       localStorage.setItem("user_score", JSON.stringify(this.score));
     },
+     async fetchQuestions() {
+      try {
+        // Assuming lesson.id and course_name are set correctly
+        const lessonItemId = this.lesson.id;
+        const questionsRef = collection(
+          db,
+          `courses/${this.course.id}/lessons/${this.lesson.id}/lesson_items/${lessonItemId}/questions`
+          // change lesson.id to lesson.id
+        );
+
+        const questionsSnap = await getDocs(questionsRef);
+        this.questions = questionsSnap.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        console.log("Done");
+        console.log(this.course.id);
+        console.log(this.lesson);
+        console.log(this.questions);
+      }
+    },
   },
   computed: {
     last_question() {
       return this.questions.length;
     },
+  },
+  async mounted() {
+    // Retrieve the selected lesson item from sessionStorage
+    const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
+    if (storedLessonItem) {
+      this.lesson = JSON.parse(storedLessonItem);
+    } else {
+      console.warn("No selected lesson item found in sessionStorage.");
+    }
+
+    // Retrieve the course name from sessionStorage
+    const storedCourse = sessionStorage.getItem("selectedCourse");
+    if (storedCourse) {
+      this.course = JSON.parse(storedCourse);
+      this.course_name = this.course.name;
+    } else {
+      console.warn("No selected course found in sessionStorage.");
+    }
+
+    await this.fetchQuestions(); // Fetch questions after lesson data is set
   },
 };
 </script>
