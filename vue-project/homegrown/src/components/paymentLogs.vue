@@ -81,13 +81,13 @@ import Modal from './logsModal.vue'
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { doc, getDoc, collection, onSnapshot  } from "firebase/firestore";
+import { doc, getDoc, collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/initialize";
-import { getAuth } from 'firebase/auth';
+// import { getAuth } from 'firebase/auth';
 
 const showModal = ref(false)
 const hasLogs = ref(true)
-const tableData = ref([]) 
+const tableData = ref([])
 
 function formatDate(timestamp) {
     // Convert the Firebase Timestamp to a JavaScript Date
@@ -103,44 +103,55 @@ function formatDate(timestamp) {
 }
 
 onMounted(async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    // const auth = getAuth();
+    // const user = auth.currentUser;
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        console.log('session in progress');
+        console.log(sessionUser.uid);
 
-    if (!user) {
-        console.log("No user is logged in");
+        // if (!user) {
+        //     console.log("No user is logged in");
+        //     return;
+        // }
+
+        const userId = sessionUser.uid;
+        const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+        const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+
+        // Check if the user document exists
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+        if (!userDocSnapshot.exists()) {
+            hasLogs.value = false;
+        }
+
+
+        const unsubscribe = onSnapshot(paymentLogsCollectionRef, (querySnapshot) => {
+            const logs = [];
+            querySnapshot.forEach((doc) => {
+                logs.push({
+                    title: doc.data().title,
+                    amount: doc.data().amount,
+                    status: doc.data().statusPayment,
+                    date: formatDate(doc.data().date),
+                    image: doc.data().image,
+                    badgeClass: doc.data().badgeClass
+                });
+            });
+            tableData.value = logs; // Update tableData with fetched logs
+
+            // Check if there are any logs
+            hasLogs.value = tableData.value.length > 0;
+        });
+    } catch {
+        console.log('no session user');
         return;
     }
 
-    const userId = user.uid;
-    const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
-    const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
-
-    // Check if the user document exists
-    const userDocSnapshot = await getDoc(userDocRef);
-
-    // If the user document doesn't exist, create it (you can optionally add some initial data to it)
-    if (!userDocSnapshot.exists()) {
-        hasLogs.value = false;
-    }
 
 
-    const unsubscribe = onSnapshot(paymentLogsCollectionRef, (querySnapshot) => {
-        const logs = [];
-        querySnapshot.forEach((doc) => {
-            logs.push({
-                title: doc.data().title,
-                amount: doc.data().amount,
-                status: doc.data().statusPayment,
-                date:  formatDate(doc.data().date),
-                image: doc.data().image,
-                badgeClass: doc.data().badgeClass
-            });
-        });
-        tableData.value = logs; // Update tableData with fetched logs
-
-        // Check if there are any logs
-        hasLogs.value = tableData.value.length > 0;
-    });
 
 })
 </script>
@@ -190,7 +201,8 @@ export default {
     /* Optional: Change text color for better contrast */
 }
 
-td, th {
+td,
+th {
     vertical-align: middle;
 }
 </style>

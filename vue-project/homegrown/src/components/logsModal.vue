@@ -94,7 +94,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, addDoc, Timestamp, getDoc } from 'firebase/firestore';
 import { db } from "../firebase/initialize";
 import { getAuth } from 'firebase/auth';
 
@@ -188,7 +188,7 @@ async function addLogs() {
 
     // If the user document doesn't exist, create it (you can optionally add some initial data to it)
     if (!userDocSnapshot.exists()) {
-        await addDoc(collection(db, 'finance'), { userId: userId });
+        await setDoc(userDocRef, { userId: userId });
     }
 
     // Add the log to the user's paymentlogs subcollection
