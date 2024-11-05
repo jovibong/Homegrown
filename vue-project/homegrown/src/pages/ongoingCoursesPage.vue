@@ -28,12 +28,32 @@
     </section>
 
     <loading-animation v-if="loading"></loading-animation>
-    <section v-else id="app" class="container py-4">
+    <div v-if="!loading && !has_ongoing" class="text-center">
+      <div class="d-flex flex-column align-items-center mb-5">
+        <img
+          src="../img/404 Courses Not Found.png"
+          alt="Courses Not Found"
+          class="img-fluid"
+          style="max-width: 50%; height: auto"
+        />
+        <div class="text-primary display-5 fw-bold text-center mb-5">
+          Go to new courses below to start learning!
+        </div>
+        <router-link to="newCoursePage" class="d-flex align-items-center btn btn-primary rounded-pill text-secondary">
+          <span class="fw-bold">View new course</span>
+          <i class="bi bi-caret-right-fill fs-4 ms-3"></i>
+        </router-link>
+      </div>
+    </div>
+    <section v-if="!loading && has_ongoing" id="app" class="container py-4">
       <div v-for="(course, key) in ongoing_courses" :key="key">
         <div class="card shadow-sm mb-4 push-in-right">
           <div class="card-body position-relative">
             <!-- Mentor Badge -->
-            <div v-if="mentor_available(course)" class="mentor-badge bg-primary">
+            <div
+              v-if="mentor_available(course)"
+              class="mentor-badge bg-primary"
+            >
               <span class="text-black">Mentor Included</span>
             </div>
             <div class="row align-items-center">
@@ -190,6 +210,7 @@ export default {
       ongoing_courses: [],
       loading: true,
       selected_course: null,
+      has_ongoing: false,
     };
   },
   methods: {
@@ -220,7 +241,7 @@ export default {
       }
       return stars;
     },
-    mentor_available(course){
+    mentor_available(course) {
       return course.available_mentors.length > 0;
     },
     goToCoursePage(course) {
@@ -230,39 +251,44 @@ export default {
       this.$router.push({ name: "individualCoursePage" });
     },
     async fetchCourses() {
-  try {
-    // Fetch ongoing course IDs from the user's ongoing_courses collection
-    const ongoingCoursesRef = collection(db, `users/${this.user}/ongoing_courses`);
-    const ongoingCoursesSnap = await getDocs(ongoingCoursesRef);
+      try {
+        // Fetch ongoing course IDs from the user's ongoing_courses collection
+        const ongoingCoursesRef = collection(
+          db,
+          `users/${this.user}/ongoing_courses`
+        );
+        const ongoingCoursesSnap = await getDocs(ongoingCoursesRef);
 
-    // Extract ongoing course IDs from the subcollection documents
-    const userOngoingCourseIds = ongoingCoursesSnap.docs.map((doc) => doc.id);
-    console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
+        // Extract ongoing course IDs from the subcollection documents
+        const userOngoingCourseIds = ongoingCoursesSnap.docs.map(
+          (doc) => doc.id
+        );
+        console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
 
-    // Fetch all courses from Firestore
-    const coursesSnap = await getDocs(collection(db, "courses"));
-    const allCourses = coursesSnap.docs.map((doc) => ({
-      id: doc.id, // Document ID (e.g., course_00101)
-      ...doc.data(),
-    }));
+        // Fetch all courses from Firestore
+        const coursesSnap = await getDocs(collection(db, "courses"));
+        const allCourses = coursesSnap.docs.map((doc) => ({
+          id: doc.id, // Document ID (e.g., course_00101)
+          ...doc.data(),
+        }));
 
-    console.log("All Courses Fetched from Firestore:", allCourses);
+        console.log("All Courses Fetched from Firestore:", allCourses);
 
-    // Filter courses to get only the ongoing ones
-    const ongoing = allCourses.filter((course) =>
-      userOngoingCourseIds.includes(course.id)
-    );
+        // Filter courses to get only the ongoing ones
+        const ongoing = allCourses.filter((course) =>
+          userOngoingCourseIds.includes(course.id)
+        );
 
-    console.log("Filtered Ongoing Courses:", ongoing);
+        console.log("Filtered Ongoing Courses:", ongoing);
 
-    this.ongoing_courses = ongoing;
-  } catch (error) {
-    console.error("Error fetching courses:", error);
-  } finally {
-    this.loading = false;
-  }
-},
-
+        this.ongoing_courses = ongoing;
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        this.loading = false;
+        this.has_ongoing = this.ongoing_courses.length > 0;
+      }
+    },
   },
   mounted() {
     this.fetchCourses();

@@ -21,69 +21,76 @@
         <div v-if="loading">
           <loading-animation></loading-animation>
         </div>
+        <div v-if="!loading && !has_ongoing" class="text-center fs-4">
+          Looks like you have no ongoing course. Click on a course below to start learning!
+        </div>
         <!-- Ongoing Course Card -->
-        <div
-          v-else
-          v-for="course in ongoing_courses"
-          :key="course.id"
-          class="col-md-4 mb-4 card-flip fade-in-top"
-        >
-          <div class="card shadow-sm position-relative h-100 card-inner">
-            <div class="card-front">
-              <div v-if="mentor_available(course)" class="mentor-badge bg-primary">
-                <span class="text-black">Mentor Included</span>
-              </div>
-              <img
-                :src="course_images[course.id]"
-                :alt="course.name + ' img'"
-                class="card-img h-100"
-              />
-              <div
-                class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-75 w-100"
-              >
-                <div class="container-fluid">
-                  <div class="row text-center">
-                    <i
-                      class="bi bi-code-slash text-primary text-center h1 fw-bold text-shadow"
-                    ></i>
-                  </div>
-                  <div class="row text-center">
-                    <h5 class="card-title fw-bold text-center px-2">
-                      {{ course.name }}
-                    </h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="card-body h-100">
-                <h5 class="card-title fw-bold text-center px-2">
-                  {{ course.name }}
-                </h5>
-                <div class="text-center mb-2">
-                  <span
-                    v-html="getRatingStars(course.rating)"
-                    class="text-warning"
-                  ></span>
-                  <small class="text-muted d-block">
-                    {{ course.num_reviews }} Reviews
-                  </small>
-                </div>
-                <div class="card-text text-center">
-                  <p class="card-text text-muted">
-                    {{ course.description }}
-                  </p>
-                </div>
+        <section v-if="!loading && has_ongoing">
+          <div
+            v-for="course in ongoing_courses"
+            :key="course.id"
+            class="col-md-4 mb-4 card-flip fade-in-top"
+          >
+            <div class="card shadow-sm position-relative h-100 card-inner">
+              <div class="card-front">
                 <div
-                  class="clickable rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
-                  @click="goToCoursePage(course)"
+                  v-if="mentor_available(course)"
+                  class="mentor-badge bg-primary"
                 >
-                  Go to course
+                  <span class="text-black">Mentor Included</span>
+                </div>
+                <img
+                  :src="course_images[course.id]"
+                  :alt="course.name + ' img'"
+                  class="card-img h-100"
+                />
+                <div
+                  class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-75 w-100"
+                >
+                  <div class="container-fluid">
+                    <div class="row text-center">
+                      <i
+                        class="bi bi-code-slash text-primary text-center h1 fw-bold text-shadow"
+                      ></i>
+                    </div>
+                    <div class="row text-center">
+                      <h5 class="card-title fw-bold text-center px-2">
+                        {{ course.name }}
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="card-body h-100">
+                  <h5 class="card-title fw-bold text-center px-2">
+                    {{ course.name }}
+                  </h5>
+                  <div class="text-center mb-2">
+                    <span
+                      v-html="getRatingStars(course.rating)"
+                      class="text-warning"
+                    ></span>
+                    <small class="text-muted d-block">
+                      {{ course.num_reviews }} Reviews
+                    </small>
+                  </div>
+                  <div class="card-text text-center">
+                    <p class="card-text text-muted">
+                      {{ course.description }}
+                    </p>
+                  </div>
+                  <div
+                    class="clickable rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
+                    @click="goToCoursePage(course)"
+                  >
+                    Go to course
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </section>
 
@@ -117,7 +124,10 @@
         >
           <div class="card shadow-sm position-relative h-100 card-inner">
             <div class="card-front">
-              <div v-if="mentor_available(course)" class="mentor-badge bg-primary">
+              <div
+                v-if="mentor_available(course)"
+                class="mentor-badge bg-primary"
+              >
                 <span class="text-black">Mentor Included</span>
               </div>
               <img
@@ -247,6 +257,7 @@ export default {
       course_images: {}, // Object to hold images for courses
       loading: true, // Loading state
       placeholderImage: "https://via.placeholder.com/500", // Placeholder image URL
+      has_ongoing: false,
     };
   },
   methods: {
@@ -276,7 +287,7 @@ export default {
       this.$router.push({ name: "newCoursePage" });
       return course;
     },
-    mentor_available(course){
+    mentor_available(course) {
       return course.available_mentors.length > 0;
     },
     preloadImage(url) {
@@ -340,6 +351,7 @@ export default {
 
         // Set loading to false after all images are loaded
         this.loading = false;
+        this.has_ongoing = this.ongoing_courses.length > 0;
       } catch (error) {
         console.error("Error fetching courses:", error);
       }

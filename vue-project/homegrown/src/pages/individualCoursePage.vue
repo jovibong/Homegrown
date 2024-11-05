@@ -250,12 +250,7 @@ export default {
       course: null,
       loading: true,
       reviews: null,
-      mentor: {
-        name: "Loretta Liew",
-        description:
-          "Hi there! I'm Loretta Liew, a dedicated mentor passionate about guiding others in their personal and professional growth. With years of experience, I help individuals achieve their fullest potential and goals.",
-        img: "lorettaliew.png",
-      },
+      mentor: {},
       lessons: [],
       expanded: false,
       lessons_loading: true,
@@ -383,6 +378,37 @@ export default {
       }
       this.expanded = !this.expanded;
     },
+       async fetchMentor() {
+      try {
+        // Reference to the course document in user's ongoing_courses
+        const courseDocRef = doc(db, `users/${this.user}/ongoing_courses/${this.course.id}`);
+        const courseSnap = await getDoc(courseDocRef);
+
+        if (courseSnap.exists()) {
+          const mentorId = courseSnap.data().mentor;
+
+          if (mentorId) {
+            // Fetch mentor details from the mentors collection
+            const mentorDocRef = doc(db, `mentors/${mentorId}`);
+            const mentorSnap = await getDoc(mentorDocRef);
+
+            if (mentorSnap.exists()) {
+              // Store the mentor details in the mentor data property
+              this.mentor = { id: mentorId, ...mentorSnap.data() };
+              console.log("Mentor Details:", this.mentor);
+            } else {
+              console.warn("Mentor not found in the mentors collection.");
+            }
+          } else {
+            console.warn("No mentor ID found for this course in ongoing_courses.");
+          }
+        } else {
+          console.warn("Course document not found in user's ongoing_courses.");
+        }
+      } catch (error) {
+        console.error("Error fetching mentor details:", error);
+      }
+    }
   },
   async mounted() {
     const storedCourse = sessionStorage.getItem("selectedCourse");
@@ -392,7 +418,7 @@ export default {
       console.log("No course data found in sessionStorage");
       return;
     }
-
+    await this.fetchMentor();
     await this.fetchLessons();
     await this.fetchReviewsWithUserDetails();
   },
