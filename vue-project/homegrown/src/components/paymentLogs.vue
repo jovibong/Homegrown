@@ -81,7 +81,7 @@ import Modal from './logsModal.vue'
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { doc, getDoc, collection, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 // import { getAuth } from 'firebase/auth';
 
@@ -125,10 +125,12 @@ onMounted(async () => {
         // If the user document doesn't exist, create it (you can optionally add some initial data to it)
         if (!userDocSnapshot.exists()) {
             hasLogs.value = false;
+            return;
         }
+        // can add sorting functionality easily using this later
+        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'desc'));
 
-
-        const unsubscribe = onSnapshot(paymentLogsCollectionRef, (querySnapshot) => {
+        const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
             const logs = [];
             querySnapshot.forEach((doc) => {
                 logs.push({
