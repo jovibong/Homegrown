@@ -26,6 +26,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    clicked: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -35,28 +39,47 @@ export default {
   },
   computed: {
     buttonClass() {
-      if (this.isAdded && !this.loading) {
+      if (this.clicked) {
         return "btn btn-success btn-pill text-white"; // Final state
+      } else {
+        if (this.isAdded && !this.loading) {
+          return "btn btn-success btn-pill text-white"; // Final state
+        }
+        if (this.isAdded && this.loading) {
+          return "btn btn-primary btn-pill text-white"; // Loading state
+        }
+        return [
+          "btn btn-pill",
+          this.isHovered
+            ? "btn-primary text-white"
+            : "btn-outline-primary text-primary",
+        ];
       }
-      if (this.isAdded && this.loading) {
-        return "btn btn-primary btn-pill text-white"; // Loading state
-      }
-      return [
-        "btn btn-pill",
-        this.isHovered ? "btn-primary text-white" : "btn-outline-primary text-primary",
-      ];
     },
     iconClass() {
-      if (this.isAdded && this.loading) {
-        return "bi bi-arrow-repeat loading-icon"; // Loading icon with animation class
+      if (this.clicked) {
+        return "bi bi-check text-white";
+      } else {
+        if (this.isAdded && this.loading) {
+          return "bi bi-arrow-repeat loading-icon"; // Loading icon with animation class
+        }
+        return this.isAdded
+          ? "bi bi-check text-white"
+          : this.isHovered
+          ? "bi bi-plus text-white"
+          : "bi bi-plus text-primary";
       }
-      return this.isAdded ? "bi bi-check text-white" : this.isHovered ? "bi bi-plus text-white" : "bi bi-plus text-primary";
     },
     loadingStyle() {
       return {};
     },
     displayText() {
-      return this.isAdded && !this.loading ? this.clickedText : this.initialText;
+      if(this.clicked){
+        return this.clickedText
+      } else {
+      return this.isAdded && !this.loading
+        ? this.clickedText
+        : this.initialText;}
     },
   },
   methods: {
@@ -66,6 +89,7 @@ export default {
       }
     },
   },
+  mounted() {},
 };
 </script>
 
@@ -83,8 +107,12 @@ export default {
 
 /* Keyframes for loading animation */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Apply spinning animation to loading icon */

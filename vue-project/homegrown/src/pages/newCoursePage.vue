@@ -74,7 +74,26 @@
                 </div>
               </div>
               <p class="text-muted">{{ course.description }}</p>
-              <add-button class="mt-5" initialText="Add Course" clickedText="Course Added" :loading="course_add_loading"></add-button>
+
+              <div
+                class="d-flex flex-md-row flex-column align-items-md-start align-items-center mt-5"
+              >
+                <add-button
+                  class="me-md-3 mb-3 mb-md-0"
+                  initialText="Add Course"
+                  clickedText="Course Added"
+                  :loading="course_add_loading"
+                  :clicked="course_added"
+                  @click="add_course()"
+                ></add-button>
+                <router-link
+                  to="individualCoursePage"
+                  v-if="course_added"
+                  class="btn btn-primary rounded-pill d-flex align-items-center text-secondary fw-bold"
+                >
+                  Go to course <i class="bi bi-caret-right-fill ms-2 fs-4"></i>
+                </router-link>
+              </div>
             </div>
           </div>
 
@@ -137,7 +156,11 @@
     </div>
 
     <!--Mentor-->
-    <section v-if="mentor" id="mentor" class="container my-2 fade-in-top">
+    <section
+      v-if="course && mentor_available(course)"
+      id="mentor"
+      class="container my-2 fade-in-top"
+    >
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white text-center fw-bold h4">
           Available Mentors
@@ -219,14 +242,14 @@
 
 <script>
 import loadingAnimation from "../components/loadingAnimation.vue";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import addButton from "../components/addButton.vue";
 
 export default {
   components: {
     loadingAnimation,
-    addButton
+    addButton,
   },
   data() {
     return {
@@ -244,6 +267,7 @@ export default {
       expanded: false,
       lessons_loading: true,
       course_add_loading: true,
+      course_added: false,
     };
   },
   methods: {
@@ -356,8 +380,101 @@ export default {
         this.expanded = !this.expanded;
       }
     },
+    mentor_available(course) {
+      return course.available_mentors.length > 0;
+    },
+    async add_course() {
+      try {
+        // Reference to the course document in the courses collection
+        const courseDocRef = doc(db, "courses", this.course.id);
+        const courseSnap = await getDoc(courseDocRef);
+
+        // Retrieve the available_mentors array and pick a mentor
+        let mentorId = "";
+        if (courseSnap.exists()) {
+          const courseData = courseSnap.data();
+          const availableMentors = courseData.available_mentors || [];
+
+          // Select a random mentor ID if available_mentors is not empty
+          if (availableMentors.length > 0) {
+            mentorId =
+              availableMentors[
+                Math.floor(Math.random() * availableMentors.length)
+              ];
+          }
+        }
+
+        // Reference to the document inside the user's ongoing_courses collection with the course ID
+        const userCourseDocRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}`
+        );
+
+        // Set the document for the course in Firebase with mentor field
+        await setDoc(userCourseDocRef, { mentor: mentorId });
+
+        // Fetch lessons from the courses collection for the specific course
+        const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
+        const lessonsSnapshot = await getDocs(lessonsRef);
+
+        for (const lessonDoc of lessonsSnapshot.docs) {
+          const lessonId = lessonDoc.id;
+
+          // Reference to the progress collection for the specific lesson in ongoing_courses
+          const progressLessonRef = doc(
+            userCourseDocRef,
+            `progress/${lessonId}`
+          );
+          await setDoc(progressLessonRef, {}); // Set an empty document for each lesson in progress
+
+          // Fetch lesson_items from the course lesson
+          const lessonItemsRef = collection(
+            db,
+            `courses/${this.course.id}/lessons/${lessonId}/lesson_items`
+          );
+          const lessonItemsSnapshot = await getDocs(lessonItemsRef);
+
+          for (const lessonItemDoc of lessonItemsSnapshot.docs) {
+            const lessonItemId = lessonItemDoc.id;
+            const lessonItemData = lessonItemDoc.data();
+
+            // Prepare the lesson item data with additional 'completed' and 'answers' fields
+            let lessonItemDataToAdd = {
+              typeof: lessonItemData.typeof,
+              completed: false,
+            };
+
+            // Add an empty 'answers' array if the item is a quiz
+            if (lessonItemData.typeof === "quiz") {
+              lessonItemDataToAdd.answers = [];
+            }
+
+            // Set the lesson item document within progress/lesson_items
+            const progressLessonItemRef = doc(
+              progressLessonRef,
+              `lesson_items/${lessonItemId}`
+            );
+            await setDoc(progressLessonItemRef, lessonItemDataToAdd);
+          }
+        }
+
+        console.log(
+          `Course ${this.course.id} added to user ${this.user}'s ongoing_courses with mentor ${mentorId} and progress.`
+        );
+      } catch (error) {
+        console.error("Error adding course to ongoing_courses:", error);
+      } finally {
+        this.course_add_loading = false;
+        sessionStorage.setItem("selected_course_added", "true");
+        this.course_added = true;
+      }
+    },
   },
   async mounted() {
+    if (sessionStorage.getItem("selected_course_added") === "true") {
+      this.course_added = true;
+    }
+
     const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);
@@ -368,11 +485,6 @@ export default {
 
     await this.fetchLessons();
     await this.fetchReviewsWithUserDetails();
-
-    // delete this later
-    setTimeout(()=>{
-        this.course_add_loading = false;
-    },3000)
   },
 };
 </script>

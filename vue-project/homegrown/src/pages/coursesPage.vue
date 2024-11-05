@@ -30,7 +30,7 @@
         >
           <div class="card shadow-sm position-relative h-100 card-inner">
             <div class="card-front">
-              <div v-if="course.mentor" class="mentor-badge bg-primary">
+              <div v-if="mentor_available(course)" class="mentor-badge bg-primary">
                 <span class="text-black">Mentor Included</span>
               </div>
               <img
@@ -117,7 +117,7 @@
         >
           <div class="card shadow-sm position-relative h-100 card-inner">
             <div class="card-front">
-              <div v-if="course.mentor" class="mentor-badge bg-primary">
+              <div v-if="mentor_available(course)" class="mentor-badge bg-primary">
                 <span class="text-black">Mentor Included</span>
               </div>
               <img
@@ -275,6 +275,9 @@ export default {
       sessionStorage.setItem("selectedCourse", JSON.stringify(course));
       this.$router.push({ name: "newCoursePage" });
       return course;
+    },
+    mentor_available(course){
+      return course.available_mentors.length > 0;
     },
     preloadImage(url) {
       return new Promise((resolve) => {

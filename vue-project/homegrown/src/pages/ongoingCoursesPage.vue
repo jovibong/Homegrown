@@ -33,7 +33,7 @@
         <div class="card shadow-sm mb-4 push-in-right">
           <div class="card-body position-relative">
             <!-- Mentor Badge -->
-            <div v-if="course.mentor" class="mentor-badge bg-primary">
+            <div v-if="mentor_available(course)" class="mentor-badge bg-primary">
               <span class="text-black">Mentor Included</span>
             </div>
             <div class="row align-items-center">
@@ -219,6 +219,9 @@ export default {
         }
       }
       return stars;
+    },
+    mentor_available(course){
+      return course.available_mentors.length > 0;
     },
     goToCoursePage(course) {
       // Save the course data to sessionStorage
