@@ -75,8 +75,12 @@
               </div>
               <p class="text-muted">{{ course.description }}</p>
 
+              <div v-if="lessons_loading" class="mt-5 mb-3">
+                <i class="bi bi-caret-right-fill fs-4 text-white"></i>
+              </div>
               <div
-                class="d-flex flex-md-row flex-column align-items-md-start align-items-center mt-5"
+                v-else
+                class="d-flex flex-md-row flex-column align-items-md-start align-items-center mt-5 fade-in-top"
               >
                 <add-button
                   class="me-md-3 mb-3 mb-md-0"
@@ -155,9 +159,10 @@
       </div>
     </div>
 
-    <!--Mentor-->
+    <!-- Mentor Section -->
+    <!-- Mentor Section -->
     <section
-      v-if="course && mentor_available(course)"
+      v-if="course && mentor_available"
       id="mentor"
       class="container my-2 fade-in-top"
     >
@@ -165,30 +170,68 @@
         <div class="card-header bg-primary text-white text-center fw-bold h4">
           Available Mentors
         </div>
-        <div class="card-body d-flex align-items-center">
-          <div class="row">
-            <!-- Mentor Image -->
-            <div class="col-md-3 d-flex justify-content-center">
-              <img
-                :src="'img/' + mentor.img"
-                alt="Mentor Img"
-                class="rounded-circle"
-                height="150px"
-                width="150px"
-              />
-            </div>
-            <!-- Mentor Information -->
-            <div class="col-md-9 text-md-start text-center">
-              <h5 class="fw-bold h4">{{ mentor.name }}</h5>
-              <p class="text-muted">{{ mentor.description }}</p>
-              <!-- Ask for Help Button -->
-              <a
-                href="#"
-                class="btn btn-primary d-inline-flex align-items-center"
+        <div class="card-body" style="height: 150px">
+          <!-- Mentor Carousel -->
+          <div
+            id="mentorCarousel"
+            class="carousel carousel-dark slide"
+            data-bs-ride="carousel"
+            data-bs-interval="300000"
+          >
+            <div class="carousel-inner d-flex align-items-center">
+              <div
+                v-for="(mentor, key) in mentors"
+                :key="key"
+                :class="['carousel-item', key === 0 ? 'active' : '']"
               >
-                Ask for help <i class="bi bi-arrow-right ms-2"></i>
-              </a>
+                <div class="row">
+                  <div class="col-md-3 d-flex justify-content-center">
+                    <img
+                      :src="'img/' + mentor.img"
+                      alt="Mentor Img"
+                      class="rounded-circle"
+                      height="150px"
+                      width="150px"
+                    />
+                  </div>
+                  <!-- Mentor Information -->
+                  <div class="col-md-9 text-md-start text-center">
+                    <h5 class="fw-bold h4 d-none d-md-inline-block">
+                      {{ mentor.name }}
+                    </h5>
+                    <p class="text-muted me-5 pe-5 d-none d-md-inline-block">
+                      {{ mentor.description }}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Carousel Controls -->
+            <button
+              class="position-absolute top-0 border border-0 bg-white"
+              type="button"
+              data-bs-target="#mentorCarousel"
+              data-bs-slide="prev"
+            >
+              <span
+                class="bi bi-chevron-compact-left display-1 text-black"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="position-absolute top-0 end-0 border border-0 bg-white"
+              type="button"
+              data-bs-target="#mentorCarousel"
+              data-bs-slide="next"
+            >
+              <span
+                class="bi bi-chevron-compact-right display-1 text-black"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
           </div>
         </div>
       </div>
@@ -257,12 +300,8 @@ export default {
       course: null,
       loading: true,
       reviews: null,
-      mentor: {
-        name: "Loretta Liew",
-        description:
-          "Hi there! I'm Loretta Liew, a dedicated mentor passionate about guiding others in their personal and professional growth. With years of experience, I help individuals achieve their fullest potential and goals.",
-        img: "lorettaliew.png",
-      },
+      mentor_available: false,
+      mentors: [],
       lessons: [],
       expanded: false,
       lessons_loading: true,
@@ -380,8 +419,41 @@ export default {
         this.expanded = !this.expanded;
       }
     },
-    mentor_available(course) {
-      return course.available_mentors.length > 0;
+    async getAllAvailableMentors(course) {
+      try {
+        // Reference the course document in the courses collection
+
+        // Retrieve available mentors from the course document
+        const availableMentors = course.available_mentors || [];
+        if (availableMentors.length === 0) {
+          console.log("No mentors available for this course.");
+          return;
+        }
+        else{
+          this.mentor_available = true;
+        }
+
+        // Fetch mentor documents for each mentor ID in available_mentors
+        const mentorsData = await Promise.all(
+          availableMentors.map(async (mentorId) => {
+            const mentorRef = doc(db, `mentors/${mentorId}`);
+            const mentorSnap = await getDoc(mentorRef);
+            if (mentorSnap.exists()) {
+              return { id: mentorId, ...mentorSnap.data() }; // Combine mentor ID with mentor data
+            } else {
+              console.warn(`Mentor ${mentorId} not found.`);
+              return null; // Return null if mentor document doesn't exist
+            }
+          })
+        );
+
+        // Filter out any null values (in case some mentor documents weren't found)
+        this.mentors = mentorsData.filter((mentor) => mentor !== null);
+
+        console.log("Available Mentors:", this.mentors);
+      } catch (error) {
+        console.error("Error fetching available mentors:", error);
+      }
     },
     async add_course() {
       try {
@@ -465,24 +537,28 @@ export default {
         console.error("Error adding course to ongoing_courses:", error);
       } finally {
         this.course_add_loading = false;
-        sessionStorage.setItem("selected_course_added", "true");
         this.course_added = true;
       }
     },
   },
   async mounted() {
-    if (sessionStorage.getItem("selected_course_added") === "true") {
-      this.course_added = true;
-    }
-
     const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);
+      const course_id = this.course.id;
+      const ongoingCourseRef = doc(
+        db,
+        `users/${this.user}/ongoing_courses/${course_id}`
+      );
+      const ongoingCourseSnap = await getDoc(ongoingCourseRef);
+      if (ongoingCourseSnap.exists()) {
+        this.course_added = true;
+      }
     } else {
       console.log("No course data found in sessionStorage");
       return;
     }
-
+    await this.getAllAvailableMentors(this.course);
     await this.fetchLessons();
     await this.fetchReviewsWithUserDetails();
   },
