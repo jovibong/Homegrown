@@ -35,10 +35,6 @@
                 <label for="password">Password</label>
                 <input type="password" class="form-control" v-model="password" placeholder="Enter password" />
               </div>
-              <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" v-model="rememberMe" />
-                <label class="form-check-label" for="rememberMe">Remember me</label>
-              </div>
               <button type="submit" class="btn btn-primary btn-block w-100">Sign In</button>
             </form>
             <div class="signup-link text-center mt-4">
@@ -57,6 +53,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase/initialize.js'; // Import Firebase auth instance
 
 export default {
+  emits: ['startLoading', 'stopLoading'],
   name: "LoginModal",
   props: {
     visible: {
@@ -69,7 +66,7 @@ export default {
       email: "",
       password: "",
       rememberMe: false, // checkbox for "Remember Me"
-      imageUrl: "your-image-url.png",
+      imageUrl: require('@/img/group_picture.jpg'),
       modalInstance: null,
       user: null, // user data from login
     };
@@ -105,27 +102,16 @@ export default {
         const user = userCredential.user;
         console.log("Logged in user:", user);
 
-        // Check the "Remember Me" preference and save accordingly
-        if (this.rememberMe) {
-          // Save "Remember Me" state and user data in localStorage
-          localStorage.setItem('rememberMe', true);
-          localStorage.setItem('user', JSON.stringify(user));
-        } else {
-          // Save user data in sessionStorage for the session only
-          sessionStorage.setItem('user', JSON.stringify(user));
-          localStorage.removeItem('rememberMe'); // Clear "Remember Me" from local storage
-        }
-
-        // Emit event with user info if needed
+        // Emit login event to parent if needed
         this.$emit('login', { user: user, rememberMe: this.rememberMe });
 
-        // Close the modal or any other UI handling after login
+        // Hide login modal
         this.hideModal();
-        } catch (error) {
-      console.error("Error logging in:", error.message);
-      alert("Login failed: " + error.message);
-    }
-  },
+      } catch (error) {
+        console.error("Error logging in:", error.message);
+        alert("Login failed: " + error.message);
+      } 
+    },
     openSignup() {
       this.$emit("openSignup");
       this.hideModal();
