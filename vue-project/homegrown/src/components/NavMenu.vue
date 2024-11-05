@@ -74,8 +74,8 @@
                     <span class="dropdown-username">{{ user.displayName || 'User' }}</span>
                     </div>
                     <hr>
-                    <a href="#" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile Settings</a>
-                    <a href="#" class="dropdown-item"><i class="bi bi-award-fill"></i> Certifications</a>
+                    <router-link to="/editProfile" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile Settings</router-link>
+                    <router-link to="/workersCertification" class="dropdown-item"><i class="bi bi-award-fill"></i> Certifications</router-link>
                     <hr>
                     <a href="#" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
                 </div>
@@ -130,12 +130,33 @@ export default {
   },
   computed: {
     userPhoto() {
-      return this.user?.photoURL || 'path/to/default-profile-pic.jpg'; // Fallback to default profile pic if none is provided
+      return this.user?.photoURL || require('@/img/blankprofile.png'); // Fallback to default profile pic if none is provided
     }
   },
   created() {
+    // Check storage for "Remember Me" and user data on page load
+    const rememberMe = localStorage.getItem('rememberMe') === 'true';
+    const savedUser = rememberMe ? localStorage.getItem('user') : sessionStorage.getItem('user');
+
+    // Set the user if available in storage
+    this.user = savedUser ? JSON.parse(savedUser) : null;
+
+    // Watch Firebase auth state changes
     onAuthStateChanged(auth, (user) => {
-      this.user = user ? user : null;
+      if (user) {
+        // Save user data in the appropriate storage based on "Remember Me" preference
+        if (rememberMe) {
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          sessionStorage.setItem('user', JSON.stringify(user));
+        }
+        this.user = user;
+      } else {
+        // Clear user data from both storages if logged out
+        sessionStorage.removeItem('user');
+        localStorage.removeItem('user');
+        this.user = null;
+      }
     });
   },
   mounted() {
@@ -222,7 +243,7 @@ export default {
 }
 
 /* Profile image */
-.profile-img {
+.profile-img  {
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -246,7 +267,7 @@ export default {
 }
 
 /* Dropdown content styling */
-.dropdown-content {
+.dropdown-content {  
   position: absolute;
   right: 0;
   top: calc(100% + 8px); /* Adds an 8px gap between the button and dropdown */
@@ -256,6 +277,7 @@ export default {
   padding: 10px;
   border-radius: 8px;
   z-index: 1000;
+  align-items: center;
 }
 
 /* Styling for individual dropdown items */
@@ -265,6 +287,24 @@ export default {
   padding: 8px;
   color: #333;
   text-decoration: none;
+}
+
+.dropdown-img {
+  width: 35px; /* Set the desired width */
+  height: 35px; /* Set the desired height */
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover; /* Ensures the image covers the space without distortion */
+  border: 2px solid #000; /* Optional: adds a border around the image */
+  margin-right: 15px; /* Adds space between the image and text */
+  object-fit: cover; /* Ensures the image covers the space without distortion */
+}
+
+.dropdown-username {
+  flex: 1; /* Push the text to occupy the remaining space */
+  text-align: left; /* Align text to the left within its space */
+  font-size: 1rem; /* Adjust font size as needed */
+  font-weight: bold; /* Optional */
+  color: #333;
 }
 
 .dropdown-content a:hover {
