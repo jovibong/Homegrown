@@ -115,7 +115,11 @@
     </section>
 
     <!--Mentor-->
-    <section v-if="mentor" id="mentor" class="container my-2 fade-in-top">
+    <section
+      v-if="mentor && !mentor_loading"
+      id="mentor"
+      class="container my-2 fade-in-top"
+    >
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white text-center fw-bold h4">
           My Mentor
@@ -161,24 +165,59 @@
                 :key="item.id"
                 class="col-12"
               >
-                <router-link :to="item.link" class="text-decoration-none">
+                <router-link
+                  :to="item.completed || item.latest ? item.link : '#'"
+                  class="text-decoration-none"
+                  :class="{
+                    'pointer-events-none': !item.completed && !item.latest, // Disable click if not completed or latest
+                  }"
+                >
                   <div
-                    class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
+                    :class="[
+                      'd-flex align-items-center p-3 mb-3 rounded',
+                      item.completed
+                        ? 'bg-secondary hover-animate hover-less'
+                        : item.latest
+                        ? 'bg-success hover-animate hover-less'
+                        : 'bg-white border border-muted',
+                    ]"
                   >
                     <div class="me-3">
                       <div
-                        class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
+                        class="rounded-circle d-flex align-items-center justify-content-center text-secondary"
+                        :class="[
+                          item.completed || item.latest
+                            ? 'bg-primary'
+                            : 'bg-light',
+                        ]"
                         style="width: 60px; height: 60px"
                       >
                         <i :class="item.icon" class="h2 pt-2"></i>
                       </div>
                     </div>
                     <div>
-                      <p class="text-primary mb-1">
+                      <p
+                        :class="[
+                          'mb-1',
+                          item.latest ? 'text-secondary' : 'text-primary',
+                        ]"
+                      >
                         {{ formatType(item.typeof) }}
                       </p>
-                      <p class="fw-bold mb-1">{{ item.name }}</p>
-                      <p class="text-muted">{{ item.duration }}</p>
+                      <p
+                        class="fw-bold mb-1"
+                        :class="[
+                          item.latest ? 'text-secondary' : 'text-primary',
+                        ]"
+                      >
+                        {{ item.name }}
+                      </p>
+                    </div>
+                    <div
+                      class="badge bg-white text-success ms-5 fs-5"
+                      v-if="item.latest"
+                    >
+                      Next Up
                     </div>
                   </div>
                 </router-link>
@@ -254,6 +293,7 @@ export default {
       lessons: [],
       expanded: false,
       lessons_loading: true,
+      mentor_loading: true,
     };
   },
   methods: {
@@ -262,22 +302,49 @@ export default {
         const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
         const lessonDocs = await getDocs(lessonsRef);
 
+        let latestFound = false; // Flag to indicate if the latest item has been found
+
         const lessonsData = await Promise.all(
           lessonDocs.docs.map(async (lessonDoc) => {
             const lessonData = lessonDoc.data();
+            const lessonId = lessonDoc.id;
 
             // Fetch lesson items for each lesson
             const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
             const lessonItemsDocs = await getDocs(lessonItemsRef);
 
+            // Reference to user's progress for the specific lesson in ongoing_courses
+            const userLessonProgressRef = collection(
+              db,
+              `users/${this.user}/ongoing_courses/${this.course.id}/progress/${lessonId}/lesson_items`
+            );
+            const userLessonProgressDocs = await getDocs(userLessonProgressRef);
+
+            // Map progress data to easily check if lesson items are completed
+            const progressData = userLessonProgressDocs.docs.reduce(
+              (acc, doc) => {
+                acc[doc.id] = doc.data().completed || false; // Default to false if completed field is missing
+                return acc;
+              },
+              {}
+            );
+
             const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
               const itemData = itemDoc.data();
+              const completed = progressData[itemDoc.id] || false;
+
+              // Set the `latest` flag on the first non-completed item if it hasn't been set yet
+              const latest = !completed && !latestFound;
+              if (latest) latestFound = true; // Mark that we've found the latest item
+
               return {
                 ...itemData,
                 id: itemDoc.id,
                 icon:
                   itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
                 link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
+                completed: completed,
+                latest: latest,
               };
             });
 
@@ -354,34 +421,39 @@ export default {
       const lessons = this.$refs["lessons"];
       console.log(lessons);
 
-      if (this.expanded) {
-        lessons.style.height = "0px";
-        chevron.classList.remove("bi-chevron-up");
-        chevron.classList.add("bi-chevron-down");
-        triangle.classList.remove("rotate");
-      } else {
-        lessons.style.height = lessons.scrollHeight + "px";
-        chevron.classList.remove("bi-chevron-down");
-        chevron.classList.add("bi-chevron-up");
-        triangle.classList.add("rotate");
+      if (!this.lessons_loading) {
+        if (this.expanded) {
+          lessons.style.height = "0px";
+          chevron.classList.remove("bi-chevron-up");
+          chevron.classList.add("bi-chevron-down");
+          triangle.classList.remove("rotate");
+        } else {
+          lessons.style.height = lessons.scrollHeight + "px";
+          chevron.classList.remove("bi-chevron-down");
+          chevron.classList.add("bi-chevron-up");
+          triangle.classList.add("rotate");
 
-        const topOffset = 100; // Adjust for desired space at the top
-        const elementPosition =
-          lessons.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - topOffset;
+          const topOffset = 100; // Adjust for desired space at the top
+          const elementPosition =
+            lessons.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - topOffset;
 
-        // Smooth scroll to the position with the offset
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
+          // Smooth scroll to the position with the offset
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+        this.expanded = !this.expanded;
       }
-      this.expanded = !this.expanded;
     },
-       async fetchMentor() {
+    async fetchMentor() {
       try {
         // Reference to the course document in user's ongoing_courses
-        const courseDocRef = doc(db, `users/${this.user}/ongoing_courses/${this.course.id}`);
+        const courseDocRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}`
+        );
         const courseSnap = await getDoc(courseDocRef);
 
         if (courseSnap.exists()) {
@@ -400,15 +472,19 @@ export default {
               console.warn("Mentor not found in the mentors collection.");
             }
           } else {
-            console.warn("No mentor ID found for this course in ongoing_courses.");
+            console.warn(
+              "No mentor ID found for this course in ongoing_courses."
+            );
           }
         } else {
           console.warn("Course document not found in user's ongoing_courses.");
         }
       } catch (error) {
         console.error("Error fetching mentor details:", error);
+      } finally {
+        this.mentor_loading = false;
       }
-    }
+    },
   },
   async mounted() {
     const storedCourse = sessionStorage.getItem("selectedCourse");
@@ -430,6 +506,10 @@ export default {
   height: 0px;
   overflow: hidden;
   transition: height 0.5s ease; /* Adjust duration as needed */
+}
+
+.pointer-events-none {
+  cursor: default;
 }
 
 .text-shadow-soft {
