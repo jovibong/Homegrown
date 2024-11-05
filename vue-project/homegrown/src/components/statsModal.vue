@@ -29,9 +29,7 @@
 </template>
 
 <script setup>
-// import { ref, watch } from 'vue'
-// import { doc, collection, setDoc, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-// import { db } from "../firebase/initialize";
+
 
 const { show, title, stat, description } = defineProps({
     show: Boolean,
@@ -42,110 +40,6 @@ const { show, title, stat, description } = defineProps({
 
 
 
-// // create log
-// // title
-// const title = ref('')
-
-// // amount
-// const amount = ref('')
-
-// // paymentType, date, status, and badgeClass
-// const paymentType = ref('')
-// const date = ref('')
-// const status = ref('')
-// const badgeClass = ref('')
-
-// // Watchers for paymentType and date to set `status` and `badgeClass`
-// watch([paymentType, date], () => {
-//     // Update status based on paymentType and date
-//     if (paymentType.value === 'bonus') {
-//         status.value = 'BONUS';
-//     } else if (paymentType.value === 'monthly pay') {
-//         const paymentDay = 15;
-//         const processDate = new Date(date.value);
-//         const day = processDate.getDate();
-
-//         if (day > paymentDay) {
-//             status.value = 'LATE';
-//         } else if (day < paymentDay) {
-//             status.value = 'EARLY';
-//         } else {
-//             status.value = 'ON TIME';
-//         }
-//     }
-
-//     // Update badgeClass based on status
-//     switch (status.value) {
-//         case 'BONUS':
-//         case 'EARLY':
-//             badgeClass.value = "text-bg-success";
-//             break;
-//         case 'ON TIME':
-//             badgeClass.value = "text-bg-primary";
-//             break;
-//         case 'LATE':
-//             badgeClass.value = "text-bg-danger";
-//             break;
-//         default:
-//             console.log(`status not processed!`);
-//     }
-// });
-
-// // need to figure out for image
-// // const image = ref('')
-// const image = 'needToFill.png'
-
-
-// // Function to clear all input fields
-// function clearFields() {
-//     title.value = '';
-//     amount.value = '';
-//     paymentType.value = '';
-//     date.value = '';
-//     status.value = ''; // Reset status
-//     badgeClass.value = ''; // Reset badgeClass
-// }
-
-// // to add log to firebase
-// async function addLogs() {
-//     // const auth = getAuth();
-//     // const user = auth.currentUser;
-
-//     try {
-//         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-//         console.log('session in progress');
-//         console.log(sessionUser.uid);
-
-//         const userId = sessionUser.uid;
-//         const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
-//         const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
-
-//         // Check if the user document exists
-//         const userDocSnapshot = await getDoc(userDocRef);
-
-//         // If the user document doesn't exist, create it (you can optionally add some initial data to it)
-//         if (!userDocSnapshot.exists()) {
-//             await setDoc(userDocRef, { userId: userId });
-//         }
-
-//         // Add the log to the user's paymentlogs subcollection
-//         await addDoc(paymentLogsCollectionRef, {
-//             title: title.value,
-//             amount: amount.value,
-//             statusPayment: status.value,
-//             date: Timestamp.fromDate(new Date(date.value)),
-//             image: image,
-//             badgeClass: badgeClass.value
-//         });
-
-//         // Clear input fields after adding the log
-//         clearFields();
-//     } catch {
-//         console.log('no session user');
-//         return;
-//     }
-
-// }
 
 
 </script>

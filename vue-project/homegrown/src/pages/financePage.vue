@@ -20,7 +20,9 @@
 
                         <div class="col-md-6">
                             <div class="bento-tile  h-100 p-3">
-                                <stats-tile title="Goal" statNonEditable="$" statEditable="100,000" descriptionNonEditable="By: " descriptionEditable="01/01/2026"></stats-tile>
+                                <stats-tile :title="title4" :statNonEditable="statNonEditable4"
+                                    :statEditable="statEditable4" :descriptionNonEditable="descriptionNonEditable4"
+                                    :descriptionEditable="descriptionEditable4"></stats-tile>
                             </div>
                         </div>
 
@@ -295,17 +297,23 @@
 
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile title="Total earned" statNonEditable="$" statEditable="51,400" descriptionNonEditable="Per month: $" descriptionEditable="5,000"></stats-tile>
+                                <stats-tile :title="title1" :statNonEditable="statNonEditable1"
+                                    :statEditable="statEditable1" :descriptionNonEditable="descriptionNonEditable1"
+                                    :descriptionEditable="descriptionEditable1"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile title="Payday" statNonEditable="Days left: " statEditable="5" descriptionNonEditable="Pay date every month:" descriptionEditable="15"></stats-tile>
+                                <stats-tile :title="title2" :statNonEditable="statNonEditable2"
+                                    :statEditable="statEditable2" :descriptionNonEditable="descriptionNonEditable2"
+                                    :descriptionEditable="descriptionEditable2"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile title="Late Payments" statNonEditable="" statEditable="1" descriptionNonEditable="Considered late: >" descriptionEditable="2 days"></stats-tile>
+                                <stats-tile :title="title3" :statNonEditable="statNonEditable3"
+                                    :statEditable="statEditable3" :descriptionNonEditable="descriptionNonEditable3"
+                                    :descriptionEditable="descriptionEditable3"></stats-tile>
                             </div>
                         </div>
 
@@ -345,12 +353,34 @@
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { doc, getDoc, collection } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 // import { getAuth } from 'firebase/auth';
 
-const hasLogs = ref('')
-const tableData = ref([])
+const title1 =ref('');
+const statNonEditable1 = ref('');
+const statEditable1 = ref('');
+const descriptionNonEditable1 = ref('');
+const descriptionEditable1 = ref('');
+
+const title2 =ref('');
+const statNonEditable2 = ref('');
+const statEditable2 = ref('');
+const descriptionNonEditable2 = ref('');
+const descriptionEditable2 = ref('');
+
+const title3 =ref('');
+const statNonEditable3 = ref('');
+const statEditable3 = ref('');
+const descriptionNonEditable3 = ref('');
+const descriptionEditable3 = ref('');
+
+const title4 =ref('');
+const statNonEditable4 = ref('');
+const statEditable4 = ref('');
+const descriptionNonEditable4 = ref('');
+const descriptionEditable4 = ref('');
+
 
 function formatDate(timestamp) {
     // Convert the Firebase Timestamp to a JavaScript Date
@@ -379,41 +409,50 @@ onMounted(async () => {
         // }
 
         const userId = sessionUser.uid;
-        const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
-        const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+        const statsRef = collection(db, 'finance', userId, 'stats');
 
-        // Check if the user document exists
-        const userDocSnapshot = await getDoc(userDocRef);
+        const totalEarnedDoc = doc(statsRef, 'Total earned');
+        const paydayDoc = doc(statsRef, 'Payday');
+        const latePaymentsDoc = doc(statsRef, 'Late Payments');
+        const goalDoc = doc(statsRef, 'Goal');
 
-        // If the user document doesn't exist, create it (you can optionally add some initial data to it)
-        if (!userDocSnapshot.exists()) {
-            hasLogs.value = false;
-            return;
+
+        const totalEarnedData = await getDoc(totalEarnedDoc);
+        const paydayData = await getDoc(paydayDoc);
+        const latePaymentsData = await getDoc(latePaymentsDoc);
+        const goalData = await getDoc(goalDoc);
+
+        if (totalEarnedData.exists()) {
+            title1.value = totalEarnedData.data().title;
+            statNonEditable1.value = totalEarnedData.data().statNonEditable;
+            statEditable1.value = totalEarnedData.data().statEditable;
+            descriptionNonEditable1.value = totalEarnedData.data().descriptionNonEditable;
+            descriptionEditable1.value = totalEarnedData.data().descriptionEditable;
         }
-        // can add sorting functionality easily using this later
-        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'desc'));
-
-        const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
-            const logs = [];
-            querySnapshot.forEach((doc) => {
-                logs.push({
-                    title: doc.data().title,
-                    amount: doc.data().amount,
-                    status: doc.data().statusPayment,
-                    date: formatDate(doc.data().date),
-                    image: doc.data().image,
-                    badgeClass: doc.data().badgeClass
-                });
-            });
-            tableData.value = logs; // Update tableData with fetched logs
-
-            // Check if there are any logs
-            hasLogs.value = tableData.value.length > 0;
-        });
+        if (paydayData.exists()) {
+            title2.value = paydayData.data().title;
+            statNonEditable2.value = paydayData.data().statNonEditable;
+            statEditable2.value = paydayData.data().statEditable;
+            descriptionNonEditable2.value = paydayData.data().descriptionNonEditable;
+            descriptionEditable2.value = paydayData.data().descriptionEditable;
+        }
+        if (latePaymentsData.exists()) {
+            title3.value = latePaymentsData.data().title;
+            statNonEditable3.value = latePaymentsData.data().statNonEditable;
+            statEditable3.value = latePaymentsData.data().statEditable;
+            descriptionNonEditable3.value = latePaymentsData.data().descriptionNonEditable;
+            descriptionEditable3.value = latePaymentsData.data().descriptionEditable;
+        }
+        if (goalData.exists()) {
+            title4.value = goalData.data().title;
+            statNonEditable4.value = goalData.data().statNonEditable;
+            statEditable4.value = goalData.data().statEditable;
+            descriptionNonEditable4.value = goalData.data().descriptionNonEditable;
+            descriptionEditable4.value = formatDate(goalData.data().descriptionEditable);
+        }
     } catch {
         console.log('no session user');
-        tableData.value = [];
-        hasLogs.value = false;
+
         return;
     }
 
