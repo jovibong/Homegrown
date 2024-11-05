@@ -20,7 +20,7 @@
 
                         <div class="col-md-6">
                             <div class="bento-tile  h-100 p-3">
-                                <stats-tile title="Goal" stat="$100,000" description="By: 01/01/2026"></stats-tile>
+                                <stats-tile title="Goal" statNonEditable="$" statEditable="100,000" descriptionNonEditable="By: " descriptionEditable="01/01/2026"></stats-tile>
                             </div>
                         </div>
 
@@ -280,7 +280,7 @@
             <input name="nav" type="radio" id="PaymentTracker" />
             <div class="page">
                 <div class="container">
-                    <div class="row my-5 g-3">
+                    <div class="row mt-5 g-3">
 
 
                         <div class="col-12">
@@ -295,20 +295,17 @@
 
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile title="Total earned" stat="$51,400"
-                                    description="$5,000 per month"></stats-tile>
+                                <stats-tile title="Total earned" statNonEditable="$" statEditable="51,400" descriptionNonEditable="Per month: $" descriptionEditable="5,000"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile title="Payday" stat="5 days left"
-                                    description="15th of every Month"></stats-tile>
+                                <stats-tile title="Payday" statNonEditable="Days left: " statEditable="5" descriptionNonEditable="Pay date every month:" descriptionEditable="15"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile title="Late Payments" stat="1"
-                                    description="Considered late: >2 days"></stats-tile>
+                                <stats-tile title="Late Payments" statNonEditable="" statEditable="1" descriptionNonEditable="Considered late: >" descriptionEditable="2 days"></stats-tile>
                             </div>
                         </div>
 
@@ -318,7 +315,7 @@
                                 <!-- start of table logs -->
                                 <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
                                 <payment-logs></payment-logs>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -341,6 +338,93 @@
 
     </div>
 </template>
+
+
+<script setup>
+
+import { onMounted, ref } from 'vue'
+// import { ref, watch } from 'vue'
+// import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+// import { getAuth } from 'firebase/auth';
+
+const hasLogs = ref('')
+const tableData = ref([])
+
+function formatDate(timestamp) {
+    // Convert the Firebase Timestamp to a JavaScript Date
+    const date = timestamp.toDate();
+
+    // Extract day, month, and year
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    // Return formatted date as dd/mm/yyyy
+    return `${day}/${month}/${year}`;
+}
+
+onMounted(async () => {
+    // const auth = getAuth();
+    // const user = auth.currentUser;
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        console.log('session in progress');
+        console.log(sessionUser.uid);
+
+        // if (!user) {
+        //     console.log("No user is logged in");
+        //     return;
+        // }
+
+        const userId = sessionUser.uid;
+        const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+        const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+
+        // Check if the user document exists
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+        if (!userDocSnapshot.exists()) {
+            hasLogs.value = false;
+            return;
+        }
+        // can add sorting functionality easily using this later
+        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'desc'));
+
+        const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
+            const logs = [];
+            querySnapshot.forEach((doc) => {
+                logs.push({
+                    title: doc.data().title,
+                    amount: doc.data().amount,
+                    status: doc.data().statusPayment,
+                    date: formatDate(doc.data().date),
+                    image: doc.data().image,
+                    badgeClass: doc.data().badgeClass
+                });
+            });
+            tableData.value = logs; // Update tableData with fetched logs
+
+            // Check if there are any logs
+            hasLogs.value = tableData.value.length > 0;
+        });
+    } catch {
+        console.log('no session user');
+        tableData.value = [];
+        hasLogs.value = false;
+        return;
+    }
+
+
+
+
+})
+
+</script>
+
+
 
 <script>
 import StatsTile from '../components/statsTile.vue';
