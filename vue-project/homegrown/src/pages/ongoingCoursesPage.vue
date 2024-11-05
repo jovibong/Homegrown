@@ -39,7 +39,7 @@
         <div class="text-primary display-5 fw-bold text-center mb-5">
           Go to new courses below to start learning!
         </div>
-        <router-link to="newCoursePage" class="d-flex align-items-center btn btn-primary rounded-pill text-secondary">
+        <router-link to="allNewCoursesPage" class="d-flex align-items-center btn btn-primary rounded-pill text-secondary">
           <span class="fw-bold">View new course</span>
           <i class="bi bi-caret-right-fill fs-4 ms-3"></i>
         </router-link>
