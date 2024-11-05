@@ -147,6 +147,8 @@ onMounted(async () => {
         });
     } catch {
         console.log('no session user');
+        tableData.value = [];
+        hasLogs.value = false;
         return;
     }
 
