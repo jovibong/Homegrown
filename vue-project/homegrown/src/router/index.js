@@ -13,6 +13,8 @@ import QuizSummaryPage from '../pages/quizSummaryPage.vue';
 import AllNewCoursesPage from '../pages/allNewCoursesPage.vue';
 import NewCoursePage from '../pages/newCoursePage.vue';
 import TestPage from '../pages/testPage.vue';
+import editProfile from '@/pages/editProfile.vue';
+import workersCertification from '@/pages/workersCertification.vue';
 
 
 const routes = [
@@ -105,6 +107,16 @@ const routes = [
         path: '/testPage',
         name: 'testPage',
         component: TestPage
+    },
+    {
+        path: '/editProfile',
+        name: 'editProfile',
+        component: editProfile
+    },
+    {
+        path: '/workersCertification',
+        name: 'workersCertification',
+        component: workersCertification
     } // to be removed when done
 
 ];
