@@ -5,7 +5,10 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link to="individualCoursePage" class="btn btn-warning text-dark d-flex align-items-center">
+            <router-link
+              to="individualCoursePage"
+              class="btn btn-warning text-dark d-flex align-items-center"
+            >
               <i class="bi bi-arrow-left me-1"></i>
               <span class="d-none d-lg-inline">Back to course overview</span>
               <span class="d-inline d-lg-none">Back</span>
@@ -44,8 +47,7 @@
       <div class="container mt-5 mb-3">
         <ul class="list-unstyled push-in-right">
           <li
-            v-for="(option, key) in questions[current_question - 1]
-              .options"
+            v-for="(option, key) in questions[current_question - 1].options"
             :class="[
               'd-flex align-items-center mb-3 p-3 rounded hover-animate hover-less border border-1',
               { 'bg-primary text-white': selected_option === key },
@@ -119,14 +121,15 @@
           </div>
         </div>
       </div>
-      <a
-        href="quiz_summary.html"
+      <router-link
+        to="quizSummaryPage"
         v-if="current_question == last_question"
         class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-3 text-secondary fw-bold justify-content-center hover-animate"
         @click="submit_quiz"
       >
         Go to Quiz Summary <i class="bi bi-arrow-right ms-2"></i>
-      </a>
+      </router-link>
+
       <button
         v-else
         class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-3 text-secondary fw-bold justify-content-center hover-animate"

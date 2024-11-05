@@ -22,7 +22,8 @@
           <loading-animation></loading-animation>
         </div>
         <!-- Ongoing Course Card -->
-          <div v-else
+        <div
+          v-else
           v-for="course in ongoing_courses"
           :key="course.id"
           class="col-md-4 mb-4 card-flip fade-in-top"
@@ -74,7 +75,8 @@
                   </p>
                 </div>
                 <div
-                  class="rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
+                  class="clickable rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
+                  @click="goToCoursePage(course)"
                 >
                   Go to course
                 </div>
@@ -95,16 +97,20 @@
         first step toward expanding your skills and knowledge!
       </p>
       <div class="d-flex justify-content-end mb-4">
-        <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+        <router-link
+          to="allNewCoursesPage"
+          class="btn btn-outline-primary d-flex align-items-center"
+        >
           View All <i class="bi bi-play-circle ms-2"></i>
-        </a>
+        </router-link>
       </div>
       <div class="row">
         <div v-if="loading">
           <loading-animation></loading-animation>
         </div>
         <!-- New Course Card -->
-        <div v-else
+        <div
+          v-else
           v-for="course in new_courses"
           :key="course.id"
           class="col-md-4 mb-4 card-flip fade-in-top"
@@ -156,9 +162,10 @@
                   </p>
                 </div>
                 <div
-                  class="rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
+                  class="clickable rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
+                  @click="goToNewCoursePage(course)"
                 >
-                  Go to course
+                  View details
                 </div>
               </div>
             </div>
@@ -217,12 +224,12 @@
 
 
 <script>
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
 export default {
-  components:{
+  components: {
     loadingAnimation,
   },
   data() {
@@ -243,7 +250,7 @@ export default {
     };
   },
   methods: {
-        getRatingStars(rating) {
+    getRatingStars(rating) {
       const roundedRating = Math.round(rating * 2) / 2;
       let stars = "";
 
@@ -258,6 +265,17 @@ export default {
       }
       return stars;
     },
+    goToCoursePage(course) {
+      // Save the course data to sessionStorage
+      sessionStorage.setItem("selectedCourse", JSON.stringify(course));
+      // Navigate to the individual course page without passing parameters
+      this.$router.push({ name: "individualCoursePage" });
+    },
+    goToNewCoursePage(course) {
+      sessionStorage.setItem("selectedCourse", JSON.stringify(course));
+      this.$router.push({ name: "newCoursePage" });
+      return course;
+    },
     preloadImage(url) {
       return new Promise((resolve) => {
         const img = new Image();
@@ -268,14 +286,17 @@ export default {
     },
     async fetchCourses() {
       try {
-        // Fetch user data to get ongoing course IDs
-        const userDocRef = doc(db, "users", this.user);
-        const userSnap = await getDoc(userDocRef);
+        // Fetch ongoing course IDs from the user's ongoing_courses subcollection
+        const ongoingCoursesRef = collection(
+          db,
+          `users/${this.user}/ongoing_courses`
+        );
+        const ongoingCoursesSnap = await getDocs(ongoingCoursesRef);
 
-        // Check if user data exists and retrieve ongoing courses array
-        const userOngoingCourseIds = userSnap.exists()
-          ? userSnap.data().ongoing_courses || []
-          : [];
+        // Extract ongoing course IDs from the subcollection documents
+        const userOngoingCourseIds = ongoingCoursesSnap.docs.map(
+          (doc) => doc.id
+        );
         console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
 
         // Fetch all courses from Firestore
@@ -287,7 +308,7 @@ export default {
 
         console.log("All Courses Fetched from Firestore:", allCourses);
 
-        // Separate ongoing and new courses by matching document ID
+        // Separate ongoing and new courses by matching document IDs
         const ongoing = allCourses
           .filter((course) => userOngoingCourseIds.includes(course.id))
           .slice(0, 6);
@@ -305,9 +326,10 @@ export default {
         // Preload images for each course and populate course_images
         await Promise.all(
           ongoing.concat(newCourses).map(async (course, index) => {
-            const imageUrl = `https://random.imagecdn.app/500/300?random=${Date.now() + index}`;
-            const loadedImage = await this.preloadImage(imageUrl);
-            this.course_images[course.id] = loadedImage; // Directly assign the image URL to course_images
+            const imageUrl = `https://random.imagecdn.app/500/300?random=${
+              Date.now() + index
+            }`;
+            this.course_images[course.id] = imageUrl;
           })
         );
 
@@ -324,9 +346,6 @@ export default {
     this.fetchCourses();
   },
 };
-
-
-
 </script>
 
 
@@ -364,5 +383,4 @@ export default {
   line-height: 1.2;
   max-width: 90px; /* Ensure the text fits within the badge */
 }
-
 </style>

@@ -183,4 +183,7 @@
     transition: width 1.6s ease-in-out;
 }
 
-
+/* Changes the mouse to a pointer when hovered */
+.clickable{
+    cursor: pointer;
+}

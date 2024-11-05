@@ -7,22 +7,28 @@
           <!-- Back Button -->
           <div class="col-3">
             <router-link
-              to="ongoingCoursesPage"
+              to="allNewCoursesPage"
               class="btn btn-warning text-dark"
               ><i class="bi bi-arrow-left"></i>
-              <span class="d-none d-lg-inline">Back to ongoing courses</span>
+              <span class="d-none d-lg-inline">Back to new courses</span>
               <span class="d-inline d-lg-none">Back</span>
             </router-link>
           </div>
           <!-- Title (Centered) -->
           <div class="col-6 text-center">
-            <h2 class="text-primary fw-bold mb-0 display-4">Ongoing Courses</h2>
+            <h2 class="text-primary fw-bold mb-0 display-4">New Courses</h2>
           </div>
           <div class="col-3"></div>
         </div>
         <p class="text-center text-muted mt-3">
-          Keep up the great work! You're on your way to mastering new skills.
-          Complete your courses to unlock your full potential today!
+          Want to try something new? Now’s the perfect time to dive into our
+          latest course and discover skills that can open new doors! Whether
+          you're looking to boost your career, learn a fresh hobby, or gain
+          insights into a field you've always been curious about, this course is
+          designed to make your journey engaging and impactful. With hands-on
+          projects, expert guidance, and a supportive community, you’ll
+          experience learning that goes beyond just theory. Don’t miss out –
+          enroll today and take the first step towards something exciting!
         </p>
       </div>
     </section>
@@ -71,31 +77,6 @@
             </div>
           </div>
 
-          <!-- Progress and Description -->
-          <div class="row">
-            <div class="text-center mt-2 mt-md-0">
-              <div class="fw-bold h3">
-                <span
-                  :ref="'progression' + course.id"
-                  class="count-animate"
-                  :data-count-limit="course.percentageCompleted"
-                  >0</span
-                >% complete
-              </div>
-              <div class="d-flex justify-content-center my-3">
-                <div class="progress" style="width: 80%; height: 15px">
-                  <div
-                    class="progress-bar bg-dark progress-animate"
-                    role="progressbar"
-                    :ref="'courseProgress' + course.id"
-                    :data-progress="course.percentageCompleted + '%'"
-                    style="width: 0%"
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!--Dropdown Button on small screens-->
           <div class="text-center my-0 d-md-none d-block">
             <button
@@ -109,41 +90,6 @@
                 ref="triangle"
               ></i>
             </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!--Mentor-->
-    <section v-if="mentor" id="mentor" class="container my-2 fade-in-top">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center fw-bold h4">
-          My Mentor
-        </div>
-        <div class="card-body d-flex align-items-center">
-          <div class="row">
-            <!-- Mentor Image -->
-            <div class="col-md-3 d-flex justify-content-center">
-              <img
-                :src="'img/' + mentor.img"
-                alt="Mentor Img"
-                class="rounded-circle"
-                height="150px"
-                width="150px"
-              />
-            </div>
-            <!-- Mentor Information -->
-            <div class="col-md-9 text-md-start text-center">
-              <h5 class="fw-bold h4">{{ mentor.name }}</h5>
-              <p class="text-muted">{{ mentor.description }}</p>
-              <!-- Ask for Help Button -->
-              <a
-                href="#"
-                class="btn btn-primary d-inline-flex align-items-center"
-              >
-                Ask for help <i class="bi bi-arrow-right ms-2"></i>
-              </a>
-            </div>
           </div>
         </div>
       </div>
@@ -188,6 +134,41 @@
         </div>
       </div>
     </div>
+
+    <!--Mentor-->
+    <section v-if="mentor" id="mentor" class="container my-2 fade-in-top">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center fw-bold h4">
+          Available Mentors
+        </div>
+        <div class="card-body d-flex align-items-center">
+          <div class="row">
+            <!-- Mentor Image -->
+            <div class="col-md-3 d-flex justify-content-center">
+              <img
+                :src="'img/' + mentor.img"
+                alt="Mentor Img"
+                class="rounded-circle"
+                height="150px"
+                width="150px"
+              />
+            </div>
+            <!-- Mentor Information -->
+            <div class="col-md-9 text-md-start text-center">
+              <h5 class="fw-bold h4">{{ mentor.name }}</h5>
+              <p class="text-muted">{{ mentor.description }}</p>
+              <!-- Ask for Help Button -->
+              <a
+                href="#"
+                class="btn btn-primary d-inline-flex align-items-center"
+              >
+                Ask for help <i class="bi bi-arrow-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!--Reviews section-->
     <section v-if="course" id="course_reviews" class="container my-5">
@@ -352,36 +333,24 @@ export default {
       return type.charAt(0).toUpperCase() + type.slice(1);
     },
     toggleAccordion() {
-      const triangle = this.$refs["triangle"];
-      console.log(triangle);
-      const chevron = this.$refs["chevron"];
-      console.log(chevron);
-      const lessons = this.$refs["lessons"];
-      console.log(lessons);
+      if (!this.lessons_loading) {
+        const triangle = this.$refs["triangle"];
+        const chevron = this.$refs["chevron"];
+        const lessons = this.$refs["lessons"];
 
-      if (this.expanded) {
-        lessons.style.height = "0px";
-        chevron.classList.remove("bi-chevron-up");
-        chevron.classList.add("bi-chevron-down");
-        triangle.classList.remove("rotate");
-      } else {
-        lessons.style.height = lessons.scrollHeight + "px";
-        chevron.classList.remove("bi-chevron-down");
-        chevron.classList.add("bi-chevron-up");
-        triangle.classList.add("rotate");
-
-        const topOffset = 100; // Adjust for desired space at the top
-        const elementPosition =
-          lessons.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - topOffset;
-
-        // Smooth scroll to the position with the offset
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
+        if (this.expanded && !this.lessons_loading) {
+          lessons.style.height = "0px";
+          chevron.classList.remove("bi-chevron-up");
+          chevron.classList.add("bi-chevron-down");
+          triangle.classList.remove("rotate");
+        } else {
+          lessons.style.height = lessons.scrollHeight + "px";
+          chevron.classList.remove("bi-chevron-down");
+          chevron.classList.add("bi-chevron-up");
+          triangle.classList.add("rotate");
+        }
+        this.expanded = !this.expanded;
       }
-      this.expanded = !this.expanded;
     },
   },
   async mounted() {

@@ -9,7 +9,9 @@ import OngoingCourses from '../pages/ongoingCoursesPage.vue';
 import IndividualCourse from '../pages/individualCoursePage.vue';
 import VideoPage from '../pages/videoPage.vue';
 import QuizPage from '../pages/quizPage.vue';
-import QuizSummaryPage from '../pages/quizSummaryPage.vue'
+import QuizSummaryPage from '../pages/quizSummaryPage.vue';
+import AllNewCoursesPage from '../pages/allNewCoursesPage.vue';
+import NewCoursePage from '../pages/newCoursePage.vue';
 import TestPage from '../pages/testPage.vue';
 
 
@@ -88,6 +90,16 @@ const routes = [
         path: '/quizSummaryPage',
         name: 'quizSummaryPage',
         component: QuizSummaryPage
+    },
+    {
+        path: '/newCoursePage',
+        name: 'newCoursePage',
+        component: NewCoursePage
+    },
+    {
+        path: '/allNewCoursesPage',
+        name: 'allNewCoursesPage',
+        component: AllNewCoursesPage
     },
     {
         path: '/testPage',

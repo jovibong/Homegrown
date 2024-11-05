@@ -176,7 +176,7 @@
 
 
 <script>
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -227,39 +227,39 @@ export default {
       this.$router.push({ name: "individualCoursePage" });
     },
     async fetchCourses() {
-      try {
-        // Fetch user data to get ongoing course IDs
-        const userDocRef = doc(db, "users", this.user);
-        const userSnap = await getDoc(userDocRef);
+  try {
+    // Fetch ongoing course IDs from the user's ongoing_courses collection
+    const ongoingCoursesRef = collection(db, `users/${this.user}/ongoing_courses`);
+    const ongoingCoursesSnap = await getDocs(ongoingCoursesRef);
 
-        // Check if user data exists and retrieve ongoing courses array
-        const userOngoingCourseIds = userSnap.exists()
-          ? userSnap.data().ongoing_courses || []
-          : [];
-        console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
+    // Extract ongoing course IDs from the subcollection documents
+    const userOngoingCourseIds = ongoingCoursesSnap.docs.map((doc) => doc.id);
+    console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
 
-        // Fetch all courses from Firestore
-        const coursesSnap = await getDocs(collection(db, "courses"));
-        const allCourses = coursesSnap.docs.map((doc) => ({
-          id: doc.id, // Document ID (e.g., course_00101)
-          ...doc.data(),
-        }));
+    // Fetch all courses from Firestore
+    const coursesSnap = await getDocs(collection(db, "courses"));
+    const allCourses = coursesSnap.docs.map((doc) => ({
+      id: doc.id, // Document ID (e.g., course_00101)
+      ...doc.data(),
+    }));
 
-        console.log("All Courses Fetched from Firestore:", allCourses);
+    console.log("All Courses Fetched from Firestore:", allCourses);
 
-        const ongoing = allCourses.filter((course) =>
-          userOngoingCourseIds.includes(course.id)
-        );
+    // Filter courses to get only the ongoing ones
+    const ongoing = allCourses.filter((course) =>
+      userOngoingCourseIds.includes(course.id)
+    );
 
-        console.log("Filtered Ongoing Courses:", ongoing);
+    console.log("Filtered Ongoing Courses:", ongoing);
 
-        this.ongoing_courses = ongoing;
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
+    this.ongoing_courses = ongoing;
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+  } finally {
+    this.loading = false;
+  }
+},
+
   },
   mounted() {
     this.fetchCourses();
