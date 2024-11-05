@@ -39,17 +39,17 @@
               <h2 class="mb-4 text-center">Create Your Account</h2>
               <form @submit.prevent="handleSignup">
                 <div class="form-group mb-3">
-                  <label for="name">Full Name</label>
+                  <label for="name" class="bold-label">Username</label>
                   <input
                     type="text"
                     class="form-control"
-                    v-model="name"
-                    placeholder="Enter your full name"
+                    v-model="username"
+                    placeholder="Enter your username"
                     required
                   />
                 </div>
                 <div class="form-group mb-3">
-                  <label for="email">Email</label>
+                  <label for="email" class="bold-label">Email</label>
                   <input
                     type="email"
                     class="form-control"
@@ -59,7 +59,7 @@
                   />
                 </div>
                 <div class="form-group mb-3">
-                  <label for="password">Password</label>
+                  <label for="password" class="bold-label">Password</label>
                   <input
                     type="password"
                     class="form-control"
@@ -69,7 +69,7 @@
                   />
                 </div>
                 <div class="form-group mb-3">
-                  <label for="confirmPassword">Confirm Password</label>
+                  <label for="confirmPassword" class="bold-label">Confirm Password</label>
                   <input
                     type="password"
                     class="form-control"
@@ -79,7 +79,7 @@
                   />
                 </div>
   
-                <button type="submit" class="btn btn-primary btn-block w-100">Sign Up</button>
+                <button type="submit" class="btn btn-primary btn-block w-100" @click="signUp">Sign Up</button>
               </form>
             </div>
           </div>
@@ -89,9 +89,10 @@
   </template>
   
   <script>
-import { Modal } from "bootstrap";
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebase/initialize.js'; 
+import Modal from 'bootstrap/js/dist/modal';
+import { createUserWithEmailAndPassword , updateProfile} from 'firebase/auth';
+import { auth, db } from '@/firebase/initialize.js'; 
+import { doc, setDoc } from 'firebase/firestore';
 
 export default {
   name: "SignUpModal",
@@ -104,7 +105,10 @@ export default {
   data() {
     return {
       imageUrl: "your-image-url.png",
-      modalInstance: null
+      modalInstance: null,
+      email: '',
+      password: '',
+      username: '' // Add an input field for username in the template
     };
   },
   watch: {
@@ -145,6 +149,15 @@ export default {
         // Firebase sign-up
         const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
+        // Update the user's display name in Firebase Auth
+        await updateProfile(user, { displayName: this.username });
+
+        // Store additional user information (username) in Firestore
+        await setDoc(doc(db, 'profiles', user.uid), {
+          username: this.username,
+          email: this.email,
+        });
+
         console.log("Signed up user:", user);
         this.$emit("signup", user); // Emit event with user info if needed
         this.hideModal();
@@ -169,6 +182,9 @@ export default {
 </script>
   
   <style scoped>
+  .bold-label {
+  font-weight: bold;
+}
   .modal-image {
     flex: 1;
   }

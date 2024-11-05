@@ -68,9 +68,10 @@ export default {
     return {
       email: "",
       password: "",
-      rememberMe: false,
+      rememberMe: false, // checkbox for "Remember Me"
       imageUrl: "your-image-url.png",
-      modalInstance: null
+      modalInstance: null,
+      user: null, // user data from login
     };
   },
   watch: {
@@ -103,13 +104,28 @@ export default {
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
         console.log("Logged in user:", user);
-        this.$emit("login", user); // Emit event with user info if needed
+
+        // Check the "Remember Me" preference and save accordingly
+        if (this.rememberMe) {
+          // Save "Remember Me" state and user data in localStorage
+          localStorage.setItem('rememberMe', true);
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          // Save user data in sessionStorage for the session only
+          sessionStorage.setItem('user', JSON.stringify(user));
+          localStorage.removeItem('rememberMe'); // Clear "Remember Me" from local storage
+        }
+
+        // Emit event with user info if needed
+        this.$emit('login', { user: user, rememberMe: this.rememberMe });
+
+        // Close the modal or any other UI handling after login
         this.hideModal();
-      } catch (error) {
-        console.error("Error logging in:", error.message);
-        alert("Login failed: " + error.message);
-      }
-    },
+        } catch (error) {
+      console.error("Error logging in:", error.message);
+      alert("Login failed: " + error.message);
+    }
+  },
     openSignup() {
       this.$emit("openSignup");
       this.hideModal();
