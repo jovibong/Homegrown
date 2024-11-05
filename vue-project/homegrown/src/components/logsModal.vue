@@ -9,11 +9,20 @@
                 <div class="container ">
                     <!-- update validation func later -->
                     <form class="row g-3 needs-validation" novalidate @submit.prevent="addLogs()">
-
+                        <p>test</p>
                         <div class="col-md-6">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
                                 required v-model="title">
+                            <div class="invalid-feedback">
+                                Please enter a title.
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="validationCustom01" class="form-label mt-4">Title</label>
+                            <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
+                                required >
                             <div class="invalid-feedback">
                                 Please enter a title.
                             </div>

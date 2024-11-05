@@ -20,9 +20,9 @@
 
                         <div class="col-md-6">
                             <div class="bento-tile  h-100 p-3">
-                                <stats-tile :title="title4" :statNonEditable="statNonEditable4"
-                                    :statEditable="statEditable4" :descriptionNonEditable="descriptionNonEditable4"
-                                    :descriptionEditable="descriptionEditable4"></stats-tile>
+                                <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
+                                    :statEditable="stats.goal.statEditable" :descriptionNonEditable="stats.goal.descriptionNonEditable"
+                                    :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
                             </div>
                         </div>
 
@@ -297,23 +297,23 @@
 
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="title1" :statNonEditable="statNonEditable1"
-                                    :statEditable="statEditable1" :descriptionNonEditable="descriptionNonEditable1"
-                                    :descriptionEditable="descriptionEditable1"></stats-tile>
+                                <stats-tile :title="stats.totalEarned.title" :statNonEditable="stats.totalEarned.statNonEditable"
+                                    :statEditable="stats.totalEarned.statEditable" :descriptionNonEditable="stats.totalEarned.descriptionNonEditable"
+                                    :descriptionEditable="stats.totalEarned.descriptionEditable"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="title2" :statNonEditable="statNonEditable2"
-                                    :statEditable="statEditable2" :descriptionNonEditable="descriptionNonEditable2"
-                                    :descriptionEditable="descriptionEditable2"></stats-tile>
+                                <stats-tile :title="stats.payday.title" :statNonEditable="stats.payday.statNonEditable"
+                                    :statEditable="stats.payday.statEditable" :descriptionNonEditable="stats.payday.descriptionNonEditable"
+                                    :descriptionEditable="stats.payday.descriptionEditable"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="title3" :statNonEditable="statNonEditable3"
-                                    :statEditable="statEditable3" :descriptionNonEditable="descriptionNonEditable3"
-                                    :descriptionEditable="descriptionEditable3"></stats-tile>
+                                <stats-tile :title="stats.latePayments.title" :statNonEditable="stats.latePayments.statNonEditable"
+                                    :statEditable="stats.latePayments.statEditable" :descriptionNonEditable="stats.latePayments.descriptionNonEditable"
+                                    :descriptionEditable="stats.latePayments.descriptionEditable"></stats-tile>
                             </div>
                         </div>
 
@@ -347,121 +347,87 @@
     </div>
 </template>
 
-
 <script setup>
-
-import { onMounted, ref } from 'vue'
-// import { ref, watch } from 'vue'
-// import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { onMounted, ref } from 'vue';
 import { doc, getDoc, collection } from "firebase/firestore";
 import { db } from "../firebase/initialize";
-// import { getAuth } from 'firebase/auth';
 
-const title1 =ref('');
-const statNonEditable1 = ref('');
-const statEditable1 = ref('');
-const descriptionNonEditable1 = ref('');
-const descriptionEditable1 = ref('');
-
-const title2 =ref('');
-const statNonEditable2 = ref('');
-const statEditable2 = ref('');
-const descriptionNonEditable2 = ref('');
-const descriptionEditable2 = ref('');
-
-const title3 =ref('');
-const statNonEditable3 = ref('');
-const statEditable3 = ref('');
-const descriptionNonEditable3 = ref('');
-const descriptionEditable3 = ref('');
-
-const title4 =ref('');
-const statNonEditable4 = ref('');
-const statEditable4 = ref('');
-const descriptionNonEditable4 = ref('');
-const descriptionEditable4 = ref('');
-
+const stats = ref({
+    totalEarned: {
+        title: '',
+        statNonEditable: '',
+        statEditable: '',
+        descriptionNonEditable: '',
+        descriptionEditable: ''
+    },
+    payday: {
+        title: '',
+        statNonEditable: '',
+        statEditable: '',
+        descriptionNonEditable: '',
+        descriptionEditable: ''
+    },
+    latePayments: {
+        title: '',
+        statNonEditable: '',
+        statEditable: '',
+        descriptionNonEditable: '',
+        descriptionEditable: ''
+    },
+    goal: {
+        title: '',
+        statNonEditable: '',
+        statEditable: '',
+        descriptionNonEditable: '',
+        descriptionEditable: ''
+    }
+});
 
 function formatDate(timestamp) {
     // Convert the Firebase Timestamp to a JavaScript Date
     const date = timestamp.toDate();
-
-    // Extract day, month, and year
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-
-    // Return formatted date as dd/mm/yyyy
     return `${day}/${month}/${year}`;
 }
 
 onMounted(async () => {
-    // const auth = getAuth();
-    // const user = auth.currentUser;
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        console.log('session in progress');
-        console.log(sessionUser.uid);
-
-        // if (!user) {
-        //     console.log("No user is logged in");
-        //     return;
-        // }
+        if (!sessionUser || !sessionUser.uid) {
+            console.log('No session user found');
+            return;
+        }
 
         const userId = sessionUser.uid;
         const statsRef = collection(db, 'finance', userId, 'stats');
 
-        const totalEarnedDoc = doc(statsRef, 'Total earned');
-        const paydayDoc = doc(statsRef, 'Payday');
-        const latePaymentsDoc = doc(statsRef, 'Late Payments');
-        const goalDoc = doc(statsRef, 'Goal');
+        const docsToFetch = [
+            { key: 'totalEarned', name: 'Total earned' },
+            { key: 'payday', name: 'Payday' },
+            { key: 'latePayments', name: 'Late Payments' },
+            { key: 'goal', name: 'Goal' }
+        ];
 
+        for (const { key, name } of docsToFetch) {
+            const docRef = doc(statsRef, name);
+            const docData = await getDoc(docRef);
 
-        const totalEarnedData = await getDoc(totalEarnedDoc);
-        const paydayData = await getDoc(paydayDoc);
-        const latePaymentsData = await getDoc(latePaymentsDoc);
-        const goalData = await getDoc(goalDoc);
-
-        if (totalEarnedData.exists()) {
-            title1.value = totalEarnedData.data().title;
-            statNonEditable1.value = totalEarnedData.data().statNonEditable;
-            statEditable1.value = totalEarnedData.data().statEditable;
-            descriptionNonEditable1.value = totalEarnedData.data().descriptionNonEditable;
-            descriptionEditable1.value = totalEarnedData.data().descriptionEditable;
+            if (docData.exists()) {
+                stats.value[key].title = docData.data().title;
+                stats.value[key].statNonEditable = docData.data().statNonEditable;
+                stats.value[key].statEditable = docData.data().statEditable;
+                stats.value[key].descriptionNonEditable = docData.data().descriptionNonEditable;
+                stats.value[key].descriptionEditable = key === 'goal' ? formatDate(docData.data().descriptionEditable) : docData.data().descriptionEditable;
+            }
         }
-        if (paydayData.exists()) {
-            title2.value = paydayData.data().title;
-            statNonEditable2.value = paydayData.data().statNonEditable;
-            statEditable2.value = paydayData.data().statEditable;
-            descriptionNonEditable2.value = paydayData.data().descriptionNonEditable;
-            descriptionEditable2.value = paydayData.data().descriptionEditable;
-        }
-        if (latePaymentsData.exists()) {
-            title3.value = latePaymentsData.data().title;
-            statNonEditable3.value = latePaymentsData.data().statNonEditable;
-            statEditable3.value = latePaymentsData.data().statEditable;
-            descriptionNonEditable3.value = latePaymentsData.data().descriptionNonEditable;
-            descriptionEditable3.value = latePaymentsData.data().descriptionEditable;
-        }
-        if (goalData.exists()) {
-            title4.value = goalData.data().title;
-            statNonEditable4.value = goalData.data().statNonEditable;
-            statEditable4.value = goalData.data().statEditable;
-            descriptionNonEditable4.value = goalData.data().descriptionNonEditable;
-            descriptionEditable4.value = formatDate(goalData.data().descriptionEditable);
-        }
-    } catch {
-        console.log('no session user');
-
-        return;
+    } catch (error) {
+        console.error('Error fetching data:', error);
     }
-
-
-
-
-})
-
+});
 </script>
+
 
 
 

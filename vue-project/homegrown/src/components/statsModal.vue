@@ -3,45 +3,74 @@
         <div v-if="show" class="modal-mask">
             <div class="modal-container p-5">
                 <div class="modal-header">
-                    <slot name="header">{{ title }} </slot>
+                    <slot name="header">{{ title }}</slot>
                 </div>
 
+                
+
+
+
+
+
+
+
+
+
+
                 <div class="mb-4">
-                    <!-- update validation func later -->
                     <form class="needs-validation" novalidate>
-                        
-                            <label for="validationCustom01" class="form-label"></label>
-                            <input type="text" class="form-control" id="validationCustom01" :value="stat" required>
-                            <div class="valid-feedback">
-                                Looks good!
-                            </div>
-                        
+                        <label for="statEditable" class="form-label">{{ statNonEditable }}</label>
+                        <input type="text" class="form-control" id="statEditable" :value="statEditable" readonly required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </form>
+                </div>
+                <div class="mb-4">
+                    <form class="needs-validation" novalidate>
+                        <label for="descriptionEditable" class="form-label">{{ descriptionNonEditable }}</label>
+                        <input type="text" class="form-control" id="descriptionEditable" :value="descriptionEditable" readonly required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
                     </form>
                 </div>
 
                 <div class="modal-footer">
-                    {{ description }}
                     <button class="modal-default-button" @click="$emit('close')">OK</button>
                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
             </div>
         </div>
     </Transition>
 </template>
 
 <script setup>
-
-
-const { show, title, stat, description } = defineProps({
+import { watch } from 'vue';
+const { show, title, statNonEditable, statEditable, descriptionNonEditable, descriptionEditable } = defineProps({
     show: Boolean,
     title: String,
-    stat: String,
-    description: String,
+    statNonEditable: String,
+    statEditable: [String, Number, Date],
+    descriptionNonEditable: String,
+    descriptionEditable: [String, Number, Date],
 });
 
-
-
-
-
+watch(() => [title, statNonEditable, statEditable, descriptionNonEditable, descriptionEditable], (newValues) => {
+    console.log('this is modal');
+    console.log('Updated tile props:', newValues);
+}, { immediate: true }); // Logs the values 
 </script>
 
 <style>
@@ -68,21 +97,11 @@ const { show, title, stat, description } = defineProps({
 
 .modal-header h3 {
     margin-top: 0;
-
 }
 
 .modal-default-button {
     float: right;
 }
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
 
 .modal-enter-from {
     opacity: 0;

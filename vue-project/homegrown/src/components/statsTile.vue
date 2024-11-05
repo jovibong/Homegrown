@@ -1,8 +1,23 @@
 <script setup>
+import { ref, defineProps, watch } from 'vue'
 import Modal from './statsModal.vue'
-import { ref } from 'vue'
+
+const props = defineProps({
+    title: String,
+    statNonEditable: String,
+    statEditable: [String, Number, Date],
+    descriptionNonEditable: String,
+    descriptionEditable: [String, Number, Date],
+})
 
 const showModal = ref(false)
+
+// Watch the props and log their values when they change
+watch(() => [props.title, props.statNonEditable, props.statEditable, props.descriptionNonEditable, props.descriptionEditable], (newValues) => {
+    console.log('this is tile')
+    console.log('Updated tile props:', newValues);
+}, { immediate: true }); // Logs the values immediately on first run
+
 </script>
 
 <template>
@@ -16,7 +31,14 @@ const showModal = ref(false)
             </button>
             <Teleport to="body">
                 <!-- use the modal component, pass in the prop -->
-                <modal :show="showModal" @close="showModal = false">
+                <Modal 
+                    :show="showModal" 
+                    @close="showModal = false"
+                    :title="title"
+                    :statNonEditable="statNonEditable"
+                    :statEditable="statEditable"
+                    :descriptionNonEditable="descriptionNonEditable"
+                    :descriptionEditable="descriptionEditable">
                     <template #header>
                         <h2>{{ title }}</h2>
                     </template>
@@ -24,29 +46,21 @@ const showModal = ref(false)
             </Teleport>
         </div>
         <div>
-            <h1 class="text-center text-primary fw-bolder display-5">{{ statNonEditable }}<span class="edit">{{ statEditable }}</span>
+            <h1 class="text-center text-primary fw-bolder display-5">{{ statNonEditable }}<span class="edit">{{
+                    statEditable
+                    }}</span>
             </h1>
         </div>
         <div>
-            <p class="text-center text-muted">{{ descriptionNonEditable }}<span class="edit">{{ descriptionEditable }}</span></p>
+            <p class="text-center text-muted">{{ descriptionNonEditable }}<span class="edit">{{ descriptionEditable
+                    }}</span>
+            </p>
         </div>
 
     </div>
 
 </template>
 
-<script>
-
-export default {
-    props: {
-        title: String,
-        statNonEditable: String,
-        statEditable: String,
-        descriptionNonEditable: String,
-        descriptionEditable: String,
-    }
-}
-</script>
 
 <style scoped>
 /* try to flicker edit when hover over tile-interact. prob is they are not siblings or child */
