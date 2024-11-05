@@ -11,23 +11,24 @@ const showModal = ref(false)
 
         <div class="d-flex justify-content-start align-items-center mb-2">
             <span class="fw-bold ps-2">{{ title }}</span>
-            <button class="tile-interact p-2" id="show-modal" @click="showModal = true" >
+            <button class="tile-interact p-2" id="show-modal" @click="showModal = true">
                 <i class='fas fa-edit'></i>
             </button>
             <Teleport to="body">
                 <!-- use the modal component, pass in the prop -->
-                <modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
+                <modal :show="showModal" @close="showModal = false">
                     <template #header>
-                        <h2>{{title}}</h2>
+                        <h2>{{ title }}</h2>
                     </template>
                 </modal>
             </Teleport>
         </div>
         <div>
-            <h1 class="text-center text-primary fw-bolder display-5 edit">{{ stat }}</h1>
+            <h1 class="text-center text-primary fw-bolder display-5">{{ statNonEditable }}<span class="edit">{{ statEditable }}</span>
+            </h1>
         </div>
         <div>
-            <p class="text-center text-muted edit">{{ description }}</p>
+            <p class="text-center text-muted">{{ descriptionNonEditable }}<span class="edit">{{ descriptionEditable }}</span></p>
         </div>
 
     </div>
@@ -37,8 +38,14 @@ const showModal = ref(false)
 <script>
 
 export default {
-    props: ['title', 'stat', 'description']
-} 
+    props: {
+        title: String,
+        statNonEditable: String,
+        statEditable: String,
+        descriptionNonEditable: String,
+        descriptionEditable: String,
+    }
+}
 </script>
 
 <style scoped>

@@ -94,9 +94,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, addDoc, Timestamp, getDoc } from 'firebase/firestore';
 import { db } from "../firebase/initialize";
-import { getAuth } from 'firebase/auth';
+// import { getAuth } from 'firebase/auth';
 
 // toggle model
 const { show } = defineProps({
@@ -104,7 +104,6 @@ const { show } = defineProps({
 });
 
 // create log
-
 // title
 const title = ref('')
 
@@ -170,39 +169,43 @@ function clearFields() {
 
 // to add log to firebase
 async function addLogs() {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    // const auth = getAuth();
+    // const user = auth.currentUser;
 
-    if (!user) {
-        console.log("No user is logged in");
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        console.log('session in progress');
+        console.log(sessionUser.uid);
+
+        const userId = sessionUser.uid;
+        const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+        const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+
+        // Check if the user document exists
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+        if (!userDocSnapshot.exists()) {
+            await setDoc(userDocRef, { userId: userId });
+        }
+
+        // Add the log to the user's paymentlogs subcollection
+        await addDoc(paymentLogsCollectionRef, {
+            title: title.value,
+            amount: amount.value,
+            statusPayment: status.value,
+            date: Timestamp.fromDate(new Date(date.value)),
+            image: image,
+            badgeClass: badgeClass.value
+        });
+
+        // Clear input fields after adding the log
         clearFields();
+    } catch {
+        console.log('no session user');
         return;
     }
 
-    const userId = user.uid;
-    const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
-    const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
-
-    // Check if the user document exists
-    const userDocSnapshot = await getDoc(userDocRef);
-
-    // If the user document doesn't exist, create it (you can optionally add some initial data to it)
-    if (!userDocSnapshot.exists()) {
-        await addDoc(collection(db, 'finance'), { userId: userId });
-    }
-
-    // Add the log to the user's paymentlogs subcollection
-    await addDoc(paymentLogsCollectionRef, {
-        title: title.value,
-        amount: amount.value,
-        statusPayment: status.value,
-        date: Timestamp.fromDate(new Date(date.value)),
-        image: image,
-        badgeClass: badgeClass.value
-    });
-
-    // Clear input fields after adding the log
-    clearFields();
 }
 
 
@@ -281,6 +284,6 @@ async function addLogs() {
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
     -webkit-transform: scale(1.1);
-    transform: scale(2);
+    transform: scale(1.2);
 }
 </style>

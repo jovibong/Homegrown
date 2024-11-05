@@ -28,11 +28,11 @@
             <h2 class="mb-4">Welcome!</h2>
             <form @submit.prevent="handleLogin">
               <div class="form-group mb-3">
-                <label for="email">Email or Phone Number</label>
+                <label for="email" class="bold-label">Email or Phone Number</label>
                 <input type="text" class="form-control" v-model="email" placeholder="Enter email or phone number" />
               </div>
               <div class="form-group mb-3">
-                <label for="password">Password</label>
+                <label for="password" class="bold-label">Password</label>
                 <input type="password" class="form-control" v-model="password" placeholder="Enter password" />
               </div>
               <div class="form-check mb-3">
@@ -57,6 +57,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase/initialize.js'; // Import Firebase auth instance
 
 export default {
+  emits: ['startLoading', 'stopLoading'],
   name: "LoginModal",
   props: {
     visible: {
@@ -69,7 +70,7 @@ export default {
       email: "",
       password: "",
       rememberMe: false, // checkbox for "Remember Me"
-      imageUrl: "your-image-url.png",
+      imageUrl: require('@/img/group_picture.jpg'),
       modalInstance: null,
       user: null, // user data from login
     };
@@ -89,14 +90,22 @@ export default {
         this.modalInstance = new Modal(this.$refs.loginModal);
         this.$refs.loginModal.addEventListener("hidden.bs.modal", () => {
           this.$emit("update:visible", false);
+          this.resetForm(); // Clear form when modal is closed
         });
       }
       this.modalInstance.show();
+      this.resetForm(); // Clear form each time modal opens
     },
     hideModal() {
       if (this.modalInstance) {
         this.modalInstance.hide();
       }
+      this.$emit("update:visible", false);
+    },
+    resetForm() {
+      // Clear all input fields
+      this.email = '';
+      this.password = '';
     },
     async handleLogin() {
       try {
@@ -117,15 +126,16 @@ export default {
         }
 
         // Emit event with user info if needed
+        // Emit login event to parent if needed
         this.$emit('login', { user: user, rememberMe: this.rememberMe });
 
-        // Close the modal or any other UI handling after login
+        // Hide login modal
         this.hideModal();
-        } catch (error) {
-      console.error("Error logging in:", error.message);
-      alert("Login failed: " + error.message);
-    }
-  },
+      } catch (error) {
+        console.error("Error logging in:", error.message);
+        alert("Login failed: " + error.message);
+      } 
+    },
     openSignup() {
       this.$emit("openSignup");
       this.hideModal();
@@ -186,6 +196,10 @@ export default {
 .signup-link a {
     color: #525FE1;
     text-decoration: underline;
+}
+
+.bold-label {
+    font-weight: bold;
 }
 </style>
 

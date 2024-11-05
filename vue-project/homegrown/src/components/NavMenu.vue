@@ -18,7 +18,8 @@
                         <!-- flex and hamburger menu only for mobile -->
                         <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around collapsed"
                             type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                            v-if="userType === 'worker' || userType === 'volunteer'">
                             <!-- custom 3 lines for animation for menu -->
                             <span class="toggler-icon top-bar"></span>
                             <span class="toggler-icon middle-bar"></span>
@@ -28,25 +29,25 @@
                         <!-- list of links/navs -->
                         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                             <ul class="navbar-nav">
-                                <li class="nav-item mx-3">
-                                    <a class="nav-link active text-light" aria-current="page" href="#">Home</a>
+                                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+                                    <router-link to="/homePage" class="nav-link active text-light" aria-current="page">Home</router-link>
                                 </li>
-                                <li class="nav-item mx-3">
+                                <li class="nav-item mx-3" v-if="userType === 'worker'">
                                     <router-link to="/coursesPage" class="nav-link text-light">Upskilling</router-link>
                                 </li>
-                                <li class="nav-item mx-3">
+                                <li class="nav-item mx-3" v-if="userType === 'volunteer'">
                                     <router-link to="/volunteerPage" class="nav-link text-light">Volunteer</router-link>
                                 </li>
-                                <li class="nav-item mx-3">
+                                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
                                     <router-link to="/eventPage" class="nav-link text-light">Events</router-link>
                                 </li>
-                                <li class="nav-item mx-3">
+                                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
                                     <router-link to="/chat" class="nav-link text-light">Chat</router-link>
                                 </li>
-                                <li class="nav-item mx-3">
+                                <li class="nav-item mx-3" v-if="userType === 'worker'">
                                     <router-link to="/financePage" class="nav-link text-light">Finance</router-link>
                                 </li>
-                                <li class="nav-item mx-3">
+                                <li class="nav-item mx-3" v-if="userType === 'volunteer'">
                                     <router-link to="/mentorshipPage" class="nav-link text-light">Mentorship</router-link>
                                 </li>
                             </ul>
@@ -77,7 +78,7 @@
                     <router-link to="/editProfile" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile Settings</router-link>
                     <router-link to="/workersCertification" class="dropdown-item"><i class="bi bi-award-fill"></i> Certifications</router-link>
                     <hr>
-                    <a href="#" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+                    <router-link to="/homePage" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign Out</router-link>
                 </div>
                 </div>
 
@@ -86,7 +87,7 @@
                     <!-- if want the sign in to remain as a navlink use class below -->
                     <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
                     <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openLoginModal">Sign In</a>
-                    <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openSignUpModal">Sign Up</a>
+                    <a class="btn btn-warning fw-bold glow-on-hover mx-1 " @click="openSignUpModal">Sign Up</a>
                 </nav>
             </div>
         </div>
@@ -95,6 +96,8 @@
 
     </div>
     <!---end of navbar-->
+    <!-- // Show Sign Out Popup when user clicks Sign Out -->
+
     <LoginModal
     :visible="isLoginModalVisible"
     @login="handleLogin"
@@ -111,9 +114,11 @@
 
 <script>
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '@/firebase/initialize.js';
+import { auth, db } from '@/firebase/initialize.js';
 import LoginModal from './authentication/LoginModal.vue';
 import SignupModal from './authentication/SignupModal.vue';
+import { doc, getDoc } from 'firebase/firestore';
+
 
 export default {
   components: {
@@ -125,7 +130,9 @@ export default {
       isLoginModalVisible: false,
       isSignUpModalVisible: false,
       user: null,
-      isDropdownVisible: false // Track dropdown visibility
+      isDropdownVisible: false, // Track dropdown visibility
+      userType: null,
+      showLoadingSpinner: false, // Controls visibility of loading spinner
     };
   },
   computed: {
@@ -142,24 +149,32 @@ export default {
     this.user = savedUser ? JSON.parse(savedUser) : null;
 
     // Watch Firebase auth state changes
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Save user data in the appropriate storage based on "Remember Me" preference
-        if (rememberMe) {
-          localStorage.setItem('user', JSON.stringify(user));
-        } else {
-          sessionStorage.setItem('user', JSON.stringify(user));
-        }
         this.user = user;
+        const docRef = doc(db, "profiles", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          this.userType = docSnap.data().userType;
+        }
       } else {
-        // Clear user data from both storages if logged out
-        sessionStorage.removeItem('user');
-        localStorage.removeItem('user');
         this.user = null;
+        this.userType = null;
       }
     });
   },
-  mounted() {
+  async mounted() {
+    // Listen for authentication state changes and fetch user type
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const docRef = doc(db, "profiles", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          this.userType = docSnap.data().userType; // Retrieve and set user type
+        }
+      }
+    });
+
     // Listen for clicks on the document to detect clicks outside the dropdown
     document.addEventListener("click", this.handleClickOutside);
   },
@@ -191,10 +206,12 @@ export default {
         .then(() => {
           console.log("User signed out");
           this.user = null;
-          this.isDropdownVisible = false;
+          this.userType = null; // Reset user type
+          this.$router.push("/homePage"); // Redirect to home page
         })
         .catch((error) => {
           console.error("Error signing out:", error);
+          this.$emit('stopLoading'); // Hide spinner on error
         });
     },
     toggleDropdown(event) {
@@ -319,6 +336,7 @@ export default {
 .hidden {
   display: none;
 }
+
 </style>
 
 
