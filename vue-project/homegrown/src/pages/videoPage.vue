@@ -99,6 +99,7 @@
         <router-link v-if="video_watched"
           to="quizPage"
           class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-2 text-secondary fw-bold justify-content-center"
+          @click="markCompleted()"
         >
         Go to {{ lesson.next_name }} <i class="bi bi-arrow-right ms-2"></i>
         </router-link>
@@ -108,6 +109,9 @@
 </template>
 
 <script>
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/initialize"; // Adjust the path as necessary
+
 export default {
   data() {
     return {
@@ -117,10 +121,14 @@ export default {
       selected_vote: null,
       image:
         "https://plus.unsplash.com/premium_photo-1661964187664-e26f70e1a224?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y29kaW5nJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D",
+      course: null,
+      storedLessonId: "",
+      user: "user_00001",
     };
   },
   mounted() {
     // Retrieve the selected lesson item from sessionStorage
+    this.storedLessonId = JSON.parse(sessionStorage.getItem("selectedLessonId"));
     const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
     if (storedLessonItem) {
       this.lesson = JSON.parse(storedLessonItem);
@@ -133,6 +141,7 @@ export default {
     if (storedCourse) {
       const course = JSON.parse(storedCourse);
       this.course_name = course.name;
+      this.course = course;
     } else {
       console.warn("No selected course found in sessionStorage.");
     }
@@ -143,6 +152,24 @@ export default {
     },
     submit_vote(vote) {
       this.selected_vote = vote;
+    },
+     async markCompleted() {
+      try {
+        // Reference to the lesson item document
+        const lessonItemRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items/${this.lesson.id}`
+        );
+
+        // Update `completed` field to true
+        await updateDoc(lessonItemRef, {
+          completed: true,
+        });
+
+        console.log("Lesson item marked as completed.");
+      } catch (error) {
+        console.error("Error marking lesson item as completed:", error);
+      }
     },
   },
 };

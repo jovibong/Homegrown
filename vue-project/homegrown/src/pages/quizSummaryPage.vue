@@ -6,12 +6,14 @@
         <h2 class="text-primary fw-bold mb-0 display-5">{{ course_name }}</h2>
       </div>
       <!-- Lesson Name -->
-      <h3 class="text-black display-5 mt-3 text-center">{{ lesson.name }}</h3>
+      <h3 class="text-black display-5 mt-3 text-center">
+        {{ lesson_item.name }}
+      </h3>
     </section>
     <section id="data">
       <div class="container mt-5">
         <div class="row mx-auto mb-5 d-flex align-items-stretch">
-          <div class="col-4">
+          <div class="col-md-4 mb-md-0 mb-3">
             <div class="card text-center shadow-sm h-100">
               <div class="card-body">
                 <h6 class="card-title fw-bold text-muted text-start text-muted">
@@ -41,7 +43,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-md-4 mb-md-0 mb-3">
             <div class="card text-center shadow-sm h-100">
               <div class="card-body h-100">
                 <h6 class="card-title fw-bold text-muted text-start text-muted">
@@ -79,7 +81,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-md-4 mb-md-0 mb-3">
             <div class="card shadow-sm h-100">
               <div class="card-body h-100">
                 <h6 class="card-title fw-bold text-muted text-start">
@@ -218,6 +220,7 @@
     <router-link
       to="individualCoursePage"
       class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2"
+      @click="submit_quiz()"
     >
       <i class="bi bi-arrow-left me-2"></i>
       <span class="d-none d-md-inline">Back to course overview</span>
@@ -228,122 +231,57 @@
     <router-link
       to="videoPage"
       class="btn btn-warning text-dark d-flex align-items-center col-lg-3 col-md-4 justify-content-center hover-animate py-3 my-2"
+      @click="submit_quiz()"
     >
       <span class="d-none d-md-inline text-end">Continue to next lesson</span>
       <span class="d-inline d-md-none text-end">Next Lesson</span>
       <i class="bi bi-arrow-right ms-2"></i>
     </router-link>
-   
+
     <div class="col-lg-2 col-md-1"></div>
   </div>
 </template>
 
 <script>
 import Chart from "chart.js/auto";
+import { doc, updateDoc } from "firebase/firestore"; // Import the necessary functions
+import { db } from "../firebase/initialize"; // Adjust path if necessary
+
 export default {
   data() {
     return {
-      questions: [
-        {
-          id: 101,
-          question_number: 1,
-          type: "multiple_choice",
-          question:
-            "Which version of Python is recommended for new users to install?",
-          options: {
-            A: "Python 2.7",
-            B: "Python 3.x",
-            C: "Python 1.5",
-            D: "Python 4.0",
-          },
-          correct_answer: "B",
-          review:
-            "Python 3.x is the recommended version for new users to install because it is the latest major release with ongoing support and development. Python 2.7, though popular in the past, reached its end-of-life in January 2020, meaning it no longer receives updates or security patches. This shift encourages developers to use Python 3 for new projects and migrate older projects as well. Python 3.x includes numerous improvements and new features such as better Unicode support, new syntax for type hints, and enhanced libraries that make it more efficient and versatile. Consequently, beginners and professionals alike are advised to start with Python 3.x to benefit from the latest advancements in the language.",
-        },
-        {
-          id: 102,
-          question_number: 2,
-          type: "multiple_choice",
-          question:
-            "What is the best way to verify that Python is correctly installed on your system?",
-          options: {
-            A: "python --install",
-            B: "verify-python",
-            C: "python --version",
-            D: "python --check",
-          },
-          correct_answer: "C",
-          review:
-            "The most reliable way to confirm that Python is correctly installed is by running the command `python --version` in the terminal or command prompt. This command tells Python to display its version number, ensuring it’s installed and accessible from the command line. If Python is not installed or not properly configured in the system's PATH, this command will return an error, indicating that further installation steps may be necessary. The alternatives provided, such as `python --install` and `verify-python`, are not valid commands for this purpose, so using `python --version` is the most straightforward method to verify a successful Python installation.",
-        },
-        {
-          id: 103,
-          question_number: 3,
-          type: "multiple_choice",
-          question:
-            "Which package manager is commonly used on macOS to install Python?",
-          options: {
-            A: "apt-get",
-            B: "Homebrew",
-            C: "yum",
-            D: "Chocolatey",
-          },
-          correct_answer: "B",
-          review:
-            "On macOS, Homebrew is the preferred package manager for installing software, including Python. Homebrew simplifies the process of downloading, installing, and managing software packages by handling dependencies and ensuring the latest versions are available. macOS does not come with a built-in package manager, so users often install Homebrew to manage software installations easily. Unlike package managers like `apt-get` (typically used on Debian-based Linux distributions) or `yum` (used on Red Hat-based systems), Homebrew was designed specifically for macOS, making it the go-to option for macOS users needing a streamlined installation process for Python and other software.",
-        },
-        {
-          id: 104,
-          question_number: 4,
-          type: "multiple_choice",
-          question:
-            "What option should you select during Python installation to make it accessible from the command line?",
-          options: {
-            A: "Install Python for All Users",
-            B: "Add Python to PATH",
-            C: "Install Documentation",
-            D: "Install PIP",
-          },
-          correct_answer: "B",
-          review:
-            "When installing Python on your system, selecting the 'Add Python to PATH' option is crucial if you want to access Python from the command line easily. Adding Python to the PATH environment variable allows your system to recognize Python commands from any directory, streamlining the process of running Python scripts or launching the Python interpreter. Without adding Python to PATH, you would need to specify the full path to the Python executable every time you want to use it, which can be cumbersome. Including Python in PATH improves accessibility and ease of use, particularly for those who frequently work with Python from the command line.",
-        },
-        {
-          id: 105,
-          question_number: 5,
-          type: "multiple_choice",
-          question:
-            "Which command is used to create a virtual environment in Python?",
-          options: {
-            A: "python -m venv [environment-name]",
-            B: "python create-env [environment-name]",
-            C: "python --virtual [environment-name]",
-            D: "python make-env [environment-name]",
-          },
-          correct_answer: "A",
-          review:
-            "To create a virtual environment in Python, the `python -m venv [environment-name]` command is used. This command sets up an isolated Python environment, allowing you to install packages and dependencies specific to a project without affecting other projects or the global Python environment. Virtual environments are especially useful in larger projects where different dependencies or versions of libraries are needed. By running `python -m venv` followed by the environment name, Python generates a separate directory with its own copy of the Python interpreter and a site-packages directory for project-specific dependencies. This method helps maintain a clean, organized development setup, making it an essential tool for Python developers.",
-        },
-      ],
-      lesson: {
-        id: "Q001",
-        name: "Lesson 1: Quiz",
-        title: "Installing Python",
-        description: `  
-                Feel free to go back to the lesson if you are unable to answer the questions.
-            `,
-        typeof: "quiz",
-        next_name: "Lesson 1: Quiz",
-        rating: 84,
-      },
-      course_name: "Introduction to Python",
+      questions: {},
+      lesson_item: {},
+      course: null,
       answers: [],
       score: 0,
-      ranking: ["86%", 1435],
-      previous_quiz_score: 0.75,
+      user: "user_00001",
+      storedLessonId: "",
+      course_name: ""
     };
   },
   methods: {
+    async submit_quiz() {
+      try {
+        // Reference to the lesson item document
+        const lessonItemRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items/${this.lesson_item.id}`
+        );
+
+        // Update the `answers` field and mark `completed` as true
+        await updateDoc(lessonItemRef, {
+          answers: this.answers,
+          completed: true,
+        });
+
+        console.log(
+          "Quiz answers submitted successfully and marked as completed."
+        );
+      } catch (error) {
+        console.error("Error submitting quiz answers:", error);
+      }
+    },
     getClass(question, option_key, key) {
       if (option_key == question.correct_answer) {
         return "bg-success text-white";
@@ -376,11 +314,30 @@ export default {
     score_in_percentage() {
       return Math.round((this.score / this.questions.length) * 100, 0);
     },
+    previous_quiz_score() {
+      const numbers = [0.1, 0.2, 0.25, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1];
+      const randomIndex = Math.floor(Math.random() * numbers.length);
+      return numbers[randomIndex];
+    },
+    ranking() {
+      const percentageBeaten = Math.floor(Math.random() * (95 - 50 + 1)) + 50;
+      const rank = Math.round((1 - (percentageBeaten - 50) / 45) * 2000);
+      const percentageString = `${percentageBeaten}%`;
+
+      return [percentageString, rank];
+    },
   },
   mounted() {
     // Load answers from localStorage when Vue instance is mounted
-    this.answers = JSON.parse(localStorage.getItem("user_answers"));
-    this.score = JSON.parse(localStorage.getItem("user_score"));
+    this.answers = JSON.parse(sessionStorage.getItem("user_answers"));
+    this.score = JSON.parse(sessionStorage.getItem("user_score"));
+    this.questions = JSON.parse(sessionStorage.getItem("selected_questions"));
+    this.lesson_item = JSON.parse(sessionStorage.getItem("selectedLessonItem"));
+    this.course = JSON.parse(sessionStorage.getItem("selectedCourse"));
+    this.course_name = this.course.name;
+    this.storedLessonId = JSON.parse(
+      sessionStorage.getItem("selectedLessonId")
+    );
 
     // Create Chart
     const ctx = document.getElementById("myChart");

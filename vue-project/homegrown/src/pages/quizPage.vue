@@ -37,7 +37,7 @@
       </div>
     </section>
 
-    <section id="question" v-if="questions.length > 0">
+    <section id="question" v-if="has_questions()">
       <p class="text-center text-muted display-6 mt-5 fade-in-top">
         Question {{ current_question }}/{{ num_questions }}
       </p>
@@ -66,6 +66,15 @@
             <span class="h6 mb-0">{{ option }}</span>
           </li>
         </ul>
+      </div>
+      <div class="container w-50 d-flex justify-content-center mb-3">
+        <button
+          v-if="selected_option && !submitted"
+          class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-2 text-secondary fw-bold justify-content-center fade-in-bottom hover-animate"
+          @click="submit_option"
+        >
+          Submit Answer <i class="bi bi-arrow-right ms-2"></i>
+        </button>
       </div>
     </section>
 
@@ -156,8 +165,8 @@ export default {
     };
   },
   methods: {
-    watchvideo() {
-      this.video_watched = true;
+    has_questions() {
+      return this.questions.length > 0;
     },
     submit_vote(vote) {
       this.selected_vote = vote;
@@ -191,31 +200,35 @@ export default {
     },
     // change this code to submit the answers to a database instead
     submit_quiz() {
-      localStorage.setItem("user_answers", JSON.stringify(this.answers));
-      localStorage.setItem("user_score", JSON.stringify(this.score));
+      sessionStorage.setItem("user_answers", JSON.stringify(this.answers));
+      sessionStorage.setItem("user_score", JSON.stringify(this.score));
+      sessionStorage.setItem("selected_questions",JSON.stringify(this.questions));
     },
-     async fetchQuestions() {
+    async fetchQuestions(storedLessonId) {
       try {
-        // Assuming lesson.id and course_name are set correctly
-        const lessonItemId = this.lesson.id;
         const questionsRef = collection(
           db,
-          `courses/${this.course.id}/lessons/${this.lesson.id}/lesson_items/${lessonItemId}/questions`
-          // change lesson.id to lesson.id
+          `courses/${this.course.id}/lessons/${storedLessonId}/lesson_items/${this.lesson.id}/questions`
         );
-
         const questionsSnap = await getDocs(questionsRef);
-        this.questions = questionsSnap.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+        this.questions = questionsSnap.docs.map((doc) => {
+          const questionData = doc.data();
+          const sortedOptions = Object.keys(questionData.options)
+            .sort() // Sort keys alphabetically
+            .reduce((acc, key) => {
+              acc[key] = questionData.options[key];
+              return acc;
+            }, {});
+
+          return {
+            ...questionData,
+            options: sortedOptions, // Use sorted options
+            id: doc.id,
+          };
+        });
+        console.log(this.questions);
       } catch (error) {
         console.error("Error fetching questions:", error);
-      } finally {
-        console.log("Done");
-        console.log(this.course.id);
-        console.log(this.lesson);
-        console.log(this.questions);
       }
     },
   },
@@ -227,6 +240,9 @@ export default {
   async mounted() {
     // Retrieve the selected lesson item from sessionStorage
     const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
+    const storedLessonId = JSON.parse(
+      sessionStorage.getItem("selectedLessonId")
+    );
     if (storedLessonItem) {
       this.lesson = JSON.parse(storedLessonItem);
     } else {
@@ -242,7 +258,7 @@ export default {
       console.warn("No selected course found in sessionStorage.");
     }
 
-    await this.fetchQuestions(); // Fetch questions after lesson data is set
+    await this.fetchQuestions(storedLessonId); // Fetch questions after lesson data is set
   },
 };
 </script>

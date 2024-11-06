@@ -171,7 +171,7 @@
                   :class="{
                     'pointer-events-none': !item.completed && !item.latest, // Disable click if not completed or latest
                   }"
-                  @click.prevent="handleLessonItemClick(item)"
+                  @click.prevent="handleLessonItemClick(item, lessonId)"
                 >
                   <div
                     :class="[
@@ -291,78 +291,88 @@ export default {
       loading: true,
       reviews: null,
       mentor: {},
-      lessons: [],
+      lessons: {},
       expanded: false,
       lessons_loading: true,
       mentor_loading: true,
     };
   },
   methods: {
-    async fetchLessons() {
-      try {
-        const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
-        const lessonDocs = await getDocs(lessonsRef);
+      async fetchLessons() {
+        try {
+          const lessonsRef = collection(
+            db,
+            `courses/${this.course.id}/lessons`
+          );
+          const lessonDocs = await getDocs(lessonsRef);
 
-        let latestFound = false; // Flag to indicate if the latest item has been found
+          let latestFound = false; // Flag to indicate if the latest item has been found
 
-        const lessonsData = await Promise.all(
-          lessonDocs.docs.map(async (lessonDoc) => {
-            const lessonData = lessonDoc.data();
-            const lessonId = lessonDoc.id;
+          const lessonsData = {}; // Initialize as an object (map) instead of an array
 
-            // Fetch lesson items for each lesson
-            const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
-            const lessonItemsDocs = await getDocs(lessonItemsRef);
+          await Promise.all(
+            lessonDocs.docs.map(async (lessonDoc) => {
+              const lessonData = lessonDoc.data();
+              const lessonId = lessonDoc.id;
 
-            // Reference to user's progress for the specific lesson in ongoing_courses
-            const userLessonProgressRef = collection(
-              db,
-              `users/${this.user}/ongoing_courses/${this.course.id}/progress/${lessonId}/lesson_items`
-            );
-            const userLessonProgressDocs = await getDocs(userLessonProgressRef);
+              // Fetch lesson items for each lesson
+              const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
+              const lessonItemsDocs = await getDocs(lessonItemsRef);
 
-            // Map progress data to easily check if lesson items are completed
-            const progressData = userLessonProgressDocs.docs.reduce(
-              (acc, doc) => {
-                acc[doc.id] = doc.data().completed || false; // Default to false if completed field is missing
-                return acc;
-              },
-              {}
-            );
+              // Reference to user's progress for the specific lesson in ongoing_courses
+              const userLessonProgressRef = collection(
+                db,
+                `users/${this.user}/ongoing_courses/${this.course.id}/progress/${lessonId}/lesson_items`
+              );
+              const userLessonProgressDocs = await getDocs(
+                userLessonProgressRef
+              );
 
-            const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
-              const itemData = itemDoc.data();
-              const completed = progressData[itemDoc.id] || false;
+              // Map progress data to easily check if lesson items are completed
+              const progressData = userLessonProgressDocs.docs.reduce(
+                (acc, doc) => {
+                  acc[doc.id] = doc.data().completed || false; // Default to false if completed field is missing
+                  return acc;
+                },
+                {}
+              );
 
-              // Set the `latest` flag on the first non-completed item if it hasn't been set yet
-              const latest = !completed && !latestFound;
-              if (latest) latestFound = true; // Mark that we've found the latest item
+              const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
+                const itemData = itemDoc.data();
+                const completed = progressData[itemDoc.id] || false;
 
-              return {
-                ...itemData,
-                id: itemDoc.id,
-                icon:
-                  itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
-                link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
-                completed: completed,
-                latest: latest,
+                // Set the `latest` flag on the first non-completed item if it hasn't been set yet
+                const latest = !completed && !latestFound;
+                if (latest) latestFound = true; // Mark that we've found the latest item
+
+                return {
+                  ...itemData,
+                  id: itemDoc.id,
+                  icon:
+                    itemData.typeof === "quiz"
+                      ? "bi-lightbulb"
+                      : "bi-play-fill",
+                  link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
+                  completed: completed,
+                  latest: latest,
+                };
+              });
+
+              // Store each lesson using lessonId as the key in lessonsData
+              lessonsData[lessonId] = {
+                title: lessonData.title,
+                lesson_items: lessonItemsData,
               };
-            });
+            })
+          );
 
-            return {
-              title: lessonData.title,
-              lesson_items: lessonItemsData,
-            };
-          })
-        );
-
-        this.lessons = lessonsData;
-      } catch (error) {
-        console.error("Error fetching lessons and items:", error);
-      } finally {
-        this.lessons_loading = false;
-      }
-    },
+          this.lessons = lessonsData; // Assign lessonsData (map) to this.lessons
+        } catch (error) {
+          console.error("Error fetching lessons and items:", error);
+        } finally {
+          this.lessons_loading = false;
+        }
+      },
     async fetchReviewsWithUserDetails() {
       try {
         const reviewsRef = collection(db, `courses/${this.course.id}/reviews`);
@@ -486,9 +496,10 @@ export default {
         this.mentor_loading = false;
       }
     },
-    handleLessonItemClick(item) {
+    handleLessonItemClick(item, lessonId) {
       // Store the clicked lesson item in sessionStorage
       sessionStorage.setItem("selectedLessonItem", JSON.stringify(item));
+      sessionStorage.setItem("selectedLessonId", JSON.stringify(lessonId));
 
       // Navigate to the route
       if (item.completed || item.latest) {
