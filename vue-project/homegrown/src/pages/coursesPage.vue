@@ -358,8 +358,17 @@ export default {
     },
   },
   mounted() {
+  // Uncomment below once profile login is settled.
+  // this.user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
+
+  // Check if user exists before calling fetchCourses
+  if (this.user) {
     this.fetchCourses();
-  },
+  } else {
+    console.error("User not found in sessionStorage or localStorage.");
+  }
+},
+
 };
 </script>
 
