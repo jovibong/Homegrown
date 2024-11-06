@@ -166,7 +166,7 @@
                 class="col-12"
               >
                 <router-link
-                  :to="item.completed || item.latest ? item.link : '#'"
+                  :to="item.completed || item.latest ? item.route_link : '#'"
                   class="text-decoration-none"
                   :class="{
                     'pointer-events-none': !item.completed && !item.latest, // Disable click if not completed or latest
@@ -352,7 +352,7 @@ export default {
                     itemData.typeof === "quiz"
                       ? "bi-lightbulb"
                       : "bi-play-fill",
-                  link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
+                  route_link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
                   completed: completed,
                   latest: latest,
                 };
@@ -503,7 +503,7 @@ export default {
 
       // Navigate to the route
       if (item.completed || item.latest) {
-        this.$router.push(item.link);
+        this.$router.push(item.route_link);
       }
     },
   },
