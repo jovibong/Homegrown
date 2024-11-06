@@ -1,8 +1,8 @@
 .carouselHeaderwidth {
-    width: 100%;
-    max-height: auto;
-    overflow: hidden;
-    margin-bottom: 5px;
+  width: 100%;
+  max-height: auto;
+  overflow: hidden;
+  margin-bottom: 5px;
 }
 
   
@@ -13,52 +13,52 @@
 }
 
 .title {
-    font-family: 'Poppins';
-    color: #525FE1;
-    font-weight: bold;
+  font-family: 'Poppins';
+  color: #525FE1;
+  font-weight: bold;
 }
 
 .searchBar {
-    padding-left: 30px;
-    border-radius:30px;
-    border:2px solid #525FE1;
-    height: 50px;
-
+  padding-left: 30px;
+  border-radius:30px;
+  border:2px solid #525FE1;
+  height: 50px;
 }
 
 .event-details {
   border:2px solid #525FE1;
   margin-right: 10px;
   height: 70px;
+  color: black;
 }
 
 .scroll-container {
-    display: flex;
-    overflow-x: auto;
-    padding: 1rem;
-    gap: 1rem; /* Adjust spacing between cards as needed */
+  display: flex;
+  overflow-x: auto;
+  padding: 1rem;
+  gap: 1rem; /* Adjust spacing between cards as needed */
   }
   
   .scroll-container .card {
-    flex: 0 0 auto; /* Ensure each card stays the same width */
-    width: 200px; /* Set a fixed width for each card */
+  flex: 0 0 auto; /* Ensure each card stays the same width */
+  width: 200px; /* Set a fixed width for each card */
   }
 
   /* trying to style glider */
 
-  .scroll-container::-webkit-scrollbar {
-    height: 8px; /* Scrollbar height for horizontal scroll */
-  }
-  
-  .scroll-container::-webkit-scrollbar-track {
-    background: #eee; /* Scrollbar track color */
-  }
-  
-  .scroll-container::-webkit-scrollbar-thumb {
-    background-color: #525FE1; /* Scrollbar thumb color */
-    border-radius: 10px; /* Rounded scrollbar edges */
-    border: 2px solid #525FE1; /* Adds padding to thumb */
-  }
+.scroll-container::-webkit-scrollbar {
+  height: 8px; /* Scrollbar height for horizontal scroll */
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: #eee; /* Scrollbar track color */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #525FE1; /* Scrollbar thumb color */
+  border-radius: 10px; /* Rounded scrollbar edges */
+  border: 2px solid #525FE1; /* Adds padding to thumb */
+}
 
   /* styles.css or component's <style> section */
 .button {
@@ -114,6 +114,10 @@
   animation: slide-in 0.3s ease-out;
 }
 
+.create-leave-active {
+  animation: slide-in 0.3s ease-in;
+}
+
 @keyframes slide-in {
   from {
     opacity: 0;
@@ -124,4 +128,136 @@
     opacity: 1;
     transform: translateY(0px) scale(1);
   }
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.joinButton .inactive {
+  /* Return to original height and width with a slight delay */
+  height: 95px;
+  width: 500px;
+  transition: all 0.3s ease;
+}
+
+.joinButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+  height: 60px;
+  width: 500px;
+  background: #5e14c6;
+  border-radius: 55px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  overflow: hidden;
+  padding: 10px;
+}
+
+/* Active state changes for the button */
+.joinButton.active {
+  height: 20px;
+  width: 500px;
+}
+
+/* Background animation layer */
+.joinButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  width: 100%;
+  background: #525FE1;
+  border-radius: 55px;
+  transition: all 6s ease-in-out;
+}
+
+.joinButton.active::before {
+  animation: layer 1.5s ease-in-out forwards;
+}
+
+@keyframes layer {
+  100% {
+    left: 0%;
+  }
+}
+
+/* Icon and text styles within the button */
+.joinButton i,
+.joinButton .button-text {
+  color: #fff;
+  font-size: 20px; /* Adjusted to a consistent size */
+  font-weight: 500;
+  transition: transform 0.2s ease;
+}
+
+/* Adjust the icon margin */
+.joinButton .button-text {
+  margin-left: 8px;
+}
+
+/* Transform text when button is active */
+.joinButton.active i,
+.joinButton.active .button-text {
+  transform: translateY(60px);
+}
+
+.joinButton.inactive i,
+.joinButton.inactive .button-text {
+  transform: translateY(0);
+}
+
+
+.groupContainer {
+  display: flex;
+  align-items: center; /* vertically centers items */
+  justify-content: space-between; /* spaces items out */
+}
+
+
+.createButton {
+  width: 200px;
+  background-color: #525FE1;
+  color: yellow;
+  font-family: 'Poppins';
+  border-radius: 55px;
+  border: 0px;
+}
+
+@media (max-width: 768px) {
+  .joinButton {
+    height: 50px;
+    width: 90%; /* Reduced width for medium screens */
+  }
+
+  .joinButton i,
+  .joinButton .button-text {
+    font-size: 16px; /* Reduce font size for medium screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .joinButton {
+    height: 45px;
+    width: 85%; /* Even smaller width for small screens */
+    padding: 8px;
+  }
+
+  .joinButton i,
+  .joinButton .button-text {
+    font-size: 14px; /* Further reduce font size for small screens */
+  }
+}
+
+#submitButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

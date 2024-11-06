@@ -192,6 +192,9 @@ async function addLogs() {
             await setDoc(userDocRef, { userId: userId });
         }
 
+        console.log(date.value)
+        console.log( typeof(date.value))
+
         // Add the log to the user's paymentlogs subcollection
         await addDoc(paymentLogsCollectionRef, {
             title: title.value,
