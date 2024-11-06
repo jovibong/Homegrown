@@ -101,7 +101,7 @@
           class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-2 text-secondary fw-bold justify-content-center"
           @click="markCompleted()"
         >
-        Go to {{ lesson.next_name }} <i class="bi bi-arrow-right ms-2"></i>
+        Go to quiz <i class="bi bi-arrow-right ms-2"></i>
         </router-link>
       </div>
     </section>
@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust the path as necessary
 
 export default {
@@ -126,15 +126,8 @@ export default {
       user: "user_00001",
     };
   },
-  mounted() {
-    // Retrieve the selected lesson item from sessionStorage
-    this.storedLessonId = JSON.parse(sessionStorage.getItem("selectedLessonId"));
-    const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
-    if (storedLessonItem) {
-      this.lesson = JSON.parse(storedLessonItem);
-    } else {
-      console.warn("No selected lesson item found in sessionStorage.");
-    }
+  async mounted() {
+    await this.waitForLessonData(); // Wait for the lesson data with type 'video'
 
     // Retrieve the course name from sessionStorage
     const storedCourse = sessionStorage.getItem("selectedCourse");
@@ -147,15 +140,33 @@ export default {
     }
   },
   methods: {
+    waitForLessonData() {
+      return new Promise((resolve) => {
+        const interval = setInterval(() => {
+          const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
+          if (storedLessonItem) {
+            const lessonData = JSON.parse(storedLessonItem);
+            if (lessonData.typeof === "video") {
+              this.lesson = lessonData;
+              this.storedLessonId = JSON.parse(sessionStorage.getItem("selectedLessonId"));
+              clearInterval(interval);
+              resolve(this.storedLessonId);
+            }
+          } else {
+            console.warn("No selected lesson item found in sessionStorage.");
+          }
+        }, 500); // Check every 500 ms
+      });
+    },
     watchvideo() {
       this.video_watched = true;
     },
     submit_vote(vote) {
       this.selected_vote = vote;
     },
-     async markCompleted() {
+    async markCompleted() {
       try {
-        // Reference to the lesson item document
+        // Reference to the current lesson item document
         const lessonItemRef = doc(
           db,
           `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items/${this.lesson.id}`
@@ -167,11 +178,31 @@ export default {
         });
 
         console.log("Lesson item marked as completed.");
+
+        // Determine the next item (quiz) if the current item is the video
+        if (this.lesson.typeof === "video") {
+          const nextLessonItemRef = doc(
+            db,
+            `courses/${this.course.id}/lessons/${this.storedLessonId}/lesson_items/lesson_item_002`
+          );
+          const nextLessonItemSnap = await getDoc(nextLessonItemRef);
+
+          if (nextLessonItemSnap.exists()) {
+            const nextLessonItem = { id: nextLessonItemSnap.id, ...nextLessonItemSnap.data() };
+            sessionStorage.setItem("selectedLessonItem", JSON.stringify(nextLessonItem));
+            console.log("Next lesson item (quiz) stored in sessionStorage:", nextLessonItem);
+          } else {
+            console.warn("Quiz lesson item not found.");
+          }
+        } else {
+          console.log("Current lesson item is the quiz; no next item to set.");
+        }
       } catch (error) {
-        console.error("Error marking lesson item as completed:", error);
+        console.error("Error marking lesson item as completed or finding the next item:", error);
       }
     },
   },
 };
 </script>
+
 

@@ -147,6 +147,7 @@
 <script>
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust the path as needed
+
 export default {
   data() {
     return {
@@ -155,7 +156,7 @@ export default {
       course_name: "",
       course: null,
       current_question: 1,
-      num_questions: 5,
+      num_questions: 0,
       score: 0,
       selected_vote: null,
       selected_option: null,
@@ -171,25 +172,17 @@ export default {
     submit_vote(vote) {
       this.selected_vote = vote;
     },
-
     select_option(key) {
-      // If the selected option is the same as the clicked option, deselect it
-      if (this.selected_option === key) {
-        this.selected_option = null; // Deselect the option
-      } else {
-        // Otherwise, set the selected option to the clicked key
-        this.selected_option = key;
-      }
+      this.selected_option = this.selected_option === key ? null : key;
     },
     submit_option() {
-      let correct_ans =
-        this.questions[this.current_question - 1].correct_answer;
-      if (correct_ans == this.selected_option) {
+      let correct_ans = this.questions[this.current_question - 1].correct_answer;
+      if (correct_ans === this.selected_option) {
         this.is_correct = true;
         this.score += 1;
       }
       this.submitted = true;
-      this.answers[this.answers.length] = this.selected_option;
+      this.answers.push(this.selected_option);
     },
     go_to_next() {
       this.is_correct = false;
@@ -198,11 +191,10 @@ export default {
       this.current_question++;
       this.selected_vote = null;
     },
-    // change this code to submit the answers to a database instead
     submit_quiz() {
       sessionStorage.setItem("user_answers", JSON.stringify(this.answers));
       sessionStorage.setItem("user_score", JSON.stringify(this.score));
-      sessionStorage.setItem("selected_questions",JSON.stringify(this.questions));
+      sessionStorage.setItem("selected_questions", JSON.stringify(this.questions));
     },
     async fetchQuestions(storedLessonId) {
       try {
@@ -214,7 +206,7 @@ export default {
         this.questions = questionsSnap.docs.map((doc) => {
           const questionData = doc.data();
           const sortedOptions = Object.keys(questionData.options)
-            .sort() // Sort keys alphabetically
+            .sort()
             .reduce((acc, key) => {
               acc[key] = questionData.options[key];
               return acc;
@@ -222,14 +214,37 @@ export default {
 
           return {
             ...questionData,
-            options: sortedOptions, // Use sorted options
+            options: sortedOptions,
             id: doc.id,
           };
         });
-        console.log(this.questions);
+        console.log("Questions fetched:", this.questions);
       } catch (error) {
         console.error("Error fetching questions:", error);
+      } finally {
+        this.num_questions = this.questions.length;
       }
+    },
+    async waitForLessonData() {
+      return new Promise((resolve) => {
+        const interval = setInterval(() => {
+          const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
+          const storedCourse = sessionStorage.getItem("selectedCourse");
+          const storedLessonId = sessionStorage.getItem("selectedLessonId");
+
+          if (storedLessonItem && storedCourse && storedLessonId) {
+            const lesson = JSON.parse(storedLessonItem);
+
+            if (lesson.typeof === "quiz") {
+              clearInterval(interval);
+              this.lesson = lesson;
+              this.course = JSON.parse(storedCourse);
+              this.course_name = this.course.name;
+              resolve(JSON.parse(storedLessonId));
+            }
+          }
+        }, 100); // Check every 100ms
+      });
     },
   },
   computed: {
@@ -238,27 +253,8 @@ export default {
     },
   },
   async mounted() {
-    // Retrieve the selected lesson item from sessionStorage
-    const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
-    const storedLessonId = JSON.parse(
-      sessionStorage.getItem("selectedLessonId")
-    );
-    if (storedLessonItem) {
-      this.lesson = JSON.parse(storedLessonItem);
-    } else {
-      console.warn("No selected lesson item found in sessionStorage.");
-    }
-
-    // Retrieve the course name from sessionStorage
-    const storedCourse = sessionStorage.getItem("selectedCourse");
-    if (storedCourse) {
-      this.course = JSON.parse(storedCourse);
-      this.course_name = this.course.name;
-    } else {
-      console.warn("No selected course found in sessionStorage.");
-    }
-
-    await this.fetchQuestions(storedLessonId); // Fetch questions after lesson data is set
+    const storedLessonId = await this.waitForLessonData();
+    await this.fetchQuestions(storedLessonId);
   },
 };
 </script>

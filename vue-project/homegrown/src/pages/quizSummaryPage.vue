@@ -244,7 +244,7 @@
 
 <script>
 import Chart from "chart.js/auto";
-import { doc, updateDoc } from "firebase/firestore"; // Import the necessary functions
+import { doc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust path if necessary
 
 export default {
@@ -278,8 +278,48 @@ export default {
         console.log(
           "Quiz answers submitted successfully and marked as completed."
         );
+
+        // Proceed to load the next lesson and its first item
+        await this.loadNextLesson();
       } catch (error) {
         console.error("Error submitting quiz answers:", error);
+      }
+    },
+    async loadNextLesson() {
+      try {
+        // Fetch the lessons collection for the current course
+        const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
+        const lessonsSnap = await getDocs(lessonsRef);
+
+        // Find the current lesson's position in the list of lessons
+        const lessons = lessonsSnap.docs;
+        const currentIndex = lessons.findIndex(
+          (lesson) => lesson.id === this.storedLessonId
+        );
+
+        // Check if there is a next lesson
+        if (currentIndex !== -1 && currentIndex + 1 < lessons.length) {
+          // Set the next lesson as the selected lesson
+          const nextLessonDoc = lessons[currentIndex + 1];
+          sessionStorage.setItem("selectedLessonId", JSON.stringify(nextLessonDoc.id));
+
+          // Fetch the first lesson item from the next lesson
+          const lessonItemsRef = collection(nextLessonDoc.ref, "lesson_items");
+          const lessonItemsSnap = await getDocs(lessonItemsRef);
+          const firstLessonItem = lessonItemsSnap.docs[0].data();
+
+          // Store the first lesson item of the next lesson in sessionStorage
+          sessionStorage.setItem("selectedLessonItem", JSON.stringify({
+            id: lessonItemsSnap.docs[0].id,
+            ...firstLessonItem
+          }));
+
+          console.log("Updated to next lesson and first lesson item.");
+        } else {
+          console.log("No more lessons available.");
+        }
+      } catch (error) {
+        console.error("Error loading next lesson:", error);
       }
     },
     getClass(question, option_key, key) {
@@ -306,8 +346,7 @@ export default {
     },
     improvement() {
       return Math.round(
-        (this.score / this.questions.length / this.previous_quiz_score) * 100 -
-          100,
+        (this.score / this.questions.length / this.previous_quiz_score) * 100 - 100,
         0
       );
     },
@@ -328,18 +367,14 @@ export default {
     },
   },
   mounted() {
-    // Load answers from localStorage when Vue instance is mounted
     this.answers = JSON.parse(sessionStorage.getItem("user_answers"));
     this.score = JSON.parse(sessionStorage.getItem("user_score"));
     this.questions = JSON.parse(sessionStorage.getItem("selected_questions"));
     this.lesson_item = JSON.parse(sessionStorage.getItem("selectedLessonItem"));
     this.course = JSON.parse(sessionStorage.getItem("selectedCourse"));
     this.course_name = this.course.name;
-    this.storedLessonId = JSON.parse(
-      sessionStorage.getItem("selectedLessonId")
-    );
+    this.storedLessonId = JSON.parse(sessionStorage.getItem("selectedLessonId"));
 
-    // Create Chart
     const ctx = document.getElementById("myChart");
     const checkChartLoaded = () => {
       if (typeof Chart !== "undefined") {
@@ -359,7 +394,6 @@ export default {
           },
         });
       } else {
-        // Retry after a short delay if Chart.js is not yet loaded
         setTimeout(checkChartLoaded, 100);
       }
     };
@@ -368,6 +402,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .content {
