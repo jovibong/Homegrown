@@ -68,7 +68,7 @@
                 <input type="text" class="searchBar col-6 me-3" placeholder="explore">
                 <span class="ml-2 title me-3"> or </span>
 
-                <button @click="createEvent" :class="showCreateEvent ? 'button pressed' : 'button notPressed'"> Create Event </button>
+                <button @click="allowCreate" :class="showCreate ? 'button pressed' : 'button notPressed'"> Create Event </button>
                 <!-- <input type="text" class="searchBar col-6" placeholder="search"> -->
             </div>
             
@@ -77,33 +77,39 @@
             
             <keep-alive>
             <transition name="create">
-            <create-event v-if="showCreateEvent" class="createEventStyle"></create-event>
+            <create-event v-if="showCreate" class="createEventStyle"></create-event>
             </transition>
             </keep-alive>
             
             </div>
 
-            <router-link to="/eventForum" class="btn btn-primary">
+            <router-link to="/forum" class="btn btn-primary mt-4">
         to Forum
+      </router-link>
+
+      <router-link to="/calender" class="btn btn-primary mt-4">
+        to calender
       </router-link>
         </section>
 
         <!-- Event Cards -->
         <section class="my-5">
-            <h2 class="title"> Popular Events </h2>
+            <h2 class="title"> My Events </h2>
             <div class="scroll-container">
                 <!-- row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-5 -->
                 <event-cards 
-                v-for="event in events" 
+                v-for="event in myEvents" 
                 :key="event.id" 
                 :eventID = "event.id"
-                :title="event.title"></event-cards>
+                :title = "event.title"
+                :description="event.description"></event-cards>
             </div>
         </section>
 
-        <!-- Event Cards -->
+        <!-- Event Cards - Category -->
         <section class="my-5">
-            <h2 class="title"> My Events </h2>
+            <h2 class="title"> Events By Category </h2>
+            <span><button> Filter By </button></span>
             <div class="scroll-container">
                 <!-- row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-5 -->
                 <div class="card" style="width: 18rem;">
@@ -186,9 +192,13 @@
 <script>
 import EventCards from '../components/eventCard.vue';
 import createEvent from '../components/createEvents.vue';
+import { collection, getDocs } from "firebase/firestore";
+import { db } from '../firebase/initialize'
+
 
 
 export default {
+
   components:
     {
         "event-cards": EventCards,
@@ -197,31 +207,51 @@ export default {
 
     data() {
         return {
-            events:[
-            {
-                id: 1,
-                title: "Deepavali",
-                description: "pasar",
-                eventImage: "../img/deepavali.png",
-                eventLink: "#"
-            },
-            {
-                id: 2,
-                title: "New Year",
-                description: "holiday faster come",
-                eventImage: "../img/deepavali.png",
-                eventLink: "#"
-            }
-        ],
-            showCreateEvent: false,
+            popularEvents:[],
+            pastEvents:[],
+            myEvents:[],
+            showCreate: false,
         }
     },
 
+    mounted() {
+        const userData = JSON.parse(localStorage.getItem('rememberMe')
+            ? localStorage.getItem('user')
+            : sessionStorage.getItem('user'));
+        console.log(userData)
+
+        this.getAllEvents();
+    },
+
+
     methods: {
-        createEvent(){
-            this.showCreateEvent = !this.showCreateEvent;
+
+        async getEventsByCategory(){
+
+        },
+
+        async getAllEvents(){
+            const querySnapshot = await getDocs(collection(db, "events"));
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                this.myEvents.push({ 
+                    id: doc.id,
+                    title: doc.data().name,
+                    description: doc.data().description, });
+            });
+        },
+
+        async getMyEvents(){
+            
+        },
+
+        allowCreate(){
+            this.showCreate = !this.showCreate;
         }
-    }
+    },
+
+ 
 }
 </script>
 
