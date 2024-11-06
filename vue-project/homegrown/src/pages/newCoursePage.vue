@@ -1,5 +1,5 @@
 <template>
-  <div class="individualCoursePage text-start">
+  <div class="newCoursePage">
     <!--Back Button and Course Title-->
     <section id="Title" class="container py-3 fade-in-top">
       <div class="container mb-4">
@@ -428,8 +428,7 @@ export default {
         if (availableMentors.length === 0) {
           console.log("No mentors available for this course.");
           return;
-        }
-        else{
+        } else {
           this.mentor_available = true;
         }
 
@@ -482,8 +481,11 @@ export default {
           `users/${this.user}/ongoing_courses/${this.course.id}`
         );
 
-        // Set the document for the course in Firebase with mentor field
-        await setDoc(userCourseDocRef, { mentor: mentorId });
+        // Set the document for the course in Firebase with mentor field and percentage_completed
+        await setDoc(userCourseDocRef, {
+          mentor: mentorId,
+          percentage_completed: 0, // Initialize percentage_completed to 0
+        });
 
         // Fetch lessons from the courses collection for the specific course
         const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
@@ -531,7 +533,7 @@ export default {
         }
 
         console.log(
-          `Course ${this.course.id} added to user ${this.user}'s ongoing_courses with mentor ${mentorId} and progress.`
+          `Course ${this.course.id} added to user ${this.user}'s ongoing_courses with mentor ${mentorId}, percentage_completed initialized to 0, and progress data set.`
         );
       } catch (error) {
         console.error("Error adding course to ongoing_courses:", error);

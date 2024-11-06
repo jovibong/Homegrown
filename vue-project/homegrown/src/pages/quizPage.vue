@@ -222,7 +222,7 @@ export default {
       } catch (error) {
         console.error("Error fetching questions:", error);
       } finally {
-        this.num_questions = this.questions.length;
+        this.num_questions = this.questions.length
       }
     },
     async waitForLessonData() {

@@ -74,21 +74,22 @@
           <!-- Progress and Description -->
           <div class="row">
             <div class="text-center mt-2 mt-md-0">
-              <div class="fw-bold h3">
+              <div class="fw-bold h3" v-if="!percentage_loading">
                 <span
                   :ref="'progression' + course.id"
                   class="count-animate"
-                  :data-count-limit="course.percentageCompleted"
+                  :data-count-limit="percentage_completed"
                   >0</span
                 >% complete
               </div>
+              <div v-else class="h3">&nbsp;</div>
               <div class="d-flex justify-content-center my-3">
                 <div class="progress" style="width: 80%; height: 15px">
                   <div
                     class="progress-bar bg-dark progress-animate"
                     role="progressbar"
                     :ref="'courseProgress' + course.id"
-                    :data-progress="course.percentageCompleted + '%'"
+                    :data-progress="percentage_completed + '%'"
                     style="width: 0%"
                   ></div>
                 </div>
@@ -295,84 +296,104 @@ export default {
       expanded: false,
       lessons_loading: true,
       mentor_loading: true,
+      percentage_loading: true,
+      percentage_completed: 0, // Initialize percentage_completed to 0
     };
   },
   methods: {
-      async fetchLessons() {
-        try {
-          const lessonsRef = collection(
-            db,
-            `courses/${this.course.id}/lessons`
-          );
-          const lessonDocs = await getDocs(lessonsRef);
+    async fetchCourseProgress() {
+      try {
+        const courseDocRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}`
+        );
+        const courseDoc = await getDoc(courseDocRef);
 
-          let latestFound = false; // Flag to indicate if the latest item has been found
-
-          const lessonsData = {}; // Initialize as an object (map) instead of an array
-
-          await Promise.all(
-            lessonDocs.docs.map(async (lessonDoc) => {
-              const lessonData = lessonDoc.data();
-              const lessonId = lessonDoc.id;
-
-              // Fetch lesson items for each lesson
-              const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
-              const lessonItemsDocs = await getDocs(lessonItemsRef);
-
-              // Reference to user's progress for the specific lesson in ongoing_courses
-              const userLessonProgressRef = collection(
-                db,
-                `users/${this.user}/ongoing_courses/${this.course.id}/progress/${lessonId}/lesson_items`
-              );
-              const userLessonProgressDocs = await getDocs(
-                userLessonProgressRef
-              );
-
-              // Map progress data to easily check if lesson items are completed
-              const progressData = userLessonProgressDocs.docs.reduce(
-                (acc, doc) => {
-                  acc[doc.id] = doc.data().completed || false; // Default to false if completed field is missing
-                  return acc;
-                },
-                {}
-              );
-
-              const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
-                const itemData = itemDoc.data();
-                const completed = progressData[itemDoc.id] || false;
-
-                // Set the `latest` flag on the first non-completed item if it hasn't been set yet
-                const latest = !completed && !latestFound;
-                if (latest) latestFound = true; // Mark that we've found the latest item
-
-                return {
-                  ...itemData,
-                  id: itemDoc.id,
-                  icon:
-                    itemData.typeof === "quiz"
-                      ? "bi-lightbulb"
-                      : "bi-play-fill",
-                  route_link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
-                  completed: completed,
-                  latest: latest,
-                };
-              });
-
-              // Store each lesson using lessonId as the key in lessonsData
-              lessonsData[lessonId] = {
-                title: lessonData.title,
-                lesson_items: lessonItemsData,
-              };
-            })
-          );
-
-          this.lessons = lessonsData; // Assign lessonsData (map) to this.lessons
-        } catch (error) {
-          console.error("Error fetching lessons and items:", error);
-        } finally {
-          this.lessons_loading = false;
+        if (courseDoc.exists()) {
+          this.percentage_completed = courseDoc.data().percentage_completed || 0;
+          console.log("Fetched percentage completed:", this.percentage_completed);
+        } else {
+          console.warn("Course document not found in user's ongoing_courses.");
         }
-      },
+      } catch (error) {
+        console.error("Error fetching course progress:", error);
+      } finally {
+        this.percentage_loading = false;
+      }
+    },
+    async fetchLessons() {
+      try {
+        const lessonsRef = collection(
+          db,
+          `courses/${this.course.id}/lessons`
+        );
+        const lessonDocs = await getDocs(lessonsRef);
+
+        let latestFound = false; // Flag to indicate if the latest item has been found
+
+        const lessonsData = {}; // Initialize as an object (map) instead of an array
+
+        await Promise.all(
+          lessonDocs.docs.map(async (lessonDoc) => {
+            const lessonData = lessonDoc.data();
+            const lessonId = lessonDoc.id;
+
+            // Fetch lesson items for each lesson
+            const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
+            const lessonItemsDocs = await getDocs(lessonItemsRef);
+
+            // Reference to user's progress for the specific lesson in ongoing_courses
+            const userLessonProgressRef = collection(
+              db,
+              `users/${this.user}/ongoing_courses/${this.course.id}/progress/${lessonId}/lesson_items`
+            );
+            const userLessonProgressDocs = await getDocs(userLessonProgressRef);
+
+            // Map progress data to easily check if lesson items are completed
+            const progressData = userLessonProgressDocs.docs.reduce(
+              (acc, doc) => {
+                acc[doc.id] = doc.data().completed || false; // Default to false if completed field is missing
+                return acc;
+              },
+              {}
+            );
+
+            const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
+              const itemData = itemDoc.data();
+              const completed = progressData[itemDoc.id] || false;
+
+              // Set the `latest` flag on the first non-completed item if it hasn't been set yet
+              const latest = !completed && !latestFound;
+              if (latest) latestFound = true; // Mark that we've found the latest item
+
+              return {
+                ...itemData,
+                id: itemDoc.id,
+                icon:
+                  itemData.typeof === "quiz"
+                    ? "bi-lightbulb"
+                    : "bi-play-fill",
+                route_link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
+                completed: completed,
+                latest: latest,
+              };
+            });
+
+            // Store each lesson using lessonId as the key in lessonsData
+            lessonsData[lessonId] = {
+              title: lessonData.title,
+              lesson_items: lessonItemsData,
+            };
+          })
+        );
+
+        this.lessons = lessonsData; // Assign lessonsData (map) to this.lessons
+      } catch (error) {
+        console.error("Error fetching lessons and items:", error);
+      } finally {
+        this.lessons_loading = false;
+      }
+    },
     async fetchReviewsWithUserDetails() {
       try {
         const reviewsRef = collection(db, `courses/${this.course.id}/reviews`);
@@ -426,11 +447,8 @@ export default {
     },
     toggleAccordion() {
       const triangle = this.$refs["triangle"];
-      console.log(triangle);
       const chevron = this.$refs["chevron"];
-      console.log(chevron);
       const lessons = this.$refs["lessons"];
-      console.log(lessons);
 
       if (!this.lessons_loading) {
         if (this.expanded) {
@@ -460,7 +478,6 @@ export default {
     },
     async fetchMentor() {
       try {
-        // Reference to the course document in user's ongoing_courses
         const courseDocRef = doc(
           db,
           `users/${this.user}/ongoing_courses/${this.course.id}`
@@ -471,21 +488,17 @@ export default {
           const mentorId = courseSnap.data().mentor;
 
           if (mentorId) {
-            // Fetch mentor details from the mentors collection
             const mentorDocRef = doc(db, `mentors/${mentorId}`);
             const mentorSnap = await getDoc(mentorDocRef);
 
             if (mentorSnap.exists()) {
-              // Store the mentor details in the mentor data property
               this.mentor = { id: mentorId, ...mentorSnap.data() };
               console.log("Mentor Details:", this.mentor);
             } else {
               console.warn("Mentor not found in the mentors collection.");
             }
           } else {
-            console.warn(
-              "No mentor ID found for this course in ongoing_courses."
-            );
+            console.warn("No mentor ID found for this course in ongoing_courses.");
           }
         } else {
           console.warn("Course document not found in user's ongoing_courses.");
@@ -497,11 +510,9 @@ export default {
       }
     },
     handleLessonItemClick(item, lessonId) {
-      // Store the clicked lesson item in sessionStorage
       sessionStorage.setItem("selectedLessonItem", JSON.stringify(item));
       sessionStorage.setItem("selectedLessonId", JSON.stringify(lessonId));
 
-      // Navigate to the route
       if (item.completed || item.latest) {
         this.$router.push(item.route_link);
       }
@@ -511,6 +522,7 @@ export default {
     const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);
+      await this.fetchCourseProgress(); // Fetch percentage_completed when page loads
     } else {
       console.log("No course data found in sessionStorage");
       return;
@@ -521,6 +533,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .content {

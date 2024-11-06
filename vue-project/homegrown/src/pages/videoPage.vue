@@ -96,12 +96,13 @@
       <div
         class="container w-50 d-flex justify-content-center mt-2 fade-in-bottom"
       >
-        <router-link v-if="video_watched"
+        <router-link
+          v-if="video_watched"
           to="quizPage"
           class="btn btn-primary btn-lg rounded-pill d-inline-flex align-items-center m-2 text-secondary fw-bold justify-content-center"
           @click="markCompleted()"
         >
-        Go to quiz <i class="bi bi-arrow-right ms-2"></i>
+          Go to quiz <i class="bi bi-arrow-right ms-2"></i>
         </router-link>
       </div>
     </section>
@@ -109,7 +110,13 @@
 </template>
 
 <script>
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust the path as necessary
 
 export default {
@@ -127,7 +134,7 @@ export default {
     };
   },
   async mounted() {
-    await this.waitForLessonData(); // Wait for the lesson data with type 'video'
+    await this.waitForLessonData();
 
     // Retrieve the course name from sessionStorage
     const storedCourse = sessionStorage.getItem("selectedCourse");
@@ -148,7 +155,9 @@ export default {
             const lessonData = JSON.parse(storedLessonItem);
             if (lessonData.typeof === "video") {
               this.lesson = lessonData;
-              this.storedLessonId = JSON.parse(sessionStorage.getItem("selectedLessonId"));
+              this.storedLessonId = JSON.parse(
+                sessionStorage.getItem("selectedLessonId")
+              );
               clearInterval(interval);
               resolve(this.storedLessonId);
             }
@@ -176,8 +185,10 @@ export default {
         await updateDoc(lessonItemRef, {
           completed: true,
         });
-
         console.log("Lesson item marked as completed.");
+
+        // Calculate and update percentage completed
+        await this.updatePercentageCompleted();
 
         // Determine the next item (quiz) if the current item is the video
         if (this.lesson.typeof === "video") {
@@ -188,9 +199,18 @@ export default {
           const nextLessonItemSnap = await getDoc(nextLessonItemRef);
 
           if (nextLessonItemSnap.exists()) {
-            const nextLessonItem = { id: nextLessonItemSnap.id, ...nextLessonItemSnap.data() };
-            sessionStorage.setItem("selectedLessonItem", JSON.stringify(nextLessonItem));
-            console.log("Next lesson item (quiz) stored in sessionStorage:", nextLessonItem);
+            const nextLessonItem = {
+              id: nextLessonItemSnap.id,
+              ...nextLessonItemSnap.data(),
+            };
+            sessionStorage.setItem(
+              "selectedLessonItem",
+              JSON.stringify(nextLessonItem)
+            );
+            console.log(
+              "Next lesson item (quiz) stored in sessionStorage:",
+              nextLessonItem
+            );
           } else {
             console.warn("Quiz lesson item not found.");
           }
@@ -198,7 +218,43 @@ export default {
           console.log("Current lesson item is the quiz; no next item to set.");
         }
       } catch (error) {
-        console.error("Error marking lesson item as completed or finding the next item:", error);
+        console.error(
+          "Error marking lesson item as completed or finding the next item:",
+          error
+        );
+      }
+    },
+    async updatePercentageCompleted() {
+      try {
+        // Reference to the lesson items collection within the user's ongoing course
+        const lessonItemsRef = collection(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items`
+        );
+
+        const lessonItemsSnap = await getDocs(lessonItemsRef);
+        const totalItems = lessonItemsSnap.size;
+        const completedItems = lessonItemsSnap.docs.filter(
+          (doc) => doc.data().completed === true
+        ).length;
+
+        // Calculate the percentage completed
+        const percentageCompleted = Math.round(
+          (completedItems / totalItems) * 100
+        );
+
+        // Update the course document with the new percentage completed
+        const courseRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}`
+        );
+        await updateDoc(courseRef, {
+          percentage_completed: percentageCompleted,
+        });
+
+        console.log(`Updated percentage completed: ${percentageCompleted}%`);
+      } catch (error) {
+        console.error("Error updating percentage completed:", error);
       }
     },
   },

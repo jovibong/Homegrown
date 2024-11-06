@@ -269,11 +269,17 @@ export default {
           db,
           `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items/${this.lesson_item.id}`
         );
+        
+        // Mark the lesson item as completed
         await updateDoc(lessonItemRef, {
           answers: this.answers,
           completed: true,
         });
+        
         console.log("Quiz answers submitted successfully and marked as completed.");
+
+        // Calculate and update percentage completed
+        await this.updatePercentageCompleted();
 
         if (!this.is_last_quiz) {
           await this.loadNextLesson();
@@ -310,6 +316,30 @@ export default {
         }
       } catch (error) {
         console.error("Error loading next lesson:", error);
+      }
+    },
+    async updatePercentageCompleted() {
+      try {
+        // Reference to the lesson items collection within the user's ongoing course
+        const lessonItemsRef = collection(
+          db,
+          `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items`
+        );
+
+        const lessonItemsSnap = await getDocs(lessonItemsRef);
+        const totalItems = lessonItemsSnap.size;
+        const completedItems = lessonItemsSnap.docs.filter((doc) => doc.data().completed === true).length;
+
+        // Calculate the percentage completed
+        const percentageCompleted = Math.round((completedItems / totalItems) * 100);
+
+        // Update the course document with the new percentage completed
+        const courseRef = doc(db, `users/${this.user}/ongoing_courses/${this.course.id}`);
+        await updateDoc(courseRef, { percentage_completed: percentageCompleted });
+
+        console.log(`Updated percentage completed: ${percentageCompleted}%`);
+      } catch (error) {
+        console.error("Error updating percentage completed:", error);
       }
     },
     async checkIfLastQuiz() {
@@ -419,6 +449,7 @@ export default {
   },
 };
 </script>
+
 
 
 
