@@ -20,15 +20,6 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="validationCustom01" class="form-label mt-4">Title</label>
-                            <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
-                                required >
-                            <div class="invalid-feedback">
-                                Please enter a title.
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
                             <label for="validationCustom05" class="form-label mt-4">Payment Date</label>
                             <input type="date" class="form-control" id="validationCustom05" required v-model="date">
                             <div class="invalid-feedback">
@@ -49,7 +40,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="validationCustomUsername" class="form-label mt-4">Amount</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">SGD$</span>

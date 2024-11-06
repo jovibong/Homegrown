@@ -31,24 +31,23 @@ watch(() => [props.title, props.statNonEditable, props.statEditable, props.descr
             </button>
             <Teleport to="body">
                 <!-- use the modal component, pass in the prop -->
-                <Modal 
-                    :show="showModal" 
-                    @close="showModal = false"
-                    :title="title"
-                    :statNonEditable="statNonEditable"
-                    :statEditable="statEditable"
-                    :descriptionNonEditable="descriptionNonEditable"
+                <Modal :show="showModal" @close="showModal = false" :title="title" :statNonEditable="statNonEditable"
+                    :statEditable="statEditable" :descriptionNonEditable="descriptionNonEditable"
                     :descriptionEditable="descriptionEditable">
                     <template #header>
-                        <h2>{{ title }}</h2>
+                        <div class="w-100">
+                            <h2>{{ title }}</h2>
+                            <hr>
+                        </div>
+
                     </template>
                 </modal>
             </Teleport>
         </div>
         <div>
             <h1 class="text-center text-primary fw-bolder display-5">{{ statNonEditable }}<span class="edit">{{
-                    statEditable
-                    }}</span>
+                statEditable
+            }}</span>
             </h1>
         </div>
         <div>
