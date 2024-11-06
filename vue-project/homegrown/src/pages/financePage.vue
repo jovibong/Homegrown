@@ -349,7 +349,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { doc, getDoc, collection } from "firebase/firestore";
+import { doc, onSnapshot, collection } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 const stats = ref({
@@ -384,49 +384,55 @@ const stats = ref({
 });
 
 function formatDate(timestamp) {
-    // Convert the Firebase Timestamp to a JavaScript Date
-    const date = timestamp.toDate();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    if (timestamp && timestamp.toDate) {
+        const date = timestamp.toDate();
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    return '';
 }
 
-onMounted(async () => {
-    try {
-        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        if (!sessionUser || !sessionUser.uid) {
-            console.log('No session user found');
-            return;
-        }
-
-        const userId = sessionUser.uid;
-        const statsRef = collection(db, 'finance', userId, 'stats');
-
-        const docsToFetch = [
-            { key: 'totalEarned', name: 'Total earned' },
-            { key: 'payday', name: 'Payday' },
-            { key: 'latePayments', name: 'Late Payments' },
-            { key: 'goal', name: 'Goal' }
-        ];
-
-        for (const { key, name } of docsToFetch) {
-            const docRef = doc(statsRef, name);
-            const docData = await getDoc(docRef);
-
-            if (docData.exists()) {
-                stats.value[key].title = docData.data().title;
-                stats.value[key].statNonEditable = docData.data().statNonEditable;
-                stats.value[key].statEditable = docData.data().statEditable;
-                stats.value[key].descriptionNonEditable = docData.data().descriptionNonEditable;
-                stats.value[key].descriptionEditable = key === 'goal' ? formatDate(docData.data().descriptionEditable) : docData.data().descriptionEditable;
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
+onMounted(() => {
+    const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    if (!sessionUser || !sessionUser.uid) {
+        console.log('No session user found');
+        return;
     }
+
+    const userId = sessionUser.uid;
+    const statsRef = collection(db, 'finance', userId, 'stats');
+
+    const docsToFetch = [
+        { key: 'totalEarned', name: 'Total earned' },
+        { key: 'payday', name: 'Payday' },
+        { key: 'latePayments', name: 'Late Payments' },
+        { key: 'goal', name: 'Goal' }
+    ];
+
+    docsToFetch.forEach(({ key, name }) => {
+        const docRef = doc(statsRef, name);
+        
+        // Set up a real-time listener for each document
+        onSnapshot(docRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                stats.value[key].title = data.title;
+                stats.value[key].statNonEditable = data.statNonEditable;
+                stats.value[key].statEditable = data.statEditable;
+                stats.value[key].descriptionNonEditable = data.descriptionNonEditable;
+                stats.value[key].descriptionEditable = key === 'goal' ? formatDate(data.descriptionEditable) : data.descriptionEditable;
+            } else {
+                console.log(`Document for ${name} does not exist.`);
+            }
+        }, (error) => {
+            console.error(`Error fetching real-time data for ${name}:`, error);
+        });
+    });
 });
 </script>
+
 
 
 
