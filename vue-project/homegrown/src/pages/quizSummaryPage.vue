@@ -242,6 +242,7 @@
   </div>
 </template>
 
+
 <script>
 import Chart from "chart.js/auto";
 import { doc, updateDoc, collection, getDocs } from "firebase/firestore";
@@ -257,69 +258,83 @@ export default {
       score: 0,
       user: "user_00001",
       storedLessonId: "",
-      course_name: ""
+      course_name: "",
+      is_last_quiz: false, // Initialize is_last_quiz to false
     };
   },
   methods: {
     async submit_quiz() {
       try {
-        // Reference to the lesson item document
         const lessonItemRef = doc(
           db,
           `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items/${this.lesson_item.id}`
         );
-
-        // Update the `answers` field and mark `completed` as true
         await updateDoc(lessonItemRef, {
           answers: this.answers,
           completed: true,
         });
+        console.log("Quiz answers submitted successfully and marked as completed.");
 
-        console.log(
-          "Quiz answers submitted successfully and marked as completed."
-        );
-
-        // Proceed to load the next lesson and its first item
-        await this.loadNextLesson();
+        if (!this.is_last_quiz) {
+          await this.loadNextLesson();
+        } else {
+          console.log("This was the last quiz in the course.");
+        }
       } catch (error) {
         console.error("Error submitting quiz answers:", error);
       }
     },
     async loadNextLesson() {
       try {
-        // Fetch the lessons collection for the current course
         const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
         const lessonsSnap = await getDocs(lessonsRef);
+        const lessons = lessonsSnap.docs.sort((a, b) => a.id.localeCompare(b.id));
+        const currentIndex = lessons.findIndex((lesson) => lesson.id === this.storedLessonId);
 
-        // Find the current lesson's position in the list of lessons
-        const lessons = lessonsSnap.docs;
-        const currentIndex = lessons.findIndex(
-          (lesson) => lesson.id === this.storedLessonId
-        );
-
-        // Check if there is a next lesson
         if (currentIndex !== -1 && currentIndex + 1 < lessons.length) {
-          // Set the next lesson as the selected lesson
           const nextLessonDoc = lessons[currentIndex + 1];
           sessionStorage.setItem("selectedLessonId", JSON.stringify(nextLessonDoc.id));
 
-          // Fetch the first lesson item from the next lesson
           const lessonItemsRef = collection(nextLessonDoc.ref, "lesson_items");
           const lessonItemsSnap = await getDocs(lessonItemsRef);
-          const firstLessonItem = lessonItemsSnap.docs[0].data();
+          const sortedItems = lessonItemsSnap.docs.sort((a, b) => a.id.localeCompare(b.id));
+          const firstLessonItem = sortedItems[0].data();
 
-          // Store the first lesson item of the next lesson in sessionStorage
           sessionStorage.setItem("selectedLessonItem", JSON.stringify({
-            id: lessonItemsSnap.docs[0].id,
-            ...firstLessonItem
+            id: sortedItems[0].id,
+            ...firstLessonItem,
           }));
-
           console.log("Updated to next lesson and first lesson item.");
         } else {
           console.log("No more lessons available.");
         }
       } catch (error) {
         console.error("Error loading next lesson:", error);
+      }
+    },
+    async checkIfLastQuiz() {
+      try {
+        const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
+        const lessonsSnap = await getDocs(lessonsRef);
+        const lessons = lessonsSnap.docs.sort((a, b) => a.id.localeCompare(b.id));
+        const lessonIds = lessons.map((doc) => doc.id);
+
+        const isLastLesson = this.storedLessonId === lessonIds[lessonIds.length - 1];
+
+        if (isLastLesson) {
+          const lessonItemsRef = collection(
+            db,
+            `courses/${this.course.id}/lessons/${this.storedLessonId}/lesson_items`
+          );
+          const lessonItemsSnap = await getDocs(lessonItemsRef);
+          const lessonItems = lessonItemsSnap.docs.sort((a, b) => a.id.localeCompare(b.id));
+          const lessonItemIds = lessonItems.map((doc) => doc.id);
+
+          const isLastItem = this.lesson_item.id === lessonItemIds[lessonItemIds.length - 1];
+          this.is_last_quiz = isLastItem;
+        }
+      } catch (error) {
+        console.error("Error checking if last quiz:", error);
       }
     },
     getClass(question, option_key, key) {
@@ -366,7 +381,7 @@ export default {
       return [percentageString, rank];
     },
   },
-  mounted() {
+  async mounted() {
     this.answers = JSON.parse(sessionStorage.getItem("user_answers"));
     this.score = JSON.parse(sessionStorage.getItem("user_score"));
     this.questions = JSON.parse(sessionStorage.getItem("selected_questions"));
@@ -374,6 +389,8 @@ export default {
     this.course = JSON.parse(sessionStorage.getItem("selectedCourse"));
     this.course_name = this.course.name;
     this.storedLessonId = JSON.parse(sessionStorage.getItem("selectedLessonId"));
+
+    await this.checkIfLastQuiz();
 
     const ctx = document.getElementById("myChart");
     const checkChartLoaded = () => {
@@ -402,6 +419,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>
