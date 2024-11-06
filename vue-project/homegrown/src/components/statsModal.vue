@@ -13,10 +13,12 @@
                         <div class="col-12">
                             <label for="validationCustomUsername" class="form-label mt-4"></label>
                             <div class="input-group has-validation">
-                                <span v-if="statNonEditable.length>0" class="input-group-text" id="inputGroupPrepend">{{ statNonEditable }}</span>
+                                <span v-if="statNonEditable.length > 0" class="input-group-text"
+                                    id="inputGroupPrepend">{{
+                                        statNonEditable }}</span>
                                 <input :type="statType" class="form-control text-center" id="validationCustomUsername"
                                     aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
-                                    :value="statEditable">
+                                    v-model="InputStatEditable">
                                 <div class="invalid-feedback">
                                     Please enter a valid number.
                                 </div>
@@ -30,7 +32,7 @@
                                     }}</span>
                                 <input :type="descType" class="form-control  text-center" id="validationCustomUsername"
                                     aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
-                                    :value="formatDate(descriptionEditable)">
+                                    v-model="InputDescriptionEditable">
                                 <div class="invalid-feedback">
                                     Please enter a valid number.
                                 </div>
@@ -48,9 +50,8 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-danger m-3" type="button" @click="$emit('close')">Cancel</button>
-                    <!-- add addlogs fucntion here -->
-                    <button class="btn btn-success" type="submit" @click="() => { $emit('close'); }">Add
-                        log</button>
+                    <button class="btn btn-success" type="button" @click="() => { $emit('close'); updateStats(); }">Edit
+                        stat</button>
                 </div>
 
 
@@ -61,39 +62,42 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { updateDoc, doc, Timestamp } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+import { Date } from 'core-js';
+
 const { show, title, statNonEditable, statEditable, descriptionNonEditable, descriptionEditable } = defineProps({
     show: Boolean,
     title: String,
     statNonEditable: String,
-    statEditable: [String, Number, Date],
+    statEditable: [String, Number, Date, Timestamp],
     descriptionNonEditable: String,
-    descriptionEditable: [String, Number, Date],
+    descriptionEditable: [String, Number],
 });
 
 
 function formatDate(value) {
-        if (typeof value === 'string' && value.indexOf('/')!=-1) {
+    if (typeof value === 'string' && value.indexOf('/') != -1) {
         // Return the date in YYYY-MM-DD format
         const dateArray = value.split('/')
         return `${dateArray[2]}-${dateArray[1]}-${dateArray[0]}`;
-    }else{
-    return  value; // For String, Number, etc.
+    } else {
+        return value; // For String, Number, etc.
 
     }
-
-
-    
 }
-
 
 const statType = ref('');
 const descType = ref('');
+const InputStatEditable = ref(null);
+const InputDescriptionEditable = ref('');
+
 
 function determineType(value) {
 
-    if (typeof value === 'string' && value.indexOf('/')!=-1){
+    if (typeof value === 'string' && value.indexOf('/') != -1) {
         return 'date';
-    }else{
+    } else {
         return typeof value
     }
 
@@ -107,14 +111,62 @@ watch(() => [title, statNonEditable, statEditable, descriptionNonEditable, descr
 
     statType.value = determineType(statEditable);
     descType.value = determineType(descriptionEditable);
+    InputStatEditable.value = statEditable;
+    InputDescriptionEditable.value = formatDate(descriptionEditable);
 
     console.log(statType.value);
-    console.log(descType.value, newValues);
+    console.log(descType.value);
 }, { immediate: true }); // Logs the values 
 
 
 
 
+async function updateStats() {
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        console.log('session in progress');
+        console.log(sessionUser.uid);
+
+        const userId = sessionUser.uid;
+        // const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+        // const statsref = collection(userDocRef, 'stats', title); // Reference to the user's paymentlogs subcollection
+        const statsref = doc(db, 'finance', userId, 'stats', title);
+        console.log(statType.value);
+        console.log('this is the date', InputDescriptionEditable.value);
+
+
+
+        
+
+        if (descType.value == 'date') {
+            // console.log(  Timestamp.fromDate(new Date(InputDescriptionEditable.value)));
+            // console.log( typeof(Timestamp.fromDate(new Date(InputDescriptionEditable.value))));
+            await updateDoc(statsref, {
+                statEditable: InputStatEditable.value,
+                descriptionEditable: Timestamp.fromDate(new Date(InputDescriptionEditable.value)),
+            });
+            console.log("date updating data:");
+
+
+        } else {
+            const updatelog = {
+                statEditable: InputStatEditable.value,
+                descriptionEditable: InputDescriptionEditable.value,
+            };
+            await updateDoc(statsref, updatelog);
+            console.log("success updating data:");
+
+
+        }
+
+
+    } catch (error) {
+        console.error("Error updating data:", error);
+    }
+    // console.log(InputStatEditable.value)
+    // console.log(InputDescriptionEditable.value)
+
+}
 
 
 
