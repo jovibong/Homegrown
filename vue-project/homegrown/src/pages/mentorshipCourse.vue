@@ -143,45 +143,91 @@
 <script>
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
+// import { auth } from "../firebase/initialize";
+
 
 export default {
     data() {
         return {
-            mentees: [
-                {
-                    name: "Ravi Kumar",
-                    description: "Hello! I'm Ravi Kumar from India, currently working in construction. I’m eager to learn new skills and improve my career prospects, and I enjoy sharing my experiences with others.",
-                    img: "ravikumar.png",
-                    notificationCount: 1,
-                },
-                {
-                    name: "Maria Gomez",
-                    description: "Hi! I'm Maria Gomez, originally from the Philippines, working as a domestic helper. I’m passionate about cooking, learning about personal finance, and helping others in my community.",
-                    img: "mariagomez.png",
-                    notificationCount: 0,
-                },
-                {
-                    name: "Ahmed Hossain",
-                    description: "Hello! I'm Ahmed Hossain from Bangladesh, currently working in manufacturing. I’m focused on upskilling and connecting with others to learn new skills that can help me and my family.",
-                    img: "ahmedhossain.png",
-                    notificationCount: 0,
-                },
-                {
-                    name: "Lina Wijaya",
-                    description: "Hi! I'm Lina Wijaya from Indonesia, working in the hospitality sector. I am passionate about professional development and helping my peers grow in their careers.",
-                    img: "linawijaya.png",
-                    notificationCount: 1,
-                }
-            ],
+            // mentees: [
+            //     {
+            //         name: "Ravi Kumar",
+            //         description: "Hello! I'm Ravi Kumar from India, currently working in construction. I’m eager to learn new skills and improve my career prospects, and I enjoy sharing my experiences with others.",
+            //         img: "ravikumar.png",
+            //         notificationCount: 1,
+            //     },
+            //     {
+            //         name: "Maria Gomez",
+            //         description: "Hi! I'm Maria Gomez, originally from the Philippines, working as a domestic helper. I’m passionate about cooking, learning about personal finance, and helping others in my community.",
+            //         img: "mariagomez.png",
+            //         notificationCount: 0,
+            //     },
+            //     {
+            //         name: "Ahmed Hossain",
+            //         description: "Hello! I'm Ahmed Hossain from Bangladesh, currently working in manufacturing. I’m focused on upskilling and connecting with others to learn new skills that can help me and my family.",
+            //         img: "ahmedhossain.png",
+            //         notificationCount: 0,
+            //     },
+            //     {
+            //         name: "Lina Wijaya",
+            //         description: "Hi! I'm Lina Wijaya from Indonesia, working in the hospitality sector. I am passionate about professional development and helping my peers grow in their careers.",
+            //         img: "linawijaya.png",
+            //         notificationCount: 1,
+            //     }
+            // ],
+            mentees: [],
             course: null,
             lessons: [],
             expanded: false,
             lessons_loading: true,
+            mentees_loading: true,
+            mentor: null,
+            uid: null,
         };
     },
     methods: {
-        async fetchLessons() {
+        fetchMentees: async function () {
             try {
+                const menteesRef = collection(db, `mentors/${this.mentor.id}/mentorships${this.courseId}/mentees`);
+                const menteesSnapshot = await getDocs(menteesRef);
+                const menteeIds = menteesSnapshot.docs.map(doc => doc.id);
+
+                const menteeDataArray = await Promise.all(
+                    menteeIds.map(async (menteeId) => {
+                        const userRef = doc(db, "users", menteeId);
+                        const userSnapshot = await getDoc(userRef);
+
+                        if (userSnapshot.exists()) {
+                            const userData = userSnapshot.data();
+                            return {
+                                name: userData.name,
+                                notificationCount: userData.notification_count || 0, // Default to 0 if undefined
+                            };
+                        } else {
+                            return null; // In case the user document doesn't exist
+                        }
+                    })
+                )
+                this.mentees = menteeDataArray;
+            }
+
+            catch (error) {
+                console.error("Error fetching mentees:", error);
+            } finally {
+                this.mentee_loading = false;
+            }
+
+        },
+        fetchLessons: async function () {
+            const user = JSON.parse(localStorage.getItem("auth"))
+            const uid = user.uid;
+            const docRef = doc(db, "profiles", uid);
+
+            try {
+                const docSnap = await getDoc(docRef);
+                const mentorField = docSnap.data().mentor;
+                console.log("Mentor:", mentorField);
+
                 const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
                 const lessonDocs = await getDocs(lessonsRef);
 
@@ -193,6 +239,7 @@ export default {
                         const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
                         const lessonItemsDocs = await getDocs(lessonItemsRef);
 
+                        // transforming the data
                         const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
                             const itemData = itemDoc.data();
                             return {
@@ -204,6 +251,7 @@ export default {
                             };
                         });
 
+                        //returning the data
                         return {
                             title: lessonData.title,
                             lesson_items: lessonItemsData,
@@ -211,6 +259,7 @@ export default {
                     })
                 );
 
+                // assigning the data to the variable
                 this.lessons = lessonsData;
             } catch (error) {
                 console.error("Error fetching lessons and items:", error);
@@ -303,14 +352,17 @@ export default {
         },
     },
     async mounted() {
-        const storedCourse = sessionStorage.getItem("selectedCourse");
-        if (storedCourse) {
-            this.course = JSON.parse(storedCourse);
-        } else {
-            console.log("No course data found in sessionStorage");
-            return;
-        }
-
+        // const storedCourse = sessionStorage.getItem("selectedCourse");
+        // if (storedCourse) {
+        //     this.course = JSON.parse(storedCourse);
+        // } else {
+        //     console.log("No course data found in sessionStorage");
+        //     return;
+        // }
+        // const uid = auth.currentUser.uid;
+        const user = JSON.parse(localStorage.getItem("auth"));
+        this.uid = user.uid;
+        console.log(user.uid)
         await this.fetchLessons();
         await this.fetchReviewsWithUserDetails();
     },
