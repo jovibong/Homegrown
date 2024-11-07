@@ -1,14 +1,14 @@
 <template>
     <div>
-        <div v-if="mentorships_loading">Loading...</div>
-        <div v-else>
-            <section id="ongoing_app" class="container py-3">
-                <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
-                <p class="text-center text-muted mb-0 h5 pb-5">
-                    You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them
-                    unlock
-                    their full potential with every step they take.
-                </p>
+        <section id="ongoing_app" class="container py-3">
+            <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
+            <p class="text-center text-muted mb-0 h5 pb-5">
+                You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them
+                unlock
+                their full potential with every step they take.
+            </p>
+            <div v-if="mentorships_loading" class="text-center">Loading...</div>
+            <div v-else>
                 <div class="row">
                     <!-- Mentorship Cards -->
                     <div v-for="course in courses" :key="course.id" class="col-md-4 mb-4">
@@ -36,8 +36,8 @@
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
 
         <section id="new_app">
@@ -48,28 +48,31 @@
                     them
                     unlock their full potential while growing alongside them.
                 </p>
-                <div class="row g-4">
+                <div v-if="mentorships_loading" class="text-center">Loading...</div>
+                <div v-else>
+                    <div class="row g-4">
 
-                    <div v-for="course in availableMentorships" :key="course.id" class="col-md-6">
-                        <div class="card d-flex flex-column h-100">
-                            <img :src="getImageUrl(course)" class="card-img-top" :alt="course.name">
-                            <div class="card-body flex-grow-1">
-                                <h5 class="card-title">{{ course.name }}</h5>
-                                <p class="card-text">{{ course.description }}</p>
+                        <div v-for="course in availableMentorships" :key="course.id" class="col-md-6">
+                            <div class="card d-flex flex-column h-100">
+                                <!-- <img :src="getImageUrl(course)" class="card-img-top" :alt="course.name"> -->
+                                <div class="card-body flex-grow-1">
+                                    <h5 class="card-title">{{ course.name }}</h5>
+                                    <p class="card-text">{{ course.description }}</p>
+                                </div>
+                                <div class="m-3">
+                                    <p class="fw-semibold">Requirements:</p>
+                                    <ul class="list-unstyled">
+                                        <li v-for="requirement in course.requirements" :key="requirement"
+                                            class="text-muted">
+                                            • {{ requirement }}
+                                        </li>
+                                    </ul>
+                                    <h4 class="fw-semibold"><span class="badge bg-primary"> Mentors Required: {{
+                                        course.mentors_required }} </span></h4>
+                                </div>
+                                <button class="btn btn-view-info btn-position m-15" @click="openModal(course)">Be a
+                                    Mentor</button>
                             </div>
-                            <div class="m-3">
-                                <p class="fw-semibold">Requirements:</p>
-                                <ul class="list-unstyled">
-                                    <li v-for="requirement in course.requirements" :key="requirement"
-                                        class="text-muted">
-                                        • {{ requirement }}
-                                    </li>
-                                </ul>
-                                <h4 class="fw-semibold"><span class="badge bg-primary"> Mentors Required: {{
-                                    course.mentors_required }} </span></h4>
-                            </div>
-                            <button class="btn btn-view-info btn-position m-15" @click="openModal(course)">Be a
-                                Mentor</button>
                         </div>
                     </div>
                 </div>
@@ -127,11 +130,11 @@ import { db } from "../firebase/initialize";
 export default {
     data() {
         return {
-            mentorships: [],
             courses: [],
             mentorships_loading: true,
+
+            allCourses: [],
             availableMentorships: [],
-            availableLoading: true,
 
             selectedCourseId: null,
             selectedCourseName: '', // Store course name for feedback
@@ -144,9 +147,9 @@ export default {
     },
     methods: {
         fetchLessons: async function () {
-            const user = JSON.parse(localStorage.getItem("auth"))
-            const uid = user.uid;
             try {
+                const user = JSON.parse(localStorage.getItem("auth"))
+                const uid = user.uid;
                 const docRef = doc(db, "profiles", uid);
                 const docSnap = await getDoc(docRef);
                 const mentorID = docSnap.data().mentor;
@@ -168,37 +171,51 @@ export default {
 
                 // Wait for all course data to be fetched
                 const coursesName = await Promise.all(coursesPromises);
-
-                // Now set the courses after all are fetched
+                this.courses = coursesName
                 console.log(coursesName)
-                this.courses = coursesName;
-                // console.log("Courses:", this.courses);
 
-
-            } catch (error) {
-                console.error("Error fetching Current Mentorships:", error);
-            } finally {
-                this.mentorships_loading = false;
-            }
-        },
-        async fetchAvailableMentorship() {
-
-            try {
                 const coursesRef = collection(db, "courses");  // Reference to the "courses" collection
                 const querySnapshot = await getDocs(coursesRef);  // Get all documents in the collection
 
-                let mentorships = [];
+                let allCourses = [];
                 querySnapshot.forEach((doc) => {
-                    mentorships.push({ ...doc.data(), id: doc.id });
+                    allCourses.push({ ...doc.data(), id: doc.id });
                 });
 
-                console.log(mentorships);
+                console.log("all", allCourses);
+                this.allCourses = allCourses;
+                console.log("mentorhsips", mentorships)
+                let availableMentorships = [];
+
+                // Iterate through allCourses and check if each course is in mentorships
+                for (let n = 0; n < allCourses.length; n++) {
+                    let course = allCourses[n];
+                    let courseExistsInMentorships = false;
+
+
+                    // Check if the course name exists in mentorships
+                    for (let j = 0; j < mentorships.length; j++) {
+                        if (mentorships[j].id == course.id) {
+                            courseExistsInMentorships = true;
+                            break;  // Exit loop early if match is found
+                        }
+                    }
+
+                    // If course is not in mentorships, add it to availableMentorships
+                    if (!courseExistsInMentorships) {
+                        availableMentorships.push(course);
+                    }
+                }
+
+                // Set availableMentorships as the resulting array
+                this.availableMentorships = availableMentorships;
+                console.log(availableMentorships);
 
 
             } catch (error) {
                 console.error("Error fetching lessons and items:", error);
             } finally {
-                this.availableLoading = false;
+                this.mentorships_loading = false;
             }
         },
         getImageUrl(course) {
@@ -251,7 +268,6 @@ export default {
         const user = JSON.parse(localStorage.getItem("auth"))
         console.log(user.uid)
         await this.fetchLessons();
-        await this.fetchAvailableMentorship()
         // await this.fetchReviewsWithUserDetails();
     },
 }
