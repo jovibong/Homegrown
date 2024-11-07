@@ -13,7 +13,7 @@
                     <!-- Mentorship Cards -->
                     <div v-for="course in courses" :key="course.id" class="col-md-4 mb-4">
                         <div class="card shadow-sm position-relative hover-animate">
-                            <router-link to="/mentorshipCourse" class="text-decoration-none">
+                            <router-link :to="`/mentorshipCourse/${course.id}`" class="text-decoration-none">
                                 <span v-if="course.noti_count > 0"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
                                     {{ course.noti_count }}
@@ -172,7 +172,7 @@ export default {
                 // Wait for all course data to be fetched
                 const coursesName = await Promise.all(coursesPromises);
                 this.courses = coursesName
-                console.log(coursesName)
+                // console.log(coursesName)
 
                 const coursesRef = collection(db, "courses");  // Reference to the "courses" collection
                 const querySnapshot = await getDocs(coursesRef);  // Get all documents in the collection
@@ -182,9 +182,9 @@ export default {
                     allCourses.push({ ...doc.data(), id: doc.id });
                 });
 
-                console.log("all", allCourses);
+                // console.log("all", allCourses);
                 this.allCourses = allCourses;
-                console.log("mentorhsips", mentorships)
+                // console.log("mentorhsips", mentorships)
                 let availableMentorships = [];
 
                 // Iterate through allCourses and check if each course is in mentorships
@@ -209,7 +209,7 @@ export default {
 
                 // Set availableMentorships as the resulting array
                 this.availableMentorships = availableMentorships;
-                console.log(availableMentorships);
+                // console.log(availableMentorships);
 
 
             } catch (error) {
@@ -257,18 +257,8 @@ export default {
         }
     },
     async mounted() {
-        // const storedCourse = sessionStorage.getItem("selectedCourse");
-        // if (storedCourse) {
-        //     this.course = JSON.parse(storedCourse);
-        // } else {
-        //     console.log("No course data found in sessionStorage");
-        //     return;
-        // }
-        // const uid = auth.currentUser.uid;
-        const user = JSON.parse(localStorage.getItem("auth"))
-        console.log(user.uid)
+
         await this.fetchLessons();
-        // await this.fetchReviewsWithUserDetails();
     },
 }
 </script>

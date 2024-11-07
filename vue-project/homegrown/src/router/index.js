@@ -67,7 +67,7 @@ const routes = [
         component: Mentorship
     },
     {
-        path: '/mentorshipCourse',
+        path: '/mentorshipCourse/:id',
         name: 'mentorshipCourse',
         component: MentorshipCourse
     },

@@ -27,37 +27,40 @@
 
         </section>
 
-        <section v-if="course" id="course_info" class="container py-2 fade-in-top">
-            <div class="card shadow-sm mb-md-2 mb-3">
-                <div class="card-body position-relative">
+        <div v-if="mentorships_loading" class="text-center">Loading...</div>
+        <div v-else>
+            <section v-if="course" id="course_info" class="container py-2 fade-in-top">
+                <div class="card shadow-sm mb-md-2 mb-3">
+                    <div class="card-body position-relative">
 
-                    <!-- Icon -->
-                    <div class="row my-0 d-flex align-items-center">
-                        <h5 class=" col-md-10 mt-2 fw-bold display-lg-4 display-5">{{ course.name }}</h5>
-                        <div class="text-center col-md-2 my-0 d-md-block d-none">
+                        <!-- Icon -->
+                        <div class="row my-0 d-flex align-items-center">
+                            <h5 class=" col-md-10 mt-2 fw-bold display-lg-4 display-5">{{ course.name }}</h5>
+                            <div class="text-center col-md-2 my-0 d-md-block d-none">
 
-                            <button class="rounded-circle bg-white border border-0" type="button"
-                                @click="toggleAccordion()">
-                                <i class="bi bi-chevron-down display-5" :class="{ 'text-black-50': lessons_loading }"
-                                    ref="chevron"></i>
-                            </button>
+                                <button class="rounded-circle bg-white border border-0" type="button"
+                                    @click="toggleAccordion()">
+                                    <i class="bi bi-chevron-down display-5"
+                                        :class="{ 'text-black-50': lessons_loading }" ref="chevron"></i>
+                                </button>
+                            </div>
+
+                            <p class="text-muted">{{ course.description }}</p>
+
                         </div>
 
-                        <p class="text-muted">{{ course.description }}</p>
-
-                    </div>
-
-                    <!--Dropdown Button on small screens-->
-                    <div class="text-center my-0 d-md-none d-block">
-                        <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button"
-                            @click="toggleAccordion()">
-                            <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'"
-                                ref="triangle"></i>
-                        </button>
+                        <!--Dropdown Button on small screens-->
+                        <div class="text-center my-0 d-md-none d-block">
+                            <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg"
+                                type="button" @click="toggleAccordion()">
+                                <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'"
+                                    ref="triangle"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <!--Mentor-->
         <section id="Mentee" class="container my-2 fade-in-top">
@@ -127,13 +130,6 @@
             </div>
         </div>
 
-        <!--Dropdown Button on small screens-->
-        <div class="text-center my-0 d-md-none d-block">
-            <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button"
-                @click="toggleAccordion()">
-                <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'" ref="triangle"></i>
-            </button>
-        </div>
     </div>
 
 
@@ -149,86 +145,30 @@ import { db } from "../firebase/initialize";
 export default {
     data() {
         return {
-            // mentees: [
-            //     {
-            //         name: "Ravi Kumar",
-            //         description: "Hello! I'm Ravi Kumar from India, currently working in construction. I’m eager to learn new skills and improve my career prospects, and I enjoy sharing my experiences with others.",
-            //         img: "ravikumar.png",
-            //         notificationCount: 1,
-            //     },
-            //     {
-            //         name: "Maria Gomez",
-            //         description: "Hi! I'm Maria Gomez, originally from the Philippines, working as a domestic helper. I’m passionate about cooking, learning about personal finance, and helping others in my community.",
-            //         img: "mariagomez.png",
-            //         notificationCount: 0,
-            //     },
-            //     {
-            //         name: "Ahmed Hossain",
-            //         description: "Hello! I'm Ahmed Hossain from Bangladesh, currently working in manufacturing. I’m focused on upskilling and connecting with others to learn new skills that can help me and my family.",
-            //         img: "ahmedhossain.png",
-            //         notificationCount: 0,
-            //     },
-            //     {
-            //         name: "Lina Wijaya",
-            //         description: "Hi! I'm Lina Wijaya from Indonesia, working in the hospitality sector. I am passionate about professional development and helping my peers grow in their careers.",
-            //         img: "linawijaya.png",
-            //         notificationCount: 1,
-            //     }
-            // ],
-            mentees: [],
+            expanded: false,
+
             course: null,
             lessons: [],
-            expanded: false,
             lessons_loading: true,
+
+            mentees: [],
             mentees_loading: true,
-            mentor: null,
-            uid: null,
+
         };
     },
     methods: {
-        fetchMentees: async function () {
-            try {
-                const menteesRef = collection(db, `mentors/${this.mentor.id}/mentorships${this.courseId}/mentees`);
-                const menteesSnapshot = await getDocs(menteesRef);
-                const menteeIds = menteesSnapshot.docs.map(doc => doc.id);
-
-                const menteeDataArray = await Promise.all(
-                    menteeIds.map(async (menteeId) => {
-                        const userRef = doc(db, "users", menteeId);
-                        const userSnapshot = await getDoc(userRef);
-
-                        if (userSnapshot.exists()) {
-                            const userData = userSnapshot.data();
-                            return {
-                                name: userData.name,
-                                notificationCount: userData.notification_count || 0, // Default to 0 if undefined
-                            };
-                        } else {
-                            return null; // In case the user document doesn't exist
-                        }
-                    })
-                )
-                this.mentees = menteeDataArray;
-            }
-
-            catch (error) {
-                console.error("Error fetching mentees:", error);
-            } finally {
-                this.mentee_loading = false;
-            }
-
-        },
         fetchLessons: async function () {
-            const user = JSON.parse(localStorage.getItem("auth"))
-            const uid = user.uid;
-            const docRef = doc(db, "profiles", uid);
-
             try {
-                const docSnap = await getDoc(docRef);
-                const mentorField = docSnap.data().mentor;
-                console.log("Mentor:", mentorField);
+                const routeParams = this.$route.params;
+                const id = routeParams.id
 
-                const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
+                const courseRef = doc(db, "courses", id);
+                const courseSnap = await getDoc(courseRef);
+                const course = courseSnap.data();
+                this.course = course;
+                // console.log(course)
+
+                const lessonsRef = collection(db, `courses/${id}/lessons`);
                 const lessonDocs = await getDocs(lessonsRef);
 
                 const lessonsData = await Promise.all(
@@ -239,7 +179,6 @@ export default {
                         const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
                         const lessonItemsDocs = await getDocs(lessonItemsRef);
 
-                        // transforming the data
                         const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
                             const itemData = itemDoc.data();
                             return {
@@ -251,7 +190,6 @@ export default {
                             };
                         });
 
-                        //returning the data
                         return {
                             title: lessonData.title,
                             lesson_items: lessonItemsData,
@@ -259,48 +197,52 @@ export default {
                     })
                 );
 
-                // assigning the data to the variable
                 this.lessons = lessonsData;
-            } catch (error) {
-                console.error("Error fetching lessons and items:", error);
+                // console.log(lessons);
+            }
+
+            catch (error) {
+                console.error("Error fetching lessons:", error);
             } finally {
                 this.lessons_loading = false;
             }
+
         },
-        async fetchReviewsWithUserDetails() {
+        fetchMentees: async function () {
             try {
-                const reviewsRef = collection(db, `courses/${this.course.id}/reviews`);
-                const reviewDocs = await getDocs(reviewsRef);
+                const user = JSON.parse(localStorage.getItem("auth"))
+                const uid = user.uid;
+                const mentorRef = doc(db, "profiles", uid);
+                const mentorSnap = await getDoc(mentorRef);
+                const mentorID = mentorSnap.data().mentor;
+                console.log(mentorID)
 
-                const reviewsData = await Promise.all(
-                    reviewDocs.docs.map(async (reviewDoc) => {
-                        const reviewData = reviewDoc.data();
-                        const userRef = doc(db, "users", reviewData.user);
-                        const userDoc = await getDoc(userRef);
+                const routeParams2 = this.$route.params;
+                const courseID = routeParams2.id
+                console.log(courseID)
 
-                        if (userDoc.exists()) {
-                            const userData = userDoc.data();
-                            return {
-                                ...reviewData,
-                                name: userData.name,
-                                img: userData.profile_picture,
-                            };
-                        } else {
-                            console.warn(`User data not found for user: ${reviewData.user}`);
-                            return reviewData;
-                        }
-                    })
-                );
+                const menteeRef = doc(db, "mentors", mentorID, "mentorships", courseID);
+                const menteeDoc = await getDoc(menteeRef);
+                const menteesList = menteeDoc.data().mentees;
+                this.mentees = menteesList;
+                console.log(menteesList)
 
-                this.reviews = reviewsData;
-            } catch (error) {
-                console.error("Error fetching reviews and user details:", error);
-            } finally {
-                this.loading = false;
-                console.log("This page has loaded");
+                // You stopped here Sean
+                // menteesList.forEach((userId) => {
+                //     const userRef = doc(db, "user", userId);
+                //     const userSnap = await getDoc(userRef);
+                //     const mentee = userSnap.data();
+                // });
+
             }
-        },
 
+            catch (error) {
+                console.error("Error fetching mentees:", error);
+            } finally {
+                this.mentees_loading = false;
+            }
+
+        },
         getRatingStars(rating) {
             const roundedRating = Math.round(rating * 2) / 2;
             let stars = "";
@@ -320,11 +262,11 @@ export default {
         },
         toggleAccordion() {
             const triangle = this.$refs["triangle"];
-            console.log(triangle);
+            // console.log(triangle);
             const chevron = this.$refs["chevron"];
-            console.log(chevron);
+            // console.log(chevron);
             const lessons = this.$refs["lessons"];
-            console.log(lessons);
+            // console.log(lessons);
 
             if (this.expanded) {
                 lessons.style.height = "0px";
@@ -360,11 +302,8 @@ export default {
         //     return;
         // }
         // const uid = auth.currentUser.uid;
-        const user = JSON.parse(localStorage.getItem("auth"));
-        this.uid = user.uid;
-        console.log(user.uid)
         await this.fetchLessons();
-        await this.fetchReviewsWithUserDetails();
+        await this.fetchMentees();
     },
 
 
