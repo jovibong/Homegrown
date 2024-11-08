@@ -53,7 +53,7 @@
                   class="overflow-hidden rounded-circle border border-black"
                   style="width: 40px; height: 40px"
                 >
-                  <img :src="chat.chat_img" alt="Chat Image" />
+                  <img :src="chat.chat_img" alt="Chat Image" height="40" width="40"/>
                 </div>
               </div>
               <div class="col-10 overflow-hidden">
@@ -90,12 +90,14 @@
           <div class="row p-2 bg-primary container-fluid mx-0 mb-4">
             <div class="col-1 me-2 d-flex align-items-center">
               <div
-                class="overflow-hidden rounded-circle border border-black"
+                class="overflow-hidden rounded-circle border border-black clickable"
                 style="width: 40px; height: 40px"
+                @click="openImagePopup(selected_chat_obj.chat_img)"
               >
                 <img
                   :src="selected_chat_obj.chat_img"
-                  alt="Selected Chat Image"
+                  alt="Selected Chat Image" height="40" width="40"
+                   
                 />
               </div>
             </div>

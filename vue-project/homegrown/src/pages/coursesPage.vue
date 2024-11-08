@@ -348,7 +348,7 @@ export default {
         console.error("Error fetching courses:", error);
       }
     },
-    async checkAndCreateuser(userId) {
+    async checkAndCreateuser(userId,userName) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "users", userId);
@@ -362,7 +362,7 @@ export default {
           // If user document doesn't exist, create a new one
           const newUser = {
             id: userId,
-            name: "New User", // Default name, adjust as needed
+            name: userName|| "New User", // Default name, adjust as needed
           };
 
           // Set the new document in Firestore
@@ -380,7 +380,7 @@ export default {
       JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
     if (userObject) {
-      this.checkAndCreateuser(userObject.uid);
+      this.checkAndCreateuser(userObject.uid,userObject.name);
       this.user = userObject.uid;
     }
     // Check if user exists before calling fetchCourses
