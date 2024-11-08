@@ -41,7 +41,7 @@
                   <router-link to="/eventPage" class="nav-link text-light">Events</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/chat" class="nav-link text-light">Chat</router-link>
+                  <router-link to="/chatPage" class="nav-link text-light">Chat</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker'">
                   <router-link to="/financePage" class="nav-link text-light">Finance</router-link>
