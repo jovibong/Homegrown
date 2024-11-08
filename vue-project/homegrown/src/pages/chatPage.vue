@@ -323,6 +323,31 @@ export default {
               conversations: [],
             };
 
+            // Check if it's a "contact" chat type and has exactly two members
+            if (
+              chatObj.chat_type === "contact" &&
+              chatObj.group_members.length === 2
+            ) {
+              // Find the other member who is not `this.user`
+              const otherUserId = chatObj.group_members.find(
+                (memberId) => memberId !== this.user
+              );
+
+              // Get that user's name from the users collection
+              if (otherUserId) {
+                const otherUserDoc = await getDoc(
+                  doc(db, "users", otherUserId)
+                );
+                if (otherUserDoc.exists()) {
+                  const otherUserData = otherUserDoc.data();
+                  chatObj.chat_name = otherUserData.name || "Unknown Contact";
+                  chatObj.chat_img = otherUserData.profile_picture || "default_image_url";
+                } else {
+                  console.error("Other user not found in users collection");
+                }
+              }
+            }
+
             // Step 3: Fetch conversations for each chat
             const conversationsCollection = collection(
               db,
