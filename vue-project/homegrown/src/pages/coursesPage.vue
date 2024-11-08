@@ -22,7 +22,8 @@
           <loading-animation></loading-animation>
         </div>
         <div v-if="!loading && !has_ongoing" class="text-center fs-4">
-          Looks like you have no ongoing course. Click on a course below to start learning!
+          Looks like you have no ongoing course. Click on a course below to
+          start learning!
         </div>
         <!-- Ongoing Course Card -->
         <section v-if="!loading && has_ongoing">
@@ -44,6 +45,7 @@
                   :alt="course.name + ' img'"
                   class="card-img h-100"
                 />
+
                 <div
                   class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-75 w-100"
                 >
@@ -234,7 +236,7 @@
 
 
 <script>
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, setDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -244,7 +246,7 @@ export default {
   },
   data() {
     return {
-      user: "user_00001", // Target user ID
+      user: "", // Target user ID
       ongoing_courses: [],
       new_courses: [],
       steps: [
@@ -290,14 +292,7 @@ export default {
     mentor_available(course) {
       return course.available_mentors.length > 0;
     },
-    preloadImage(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => resolve(url);
-        img.onerror = () => resolve(this.placeholderImage); // Use placeholder on error
-      });
-    },
+
     async fetchCourses() {
       try {
         // Fetch ongoing course IDs from the user's ongoing_courses subcollection
@@ -334,41 +329,67 @@ export default {
         console.log("Filtered Ongoing Courses:", ongoing);
         console.log("Filtered New Courses:", newCourses);
 
+        // Update the ongoing_courses and new_courses data properties
         this.ongoing_courses = ongoing;
         this.new_courses = newCourses;
 
-        // Preload images for each course and populate course_images
-        await Promise.all(
-          ongoing.concat(newCourses).map(async (course, index) => {
-            const imageUrl = `https://random.imagecdn.app/500/300?random=${
-              Date.now() + index
-            }`;
-            this.course_images[course.id] = imageUrl;
-          })
-        );
+        // Populate the course_images object with the imageUrl field from each course
+        ongoing.concat(newCourses).forEach((course) => {
+          this.course_images[course.id] =
+            course.imageUrl || this.placeholderImage;
+        });
 
         console.log("Course Images:", this.course_images);
 
-        // Set loading to false after all images are loaded
+        // Set loading to false after images are loaded
         this.loading = false;
         this.has_ongoing = this.ongoing_courses.length > 0;
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
     },
+    async checkAndCreateuser(userId) {
+      try {
+        // Reference to the user document in the users collection
+        const userDocRef = doc(db, "users", userId);
+
+        // Check if the document exists
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          console.log("User document exists:", userDocSnap.data());
+        } else {
+          // If user document doesn't exist, create a new one
+          const newUser = {
+            id: userId,
+            name: "New User", // Default name, adjust as needed
+          };
+
+          // Set the new document in Firestore
+          await setDoc(userDocRef, newUser);
+          console.log("User document created successfully:", newUser);
+        }
+      } catch (error) {
+        console.error("Error checking or creating user document:", error);
+      }
+    },
   },
   mounted() {
-  // Uncomment below once profile login is settled.
-  // this.user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
-
-  // Check if user exists before calling fetchCourses
-  if (this.user) {
-    this.fetchCourses();
-  } else {
-    console.error("User not found in sessionStorage or localStorage.");
-  }
-},
-
+    // Uncomment below once profile login is settled.
+    const userObject =
+      JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if (userObject) {
+      this.checkAndCreateuser(userObject.uid);
+      this.user = userObject.uid;
+    }
+    // Check if user exists before calling fetchCourses
+    if (this.user) {
+      this.fetchCourses();
+    } else {
+      console.error("User not found in sessionStorage or localStorage.");
+    }
+  },
 };
 </script>
 

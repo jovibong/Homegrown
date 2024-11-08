@@ -130,10 +130,15 @@ export default {
         "https://plus.unsplash.com/premium_photo-1661964187664-e26f70e1a224?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y29kaW5nJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D",
       course: null,
       storedLessonId: "",
-      user: "user_00001",
+      user: "",
     };
   },
   async mounted() {
+    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if(userObject){
+      this.user = userObject.uid;
+    }
     await this.waitForLessonData();
 
     // Retrieve the course name from sessionStorage

@@ -256,7 +256,7 @@ export default {
       course: null,
       answers: [],
       score: 0,
-      user: "user_00001",
+      user: "",
       storedLessonId: "",
       course_name: "",
       is_last_quiz: false, // Initialize is_last_quiz to false
@@ -412,6 +412,11 @@ export default {
     },
   },
   async mounted() {
+    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if(userObject){
+      this.user = userObject.uid;
+    }
     this.answers = JSON.parse(sessionStorage.getItem("user_answers"));
     this.score = JSON.parse(sessionStorage.getItem("user_score"));
     this.questions = JSON.parse(sessionStorage.getItem("selected_questions"));

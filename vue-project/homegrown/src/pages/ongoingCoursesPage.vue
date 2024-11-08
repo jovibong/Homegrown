@@ -206,7 +206,7 @@ export default {
   },
   data() {
     return {
-      user: "user_00001", // Target user ID
+      user: "", // Target user ID
       ongoing_courses: [],
       loading: true,
       selected_course: null,
@@ -291,6 +291,11 @@ export default {
     },
   },
   mounted() {
+    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if(userObject){
+      this.user = userObject.uid;
+    }
     this.fetchCourses();
   },
 };

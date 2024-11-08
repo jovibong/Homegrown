@@ -130,7 +130,7 @@
             <!-- Mentor Image -->
             <div class="col-md-3 d-flex justify-content-center">
               <img
-                :src="'img/' + mentor.img"
+                :src="mentor.img"
                 alt="Mentor Img"
                 class="rounded-circle"
                 height="150px"
@@ -287,7 +287,7 @@ export default {
   },
   data() {
     return {
-      user: "user_00001",
+      user: "",
       course: null,
       loading: true,
       reviews: null,
@@ -519,6 +519,11 @@ export default {
     },
   },
   async mounted() {
+    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if(userObject){
+      this.user = userObject.uid;
+    }
     const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);

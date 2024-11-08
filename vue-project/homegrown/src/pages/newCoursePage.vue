@@ -185,21 +185,21 @@
                 :class="['carousel-item', key === 0 ? 'active' : '']"
               >
                 <div class="row">
-                  <div class="col-md-3 d-flex justify-content-center">
+                  <div class="col-lg-3 col-md-5 d-flex justify-content-md-end justify-content-center">
                     <img
-                      :src="'img/' + mentor.img"
+                      :src="mentor.img"
                       alt="Mentor Img"
-                      class="rounded-circle"
-                      height="150px"
-                      width="150px"
+                      class="rounded-circle border border-primary me-md-5"
+                      style="height:100px;
+                      width:100px"
                     />
                   </div>
                   <!-- Mentor Information -->
-                  <div class="col-md-9 text-md-start text-center">
-                    <h5 class="fw-bold h4 d-none d-md-inline-block">
+                  <div class="col-lg-9 col-md-7 text-md-start text-center d-flex align-items-center d-lg-inline-block">
+                    <h5 class="fw-bold h4">
                       {{ mentor.name }}
                     </h5>
-                    <p class="text-muted me-5 pe-5 d-none d-md-inline-block">
+                    <p class="text-muted me-5 pe-5 d-none d-lg-inline-block">
                       {{ mentor.description }}
                     </p>
                   </div>
@@ -296,7 +296,7 @@ export default {
   },
   data() {
     return {
-      user: "user_00001",
+      user: "",
       course: null,
       loading: true,
       reviews: null,
@@ -544,6 +544,11 @@ export default {
     },
   },
   async mounted() {
+    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if(userObject){
+      this.user = userObject.uid;
+    }
     const storedCourse = sessionStorage.getItem("selectedCourse");
     if (storedCourse) {
       this.course = JSON.parse(storedCourse);
