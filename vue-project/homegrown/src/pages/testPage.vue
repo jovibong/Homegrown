@@ -1,62 +1,64 @@
 <template>
-  <div class="container mt-5">
-    <h2 class="text-primary mb-4">Update Course Completion</h2>
-
-    <div class="card p-4 shadow-sm">
-      <h4 class="card-title">Course Progress</h4>
-      <p>Click the button below to add a `percentage_completed` field with a starting value of 0 to each ongoing course document.</p>
-
-      <button
-        class="btn btn-primary mt-3"
-        @click="addPercentageCompleted"
-      >
-        Initialize Percentage Completed
-      </button>
-
-      <div v-if="message" class="alert alert-info mt-3">{{ message }}</div>
+  <div class="container">
+    <h2>Convert Timestamps to Firestore Timestamps</h2>
+    <button @click="convertTimestamps" class="btn btn-primary mt-3">
+      Convert All Timestamps
+    </button>
+    <div v-if="loading" class="mt-3">Converting timestamps, please wait...</div>
+    <div v-else-if="success" class="mt-3 text-success">
+      Timestamps have been successfully converted!
     </div>
   </div>
 </template>
 
 <script>
-import { doc, updateDoc, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, updateDoc, doc, Timestamp } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 export default {
   data() {
     return {
-      user: "user_00001", // Replace with dynamic user ID as needed
-      message: "",
+      loading: false,
+      success: false,
     };
   },
   methods: {
-    async addPercentageCompleted() {
-      this.message = "Initializing percentage_completed...";
+    async convertTimestamps() {
+      this.loading = true;
+      this.success = false;
 
       try {
-        // Reference to the ongoing_courses collection for the user
-        const ongoingCoursesRef = collection(
-          db,
-          `users/${this.user}/ongoing_courses`
-        );
+        const chatsCollection = collection(db, "chats");
+        const chatsSnapshot = await getDocs(chatsCollection);
 
-        // Fetch all course documents within ongoing_courses
-        const courseDocsSnap = await getDocs(ongoingCoursesRef);
+        for (const chatDoc of chatsSnapshot.docs) {
+          const chatId = chatDoc.id;
 
-        // Iterate through each course document and set percentage_completed to 0
-        const updatePromises = courseDocsSnap.docs.map((courseDoc) =>
-          updateDoc(doc(db, courseDoc.ref.path), { percentage_completed: 0 })
-        );
+          // Access the conversations sub-collection
+          const conversationsCollection = collection(db, "chats", chatId, "conversations");
+          const conversationsSnapshot = await getDocs(conversationsCollection);
 
-        // Wait for all updates to complete
-        await Promise.all(updatePromises);
+          for (const convoDoc of conversationsSnapshot.docs) {
+            const convoData = convoDoc.data();
 
-        // Update message on success
-        this.message = "Percentage completed initialized to 0 for all courses.";
-        console.log("percentage_completed set to 0 for all ongoing courses.");
+            // Check if the timestamp is already a Firestore Timestamp
+            if (!(convoData.timestamp instanceof Timestamp)) {
+              // Convert to Firestore Timestamp if it's not already
+              const updatedTimestamp = Timestamp.fromDate(new Date(convoData.timestamp));
+
+              // Update the document with the converted timestamp
+              await updateDoc(doc(db, "chats", chatId, "conversations", convoDoc.id), {
+                timestamp: updatedTimestamp,
+              });
+            }
+          }
+        }
+
+        this.success = true;
       } catch (error) {
-        console.error("Error updating percentage_completed:", error);
-        this.message = "Error updating percentage_completed. Check console for details.";
+        console.error("Error converting timestamps:", error);
+      } finally {
+        this.loading = false;
       }
     },
   },
@@ -66,9 +68,6 @@ export default {
 <style scoped>
 .container {
   max-width: 600px;
-}
-
-.btn {
-  width: 100%;
+  margin-top: 20px;
 }
 </style>

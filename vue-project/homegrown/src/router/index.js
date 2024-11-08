@@ -16,6 +16,7 @@ import TestPage from '../pages/testPage.vue';
 import EditProfile from '@/pages/editProfile.vue';
 import WorkersCertification from '@/pages/workersCertification.vue';
 import HomePage from '@/pages/homePage.vue';
+import ChatPage from '../pages/chatPage.vue';
 
 
 const routes = [
@@ -125,6 +126,11 @@ const routes = [
         path: '/workersCertification',
         name: 'workersCertification',
         component: WorkersCertification
+    },
+    {
+        path: '/chatPage',
+        name: 'chatPage',
+        component: ChatPage
     },
     {
         path: '/homePage',
