@@ -7,7 +7,7 @@
                 unlock
                 their full potential with every step they take.
             </p>
-            <div v-if="mentorships_loading" class="text-center">Loading...</div>
+            <loading-animation v-if="mentorships_loading"></loading-animation>
             <div v-else>
                 <div class="row">
                     <!-- Mentorship Cards -->
@@ -48,13 +48,13 @@
                     them
                     unlock their full potential while growing alongside them.
                 </p>
-                <div v-if="mentorships_loading" class="text-center">Loading...</div>
+                <loading-animation v-if="mentorships_loading"></loading-animation>
                 <div v-else>
                     <div class="row g-4">
 
                         <div v-for="course in availableMentorships" :key="course.id" class="col-md-6">
                             <div class="card d-flex flex-column h-100">
-                                <!-- <img :src="getImageUrl(course)" class="card-img-top" :alt="course.name"> -->
+                                <img :src="course.imageUrl" class="card-img-top" :alt="course.name">
                                 <div class="card-body flex-grow-1">
                                     <h5 class="card-title">{{ course.name }}</h5>
                                     <p class="card-text">{{ course.description }}</p>
@@ -125,9 +125,12 @@
 import { Modal, Toast } from 'bootstrap';
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
-
+import loadingAnimation from "../components/loadingAnimation.vue";
 
 export default {
+    components: {
+    loadingAnimation,
+  },
     data() {
         return {
             courses: [],
@@ -219,10 +222,6 @@ export default {
                 this.mentorships_loading = false;
             }
         },
-        getImageUrl(course) {
-            const extension = course.name.includes("Illustrator") || course.name.includes("JavaScript") ? 'png' : 'jpeg';
-            return require(`../img/${course.name}.${extension}`);
-        },
         openModal(course) {
             this.selectedCourseId = course.id;
             this.selectedCourseName = course.name; // Store the course name
@@ -258,7 +257,7 @@ export default {
         }
     },
     async mounted() {
-
+        
         await this.fetchLessons();
     },
 }
