@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { collection, getDocs , doc , getDoc} from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust the path as needed
 
 export default {
@@ -198,14 +198,6 @@ export default {
     },
     async fetchQuestions(storedLessonId) {
       try {
-        const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
-        const uid = user.uid;
-        console.log(user)
-        const docRef = doc(db, "profiles", uid);
-        const docSnap = await getDoc(docRef);
-        const userType = docSnap.data().userType;
-        this.userType = userType;
-        console.log(userType)
 
         const questionsRef = collection(
           db,

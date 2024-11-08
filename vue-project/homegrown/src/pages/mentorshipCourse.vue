@@ -164,7 +164,7 @@ export default {
         fetchLessons: async function () {
             try {
                 const routeParams = this.$route.params;
-                const id = routeParams.id;
+                let id = routeParams.id;
 
                 if (id) {
                     // If the id exists in the route parameters, store it in sessionStorage
@@ -174,8 +174,8 @@ export default {
                     // If the id does not exist in the route parameters, pull it from sessionStorage
                     const storedCourse = sessionStorage.getItem("course");
                     if (storedCourse) {
-                        const course = JSON.parse(storedCourse);
-                        console.log("Course retrieved from sessionStorage:", course);
+                        id = JSON.parse(storedCourse);
+                        console.log("Course retrieved from sessionStorage:", id);
                     } else {
                         console.log("No course data found in sessionStorage");
                     }
