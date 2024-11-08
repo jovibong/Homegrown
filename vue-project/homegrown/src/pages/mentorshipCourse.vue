@@ -217,7 +217,7 @@ export default {
                 );
 
                 this.lessons = lessonsData;
-                // console.log(lessonsData);
+                console.log(lessonsData);
             }
 
             catch (error) {
