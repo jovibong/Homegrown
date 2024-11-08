@@ -19,6 +19,7 @@
                 <option value="Outdoors">Outdoors</option>
                 <option value="Cultural">Cultural</option>
                 <option value="Meet-ups">Meet-ups</option>
+                <option value="Others">Others</option>
             </select>
             </div>
         </div>
@@ -34,12 +35,12 @@
         </div>
 
         <!-- Image Upload -->
-        <!-- <div class="row mb-3">
+        <div class="row mb-3">
             <label for="image" class="col-sm-2 col-form-label">Image</label>
             <div class="col-sm-10">
                 <input id="image" type="file" class="form-control" @change="uploadImage" />
             </div>
-        </div> -->
+        </div>
 
         <!-- Date and Time -->
         <div class="row mb-3">
@@ -71,7 +72,7 @@
 <script>
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from '../firebase/initialize'
-// import { getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage"; 
+import { getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage"; 
 
 export default {
 
@@ -98,7 +99,7 @@ export default {
                 description: this.eventDescription,
                 date: Timestamp.fromDate(new Date(this.eventDate)),
                 location: this.eventLocation,
-                // imageURL: this.imageURL,
+                imageURL: this.imageURL,
                 createdBy: this.createdBy,
                 category: this.category
 
@@ -112,57 +113,57 @@ export default {
             console.log(this.eventID)
         },
 
-        // async uploadImage(event) {
-        //     const storage = getStorage();
-        //     const file = event.target.files[0];
+        async uploadImage(event) {
+            const storage = getStorage();
+            const file = event.target.files[0];
 
-        //     if (file) {
-        //         const storageRef = ref(storage, `eventImages/${file.name}`);
+            if (file) {
+                const storageRef = ref(storage, `eventImages/${file.name}`);
 
-        //         // Create file metadata including the content type
-        //         const metadata = {
-        //             name: `${this.eventTitle} Image`,
-        //             contentType: 'image/jpeg',
-        //         };
+                // Create file metadata including the content type
+                const metadata = {
+                    name: `${this.eventTitle} Image`,
+                    contentType: 'image/jpeg',
+                };
 
-        //         const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+                const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
-        //         // Register three observers:
-        //         // 1. 'state_changed' observer, called any time the state changes
-        //         // 2. Error observer, called on failure
-        //         // 3. Completion observer, called on successful completion
-        //         uploadTask.on('state_changed',
-        //             (snapshot) => {
-        //                 // Observe state change events such as progress, pause, and resume
-        //                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        //                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //                 console.log('Upload is ' + progress + '% done');
-        //                 switch (snapshot.state) {
-        //                     case 'paused':
-        //                         console.log('Upload is paused');
-        //                         break;
-        //                     case 'running':
-        //                         console.log('Upload is running');
-        //                         break;
-        //                 }
-        //             },
-        //             (error) => {
-        //                 // Handle unsuccessful uploads
-        //                 console.error("Upload unsuccessful:", error)
-        //             },
-        //             () => {
-        //                 // Handle successful uploads on complete
-        //                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-        //                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        //                     console.log('File available at', downloadURL);
-        //                     this.imageURL = downloadURL;
-        //                 });
-        //             }
-        //         )
-        //     }else{
-        //         console.log(`cannot get image. file: ${file}`)
-        //     } 
-        // }
+                // Register three observers:
+                // 1. 'state_changed' observer, called any time the state changes
+                // 2. Error observer, called on failure
+                // 3. Completion observer, called on successful completion
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Observe state change events such as progress, pause, and resume
+                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                        switch (snapshot.state) {
+                            case 'paused':
+                                console.log('Upload is paused');
+                                break;
+                            case 'running':
+                                console.log('Upload is running');
+                                break;
+                        }
+                    },
+                    (error) => {
+                        // Handle unsuccessful uploads
+                        console.error("Upload unsuccessful:", error)
+                    },
+                    () => {
+                        // Handle successful uploads on complete
+                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            console.log('File available at', downloadURL);
+                            this.imageURL = downloadURL;
+                        });
+                    }
+                )
+            }else{
+                console.log(`cannot get image. file: ${file}`)
+            } 
+        }
     }
 }
 </script>

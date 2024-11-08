@@ -54,8 +54,13 @@ const routes = [
         path: '/forum',
         name: 'eventForum',
         component: () => import('../pages/forumPage.vue')
-    }
-    ,
+    },
+
+    {
+        path: '/forumPage/:id',
+        name: 'forumDetail',
+        component: () => import('../components/forumDetail.vue')
+    },
 
     {
         path: '/calender',

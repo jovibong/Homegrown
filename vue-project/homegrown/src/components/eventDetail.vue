@@ -4,7 +4,7 @@
 
     <!-- Header -->
 
-    <h1 class="title row justify-content-center mt-5">{{ title }}</h1>
+    <h1 class="title row justify-content-center mt-5">{{ eventTitle }}</h1>
     <img class="carouselHeaderwidth col-12 mb-5" :src="Image">
 
     <!-- Event Details -->
@@ -27,46 +27,79 @@
     <!-- Join Button -->
     <div class="button-container">
       <button @click="animateButton" :class="['joinButton', { active: isLayerActive, inactive: !isLayerActive }]">
-      <i :class="iconClass"></i>
-      <span class="button-text">{{ buttonText }}</span>
-    </button>
+        <i :class="iconClass"></i>
+        <span class="button-text">{{ buttonText }}</span>
+      </button>
     </div>
 
     <!-- Groups -->
-     <div class="groupContainer">
+    <div class="groupContainer">
       <h2 class="title"> Groups </h2>
-      <button type="button" class="createButton"  
-      data-bs-toggle="modal" data-bs-target="#createGroup"> CREATE YOUR OWN GROUP </button>
+      <button type="button" class="createButton" data-bs-toggle="modal" data-bs-target="#createGroup"> CREATE YOUR OWN
+        GROUP </button>
 
     </div>
     <!-- create group popup -->
 
-<!-- Modal -->
-<div class="modal fade" id="createGroup" tabindex="-1" aria-labelledby="createGroupLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="createGroupLabel">{{ title }}</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form @submit.prevent="addGroups">
-          Timing: <input type="text" name="title"/>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" @click="addGroups" class="btn btn-primary">Create Group</button>
+    <!-- Modal -->
+    <div class="modal fade" id="createGroup" tabindex="-1" aria-labelledby="createGroupLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-body">
+            <form @submit.prevent="addGroups">
+              <!-- Event Title -->
+              <div>
+                <h2 class="title d-flex justify-content-center my-3"> {{ title }} </h2>
+              </div>
+
+              <div class="row mb-3">
+                <label for="Name" class="col-form-label"> Group Name : </label>
+                <div class="col-sm-9">
+                  <input id="Name" v-model="groupName" type="text" class="form-control" />
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="row mb-3">
+                <label for="description" class="col-sm-2 col-form-label">Description</label>
+                <div class="col-sm-10">
+                  <textarea rows="4" cols="50" id="description" v-model="groupDesc" class="form-control"></textarea>
+
+                </div>
+              </div>
+
+              <!-- Date and Time -->
+              <div class="row mb-3">
+                <label for="date" class="col-sm-2 col-form-label">Date</label>
+                <div class="col-sm-4">
+                  <input id="date" v-model="groupDate" type="date" class="form-control" />
+                </div>
+
+                <label for="time" class="col-sm-2 col-form-label">Time</label>
+                <div class="col-sm-4">
+                  <input id="time" v-model="groupTime" type="time" class="form-control" />
+                </div>
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" @click="addGroups" class="btn btn-primary">Create Group</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+
     <!-- to display dynamically the list of created groups -->
     <div v-if="groups.length == 0"> No groups yet. Create your own!
     </div>
 
     <div v-else>
-
+      <div v-for="group in groups" :key="group.name" class="eventGroup">
+        <div id="groupName">{{ group.name }}</div>
+      </div>
     </div>
 
     <!-- Event Cards -->
@@ -112,7 +145,7 @@
 </template>
 
 <script>
-import { collection, doc, getDoc, getDocs, addDoc, Timestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, addDoc, Timestamp, query, where } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 export default {
@@ -120,9 +153,9 @@ export default {
   data() {
     return {
       eventID: this.$route.params.id,
-      title: '',
+      eventTitle: '',
       eventImage: '',
-      description: '',
+      eventDescription: '',
       eventDate:null,
       eventCategory: '',
       location: '',
@@ -131,7 +164,8 @@ export default {
       // for adding groups
       groupName: "",
       groupDesc: "",
-      groupTiming:"",
+      groupDate: null,
+      groupTime: null,
       groupMembers: [],
 
       // for animation 
@@ -164,7 +198,7 @@ export default {
 
         if (docSnap.exists()) {
           console.log("Document data:", docSnap.data());
-          this.title = docSnap.data().name;
+          this.eventTitle = docSnap.data().name;
           this.eventCategory = docSnap.data().category;
           this.location = docSnap.data().location;
 
@@ -225,7 +259,6 @@ export default {
         name: this.groupName,
         description: this.groupDesc, 
         timing: this.groupTiming,
-        
       
       };
 
@@ -257,11 +290,27 @@ export default {
         });
 
         console.log("Groups retrieved:", groups);
-        return groups; // Return the groups array
+        return this.groups = groups; // Return the groups array
       } catch (error) {
         console.error("Error fetching groups: ", error);
       }
-    }
+    },
+
+    async getRelatedEvents(eventCategory){
+
+      const q = query(collection(db, "events"), where("category", "==", eventCategory));
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      }); 
+  },
+
+  async addMyEvent(){
+    // add to calendar
+    // push into user's events
+  },
 
   }
 }
