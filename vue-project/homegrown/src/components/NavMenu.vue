@@ -147,8 +147,6 @@ export default {
       if (user) {
         this.user = user;
         const docRef = doc(db, "profiles", user.uid);
-        // line added to store auth in local storage
-        localStorage.setItem("auth", JSON.stringify(this.user))
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           this.userType = docSnap.data().userType;
@@ -164,8 +162,6 @@ export default {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const docRef = doc(db, "profiles", user.uid);
-        // line added to store auth in local storage
-        localStorage.setItem("auth", JSON.stringify(user))
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           this.userType = docSnap.data().userType; // Retrieve and set user type

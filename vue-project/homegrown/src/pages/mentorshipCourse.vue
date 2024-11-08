@@ -142,7 +142,6 @@
 <script>
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
-// import { auth } from "../firebase/initialize";
 
 
 export default {
@@ -213,8 +212,9 @@ export default {
         },
         fetchMentees: async function () {
             try {
-                const user = JSON.parse(localStorage.getItem("auth"))
+                const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
                 const uid = user.uid;
+                console.log(uid)
                 const mentorRef = doc(db, "profiles", uid);
                 const mentorSnap = await getDoc(mentorRef);
                 const mentorID = mentorSnap.data().mentor;
@@ -300,14 +300,6 @@ export default {
         },
     },
     async mounted() {
-        // const storedCourse = sessionStorage.getItem("selectedCourse");
-        // if (storedCourse) {
-        //     this.course = JSON.parse(storedCourse);
-        // } else {
-        //     console.log("No course data found in sessionStorage");
-        //     return;
-        // }
-        // const uid = auth.currentUser.uid;
         await this.fetchLessons();
         await this.fetchMentees();
     },

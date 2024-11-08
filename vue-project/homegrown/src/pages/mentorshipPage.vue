@@ -148,8 +148,9 @@ export default {
     methods: {
         fetchLessons: async function () {
             try {
-                const user = JSON.parse(localStorage.getItem("auth"))
+                const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
                 const uid = user.uid;
+                console.log(user)
                 const docRef = doc(db, "profiles", uid);
                 const docSnap = await getDoc(docRef);
                 const mentorID = docSnap.data().mentor;
