@@ -42,6 +42,16 @@
               <h2 class="mb-4 text-center">Create Your Account</h2>
               <form @submit.prevent="handleSignup">
                 <div class="form-group mb-3">
+                  <label for="name" class="bold-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="name"
+                    placeholder="Enter your name"
+                    required
+                  />
+                </div>
+                <div class="form-group mb-3">
                   <label for="name" class="bold-label">Username</label>
                   <input
                     type="text"
@@ -134,6 +144,7 @@ export default {
       modalInstance: null,
       email: '',
       password: '',
+      name: '', // Add an input field for name in the template
       username: '', // Add an input field for username in the template
       userType: '', // Store user type (worker or volunteer)
       confirmPassword: ''
@@ -187,6 +198,10 @@ export default {
           alert("Please select either 'Worker' or 'Volunteer' to sign up.");
           return;
       }
+      if (!this.name) {
+          alert("Please enter you name to sign up.");
+          return;
+      }
       try {
         // Firebase sign-up
         const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
@@ -198,7 +213,8 @@ export default {
         await setDoc(doc(db, 'profiles', user.uid), {
           username: this.username,
           email: this.email,
-          userType: this.userType // Save the selected user type
+          userType: this.userType, // Save the selected user type
+          name: this.name // Save the user's name
         });
 
         console.log("Signed up user:", user);
@@ -249,6 +265,7 @@ export default {
     max-height: 90vh;
     height: auto;
     overflow-y: auto;
+    overflow: hidden !important; /* Ensure no scrollbars show */
   }
   
   .modal-signup h2 {
