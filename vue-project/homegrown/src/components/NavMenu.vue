@@ -15,19 +15,22 @@
             </a>
 
             <!-- hamburger collapsible icon -->
-            <!-- flex and hamburger menu only for mobile -->
-            <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around collapsed" type="button"
-              data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-              aria-label="Toggle navigation" v-if="userType === 'worker' || userType === 'volunteer'">
-              <!-- custom 3 lines for animation for menu -->
-              <span class="toggler-icon top-bar"></span>
-              <span class="toggler-icon middle-bar"></span>
-              <span class="toggler-icon bottom-bar"></span>
-            </button>
+            <!-- Hamburger Menu and Profile Button Container -->
+            <div class="d-flex align-items-center"></div>
+              <!-- flex and hamburger menu only for mobile -->
+              <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around"
+                  type="button" :class="{ collapsed: !isNavbarOpen }" @click="toggleNavbar"
+                  aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                  v-if="userType === 'worker' || userType === 'volunteer'">
+                  <!-- custom 3 lines for animation for menu -->
+                  <span class="toggler-icon top-bar"></span>
+                  <span class="toggler-icon middle-bar"></span>
+                  <span class="toggler-icon bottom-bar"></span>
+              </button>
 
-            <!-- list of links/navs -->
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-              <ul class="navbar-nav">
+              <!-- list of links/navs -->
+              <div :class="['collapse', 'navbar-collapse', 'justify-content-center', { show: isNavbarOpen }]" id="navbarNav">
+                <ul class="navbar-nav">
                 <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
                   <router-link to="/homePage" class="nav-link active text-light" aria-current="page">Home</router-link>
                 </li>
@@ -126,7 +129,7 @@ export default {
       user: null,
       isDropdownVisible: false, // Track dropdown visibility
       userType: null,
-      showLoadingSpinner: false, // Controls visibility of loading spinner
+      isNavbarOpen: false, // Tracks the open/closed state of the navbar
     };
   },
   computed: {
@@ -147,8 +150,6 @@ export default {
       if (user) {
         this.user = user;
         const docRef = doc(db, "profiles", user.uid);
-        // line added to store auth in local storage
-        localStorage.setItem("auth", JSON.stringify(this.user))
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           this.userType = docSnap.data().userType;
@@ -164,8 +165,6 @@ export default {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const docRef = doc(db, "profiles", user.uid);
-        // line added to store auth in local storage
-        localStorage.setItem("auth", JSON.stringify(user))
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           this.userType = docSnap.data().userType; // Retrieve and set user type
@@ -229,6 +228,14 @@ export default {
       if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
         this.isDropdownVisible = false;
       }
+    },
+    toggleNavbar() {
+      // Toggle the open/closed state of the navbar
+      this.isNavbarOpen = !this.isNavbarOpen;
+    },
+    closeNavbar() {
+      // Close the navbar (set state to false)
+      this.isNavbarOpen = false;
     }
   }
 };
@@ -348,4 +355,38 @@ export default {
 .hidden {
   display: none;
 }
+
+/* Navbar Toggler Icon */
+.navbar-toggler {
+  border: none !important;         /* Remove border */
+  background-color: transparent !important;  /* Make background transparent */
+  box-shadow: none !important;     /* Remove any box shadow */
+  outline: none !important;        /* Remove focus outline */
+  padding: 0 !important;           /* Reset padding if needed */
+}
+
+.toggler-icon {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: darkred; /* Default color */
+  margin: 4px 0;
+  transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+}
+
+/* Style for collapsed (X) icon */
+.collapsed-bar.top-bar {
+  transform: rotate(45deg) translate(5px, 5px);
+  background-color: red; /* Change to red when transformed */
+}
+
+.collapsed-bar.middle-bar {
+  opacity: 0; /* Hide middle bar for "X" effect */
+}
+
+.collapsed-bar.bottom-bar {
+  transform: rotate(-45deg) translate(5px, -5px);
+  background-color: red; /* Change to red when transformed */
+}
+
 </style>

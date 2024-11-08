@@ -5,8 +5,7 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link
-              to="individualCoursePage"
+            <router-link :to="userType === 'worker' ? 'individualCoursePage' : 'mentorshipCourse'">
               class="btn btn-warning text-dark d-flex align-items-center"
             >
               <i class="bi bi-arrow-left me-1"></i>
@@ -145,7 +144,7 @@
 </template>
 
 <script>
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs , doc , getDoc} from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust the path as needed
 
 export default {
@@ -163,6 +162,7 @@ export default {
       submitted: false,
       is_correct: false,
       answers: [],
+      userType: "",
     };
   },
   methods: {
@@ -198,6 +198,15 @@ export default {
     },
     async fetchQuestions(storedLessonId) {
       try {
+        const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
+        const uid = user.uid;
+        console.log(user)
+        const docRef = doc(db, "profiles", uid);
+        const docSnap = await getDoc(docRef);
+        const userType = docSnap.data().userType;
+        this.userType = userType;
+        console.log(userType)
+
         const questionsRef = collection(
           db,
           `courses/${this.course.id}/lessons/${storedLessonId}/lesson_items/${this.lesson.id}/questions`

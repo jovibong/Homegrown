@@ -36,7 +36,7 @@
                 <input type="password" class="form-control" v-model="password" placeholder="Enter password" />
               </div>
               <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" v-model="rememberMe" />
+                <input type="checkbox" class="form-check-input" id="rememberMe" v-model="rememberMe" />
                 <label class="form-check-label" for="rememberMe">Remember me</label>
               </div>
               <button type="submit" class="btn btn-primary btn-block w-100">Sign In</button>
@@ -129,6 +129,8 @@ export default {
         // Emit login event to parent if needed
         this.$emit('login', { user: user, rememberMe: this.rememberMe });
 
+        // redirect to home page
+        this.$router.push({ name: 'homePage' });
         // Hide login modal
         this.hideModal();
       } catch (error) {

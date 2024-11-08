@@ -24,10 +24,9 @@
                     guiding your mentees, helping them unlock
                     their full potential with every step they take.</p>
             </div>
-
         </section>
 
-        <div v-if="lessons_loading" class="text-center">Loading...</div>
+        <loading-animation v-if="mentees_loading && lessons_loading"></loading-animation>
         <div v-else>
             <section v-if="course" id="course_info" class="container py-2 fade-in-top">
                 <div class="card shadow-sm mb-md-2 mb-3">
@@ -63,43 +62,42 @@
         </div>
 
         <!--Mentor-->
-        <div v-if="mentees_loading" class="text-center">Loading...</div>
-        <div v-else>
-            <section id="Mentee" class="container my-2 fade-in-top">
-                <div class="row">
-                    <div v-for="mentee in mentees" :key="mentee.name" class="col-md-6 mb-4">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-primary text-white text-center fw-bold h4">
-                                {{ mentee.name }}
-                                <!-- Notification Badge -->
-                                <span v-if="mentee.noti_count > 0"
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                    style="transform: translate(-50%, -50%);">
-                                    {{ mentee.noti_count }}
-                                </span>
-                            </div>
-                            <div class="card-body d-flex align-items-center">
-                                <div class="row">
-                                    <!-- Mentor Image -->
-                                    <div class="col-md-3 d-flex justify-content-center">
-                                        <img :src="'../img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
-                                            height="150px" width="150px">
-                                    </div>
-                                    <!-- Mentor Information -->
-                                    <div class="col-md-9 text-md-start text-center">
-                                        <p class="text-muted">{{ mentee.description }}</p>
-                                        <!-- Ask for Help Button -->
-                                        <a href="#" class="btn btn-primary d-inline-flex align-items-center">
-                                            Chat <i class="bi bi-arrow-right ms-2"></i>
-                                        </a>
-                                    </div>
+
+        <section id="Mentee" class="container my-2 fade-in-top">
+            <div class="row">
+                <div v-for="mentee in mentees" :key="mentee.name" class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white text-center fw-bold h4">
+                            {{ mentee.name }}
+                            <!-- Notification Badge -->
+                            <span v-if="mentee.noti_count > 0"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="transform: translate(-50%, -50%);">
+                                {{ mentee.noti_count }}
+                            </span>
+                        </div>
+                        <div class="card-body d-flex align-items-center">
+                            <div class="row">
+                                <!-- Mentor Image -->
+                                <div class="col-md-3 d-flex justify-content-center">
+                                    <img :src="mentee.profile_picture" alt="Mentee Img" class="rounded-circle"
+                                        height="100px" width="100px" style="object-fit: cover;">
+                                </div>
+                                <!-- Mentor Information -->
+                                <div class="col-md-9 text-md-start text-center">
+                                    <p class="text-muted">{{ mentee.description }}</p>
+                                    <!-- Ask for Help Button -->
+                                    <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                                        Chat <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
+
 
         <div class="content container" ref="lessons">
             <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
@@ -108,7 +106,8 @@
                         <h4 class="fw-bold mb-3">{{ lesson.title }}</h4>
                         <div class="row">
                             <div v-for="item in lesson.lesson_items" :key="item.id" class="col-12">
-                                <router-link :to="item.link" class="text-decoration-none">
+                                <router-link :to="`/${item.link}`" class="text-decoration-none"
+                                    @click.prevent="handleLessonItemClick(item, lessonId)">
                                     <div
                                         class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less">
                                         <div class="me-3">
@@ -142,10 +141,12 @@
 <script>
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
-// import { auth } from "../firebase/initialize";
-
+import loadingAnimation from "../components/loadingAnimation.vue";
 
 export default {
+    components: {
+        loadingAnimation,
+    },
     data() {
         return {
             expanded: false,
@@ -163,7 +164,22 @@ export default {
         fetchLessons: async function () {
             try {
                 const routeParams = this.$route.params;
-                const id = routeParams.id
+                const id = routeParams.id;
+
+                if (id) {
+                    // If the id exists in the route parameters, store it in sessionStorage
+                    sessionStorage.setItem("course", JSON.stringify(id));
+                    console.log("ID stored in sessionStorage:", id);
+                } else {
+                    // If the id does not exist in the route parameters, pull it from sessionStorage
+                    const storedCourse = sessionStorage.getItem("course");
+                    if (storedCourse) {
+                        const course = JSON.parse(storedCourse);
+                        console.log("Course retrieved from sessionStorage:", course);
+                    } else {
+                        console.log("No course data found in sessionStorage");
+                    }
+                }
 
                 const courseRef = doc(db, "courses", id);
                 const courseSnap = await getDoc(courseRef);
@@ -201,7 +217,7 @@ export default {
                 );
 
                 this.lessons = lessonsData;
-                // console.log(lessons);
+                // console.log(lessonsData);
             }
 
             catch (error) {
@@ -211,10 +227,19 @@ export default {
             }
 
         },
+        handleLessonItemClick(item, lessonId) {
+            sessionStorage.setItem("selectedLessonItem", JSON.stringify(item));
+            sessionStorage.setItem("selectedLessonId", JSON.stringify(lessonId));
+
+            if (item.completed || item.latest) {
+                this.$router.push(item.route_link);
+            }
+        },
         fetchMentees: async function () {
             try {
-                const user = JSON.parse(localStorage.getItem("auth"))
+                const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
                 const uid = user.uid;
+                // console.log(uid)
                 const mentorRef = doc(db, "profiles", uid);
                 const mentorSnap = await getDoc(mentorRef);
                 const mentorID = mentorSnap.data().mentor;
@@ -300,14 +325,6 @@ export default {
         },
     },
     async mounted() {
-        // const storedCourse = sessionStorage.getItem("selectedCourse");
-        // if (storedCourse) {
-        //     this.course = JSON.parse(storedCourse);
-        // } else {
-        //     console.log("No course data found in sessionStorage");
-        //     return;
-        // }
-        // const uid = auth.currentUser.uid;
         await this.fetchLessons();
         await this.fetchMentees();
     },
