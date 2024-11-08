@@ -9,7 +9,7 @@
             </button>
           </div>
           <div class="col-10 p-1 my-2 rounded-pill">
-             <input
+            <input
               type="text"
               v-model="searchQuery"
               placeholder="Search"
@@ -41,36 +41,41 @@
           ></loading-animation>
           <div v-else class="fade-in-top">
             <div v-if="filteredChats.length > 0">
-            <div
-              v-for="(chat, index) in filteredChats"
-              :key="index"
-              class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
-              @click="goToChat(index)"
-              style="cursor: pointer"
-            >
-              <div class="col-lg-2 col-1">
-                <div
-                  class="overflow-hidden rounded-circle border border-black"
-                  style="width: 40px; height: 40px"
-                >
-                  <img :src="chat.chat_img" alt="Chat Image" height="40" width="40"/>
-                </div>
-              </div>
-              <div class="col-10 overflow-hidden">
-                <div class="fw-bold">{{ chat.chat_name }}</div>
-                <div class="text-nowrap">
-                  <span
-                    v-if="chat.chat_type == 'group'"
-                    class="d-inline-block me-1"
+              <div
+                v-for="(chat, index) in filteredChats"
+                :key="index"
+                class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
+                @click="goToChat(index)"
+                style="cursor: pointer"
+              >
+                <div class="col-lg-2 col-1">
+                  <div
+                    class="overflow-hidden rounded-circle border border-black"
+                    style="width: 40px; height: 40px"
                   >
-                    {{ getUserName(getLastConvo(chat)) }}:
-                  </span>
-                  <span class="text-muted text-nowrap d-inline">
-                    {{ getLastConvo(chat).message }}
-                  </span>
+                    <img
+                      :src="chat.chat_img"
+                      alt="Chat Image"
+                      height="40"
+                      width="40"
+                    />
+                  </div>
+                </div>
+                <div class="col-10 overflow-hidden">
+                  <div class="fw-bold">{{ chat.chat_name }}</div>
+                  <div class="text-nowrap">
+                    <span
+                      v-if="chat.chat_type == 'group'"
+                      class="d-inline-block me-1"
+                    >
+                      {{ getUserName(getLastConvo(chat)) }}:
+                    </span>
+                    <span class="text-muted text-nowrap d-inline">
+                      {{ getLastConvo(chat).message }}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
             <div v-else class="text-center text-muted fst-italic mt-3">
               No chats found.
@@ -96,8 +101,9 @@
               >
                 <img
                   :src="selected_chat_obj.chat_img"
-                  alt="Selected Chat Image" height="40" width="40"
-                   
+                  alt="Selected Chat Image"
+                  height="40"
+                  width="40"
                 />
               </div>
             </div>
@@ -194,22 +200,25 @@
             class="row container-fluid p-0 m-0 mt-2 d-flex justify-content-center align-items-center"
           >
             <div
-              class="rounded-pill col-8 py-2 bg-white d-flex align-items-center"
+              class="rounded-pill col-7 py-2 bg-white d-flex align-items-center pe-0"
             >
-              <div class="row container-fluid d-flex align-items-center">
+              <div class="row container-fluid d-flex align-items-center p-0">
                 <div class="col-1">
                   <i class="bi bi-emoji-smile me-2 fs-3"></i>
                 </div>
-                <div class="col-10">
-                  <input
-                    v-model="message"
-                    type="text"
-                    placeholder="Message"
-                    class="form-control border border-0 container-fluid"
-                  />
-                </div>
-                <div class="col-1">
-                  <i class="bi bi-paperclip fs-3"></i>
+                <div class="col-11 p-0">
+                  <div class="row container-fluid d-flex align-items-center">
+                    <div class="col-11 pe-0">
+                      <input
+                        v-model="message"
+                        type="text"
+                        placeholder="Message"
+                        class="form-control border border-0 p-0"
+                      />
+                    </div>
+
+                    <i class="col-1 bi bi-paperclip fs-3"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -418,7 +427,7 @@ export default {
 
       return currentDate.toDateString() !== previousDate.toDateString();
     },
-    async checkAndCreateuser(userId) {
+    async checkAndCreateuser(userId, userName) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "chatters", userId);
@@ -432,7 +441,7 @@ export default {
           // If user document doesn't exist, create a new one
           const newUser = {
             id: userId,
-            name: "New User", // Default name, adjust as needed
+            name: userName || "New User", // Default name, adjust as needed
           };
 
           // Set the new document in Firestore
@@ -521,7 +530,7 @@ export default {
     // Filtered chat list based on search query
     filteredChats() {
       const query = this.searchQuery.toLowerCase();
-      return this.chat_arr.filter(chat =>
+      return this.chat_arr.filter((chat) =>
         chat.chat_name.toLowerCase().startsWith(query)
       );
     },
@@ -534,7 +543,7 @@ export default {
       JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
     if (userObject) {
-      this.checkAndCreateuser(userObject.uid);
+      this.checkAndCreateuser(userObject.uid, userObject.name);
       this.user = userObject.uid;
       console.log(this.user);
     }
@@ -604,7 +613,6 @@ body {
   object-position: center; /* Center the image within the container */
 }
 
-
 /* Close Button Styles */
 .close-button {
   position: absolute;
@@ -630,13 +638,10 @@ body {
 .close-button:hover {
   background-color: darken(var(--bs-primary), 10%);
   transform: scale(1.1);
-  color:var(--bs-primary);
+  color: var(--bs-primary);
 }
 
 .close-button:active {
   transform: scale(0.95);
 }
-
-
-
 </style>
