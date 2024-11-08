@@ -5,8 +5,7 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link
-              to="individualCoursePage"
+            <router-link :to="userType === 'volunteer' ? `mentorshipCourse` : 'individualCoursePage'"
               class="btn btn-warning text-dark d-flex align-items-center"
             >
               <i class="bi bi-arrow-bar-left me-1"></i>
@@ -131,6 +130,7 @@ export default {
       course: null,
       storedLessonId: "",
       user: "",
+      userType: "",
     };
   },
   async mounted() {
@@ -138,6 +138,11 @@ export default {
       JSON.parse(localStorage.getItem("user"));
     if(userObject){
       this.user = userObject.uid;
+
+      const docRef = doc(db, "profiles", this.user);
+      const docSnap = await getDoc(docRef);
+      const userType = docSnap.data().userType;
+      this.userType = userType;
     }
     await this.waitForLessonData();
 
