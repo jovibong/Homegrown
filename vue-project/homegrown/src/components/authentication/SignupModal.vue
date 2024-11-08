@@ -136,6 +136,7 @@ export default {
       password: '',
       username: '', // Add an input field for username in the template
       userType: '', // Store user type (worker or volunteer)
+      confirmPassword: ''
     };
   },
   watch: {
@@ -202,6 +203,7 @@ export default {
 
         console.log("Signed up user:", user);
         this.$emit("signup", user); // Emit event with user info if needed
+        this.$router.push({ name: 'homePage' }); // Redirect to home page
         this.hideModal();
       } catch (error) {
         console.error("Error signing up:", error.message);
