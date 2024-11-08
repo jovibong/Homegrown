@@ -5,85 +5,107 @@
   margin-bottom: 5px;
 }
 
-  
+
 .carousel-inner img {
-  object-fit: cover; /* Ensure images cover the area without distortion */
-  object-position: center; /* Center the image */
-  height: 300px; /* Set a fixed height to control cropping */
+  object-fit: cover;
+  /* Ensure images cover the area without distortion */
+  object-position: center;
+  /* Center the image */
+  height: 300px;
+  /* Set a fixed height to control cropping */
 }
 
 .title {
   font-family: 'Poppins';
   color: #525FE1;
   font-weight: bold;
+  margin-top: 20px;
+
 }
 
 .searchBar {
   padding-left: 30px;
-  border-radius:30px;
-  border:2px solid #525FE1;
+  border-radius: 30px;
+  border: 2px solid #525FE1;
   height: 50px;
+  width: 100%;
 }
 
 .event-details {
-  border:2px solid #525FE1;
+  border: 2px solid #525FE1;
   margin-right: 10px;
   height: 70px;
   color: black;
+}
+
+.card {
+  flex: 0 0 auto;
+  /* Ensure each card stays the same width */
+  width: 200px;
+  /* Set a fixed width for each card */
 }
 
 .scroll-container {
   display: flex;
   overflow-x: auto;
   padding: 1rem;
-  gap: 1rem; /* Adjust spacing between cards as needed */
-  }
-  
-  .scroll-container .card {
-  flex: 0 0 auto; /* Ensure each card stays the same width */
-  width: 200px; /* Set a fixed width for each card */
-  }
-
-  /* trying to style glider */
+  gap: 1rem;
+  /* Adjust spacing between cards as needed */
+}
 
 .scroll-container::-webkit-scrollbar {
-  height: 8px; /* Scrollbar height for horizontal scroll */
+  height: 8px;
+  /* Scrollbar height for horizontal scroll */
 }
 
 .scroll-container::-webkit-scrollbar-track {
-  background: #eee; /* Scrollbar track color */
+  background: #eee;
+  /* Scrollbar track color */
 }
 
 .scroll-container::-webkit-scrollbar-thumb {
-  background-color: #525FE1; /* Scrollbar thumb color */
-  border-radius: 10px; /* Rounded scrollbar edges */
-  border: 2px solid #525FE1; /* Adds padding to thumb */
+  background-color: #525FE1;
+  /* Scrollbar thumb color */
+  border-radius: 10px;
+  /* Rounded scrollbar edges */
+  border: 2px solid #525FE1;
+  /* Adds padding to thumb */
 }
 
-  /* styles.css or component's <style> section */
+
+
+/* styles.css or component's <style> section */
 .button {
-  padding: 10px 20px; /* Adjust padding as needed */
+  padding: 10px 20px;
+  /* Adjust padding as needed */
   border: none;
-  border-radius: 5px; /* Rounded corners */
+  border-radius: 5px;
+  /* Rounded corners */
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+  transition: background-color 0.3s, transform 0.2s;
+  /* Smooth transition */
 }
 
 /* Not pressed state */
 .notPressed {
-  background-color: #525FE1; /* Bootstrap primary color */
-  color: white; /* Text color */
+  background-color: #525FE1;
+  /* Bootstrap primary color */
+  color: white;
+  /* Text color */
 }
 
 /* Pressed state */
 .pressed {
   border: 1px solid #525FE1;
-  background-color: white; /* Darker shade for pressed effect */
-  color: #525FE1; /* Text color */
-  transform: scale(0.95); /* Slightly shrink the button */
+  background-color: white;
+  /* Darker shade for pressed effect */
+  color: #525FE1;
+  /* Text color */
+  transform: scale(0.95);
+  /* Slightly shrink the button */
 }
 
-.createEventStyle{
+.createEventStyle {
   border: 2px solid #525FE1;
   padding: 10px;
   border-radius: 10px;
@@ -92,19 +114,19 @@
 /* Grid template for responsive layout - for eventDetails */
 .grid-template {
   display: grid;
-  grid-template-columns: 1fr; /* Single column by default */
-  gap: 1rem; /* Adjust spacing as needed */
+  grid-template-columns: 1fr;
+  /* Single column by default */
+  gap: 1rem;
+  /* Adjust spacing as needed */
 }
 
 @media (min-width: 768px) {
   .grid-template {
-      grid-template-columns: repeat(3, 1fr); /* Three equal columns for medium and larger screens */
+    grid-template-columns: repeat(3, 1fr);
+    /* Three equal columns for medium and larger screens */
   }
 }
 
-#forumCategories {
-  background-color: yellow;
-}
 
 .category {
   border: 2px solid #525FE1;
@@ -149,7 +171,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
- 
+
   height: 60px;
   width: 500px;
   background: #5e14c6;
@@ -193,7 +215,8 @@
 .joinButton i,
 .joinButton .button-text {
   color: #fff;
-  font-size: 20px; /* Adjusted to a consistent size */
+  font-size: 20px;
+  /* Adjusted to a consistent size */
   font-weight: 500;
   transition: transform 0.2s ease;
 }
@@ -217,13 +240,18 @@
 
 .groupContainer {
   display: flex;
-  align-items: center; /* vertically centers items */
-  justify-content: space-between; /* spaces items out */
+  align-items: center;
+  /* vertically centers items */
+  justify-content: space-between;
+  /* spaces items out */
 }
 
 
 .createButton {
-  width: 200px;
+  width: fit-content;
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
   background-color: #525FE1;
   color: yellow;
   font-family: 'Poppins';
@@ -234,25 +262,29 @@
 @media (max-width: 768px) {
   .joinButton {
     height: 50px;
-    width: 90%; /* Reduced width for medium screens */
+    width: 90%;
+    /* Reduced width for medium screens */
   }
 
   .joinButton i,
   .joinButton .button-text {
-    font-size: 16px; /* Reduce font size for medium screens */
+    font-size: 16px;
+    /* Reduce font size for medium screens */
   }
 }
 
 @media (max-width: 576px) {
   .joinButton {
     height: 45px;
-    width: 85%; /* Even smaller width for small screens */
+    width: 85%;
+    /* Even smaller width for small screens */
     padding: 8px;
   }
 
   .joinButton i,
   .joinButton .button-text {
-    font-size: 14px; /* Further reduce font size for small screens */
+    font-size: 14px;
+    /* Further reduce font size for small screens */
   }
 }
 
@@ -260,4 +292,33 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.eventGroup {
+  border: 2px solid #525FE1;
+  border-radius: 55px;
+  width: 100%;
+  margin: 10px;
+  height: 50px;
+}
+
+#groupName {
+  padding-left: 30px;
+  display: flex;
+  text-align: center;
+  color:#525FE1
+}
+
+#forumCategories {
+  background-color: lightsalmon;
+}
+
+.category,
+.discussion {
+  background: linear-gradient(to right, pink 10%, white 10%);
+  border-radius: 10px;
+  border: none;
+  width: 100%;
+  margin: 10px;
+  height: 80px;
 }
