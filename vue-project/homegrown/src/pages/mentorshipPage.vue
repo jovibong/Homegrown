@@ -13,7 +13,7 @@
                     <!-- Mentorship Cards -->
                     <div v-for="course in courses" :key="course.id" class="col-md-4 mb-4">
                         <div class="card shadow-sm position-relative hover-animate">
-                            <router-link :to="`/mentorshipCourse/${course.id}`" class="text-decoration-none">
+                            <router-link :to="`/mentorshipCourse`" class="text-decoration-none" @click="goToMentorshipCoursePage(course.id)">
                                 <span v-if="course.noti_count > 0"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
                                     {{ course.noti_count }}
@@ -129,8 +129,8 @@ import loadingAnimation from "../components/loadingAnimation.vue";
 
 export default {
     components: {
-    loadingAnimation,
-  },
+        loadingAnimation,
+    },
     data() {
         return {
             courses: [],
@@ -222,6 +222,11 @@ export default {
                 this.mentorships_loading = false;
             }
         },
+        goToMentorshipCoursePage(course) {
+            sessionStorage.setItem("selectedCourse", JSON.stringify(course));
+            this.$router.push({ name: "mentorshipCourse" });
+            return course;
+        },
         openModal(course) {
             this.selectedCourseId = course.id;
             this.selectedCourseName = course.name; // Store the course name
@@ -257,7 +262,7 @@ export default {
         }
     },
     async mounted() {
-        
+
         await this.fetchLessons();
     },
 }
