@@ -163,23 +163,15 @@ export default {
     methods: {
         fetchLessons: async function () {
             try {
-                const routeParams = this.$route.params;
-                let id = routeParams.id;
-
-                if (id) {
-                    // If the id exists in the route parameters, store it in sessionStorage
-                    sessionStorage.setItem("course", JSON.stringify(id));
-                    console.log("ID stored in sessionStorage:", id);
+                // If the id does not exist in the route parameters, pull it from sessionStorage
+                const selectedCourse = sessionStorage.getItem("selectedCourse");
+                const id = JSON.parse(selectedCourse);
+                if (selectedCourse) {
+                    console.log("Course retrieved from sessionStorage:", id);
                 } else {
-                    // If the id does not exist in the route parameters, pull it from sessionStorage
-                    const storedCourse = sessionStorage.getItem("course");
-                    if (storedCourse) {
-                        id = JSON.parse(storedCourse);
-                        console.log("Course retrieved from sessionStorage:", id);
-                    } else {
-                        console.log("No course data found in sessionStorage");
-                    }
+                    console.log("No course data found in sessionStorage");
                 }
+
 
                 const courseRef = doc(db, "courses", id);
                 const courseSnap = await getDoc(courseRef);
@@ -245,8 +237,9 @@ export default {
                 const mentorID = mentorSnap.data().mentor;
                 // console.log(mentorID)
 
-                const routeParams2 = this.$route.params;
-                const courseID = routeParams2.id
+                // If the id does not exist in the route parameters, pull it from sessionStorage
+                const selectedCourse = sessionStorage.getItem("selectedCourse");
+                const courseID = JSON.parse(selectedCourse);
                 // console.log(courseID)
 
                 const menteeRef = doc(db, "mentors", mentorID, "mentorships", courseID);
