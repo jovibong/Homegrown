@@ -1,192 +1,310 @@
 <template>
-    <div>
-      <!-- Sidebar Links -->
-      <div class="sidebar">
-        <router-link to="/profile">Profile</router-link>
-        <router-link to="/edit-profile" class="text-dark">Edit Profile</router-link>
-      </div>
-  
-      <!-- Profile Form Section -->
-      <div class="content-container">
-        <div class="profile-header mb-4">
-          <h2>Edit Profile</h2>
-          <div class="text-center">
-            <img :src="profileImageSrc || 'https://via.placeholder.com/100'" alt="Profile Image" class="profile-image" />
-            <a class="edit-picture-link d-block" @click="triggerFileInput">Change Picture</a>
-            <input type="file" ref="profileImageInput" class="d-none" accept="image/*" @change="previewImage">
-          </div>
+    <div class="profile-page-container">
+        <!-- Sidebar Links -->
+        <div class="sidebar">
+            <a @click="showProfileSection('profile')" :class="{'active': currentSection === 'profile'}" class="sidebar-link">Profile</a>
+            <a @click="showProfileSection('changePassword')" :class="{'active': currentSection === 'changePassword'}" class="sidebar-link">Change Password</a>
         </div>
-        
-        <form @submit.prevent="submitForm">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="firstName" class="form-label">First Name</label>
-              <input type="text" class="form-control" v-model="formData.firstName" required>
-            </div>
-  
-            <div class="col-md-6 mb-3">
-              <label for="lastName" class="form-label">Last Name</label>
-              <input type="text" class="form-control" v-model="formData.lastName" required>
-            </div>
-  
-            <div class="col-md-12 mb-3">
-              <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" v-model="formData.username" required>
-            </div>
-  
-            <div class="col-md-6 mb-3">
-              <label for="password" class="form-label">Change Password</label>
-              <input type="password" class="form-control" v-model="formData.password">
-            </div>
-  
-            <div class="col-md-6 mb-3">
-              <label for="confirmPassword" class="form-label">Confirm Password</label>
-              <input type="password" class="form-control" v-model="formData.confirmPassword">
-            </div>
-          </div>
-  
-          <div class="text-end">
-            <button type="submit" class="btn btn-warning">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </template>
-  
-  <script>
 
-  import { auth, db, storage } from '@/firebase/initialize.js';
-  import { doc, getDoc, setDoc } from 'firebase/firestore';
-  import { uploadBytes, getDownloadURL, ref as storageRef } from 'firebase/storage';
-  
-  export default {
+        <!-- Content Section -->
+        <div class="content-container">
+            <div v-if="loading" class="spinner-container">
+                Loading...
+                <div class="spinner"></div>
+            </div>
+
+            <div v-else>
+                <!-- Profile Section -->
+                <div v-if="currentSection === 'profile'" class="profile-box container py-3 fade-in-top">
+                    <div class="profile-header mb-4">
+                        <h2 class="text-primary fw-bold text-center mb-3 display-4">Profile</h2>
+                        <div class="text-center">
+                            <img :src="profileImageSrc || require('@/img/blankprofile.png')" alt="Profile Image" class="profile-image" />
+                            <a class="edit-picture-link d-block" @click="triggerFileInput">Change Picture</a>
+                            <input type="file" ref="profileImageInput" class="d-none" accept="image/*" @change="previewImage">
+                        </div>
+                    </div>
+
+                    <div class="profile-details">
+                        <p><strong>Email: </strong> {{ email }}</p>
+
+                        <!-- Editable Name -->
+                        <p>
+                            <strong>Name: </strong>
+                            <span v-if="!isEditingName">
+                                {{ formData.name || "Enter your name" }}
+                                <span class="edit-icon" @click="isEditingName = true"><i class="fas fa-edit"></i></span>
+                            </span>
+                            <span v-else>
+                                <input
+                                    type="text"
+                                    v-model="formData.name"
+                                    placeholder=" Enter your name"
+                                    class="form-control mb-2"
+                                />
+                                <button class="btn btn-warning" @click="updateField('name')">Change</button>
+                            </span>
+                        </p>
+
+                        <!-- Editable Username -->
+                        <p>
+                            <strong>Username: </strong>
+                            <span v-if="!isEditingUsername">
+                                {{ formData.username || " Enter your username" }}
+                                <span class="edit-icon" @click="isEditingUsername = true"><i class="fas fa-edit"></i></span>
+                            </span>
+                            <span v-else>
+                                <input
+                                    type="text"
+                                    v-model="formData.username"
+                                    placeholder=" Enter your username"
+                                    class="form-control mb-2"
+                                />
+                                <button class="btn btn-warning" @click="updateField('username')">Change</button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Change Password Section -->
+                <div v-if="currentSection === 'changePassword'" class="profile-box container py-3 fade-in-top">
+                    <h2 class="text-primary fw-bold text-center mb-3 display-4">Change Password</h2>
+                    <form @submit.prevent="submitPasswordChange">
+                        <div class="mb-3">
+                            <label for="password" class="form-label">New Password</label>
+                            <input type="password" class="form-control" v-model="formData.password" placeholder="Enter new password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" v-model="formData.confirmPassword" placeholder="Confirm new password">
+                        </div>
+                        <button type="submit" class="btn btn-warning">Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import { auth, db, storage } from '@/firebase/initialize.js';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+
+export default {
     data() {
-      return {
-        profileImageSrc: null,
-        formData: {
-          firstName: "",
-          lastName: "",
-          username: "",
-          password: "",
-          confirmPassword: ""
-        },
-        userId: null
-      };
+        return {
+            profileImageSrc: null,
+            formData: {
+                name: "",
+                username: "",
+                password: "",
+                confirmPassword: ""
+            },
+            email: "",
+            userId: null,
+            currentSection: 'profile', // Tracks the current section being viewed
+            loading: true,
+            isEditingName: false,
+            isEditingUsername: false
+        };
     },
-    async created() {
-      const user = auth.currentUser;
-      if (user) {
-        this.userId = user.uid;
-        await this.fetchUserProfile();
-      }
+    created() {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                this.userId = user.uid;
+                this.email = user.email;
+                await this.fetchUserProfile();
+            }
+            this.loading = false;
+        });
     },
     methods: {
-      async fetchUserProfile() {
-        try {
-          const userDoc = await getDoc(doc(db, "profiles", this.userId));
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            this.formData = {
-              firstName: data.firstName || "",
-              lastName: data.lastName || "",
-              username: data.username || "",
-              password: "",
-              confirmPassword: ""
-            };
-            this.profileImageSrc = data.profileImageUrl || "https://via.placeholder.com/100";
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
+        showProfileSection(section) {
+            this.currentSection = section;
+        },
+        async fetchUserProfile() {
+            try {
+                const userDoc = await getDoc(doc(db, "profiles", this.userId));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    this.formData.name = data.name || "";
+                    this.formData.username = data.username || "";
+                    this.profileImageSrc = data.profileImageUrl || require('@/img/blankprofile.png');
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        },
+        triggerFileInput() {
+            this.$refs.profileImageInput.click();
+        },
+        async uploadFile(file, userId) {
+            try {
+                // Create a reference to the file's storage path (e.g., `profileImages/userId.jpg`)
+                const fileRef = storageRef(storage, `profileImages/${userId}.jpg`);
+                
+                // Upload the file to Cloud Storage
+                await uploadBytes(fileRef, file);
+
+                // Get the download URL for the uploaded file
+                const downloadURL = await getDownloadURL(fileRef);
+                
+                console.log('File uploaded successfully:', downloadURL);
+                
+                // Return the download URL
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                throw error; // Re-throw the error to handle it in your application
+            }
+        },
+        async previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                try {
+                    // Reference to the image location in Firebase Storage
+                    const imageRef = storageRef(storage, `profileImages/${this.userId}.jpg`);
+                    
+                    // Attempt to delete the existing image if it exists
+                    try {
+                        await deleteObject(imageRef);
+                        console.log("Previous image deleted successfully.");
+                    } catch (error) {
+                        // Log a warning if there was no image to delete or an issue deleting it
+                        console.warn("No existing image to delete or error deleting image:", error);
+                    }
+
+                    // Upload the new image
+                    await uploadBytes(imageRef, file);
+
+                    // Get the download URL for the uploaded image
+                    const imageUrl = await getDownloadURL(imageRef);
+
+                    // Update the Firestore document with the new image URL
+                    await setDoc(doc(db, "profiles", this.userId), { profileImageUrl: imageUrl }, { merge: true });
+
+                    // Update the UI with the new image URL
+                    this.profileImageSrc = imageUrl;
+
+                    // Notify the user of success
+                    alert("Profile image updated successfully!");
+                } catch (error) {
+                    console.error("Error uploading image:", error);
+                    alert("There was an error uploading your profile image.");
+                }
+            }
+        },
+
+        async updateField(field) {
+            try {
+                await setDoc(doc(db, "profiles", this.userId), {
+                    [field]: this.formData[field]
+                }, { merge: true });
+                if (field === 'name') this.isEditingName = false;
+                if (field === 'username') {
+                    this.isEditingUsername = false;
+                }
+                alert(`${field} updated successfully!`);
+            } catch (error) {
+                console.error(`Error updating ${field}:`, error);
+                alert(`There was an error updating your ${field}.`);
+            }
+        },
+        async submitPasswordChange() {
+            if (this.formData.password !== this.formData.confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+            try {
+                await auth.currentUser.updatePassword(this.formData.password);
+                alert("Password updated successfully!");
+                this.formData.password = "";
+                this.formData.confirmPassword = "";
+                this.currentSection = 'profile'; // Go back to profile after password change
+            } catch (error) {
+                console.error("Error updating password:", error);
+                alert("There was an error updating your password.");
+            }
         }
-      },
-      triggerFileInput() {
-        this.$refs.profileImageInput.click();
-      },
-      previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-          this.profileImageSrc = URL.createObjectURL(file);
-        }
-      },
-      async submitForm() {
-        if (this.formData.password && this.formData.password !== this.formData.confirmPassword) {
-          alert("Passwords do not match.");
-          return;
-        }
-  
-        try {
-          // Update profile information in Firestore
-          await setDoc(doc(db, "profiles", this.userId), {
-            firstName: this.formData.firstName,
-            lastName: this.formData.lastName,
-            username: this.formData.username,
-          });
-  
-          // Update profile image if a new one is selected
-          if (this.$refs.profileImageInput.files[0]) {
-            const file = this.$refs.profileImageInput.files[0];
-            const imageRef = storageRef(storage, `profileImages/${this.userId}`);
-            await uploadBytes(imageRef, file);
-            const imageUrl = await getDownloadURL(imageRef);
-            this.profileImageSrc = imageUrl;
-  
-            // Update image URL in Firestore
-            await setDoc(doc(db, "users", this.userId), { profileImageUrl: imageUrl }, { merge: true });
-          }
-  
-          // Update password if provided
-          if (this.formData.password) {
-            await auth.currentUser.updatePassword(this.formData.password);
-          }
-  
-          alert("Profile updated successfully!");
-        } catch (error) {
-          console.error("Error updating profile:", error);
-          alert("There was an error updating your profile.");
-        }
-      }
     }
-  };
-  </script>
-  
-  <style scoped>
-  .sidebar {
+};
+</script>
+
+<style scoped>
+.profile-page-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+.sidebar {
     background-color: #f8f9fa;
     padding: 20px;
     height: 100vh;
+    width: 250px;
     position: sticky;
     top: 0;
-    width: 200px;
-  }
-  
-  .content-container {
-    margin-left: 220px;
+}
+.sidebar-link {
+    display: block;
+    padding: 10px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+.sidebar-link.active, .sidebar-link:hover {
+    color: #3B71CA;
+}
+.content-container {
+    flex: 1;
     padding: 20px;
-  }
-  
-  .profile-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .profile-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
+    justify-content: center;
+    align-items: flex-start;
+}
+.profile-box {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+.profile-image {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-  }
-  
-  .edit-picture-link {
-    font-size: 14px;
-    color: #007bff;
+    margin-bottom: 10px;
+}
+.edit-picture-link {
+    color: #3B71CA;
     cursor: pointer;
     text-decoration: underline;
-  }
-  
-  .btn-warning {
-    background-color: #f0ad4e;
-    border: none;
-  }
-  </style>
+}
+.edit-icon {
+    margin-left: 8px;
+    color: #3B71CA;
+    cursor: pointer;
+}
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3B71CA;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+     0% { transform: rotate(0deg); }
+     100% { transform: rotate(360deg); }
+}
+</style>
   
