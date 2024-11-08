@@ -1,15 +1,20 @@
 <template>
   <div>
     <div class="row container-fluid px-0 mx-0 h-100">
-      <section id="chats" class="col-md-4 bg-white">
+      <section id="chats" class="col-lg-4 bg-white">
         <div class="row container-fluid mt-2 fade-in-top">
           <div class="col-2 pe-2">
             <button class="btn btn-secondary btn-sm my-2" id="hamburgerBtn">
               <i class="bi bi-list h4"></i>
             </button>
           </div>
-          <div class="col-10 py-2 my-2 rounded-pill border border-black">
-            Search
+          <div class="col-10 p-1 my-2 rounded-pill">
+             <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Search"
+              class="form-control border border-2 rounded-pill"
+            />
           </div>
         </div>
         <nav class="navbar navbar-expand">
@@ -30,44 +35,55 @@
         </nav>
         <!-- Chat List -->
         <div style="height: 65vh; overflow-y: auto">
-          <div
-            v-for="(chat, index) in chat_arr"
-            :key="index"
-            class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
-            @click="goToChat(index)"
-            style="cursor: pointer"
-          >
-            <div class="col-2">
-              <div
-                class="overflow-hidden rounded-circle border border-black"
-                style="width: 40px; height: 40px"
-              >
-                <img :src="chat.chat_img" alt="Chat Image" />
+          <loading-animation
+            v-if="chats_loading"
+            class="mt-5"
+          ></loading-animation>
+          <div v-else class="fade-in-top">
+            <div v-if="filteredChats.length > 0">
+            <div
+              v-for="(chat, index) in filteredChats"
+              :key="index"
+              class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
+              @click="goToChat(index)"
+              style="cursor: pointer"
+            >
+              <div class="col-lg-2 col-1">
+                <div
+                  class="overflow-hidden rounded-circle border border-black"
+                  style="width: 40px; height: 40px"
+                >
+                  <img :src="chat.chat_img" alt="Chat Image" />
+                </div>
+              </div>
+              <div class="col-10 overflow-hidden">
+                <div class="fw-bold">{{ chat.chat_name }}</div>
+                <div class="text-nowrap">
+                  <span
+                    v-if="chat.chat_type == 'group'"
+                    class="d-inline-block me-1"
+                  >
+                    {{ getUserName(getLastConvo(chat)) }}:
+                  </span>
+                  <span class="text-muted text-nowrap d-inline">
+                    {{ getLastConvo(chat).message }}
+                  </span>
+                </div>
               </div>
             </div>
-            <div class="col-10 overflow-hidden">
-              <div class="fw-bold">{{ chat.chat_name }}</div>
-              <div class="text-nowrap">
-                <span
-                  v-if="chat.chat_type == 'group'"
-                  class="d-inline-block me-1"
-                >
-                  {{ getUserName(getLastConvo(chat)) }}:
-                </span>
-                <span class="text-muted text-nowrap d-inline">
-                  {{ getLastConvo(chat).message }}
-                </span>
-              </div>
+            </div>
+            <div v-else class="text-center text-muted fst-italic mt-3">
+              No chats found.
             </div>
           </div>
+          <!-- End Chat List -->
         </div>
-        <!-- End Chat List -->
       </section>
 
       <!-- Conversation Section -->
       <section
         id="conversation"
-        class="col-md-8 bg-secondary px-0 fade-in-right"
+        class="col-lg-8 d-none d-lg-inline bg-secondary px-0 fade-in-right"
         style="height: 90vh"
       >
         <div v-if="selected_chat_obj">
@@ -140,10 +156,16 @@
                 class="container-fluid w-100 d-flex justify-content-start align-items-center my-4"
               >
                 <span
-                  class="overflow-hidden rounded-circle d-inline-block border border-black me-3"
+                  class="overflow-hidden rounded-circle d-inline-block border border-black me-3 clickable"
                   style="width: 40px; height: 40px"
+                  @click="openImagePopup(getProfilePic(conversation))"
                 >
-                  <img :src="getProfilePic(conversation)" alt="User Image" />
+                  <img
+                    :src="getProfilePic(conversation)"
+                    alt="User Image"
+                    height="40"
+                    width="40"
+                  />
                 </span>
                 <span class="bg-white rounded px-3 py-2 d-inline-block">
                   <b>{{ getUserName(conversation) }}</b
@@ -153,6 +175,19 @@
               </div>
             </div>
           </div>
+
+          <!-- Image Popup and Overlay -->
+          <div
+            v-if="showImagePopup"
+            class="popup-overlay"
+            @click="closeImagePopup"
+          >
+            <div class="popup-image-container" @click.stop>
+              <img :src="popupImageUrl" alt="Popup Image" class="popup-image" />
+              <button class="close-button" @click="closeImagePopup">×</button>
+            </div>
+          </div>
+
           <div
             class="row container-fluid p-0 m-0 mt-2 d-flex justify-content-center align-items-center"
           >
@@ -195,6 +230,7 @@
   </div>
 </template>
 
+
 <script>
 import {
   collection,
@@ -202,20 +238,37 @@ import {
   addDoc,
   serverTimestamp,
   getDoc,
+  setDoc,
+  doc,
 } from "firebase/firestore";
 import { db } from "../firebase/initialize";
+import loadingAnimation from "../components/loadingAnimation.vue";
 
 export default {
+  components: {
+    loadingAnimation,
+  },
   data() {
     return {
       chat_arr: [],
       users_arr: null,
       selected_chat_obj: null,
-      user: "user_00001",
+      user: "",
       message: "",
+      chats_loading: true,
+      showImagePopup: false,
+      popupImageUrl: "",
+      searchQuery: "", // Search input value
     };
   },
   methods: {
+    openImagePopup(imageUrl) {
+      this.popupImageUrl = imageUrl;
+      this.showImagePopup = true;
+    },
+    closeImagePopup() {
+      this.showImagePopup = false;
+    },
     async fetchUsers() {
       try {
         const usersCollection = collection(db, "users");
@@ -233,52 +286,71 @@ export default {
       this.chat_arr = [];
 
       try {
+        // Step 1: Fetch the `chats` array from the user document in `chatters` collection
+        const userDocRef = doc(db, "chatters", this.user);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+          console.error("User document does not exist in chatters collection.");
+          return;
+        }
+
+        const userChats = userDocSnap.data().chats || []; // Array of chat IDs
+
+        // Step 2: Fetch specific chats from the `chats` collection based on the IDs in `userChats`
         const chatsCollection = collection(db, "chats");
         const chatsSnapshot = await getDocs(chatsCollection);
 
         for (const chatDoc of chatsSnapshot.docs) {
-          const chatData = chatDoc.data();
-          const chatId = chatDoc.id;
+          if (userChats.includes(chatDoc.id)) {
+            const chatData = chatDoc.data();
+            const chatId = chatDoc.id;
 
-          const chatObj = {
-            id: chatId,
-            ...chatData,
-            conversations: [],
-          };
+            const chatObj = {
+              id: chatId,
+              ...chatData,
+              conversations: [],
+            };
 
-          const conversationsCollection = collection(
-            db,
-            "chats",
-            chatId,
-            "conversations"
-          );
-          const conversationsSnapshot = await getDocs(conversationsCollection);
+            // Step 3: Fetch conversations for each chat
+            const conversationsCollection = collection(
+              db,
+              "chats",
+              chatId,
+              "conversations"
+            );
+            const conversationsSnapshot = await getDocs(
+              conversationsCollection
+            );
 
-          for (const convoDoc of conversationsSnapshot.docs) {
-            const convoData = convoDoc.data();
-            const convoId = convoDoc.id;
+            for (const convoDoc of conversationsSnapshot.docs) {
+              const convoData = convoDoc.data();
+              const convoId = convoDoc.id;
 
-            chatObj.conversations.push({
-              id: convoId,
-              ...convoData,
+              chatObj.conversations.push({
+                id: convoId,
+                ...convoData,
+              });
+            }
+
+            // Sort conversations by timestamp after loading
+            chatObj.conversations.sort((a, b) => {
+              const dateA = a.timestamp.toDate
+                ? a.timestamp.toDate()
+                : new Date(a.timestamp);
+              const dateB = b.timestamp.toDate
+                ? b.timestamp.toDate()
+                : new Date(b.timestamp);
+              return dateA - dateB;
             });
+
+            this.chat_arr.push(chatObj);
           }
-
-          // Sort conversations by timestamp after loading
-          chatObj.conversations.sort((a, b) => {
-            const dateA = a.timestamp.toDate
-              ? a.timestamp.toDate()
-              : new Date(a.timestamp);
-            const dateB = b.timestamp.toDate
-              ? b.timestamp.toDate()
-              : new Date(b.timestamp);
-            return dateA - dateB;
-          });
-
-          this.chat_arr.push(chatObj);
         }
       } catch (error) {
         console.error("Error fetching chats:", error);
+      } finally {
+        this.chats_loading = false;
       }
     },
     getLastConvo(chat) {
@@ -343,6 +415,31 @@ export default {
         : new Date(previous.timestamp);
 
       return currentDate.toDateString() !== previousDate.toDateString();
+    },
+    async checkAndCreateuser(userId) {
+      try {
+        // Reference to the user document in the users collection
+        const userDocRef = doc(db, "chatters", userId);
+
+        // Check if the document exists
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          console.log("User document exists:", userDocSnap.data());
+        } else {
+          // If user document doesn't exist, create a new one
+          const newUser = {
+            id: userId,
+            name: "New User", // Default name, adjust as needed
+          };
+
+          // Set the new document in Firestore
+          await setDoc(userDocRef, newUser);
+          console.log("User document created successfully:", newUser);
+        }
+      } catch (error) {
+        console.error("Error checking or creating user document:", error);
+      }
     },
     async sendMessage() {
       if (!this.selected_chat_obj || !this.selected_chat_obj.id) {
@@ -418,9 +515,31 @@ export default {
       }
     },
   },
+  computed: {
+    // Filtered chat list based on search query
+    filteredChats() {
+      const query = this.searchQuery.toLowerCase();
+      return this.chat_arr.filter(chat =>
+        chat.chat_name.toLowerCase().startsWith(query)
+      );
+    },
+  },
   mounted() {
-    this.fetchUsers();
-    this.fetchChats();
+    this.$nextTick(() => {
+      window.scrollTo(0, 0);
+    });
+    const userObject =
+      JSON.parse(sessionStorage.getItem("user")) ||
+      JSON.parse(localStorage.getItem("user"));
+    if (userObject) {
+      this.checkAndCreateuser(userObject.uid);
+      this.user = userObject.uid;
+      console.log(this.user);
+    }
+    if (this.user) {
+      this.fetchUsers();
+      this.fetchChats();
+    }
   },
 };
 </script>
@@ -445,4 +564,77 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark translucent cover */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* High z-index to overlay other content */
+}
+
+/* Popup Image Container */
+.popup-image-container {
+  position: relative;
+  width: 50vw;
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white; /* White background for extra space */
+  overflow: hidden; /* Ensure that the container doesn’t overflow */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+/* Popup Image */
+.popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Scale the image while maintaining aspect ratio */
+  object-position: center; /* Center the image within the container */
+}
+
+
+/* Close Button Styles */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background-color: var(--bs-primary); /* Blue color from bg-primary class */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, background-color 0.2s;
+  padding-bottom: 3px;
+}
+
+.close-button:hover {
+  background-color: darken(var(--bs-primary), 10%);
+  transform: scale(1.1);
+  color:var(--bs-primary);
+}
+
+.close-button:active {
+  transform: scale(0.95);
+}
+
+
+
 </style>

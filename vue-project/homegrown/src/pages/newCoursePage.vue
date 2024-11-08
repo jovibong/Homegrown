@@ -176,7 +176,7 @@
             id="mentorCarousel"
             class="carousel carousel-dark slide"
             data-bs-ride="carousel"
-            data-bs-interval="300000"
+            data-bs-interval="7000"
           >
             <div class="carousel-inner d-flex align-items-center">
               <div
