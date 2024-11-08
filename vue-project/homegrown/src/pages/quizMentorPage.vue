@@ -23,7 +23,9 @@
                   <div class="col-6 h-100 d-flex justify-content-center">
                     <canvas id="myChart"></canvas>
                   </div>
-                  <div class="col-6 d-flex align-items-center justify-content-center">
+                  <div
+                    class="col-6 d-flex align-items-center justify-content-center"
+                  >
                     <div>
                       <p class="mb-1">
                         <span class="dot correct-dot"></span> Correct
@@ -95,7 +97,9 @@
                   </li>
                   <li>
                     You rank at the
-                    <span class="h4 fw-bold text-primary d-inline-block">{{ ranking[1] }}th</span>
+                    <span class="h4 fw-bold text-primary d-inline-block"
+                      >{{ ranking[1] }}th</span
+                    >
                     of all users who have completed this quiz.
                   </li>
                 </ul>
@@ -111,15 +115,24 @@
         <b>Questions Review </b>
         <span class="h3 text-muted">({{ questions.length }})</span>
       </div>
-      <div v-for="(question, key) in questions" class="fade-in-bottom my-3 border border-0" :ref="key" type="button"
-        :key="key" @click="toggleAccordion(key)">
-        <div class="card shadow-sm container-fluid p-0 m-0 hover-animate hover-less">
+      <div
+        v-for="(question, key) in questions"
+        class="fade-in-bottom my-3 border border-0"
+        :ref="key"
+        type="button"
+        :key="key"
+        @click="toggleAccordion(key)"
+      >
+        <div
+          class="card shadow-sm container-fluid p-0 m-0 hover-animate hover-less"
+        >
           <div class="card-body align-items-center">
             <div class="d-none d-md-inline-flex row container-fluid">
               <div class="col-1 d-flex align-items-center">
                 <div
                   class="d-md-inline-flex d-none rounded-circle bg-secondary d-flex align-items-center text-center justify-content-center p-4 fs-4"
-                  style="height: 45px; width: 45px">
+                  style="height: 45px; width: 45px"
+                >
                   {{ key + 1 }}
                 </div>
               </div>
@@ -135,11 +148,16 @@
                 </div>
               </div>
             </div>
-            <div class="d-inline-flex d-md-none align-items-center row container-fluid">
+            <div
+              class="d-inline-flex d-md-none align-items-center row container-fluid"
+            >
               <div class="col-10 p-0">
                 <h4 class="m-0 p-0">
                   Question {{ key + 1 }}:
-                  <span v-if="question.correct_answer == answers[key]" class="text-success ms-2">
+                  <span
+                    v-if="question.correct_answer == answers[key]"
+                    class="text-success ms-2"
+                  >
                     Correct
                   </span>
                   <span v-else class="text-danger ms-2"> Wrong </span>
@@ -149,7 +167,11 @@
                 <i class="bi bi-chevron-down fs-3"></i>
               </div>
             </div>
-            <div :ref="'collapse' + key" class="row container-fluid content" data-bs-parent="#question_review">
+            <div
+              :ref="'collapse' + key"
+              class="row container-fluid content"
+              data-bs-parent="#question_review"
+            >
               <div class="p-0">
                 <div class="d-md-none d-inline py-3">
                   {{ question.question }}
@@ -157,12 +179,18 @@
                 <div class="row container-fluid px-0 mx-0 d-flex">
                   <div class="col-1 p-0"></div>
                   <div class="col-md-6 col-11 ps-0">
-                    <div v-for="(option, option_key) in question.options" :key="option_key">
-                      <div class="row container-fluid rounded-pill d-flex align-items-center my-2 ps-0 pe-3"
-                        :class="getClass(question, option_key, key)">
+                    <div
+                      v-for="(option, option_key) in question.options"
+                      :key="option_key"
+                    >
+                      <div
+                        class="row container-fluid rounded-pill d-flex align-items-center my-2 ps-0 pe-3"
+                        :class="getClass(question, option_key, key)"
+                      >
                         <div
                           class="col-3 rounded-circle d-flex align-items-center justify-content-center bg-secondary p-4 fs-4 m-0"
-                          style="height: 45px; width: 45px">
+                          style="height: 45px; width: 45px"
+                        >
                           {{ option_key }}
                         </div>
                         <div class="col-9">
@@ -189,18 +217,22 @@
 
   <div class="container-fluid row mx-auto my-5 d-flex justify-content-center">
     <div class="col-lg-2 col-md-1"></div>
-    <router-link to="individualCoursePage"
+    <router-link
+      to="individualCoursePage"
       class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2"
-      @click="submit_quiz()">
+      @click="submit_quiz()"
+    >
       <i class="bi bi-arrow-left me-2"></i>
       <span class="d-none d-md-inline">Back to course overview</span>
       <span class="d-inline d-md-none">Course Overview</span>
     </router-link>
 
     <div class="col-md-2"></div>
-    <router-link to="videoPage"
+    <router-link
+      to="videoPage"
       class="btn btn-warning text-dark d-flex align-items-center col-lg-3 col-md-4 justify-content-center hover-animate py-3 my-2"
-      @click="submit_quiz()">
+      @click="submit_quiz()"
+    >
       <span class="d-none d-md-inline text-end">Continue to next lesson</span>
       <span class="d-inline d-md-none text-end">Next Lesson</span>
       <i class="bi bi-arrow-right ms-2"></i>
@@ -237,13 +269,13 @@ export default {
           db,
           `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items/${this.lesson_item.id}`
         );
-
+        
         // Mark the lesson item as completed
         await updateDoc(lessonItemRef, {
           answers: this.answers,
           completed: true,
         });
-
+        
         console.log("Quiz answers submitted successfully and marked as completed.");
 
         // Calculate and update percentage completed
@@ -382,7 +414,7 @@ export default {
   async mounted() {
     const userObject = JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
-    if (userObject) {
+    if(userObject){
       this.user = userObject.uid;
     }
     this.answers = JSON.parse(sessionStorage.getItem("user_answers"));
@@ -430,10 +462,8 @@ export default {
 .content {
   height: 0px;
   overflow: hidden;
-  transition: height 0.5s ease;
-  /* Adjust duration as needed */
+  transition: height 0.5s ease; /* Adjust duration as needed */
 }
-
 .dot {
   height: 10px;
   width: 10px;
