@@ -18,6 +18,7 @@ import WorkersCertification from '../pages/workersCertification.vue';
 import HomePage from '../pages/homePage.vue';
 import ChatPage from '../pages/chatPage.vue';
 import LandingPage from '../pages/landingPage.vue';
+import QuizMentorPage from '../pages/quizMentorPage.vue'
 
 
 const routes = [
@@ -116,7 +117,7 @@ const routes = [
     {
         path: '/testPage',
         name: 'testPage',
-        component: TestPage
+        component: TestPage // to be removed when done
     },
     {
         path: '/editProfile',
@@ -142,7 +143,12 @@ const routes = [
         path: '/',
         name: 'landingPage',
         component: LandingPage
-    } // to be removed when done
+    },
+    {
+        path: '/quizMentorPage',
+        name: 'quizMentorPage',
+        component: QuizMentorPage
+    }
 
 ];
 

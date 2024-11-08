@@ -392,6 +392,7 @@ export default {
         console.error("Error fetching lessons and items:", error);
       } finally {
         this.lessons_loading = false;
+        console.log("These lessons", this.lessons);
       }
     },
     async fetchReviewsWithUserDetails() {

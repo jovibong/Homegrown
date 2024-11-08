@@ -5,7 +5,7 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link :to="userType === 'worker' ? 'individualCoursePage' : 'mentorshipCourse'">
+            <router-link :to="userType === 'worker' ? 'individualCoursePage' : 'mentorshipCourse'"
               class="btn btn-warning text-dark d-flex align-items-center"
             >
               <i class="bi bi-arrow-left me-1"></i>
@@ -230,6 +230,7 @@ export default {
       return new Promise((resolve) => {
         const interval = setInterval(() => {
           const storedLessonItem = sessionStorage.getItem("selectedLessonItem");
+          
           const storedCourse = sessionStorage.getItem("selectedCourse");
           const storedLessonId = sessionStorage.getItem("selectedLessonId");
 
@@ -239,6 +240,7 @@ export default {
             if (lesson.typeof === "quiz") {
               clearInterval(interval);
               this.lesson = lesson;
+              
               this.course = JSON.parse(storedCourse);
               this.course_name = this.course.name;
               resolve(JSON.parse(storedLessonId));
