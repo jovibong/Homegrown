@@ -13,10 +13,11 @@ import QuizSummaryPage from '../pages/quizSummaryPage.vue';
 import AllNewCoursesPage from '../pages/allNewCoursesPage.vue';
 import NewCoursePage from '../pages/newCoursePage.vue';
 import TestPage from '../pages/testPage.vue';
-import EditProfile from '@/pages/editProfile.vue';
-import WorkersCertification from '@/pages/workersCertification.vue';
-import HomePage from '@/pages/homePage.vue';
+import EditProfile from '../pages/editProfile.vue';
+import WorkersCertification from '../pages/workersCertification.vue';
+import HomePage from '../pages/homePage.vue';
 import ChatPage from '../pages/chatPage.vue';
+import LandingPage from '../pages/landingPage.vue';
 
 
 const routes = [
@@ -136,6 +137,11 @@ const routes = [
         path: '/homePage',
         name: 'homePage',
         component: HomePage
+    },
+    {
+        path: '/',
+        name: 'landingPage',
+        component: LandingPage
     } // to be removed when done
 
 ];
