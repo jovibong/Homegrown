@@ -307,7 +307,3 @@ export default {
 }
 </script>
 
-<style scoped="">
-/* Scoped styles specific to Events.vue */
-@import "../css/events.css";
-</style>

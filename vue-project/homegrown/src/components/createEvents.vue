@@ -168,7 +168,9 @@ export default {
 }
 </script>
 
-<style scoped>
-@import "../css/events.css";
+<style scoped="">
+/* @import "../css/events.css"; */
+/* Fix this please!! */
 </style>
+
     

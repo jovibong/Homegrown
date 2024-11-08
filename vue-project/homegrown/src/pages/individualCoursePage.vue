@@ -291,7 +291,7 @@ export default {
       course: null,
       loading: true,
       reviews: null,
-      mentor: {},
+      mentor: null,
       lessons: {},
       expanded: false,
       lessons_loading: true,
