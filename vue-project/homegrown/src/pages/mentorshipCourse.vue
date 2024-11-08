@@ -27,7 +27,7 @@
 
         </section>
 
-        <div v-if="mentorships_loading" class="text-center">Loading...</div>
+        <div v-if="lessons_loading" class="text-center">Loading...</div>
         <div v-else>
             <section v-if="course" id="course_info" class="container py-2 fade-in-top">
                 <div class="card shadow-sm mb-md-2 mb-3">
@@ -63,40 +63,43 @@
         </div>
 
         <!--Mentor-->
-        <section id="Mentee" class="container my-2 fade-in-top">
-            <div class="row">
-                <div v-for="mentee in mentees" :key="mentee.name" class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white text-center fw-bold h4">
-                            {{ mentee.name }}
-                            <!-- Notification Badge -->
-                            <span v-if="mentee.notificationCount > 0"
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                style="transform: translate(-50%, -50%);">
-                                {{ mentee.notificationCount }}
-                            </span>
-                        </div>
-                        <div class="card-body d-flex align-items-center">
-                            <div class="row">
-                                <!-- Mentor Image -->
-                                <div class="col-md-3 d-flex justify-content-center">
-                                    <img :src="'../img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
-                                        height="150px" width="150px">
-                                </div>
-                                <!-- Mentor Information -->
-                                <div class="col-md-9 text-md-start text-center">
-                                    <p class="text-muted">{{ mentee.description }}</p>
-                                    <!-- Ask for Help Button -->
-                                    <a href="#" class="btn btn-primary d-inline-flex align-items-center">
-                                        Chat <i class="bi bi-arrow-right ms-2"></i>
-                                    </a>
+        <div v-if="mentees_loading" class="text-center">Loading...</div>
+        <div v-else>
+            <section id="Mentee" class="container my-2 fade-in-top">
+                <div class="row">
+                    <div v-for="mentee in mentees" :key="mentee.name" class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white text-center fw-bold h4">
+                                {{ mentee.name }}
+                                <!-- Notification Badge -->
+                                <span v-if="mentee.noti_count > 0"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="transform: translate(-50%, -50%);">
+                                    {{ mentee.noti_count }}
+                                </span>
+                            </div>
+                            <div class="card-body d-flex align-items-center">
+                                <div class="row">
+                                    <!-- Mentor Image -->
+                                    <div class="col-md-3 d-flex justify-content-center">
+                                        <img :src="'../img/' + mentee.img" alt="Mentee Img" class="rounded-circle"
+                                            height="150px" width="150px">
+                                    </div>
+                                    <!-- Mentor Information -->
+                                    <div class="col-md-9 text-md-start text-center">
+                                        <p class="text-muted">{{ mentee.description }}</p>
+                                        <!-- Ask for Help Button -->
+                                        <a href="#" class="btn btn-primary d-inline-flex align-items-center">
+                                            Chat <i class="bi bi-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <div class="content container" ref="lessons">
             <div v-for="(lesson, lessonId) in lessons" :key="lessonId" class="mb-4">
@@ -202,7 +205,7 @@ export default {
             }
 
             catch (error) {
-                console.error("Error fetching lessons:", error);
+                console.error("Error fetching lesson:", error);
             } finally {
                 this.lessons_loading = false;
             }
@@ -215,24 +218,27 @@ export default {
                 const mentorRef = doc(db, "profiles", uid);
                 const mentorSnap = await getDoc(mentorRef);
                 const mentorID = mentorSnap.data().mentor;
-                console.log(mentorID)
+                // console.log(mentorID)
 
                 const routeParams2 = this.$route.params;
                 const courseID = routeParams2.id
-                console.log(courseID)
+                // console.log(courseID)
 
                 const menteeRef = doc(db, "mentors", mentorID, "mentorships", courseID);
                 const menteeDoc = await getDoc(menteeRef);
                 const menteesList = menteeDoc.data().mentees;
                 this.mentees = menteesList;
-                console.log(menteesList)
+                // console.log(menteesList)
 
-                // You stopped here Sean
-                // menteesList.forEach((userId) => {
-                //     const userRef = doc(db, "user", userId);
-                //     const userSnap = await getDoc(userRef);
-                //     const mentee = userSnap.data();
-                // });
+
+                const menteePromises = menteesList.map(async (userId) => {
+                    const userRef = doc(db, "users", userId);
+                    const userSnap = await getDoc(userRef);
+                    return userSnap.data();
+                });
+
+                this.mentees = await Promise.all(menteePromises);
+                // console.log(await Promise.all(menteePromises))
 
             }
 
