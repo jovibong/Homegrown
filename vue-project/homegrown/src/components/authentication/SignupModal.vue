@@ -195,12 +195,12 @@ export default {
         return;
       }
       if (!this.userType) {
-          alert("Please select either 'Worker' or 'Volunteer' to sign up.");
-          return;
+        alert("Please select either 'Worker' or 'Volunteer' to sign up.");
+        return;
       }
       if (!this.name) {
-          alert("Please enter you name to sign up.");
-          return;
+        alert("Please enter your name to sign up.");
+        return;
       }
       try {
         // Firebase sign-up
@@ -219,7 +219,18 @@ export default {
 
         console.log("Signed up user:", user);
         this.$emit("signup", user); // Emit event with user info if needed
-        this.$router.push({ name: 'homePage' }); // Redirect to home page
+
+        // Redirect based on userType
+        if (this.userType === 'worker') {
+          this.$router.push({ name: 'homePage' });
+        } else if (this.userType === 'volunteer') {
+          this.$router.push({ name: 'volunteerHomePage' });
+        } else {
+          console.warn('Unknown userType:', this.userType);
+          this.$router.push({ name: 'landingPage' }); // Default or error page if needed
+        }
+
+        // Hide signup modal
         this.hideModal();
       } catch (error) {
         console.error("Error signing up:", error.message);
