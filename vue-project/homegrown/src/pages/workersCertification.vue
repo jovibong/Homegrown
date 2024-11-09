@@ -1,155 +1,217 @@
 <template>
-    <div class="certifications-page">
-      <h1 class="title">Certifications</h1>
-      
-      <!-- Tab navigation -->
-      <div class="tabs">
-        <span :class="{ active: activeTab === 'newest' }" @click="setActiveTab('newest')">Newest</span>
-        <span :class="{ active: activeTab === 'completed' }" @click="setActiveTab('completed')">Completed</span>
-        <span :class="{ active: activeTab === 'ongoing' }" @click="setActiveTab('ongoing')">Ongoing</span>
-      </div>
+    <div class="page-wrapper">
+      <!-- Certification Content -->
+      <div class="certifications-page">
+        <h2 class="title text-primary fw-bold text-center mb-3 display-4">Your Completed Certifications</h2>
   
-      <!-- View All Link -->
-      <div class="view-all">
-        <a href="#">View All <i class="bi bi-arrow-right"></i></a>
-      </div>
+        <div v-if="completedCertifications.length" class="certifications-grid">
+          <div
+            v-for="(cert, index) in completedCertifications"
+            :key="cert.id"
+            class="cert-card"
+          >
+            <!-- Certification Image and Rank -->
+            <div class="cert-image-container">
+              <img :src="cert.imageUrl" alt="Certification Image" class="cert-image" />
+              <div class="rank-number">
+                <i class="bi bi-trophy-fill"></i> <!-- Trophy icon for rank -->
+                <span>{{ index + 1 }}</span>
+              </div>
+            </div>
   
-      <!-- Certifications Grid -->
-      <div class="certifications-grid">
-        <div 
-          v-for="cert in filteredCertifications" 
-          :key="cert.id" 
-          class="cert-card">
-          
-          <div class="cert-icon">
-            <i class="bi bi-award-fill"></i>
-            <img v-if="cert.status === 'completed'" src="path/to/medal-icon.png" class="medal-icon" />
+            <!-- Certification Content -->
+            <div class="cert-content">
+              <h3 class="cert-title">{{ cert.title }}</h3>
+              <p class="cert-grade">
+                <i class="bi bi-star-fill"></i> <!-- Star icon for score -->
+                Score: {{ cert.grade }}%
+              </p>
+              <div class="badge completed">
+                <i class="bi bi-award"></i> <!-- Award icon for "Completed" -->
+                Completed
+              </div>
+            </div>
           </div>
-          
-          <h3>{{ cert.title }}</h3>
-          <p>Grade Achieved: {{ cert.grade }}%</p>
+        </div>
+  
+        <div v-else class="no-certifications">
+          <p>You haven’t completed any certifications yet. Start learning now!</p>
         </div>
       </div>
-    </div>
-  </template>
-  
+  </div>
+    </template>
+    
   <script>
   export default {
     data() {
       return {
-        activeTab: 'completed', // Default tab
         certifications: [
-          { id: 1, title: 'Introduction to Python', grade: 100, status: 'completed' },
-          { id: 2, title: 'Color Design', grade: 78, status: 'completed' },
-          { id: 3, title: 'Language - Mandarin', grade: 80, status: 'completed' },
-          { id: 4, title: 'Language - English', grade: 80, status: 'completed' },
-          { id: 5, title: 'Basic Excel', grade: 80, status: 'completed' },
-          { id: 6, title: 'Basic', grade: 80, status: 'completed' },
-          // Add more certifications as needed
+          { id: 1, title: 'Introduction to Python', grade: 98, status: 'completed', imageUrl: 'path/to/python.jpg' },
+          { id: 2, title: 'Advanced CSS Design', grade: 92, status: 'completed', imageUrl: 'path/to/css.jpg' },
+          { id: 3, title: 'JavaScript Essentials', grade: 87, status: 'completed', imageUrl: 'path/to/js.jpg' },
+          // Add more certification data as needed
         ]
       };
     },
     computed: {
-      filteredCertifications() {
-        return this.certifications.filter(cert => cert.status === this.activeTab);
-      }
-    },
-    methods: {
-      setActiveTab(tab) {
-        this.activeTab = tab;
+      completedCertifications() {
+        return this.certifications.filter(cert => cert.status === 'completed');
       }
     }
   };
   </script>
   
   <style scoped>
+  /* Full-page layout */
+  .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Main content fills available space */
   .certifications-page {
+    flex: 1;
     padding: 20px;
+    background-color: #f4f4f9;
     text-align: center;
-    background-color: #f9f9f9;
   }
   
   .title {
-    font-size: 2rem;
     color: #3B71CA;
-    font-weight: bold;
+    margin-bottom: 20px;
   }
   
-  .tabs {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .tabs span {
-    margin: 0 15px;
-    cursor: pointer;
-    font-size: 1rem;
-    color: #333;
-  }
-  
-  .tabs .active {
-    font-weight: bold;
-    color: #3B71CA;
-    border-bottom: 3px solid #3B71CA;
-    padding-bottom: 5px;
-  }
-  
-  .view-all {
-    text-align: right;
-    margin-top: 10px;
-    font-size: 1rem;
-  }
-  
-  .view-all a {
-    color: #3B71CA;
-    text-decoration: none;
-  }
-  
+  /* Certifications grid */
   .certifications-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
     gap: 20px;
-    margin-top: 20px;
+    padding: 20px;
   }
   
+  /* Certification card */
   .cert-card {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 350px; /* Slightly greater height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
   }
   
   .cert-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.2);
   }
   
-  .cert-icon {
-    font-size: 2rem;
-    color: #6C63FF;
-    position: relative;
-  }
-  
-  .medal-icon {
+  /* Rank number */
+  .rank-number {
     position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 20px;
-    height: 20px;
-  }
-  
-  .cert-card h3 {
-    font-size: 1.1rem;
-    margin: 10px 0 5px;
-    color: #333;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
     font-weight: bold;
+    color: #FFD700; /* Gold color for trophy */
   }
   
-  .cert-card p {
-    font-size: 0.9rem;
-    color: #666;
+  .rank-number i {
+    margin-right: 5px;
+    font-size: 1.5rem;
+  }
+  
+  /* Image container */
+  .cert-image-container {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .cert-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  /* Content styling */
+  .cert-content {
+    text-align: center;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cert-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333333;
+    margin: 10px 0;
+  }
+  
+  .cert-grade {
+    font-size: 1.2rem;
+    color: #666666;
+  }
+  
+  .cert-grade i {
+    color: #FFD700; /* Gold color for the star */
+    margin-right: 5px;
+  }
+  
+  .badge.completed {
+    display: inline-block;
+    background-color: #3B71CA;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 12px;
+  }
+  
+  .badge.completed i {
+    margin-right: 5px;
+  }
+  
+  /* Responsive layout */
+  @media (max-width: 992px) {
+    .certifications-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .certifications-grid {
+      grid-template-columns: 1fr; /* 1 column on mobile */
+    }
+  }
+  
+  .no-certifications {
+    font-size: 1.2rem;
+    color: #666666;
+    margin-top: 50px;
+  }
+  
+  /* Footer styling */
+  .footer {
+    background-color: #3B71CA;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1rem;
   }
   </style>
   
