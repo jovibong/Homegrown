@@ -452,7 +452,7 @@ export default {
 
       return currentDate.toDateString() !== previousDate.toDateString();
     },
-    async checkAndCreateuser(userId, userName) {
+    async checkAndCreateuser(userId, userName,profilePicture) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "chatters", userId);
@@ -464,9 +464,11 @@ export default {
           console.log("User document exists:", userDocSnap.data());
         } else {
           // If user document doesn't exist, create a new one
+          console.log("Creating new user");
           const newUser = {
             id: userId,
             name: userName || "New User", // Default name, adjust as needed
+            profile_picture: profilePicture || "https://thispersondoesnotexist.com/"
           };
 
           // Set the new document in Firestore
@@ -568,7 +570,7 @@ export default {
       JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
     if (userObject) {
-      this.checkAndCreateuser(userObject.uid, userObject.name);
+      this.checkAndCreateuser(userObject.uid, userObject.name, userObject.profile_picture);
       this.user = userObject.uid;
       console.log(this.user);
     }
