@@ -93,11 +93,13 @@ export default {
     methods: {
         async submitInput(e) {
           console.log(e.value);
+          const dateTimeString = `${this.eventDate}T${this.eventTime}`;
+          const combinedDateTime = new Date(dateTimeString);
 
             const docData = {
                 name: this.eventTitle,
                 description: this.eventDescription,
-                date: Timestamp.fromDate(new Date(this.eventDate)),
+                date: Timestamp.fromDate(new Date(combinedDateTime)),
                 location: this.eventLocation,
                 imageURL: this.imageURL,
                 createdBy: this.createdBy,
@@ -168,9 +170,10 @@ export default {
 }
 </script>
 
-<style scoped="">
-/* @import "../css/events.css"; */
-/* Fix this please!! */
+<style scoped>
+@import '../css/events.css';
+
+
 </style>
 
     

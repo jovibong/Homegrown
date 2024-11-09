@@ -1,53 +1,10 @@
-.carouselHeaderwidth {
-  width: 100%;
-  max-height: auto;
-  overflow: hidden;
-  margin-bottom: 5px;
-}
 
-
-.carousel-inner img {
-  object-fit: cover;
-  /* Ensure images cover the area without distortion */
-  object-position: center;
-  /* Center the image */
-  height: 300px;
-  /* Set a fixed height to control cropping */
-}
-
-.title {
-  font-family: 'Poppins';
-  color: #525FE1;
-  font-weight: bold;
-  margin-top: 20px;
-
-}
-
-.searchBar {
-  padding-left: 30px;
-  border-radius: 30px;
-  border: 2px solid #525FE1;
-  height: 50px;
-  width: 100%;
-}
-
-.event-details {
-  border: 2px solid #525FE1;
-  margin-right: 10px;
-  height: 70px;
-  color: black;
-}
-
-.card {
-  flex: 0 0 auto;
-  /* Ensure each card stays the same width */
-  width: 200px;
-  /* Set a fixed width for each card */
-}
-
+/* Scrolling Container */
 .scroll-container {
   display: flex;
+  flex-direction: row;
   overflow-x: auto;
+  width: 100%;
   padding: 1rem;
   gap: 1rem;
   /* Adjust spacing between cards as needed */
@@ -73,36 +30,19 @@
 }
 
 
-
-/* styles.css or component's <style> section */
-.button {
-  padding: 10px 20px;
-  /* Adjust padding as needed */
-  border: none;
-  border-radius: 5px;
-  /* Rounded corners */
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  /* Smooth transition */
-}
-
-/* Not pressed state */
-.notPressed {
-  background-color: #525FE1;
-  /* Bootstrap primary color */
-  color: white;
-  /* Text color */
-}
-
-/* Pressed state */
-.pressed {
-  border: 1px solid #525FE1;
-  background-color: white;
-  /* Darker shade for pressed effect */
+.title {
+  font-family: 'Poppins';
   color: #525FE1;
-  /* Text color */
-  transform: scale(0.95);
-  /* Slightly shrink the button */
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.searchBar {
+  padding-left: 30px;
+  border-radius: 30px;
+  border: 2px solid #525FE1;
+  height: 50px;
+  width: 100%;
 }
 
 .createEventStyle {
@@ -110,23 +50,6 @@
   padding: 10px;
   border-radius: 10px;
 }
-
-/* Grid template for responsive layout - for eventDetails */
-.grid-template {
-  display: grid;
-  grid-template-columns: 1fr;
-  /* Single column by default */
-  gap: 1rem;
-  /* Adjust spacing as needed */
-}
-
-@media (min-width: 768px) {
-  .grid-template {
-    grid-template-columns: repeat(3, 1fr);
-    /* Three equal columns for medium and larger screens */
-  }
-}
-
 
 .category {
   border: 2px solid #525FE1;
@@ -137,7 +60,7 @@
 }
 
 .create-leave-active {
-  animation: slide-in 0.3s ease-in;
+  animation: slide-in 0.3s reverse;
 }
 
 @keyframes slide-in {
@@ -152,90 +75,6 @@
   }
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 30px;
-}
-
-.joinButton .inactive {
-  /* Return to original height and width with a slight delay */
-  height: 95px;
-  width: 500px;
-  transition: all 0.3s ease;
-}
-
-.joinButton {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  height: 60px;
-  width: 500px;
-  background: #5e14c6;
-  border-radius: 55px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  overflow: hidden;
-  padding: 10px;
-}
-
-/* Active state changes for the button */
-.joinButton.active {
-  height: 20px;
-  width: 500px;
-}
-
-/* Background animation layer */
-.joinButton::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  height: 100%;
-  width: 100%;
-  background: #525FE1;
-  border-radius: 55px;
-  transition: all 6s ease-in-out;
-}
-
-.joinButton.active::before {
-  animation: layer 1.5s ease-in-out forwards;
-}
-
-@keyframes layer {
-  100% {
-    left: 0%;
-  }
-}
-
-/* Icon and text styles within the button */
-.joinButton i,
-.joinButton .button-text {
-  color: #fff;
-  font-size: 20px;
-  /* Adjusted to a consistent size */
-  font-weight: 500;
-  transition: transform 0.2s ease;
-}
-
-/* Adjust the icon margin */
-.joinButton .button-text {
-  margin-left: 8px;
-}
-
-/* Transform text when button is active */
-.joinButton.active i,
-.joinButton.active .button-text {
-  transform: translateY(60px);
-}
-
-.joinButton.inactive i,
-.joinButton.inactive .button-text {
-  transform: translateY(0);
-}
 
 
 .groupContainer {
@@ -246,18 +85,6 @@
   /* spaces items out */
 }
 
-
-.createButton {
-  width: fit-content;
-  padding: 5px;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-color: #525FE1;
-  color: yellow;
-  font-family: 'Poppins';
-  border-radius: 55px;
-  border: 0px;
-}
 
 @media (max-width: 768px) {
   .joinButton {

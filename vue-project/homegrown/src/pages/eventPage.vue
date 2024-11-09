@@ -58,7 +58,7 @@
 
         </section>
 
-        <div class="container">
+        <div class="container mt-5">
 
             <!-- Explore more or Search -->
             <section class="row">
@@ -80,7 +80,7 @@
                         <span class="title col-2"> or </span>
 
                         <button @click="allowCreate"
-                            :class="showCreate ? 'button col-3 pressed' : 'button col-3 notPressed'"> 
+                            :class="showCreate ? 'createButton col-3 pressed' : 'createButton col-3 notPressed'">
                             Create Event </button>
                         <!-- <input type="text" class="searchBar col-6" placeholder="search"> -->
                     </div>
@@ -112,49 +112,32 @@
                 <div class="scroll-container">
                     <!-- row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-5 -->
                     <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id" :title="event.title"
-                        :description="event.description"></event-cards>
+                        :description="event.description" :image="event.imageURL"></event-cards>
                 </div>
             </section>
 
             <!-- Event Cards - Category -->
             <section class="my-5">
                 <h2 class="title"> Events By Category </h2>
-                <span><button> Filter By </button></span>
+
+                <select v-model="selectedCategory" @change="getEventsByCategory" class="form-select">
+                    <option disabled value="">Select a category</option>
+                    <option value="Holiday">Holiday</option>
+                    <option value="Festivals">Festivals</option>
+                    <option value="Outdoors">Outdoors</option>
+                    <option value="Cultural">Cultural</option>
+                    <option value="Meet-ups">Meet-ups</option>
+                    <option value="Others">Others</option>
+                </select>
+
                 <div class="scroll-container">
-                    <!-- row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-5 -->
-                    <div class="card" style="width: 18rem;">
-                        <img src="img/deepavali.png" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                                of
-                                the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-
-                    <div class="card" style="width: 18rem;">
-                        <img src="img/deepavali.png" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                                of
-                                the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-
-                    <div class="card" style="width: 18rem;">
-                        <img src="img/deepavali.png" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                                of
-                                the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-
+                <div v-if="selectedEvents.length == 0">
+                    No event in selected category 
+                </div>
+                <div v-else>
+                    <event-cards v-for="event in selectedEvents" :key="event.id" :eventID="event.id"
+                        :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
+                </div>
                 </div>
             </section>
 
@@ -162,12 +145,12 @@
             <section class="my-5">
                 <h2 class="title"> All Events </h2>
                 <div class="allEventlist">
-                    <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id" :title="event.title"
-                        :description="event.description"></event-cards>
+                    <event-cards v-for="event in showAllEvents" :key="event.id" :eventID="event.id" :title="event.title"
+                        :description="event.description" :image="event.imageURL"></event-cards>
                 </div>
 
                 <button @click="toggleShowAllEvents">
-                    {{ showAllEvents ? 'Show Less' : 'Show More' }}
+                    {{ displayAllEvents ? 'Show Less' : 'Show More' }}
                 </button>
 
             </section>
@@ -181,9 +164,8 @@
 <script>
 import EventCards from '../components/eventCard.vue';
 import createEvent from '../components/createEvents.vue';
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, getDoc, setDoc, query, where, doc } from "firebase/firestore";
 import { db } from '../firebase/initialize'
-
 
 
 export default {
@@ -196,13 +178,18 @@ export default {
 
     data() {
         return {
-            popularEvents:[],
+            currentEvents:[],
             pastEvents:[],
             myEvents:[],
+            allEvents:[],
+
+            selectedEvents: [],
+            selectedCategory: '',
+
             showCreate: false,
 
-            maxVisibleEvents: 4, // Set the initial number of events to display
-            showAllEvents: false, // Toggle to show all events or only limited number
+            maxVisibleEvents: 2, // Set the initial number of events to display
+            displayAllEvents: false, // Toggle to show all events or only limited number
 
             eventSuggestVisible: false,
             searchQuery: '',
@@ -211,39 +198,66 @@ export default {
     },
 
     mounted() {
-        const userData = JSON.parse(localStorage.getItem('rememberMe')
-            ? localStorage.getItem('user')
-            : sessionStorage.getItem('user'));
-        console.log(userData)
-
+        // this.getUser();     
         this.getAllEvents();
     },
 
     computed: {
-        filteredEvents() {
-            // Convert search query to lowercase for a case-insensitive search
-            const query = this.searchQuery.toLowerCase();
+        // filteredEvents() {
+        //     // Convert search query to lowercase for a case-insensitive search
+        //     const query = this.searchQuery.toLowerCase();
 
-            // Filter `myEvents` based on `searchQuery`
-            return this.myEvents.filter(
-                (event) =>
-                    event.title.toLowerCase().includes(query) ||
-                    event.description.toLowerCase().includes(query)
-            );
-        },
-        displayedEvents() {
-            return this.showAllEvents ? this.myEvents : this.myEvents.slice(0, this.maxVisibleEvents);
+        //     // Filter `myEvents` based on `searchQuery`
+        //     return this.myEvents.filter(
+        //         (event) =>
+        //             event.title.toLowerCase().includes(query) ||
+        //             event.description.toLowerCase().includes(query)
+        //     );
+        // },
+
+        showAllEvents() {
+            return this.displayAllEvents ? this.allEvents : this.allEvents.slice(0, this.maxVisibleEvents);
         }
     },
 
 
     methods: {
-        toggleShowAllEvents() {
-      this.showAllEvents = !this.showAllEvents;
-    },
+        async getUser(){
+            const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+            console.log(sessionUser.uid);
 
+            const userId = sessionUser.uid;
+            const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+
+            // Check if the user document exists
+            const userDocSnapshot = await getDoc(userDocRef);
+
+            // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+            if (!userDocSnapshot.exists()) {
+                await setDoc(userDocRef, { userId: userId });
+            }
+        },
+
+        toggleShowAllEvents() {
+        this.displayAllEvents = !this.displayAllEvents;
+        },
 
         async getEventsByCategory(){
+            this.selectedEvents = [];
+            const eventCategory = this.selectedCategory;
+            const q = query(collection(db, "events"), where("category", "==", eventCategory));
+
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                this.selectedEvents.push({ 
+                    id: doc.id,
+                    title: doc.data().name,
+                    description: doc.data().description, 
+                    imageURL: doc.data().imageURL,
+                });
+            }); 
 
         },
 
@@ -252,15 +266,43 @@ export default {
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
-                this.myEvents.push({ 
+                this.allEvents.push({ 
                     id: doc.id,
                     title: doc.data().name,
-                    description: doc.data().description, });
+                    description: doc.data().description, 
+                    imageURL: doc.data().imageURL,
+                });
             });
+
+            this.getPastEvents();
         },
 
-        async getMyEvents(){
-            
+        async getMyEvents(userID){
+            console.log(userID)
+        },
+
+        async getPastEvents() {
+            const querySnapshot = await getDocs(collection(db, "events"));
+
+            const today = new Date();  // Get today's date and time
+
+            querySnapshot.forEach((doc) => {
+                // Get event data from Firestore
+                const eventDate = doc.data().date.toDate(); 
+
+                // Check if the event date is in the past
+                if (eventDate < today) {
+                    console.log("i made it")
+                    console.log(doc.id, " => ", doc.data());
+
+                    // Push the event into the array if it's in the past
+                    this.pastEvents.push({
+                        id: doc.id,
+                    });
+                }
+            });
+
+            console.log("Past Events", this.pastEvents)
         },
 
         allowCreate(){
@@ -301,9 +343,66 @@ export default {
             } catch (error) {
                 console.error("Error fetching related event searches: ", error);
             }
-        }
+        },
+
     },
 
 }
 </script>
 
+<style scoped>
+@import '../css/events.css';
+
+/* for carousel */
+.carouselHeaderwidth {
+  width: 100%;
+  max-height: auto;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+
+.carousel-inner img {
+  object-fit: cover;
+  /* Ensure images cover the area without distortion */
+  object-position: center;
+  /* Center the image */
+  height: 300px;
+  /* Set a fixed height to control cropping */
+}
+
+
+
+/* For button pressed and not pressed*/
+/* Not pressed state */
+.notPressed {
+  background-color: #525FE1;
+  color: white;
+}
+
+/* Pressed state */
+.pressed {
+  border: 2px solid darkblue;
+  color:white;
+}
+
+
+.createEvent {
+  padding: 10px 20px;
+  /* Adjust padding as needed */
+  border: none;
+  border-radius: 5px;
+  /* Rounded corners */
+  /* Smooth transition */
+}
+
+.createButton {
+  cursor: pointer;
+  width: fit-content;
+  padding: 10px 20px;
+  font-family: 'Poppins';
+  border-radius: 5px;
+  border: none;
+}
+
+</style>

@@ -65,6 +65,9 @@ export default {
         console.error('Error fetching events', error);
       }
     },
+
+
+    
   },
 };
 
