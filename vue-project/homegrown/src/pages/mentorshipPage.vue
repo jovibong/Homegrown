@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div  v-if="courses.length>0">
         <section id="ongoing_app" class="container py-3">
             <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
             <p class="text-center text-muted mb-0 h5 pb-5">
@@ -39,7 +40,7 @@
                 </div>
             </div>
         </section>
-
+        </div>
 
         <section id="new_app">
             <div class="container py-5">
@@ -79,6 +80,7 @@
                 </div>
             </div>
         </section>
+        
 
 
         <div class="modal fade" id="mentorModal" tabindex="-1" aria-labelledby="mentorModalLabel" aria-hidden="true">
@@ -124,7 +126,7 @@
 
 <script>
 import { Modal, Toast } from 'bootstrap';
-import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
+import { getDocs, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -165,21 +167,19 @@ export default {
 
                 // If the user document doesn't exist, create it (you can optionally add some initial data to it)
                 if (!userDocSnapshot.exists()) {
-                    await setDoc(userDocRef, { userId: userId });
                     const docRef = doc(db, "profiles", userId);
                     const docSnap = await getDoc(docRef);
                     const mentorName = docSnap.data().name;
-                    await setDoc(userDocRef, { name: mentorName });
-                    await setDoc(userDocRef, { description: "Hi I am a new mentor!" });
+                    const mentorshipCollectionRef = collection(userDocRef, "mentorship");
+                    await setDoc(userDocRef, {
+                        userId: userId,
+                        name: mentorName,
+                        description: "Hi I am a new mentor!",
+                    });
+                    await setDoc(doc(mentorshipCollectionRef, "placeholderDoc"), {});
                 }
-                
-                // EDIT FROM THIS PART ONWARD SEAN
-                const docRef = doc(db, "profiles", userId);
-                const docSnap = await getDoc(docRef);
-                const mentorID = docSnap.data().mentor;
 
-                // const mentorRef = doc(db, "mentors", mentorID);
-                const subcollectionRef = collection(db, "mentors", mentorID, "mentorships")
+                const subcollectionRef = collection(db, "mentors", userId, "mentorship")
                 const mentorSnap = await getDocs(subcollectionRef);
                 // console.log(mentorSnap)
 
