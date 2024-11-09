@@ -81,6 +81,17 @@
                         <button type="submit" class="btn btn-warning">Update Password</button>
                     </form>
                 </div>
+                <div v-if="showReauthModal" class="modal-overlay">
+                            <div class="reauth-modal">
+                            <h2 class="text-primary fw-bold">Re-authentication Required</h2>
+                            <p>Please enter your current password to proceed.</p>
+                            <input type="password" placeholder="Enter current password" class="reauth-input" />
+                            <div class="button-container">
+                            <button class="btn btn-submit">Submit</button>
+                            <button class="btn btn-cancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -89,7 +100,7 @@
 <script>
 import { auth, db, storage } from '@/firebase/initialize.js';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged,reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 export default {
@@ -100,14 +111,16 @@ export default {
                 name: "",
                 username: "",
                 password: "",
-                confirmPassword: ""
+                confirmPassword: "",
             },
             email: "",
             userId: null,
             currentSection: 'profile', // Tracks the current section being viewed
             loading: true,
             isEditingName: false,
-            isEditingUsername: false
+            isEditingUsername: false,
+            showReauthModal: false, 
+            currentPassword: "" 
         };
     },
     created() {
@@ -213,21 +226,42 @@ export default {
             }
         },
         async submitPasswordChange() {
-            if (this.formData.password !== this.formData.confirmPassword) {
-                alert("Passwords do not match.");
-                return;
-            }
-            try {
-                await auth.currentUser.updatePassword(this.formData.password);
-                alert("Password updated successfully!");
-                this.formData.password = "";
-                this.formData.confirmPassword = "";
-                this.currentSection = 'profile'; // Go back to profile after password change
-            } catch (error) {
+        if (this.formData.password !== this.formData.confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+        try {
+            const user = auth.currentUser;
+            await updatePassword(user, this.formData.password);
+            alert("Password updated successfully!");
+            this.formData.password = "";
+            this.formData.confirmPassword = "";
+            this.currentSection = 'profile'; // Go back to profile after password change
+        } catch (error) {
+            if (error.code === 'auth/requires-recent-login') {
+                // Show the re-authentication modal
+                this.showReauthModal = true;
+            } else {
                 console.error("Error updating password:", error);
-                alert("There was an error updating your password.");
+                alert("There was an error updating your password: " + error.message);
             }
         }
+    },
+    async handleReauth() {
+        try {
+            const user = auth.currentUser;
+            const credential = EmailAuthProvider.credential(user.email, this.currentPassword);
+            await reauthenticateWithCredential(user, credential);
+            alert("Re-authentication successful. You can now change your password.");
+            this.showReauthModal = false; // Hide the modal after successful re-authentication
+        } catch (error) {
+            console.error("Re-authentication failed:", error);
+            alert("Re-authentication failed: " + error.message);
+        }
+    },
+    closeReauthModal() {
+        this.showReauthModal = false;
+    }
     }
 };
 </script>
@@ -305,6 +339,93 @@ export default {
 @keyframes spin {
      0% { transform: rotate(0deg); }
      100% { transform: rotate(360deg); }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  text-align: center;
+}
+
+.reauth-modal {
+  background-color: #fefefe; /* Match profile container color */
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.reauth-modal h2 {
+  color: #525FE1; /* Profile heading color */
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.reauth-modal p {
+  color: #333; /* Profile text color */
+  margin-bottom: 15px;
+}
+
+.reauth-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  background-color: #FFC107; /* Button color */
+  color: #000; /* Button text color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #e0a106; /* Hover color */
+}
+
+.btn-submit {
+  background-color: #FFC107; /* Match with the warning theme */
+  ; /* Primary color */
+}
+
+.btn-submit:hover {
+  background-color:#e0a106; /* Slightly darker shade for hover */
+}
+
+.btn-cancel {
+  background-color: #FFC107; /* Match with the warning theme */
+}
+
+.btn-cancel:hover {
+  background-color: #e0a106;
 }
 </style>
   

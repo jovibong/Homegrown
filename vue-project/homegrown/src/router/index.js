@@ -19,6 +19,8 @@ import HomePage from '../pages/homePage.vue';
 import ChatPage from '../pages/chatPage.vue';
 import LandingPage from '../pages/landingPage.vue';
 import QuizMentorPage from '../pages/quizMentorPage.vue'
+import VolunteerHomePage from '../pages/volunteerHomePage.vue';
+import VolunteerAchievement from '../pages/volunteerAchievement.vue';
 
 
 const routes = [
@@ -153,6 +155,16 @@ const routes = [
         path: '/quizMentorPage',
         name: 'quizMentorPage',
         component: QuizMentorPage
+    },
+    {
+        path: '/volunteerHomePage',
+        name: 'volunteerHomePage',
+        component: VolunteerHomePage
+    },
+    {
+        path: '/volunteerAchievement',
+        name: 'volunteerAchievement',
+        component: VolunteerAchievement
     }
 
 ];
