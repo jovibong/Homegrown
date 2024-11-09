@@ -82,7 +82,7 @@
             <router-link to="/workersCertification" class="dropdown-item"><i class="bi bi-award-fill"></i>
               Certifications</router-link>
             <hr>
-            <router-link to="/homePage" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign
+            <router-link to="/" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign
               Out</router-link>
           </div>
         </div>
