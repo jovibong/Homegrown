@@ -7,14 +7,14 @@
       <section id="intro" class="container pt-5 pb-0 fade-in">
         <div class="row align-items-center">
           <div class="col-lg-6">
-            <h1 class="display-4 fw-bold">Feel at home, while you grow</h1>
+            <h1 class="display-4 fw-bold home">Welcome!</h1>
             <p class="lead text-muted">
-              Join our platform to improve your skills, manage your finances, and connect with a supportive community.
+             Thank you for taking the step to join our community.
               Access free courses, track payments, and get personalized mentorship and resources to enhance your life in
-              Singapore. Sign up today and start building a brighter future!
+              Singapore. Let’s get started!
             </p>
             <div class="mt-4 d-flex align-items-center">
-              <a href="#" class="btn btn-secondary btn-lg me-3 text-dark">JOIN NOW</a>
+              <router-link to='/coursesPage' class="btn btn-warning btn-secondary btn-lg me-3 text-dark">UPSKILL NOW</router-link>
               <a href="#" class="d-flex align-items-center text-primary">
                 <span class="ms-4">
                   <i class="bi bi-play-circle-fill me-2 fs-3"></i>
@@ -116,11 +116,12 @@
       <!-- Events Section -->
       <section class="events-section fade-in">
         <div class="container">
-          <h2 class="text-center">Popular Past Events</h2>
+          <h2 class="text-center fw-bold">
+            Popular Past Events</h2>
           <div class="row">
             <div class="col-md-4">
               <div class="card">
-                <img src="event1.jpg" class="card-img-top" alt="Event 1" />
+                <img src="../img/cultural.jpg" class="card-img-top" alt="Event 1" />
                 <div class="card-body">
                   <h5 class="card-title">Cultural Exchange</h5>
                   <p class="card-text">Learn and share your culture with others in Singapore.</p>
@@ -129,7 +130,7 @@
             </div>
             <div class="col-md-4">
               <div class="card">
-                <img src="event2.jpg" class="card-img-top" alt="Event 2" />
+                <img src="../img/heritagewalk.jpg" class="card-img-top" alt="Event 2" />
                 <div class="card-body">
                   <h5 class="card-title">Heritage Walk</h5>
                   <p class="card-text">Explore Singapore's historical landmarks with fellow workers.</p>
@@ -138,12 +139,17 @@
             </div>
             <div class="col-md-4">
               <div class="card">
-                <img src="event3.jpg" class="card-img-top" alt="Event 3" />
+                <img src="../img/volunteering.jpeg" class="card-img-top" alt="Event 3" />
                 <div class="card-body">
                   <h5 class="card-title">Volunteering Fair</h5>
                   <p class="card-text">Discover opportunities to give back to the community.</p>
                 </div>
               </div>
+            </div>
+            <div class="mt-3 text-end">
+                <router-link to="/eventPage" class="text-primary">
+                    See more events
+                </router-link>
             </div>
           </div>
         </div>
@@ -153,9 +159,9 @@
       <section class="testimonial-section py-5 fade-in">
         <div class="container text-center">
           <h2 class="fw-bold">
-            <span class="text-primary">What</span> fellow Migrant Workers Say
+            <span class="text-primary">What</span> Fellow Migrant Workers Say
           </h2>
-          <p class="mb-4">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...</p>
+          <p class="mb-4"></p>
   
           <div class="testimonial-box position-relative p-4 mx-auto mb-5">
             <div class="quote-icon position-absolute top-0 start-0" style="font-size: 3rem;">
@@ -168,9 +174,9 @@
   
           <div class="profile-box d-flex justify-content-center">
             <div class="text-center">
-              <img src="profile.jpg" alt="James Thomas" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
-              <h5 class="fw-bold mt-3">James Thomas</h5>
-              <p class="text-muted">YISHUN</p>
+              <img src="../img/marine_worker.jpg" alt="James Thomas" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
+              <h5 class="fw-bold mt-3">Hossain Sokkur</h5>
+              <p class="text-muted">Marine Trade Worker</p>
             </div>
           </div>
         </div>
@@ -179,7 +185,19 @@
   </template>
   
   <script>
+
   export default {
+    data() {
+    return {
+      steps: [
+        'Sign up for an account on Homegrown.',
+        'Browse through the available courses and select one that interests you.',
+        'Enroll in the course and start learning at your own pace.',
+        'Complete the course and receive a certificate of completion.',
+        'Share your achievements with the Homegrown community!'
+      ]
+    };
+    },
     name: 'HomegrownApp',
     mounted() {
       const faders = document.querySelectorAll(".fade-in");
@@ -205,6 +223,9 @@
   </script>
   
   <style scoped>
+  .home{
+    color:#525FE1;  ;
+  }
   .fade-in {
     opacity: 0;
     transform: translateY(50px);
@@ -214,5 +235,14 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  .profile-picture {
+  width: 150px; /* Adjust as needed */
+  height: 150px; /* Adjust as needed */
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: contain; /* Resizes the image to fit within the container */
+  object-position: center; /* Centers the image within the container */
+  border: 2px solid #000; /* Optional: add a border */
+}
   </style>
   
