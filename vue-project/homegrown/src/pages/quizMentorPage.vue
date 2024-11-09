@@ -102,8 +102,7 @@
   <div class="container-fluid row mx-auto my-5 d-flex justify-content-center">
     <router-link
       to="mentorshipCourse"
-      class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2"
-    >
+      class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2">
       <i class="bi bi-arrow-left me-2"></i>
       <span class="d-none d-md-inline">Back to course overview</span>
       <span class="d-inline d-md-none">Course Overview</span>
