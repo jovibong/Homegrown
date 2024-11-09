@@ -32,7 +32,12 @@
               <div :class="['collapse', 'navbar-collapse', 'justify-content-center', { show: isNavbarOpen }]" id="navbarNav">
                 <ul class="navbar-nav">
                 <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/homePage" class="nav-link active text-light" aria-current="page">Home</router-link>
+                  <router-link 
+                    :to="userType === 'worker' ? '/homePage' : '/volunteerHomePage'" 
+                    class="nav-link active text-light" 
+                    aria-current="page">
+                    Home
+                  </router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker'">
                   <router-link to="/coursesPage" class="nav-link text-light">Upskilling</router-link>
@@ -79,10 +84,20 @@
             <hr>
             <router-link to="/editProfile" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile
               Settings</router-link>
-            <router-link to="/workersCertification" class="dropdown-item"><i class="bi bi-award-fill"></i>
-              Certifications</router-link>
+              <router-link 
+              v-if="userType === 'worker'" 
+              to="/workersCertification" 
+              class="dropdown-item">
+              <i class="bi bi-award-fill"></i> Certifications
+            </router-link>
+            <router-link 
+              v-else-if="userType === 'volunteer'" 
+              to="/volunteerAchievement" 
+              class="dropdown-item">
+              <i class="bi bi-award-fill"></i> Achievements
+            </router-link>
             <hr>
-            <router-link to="/homePage" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign
+            <router-link to="/" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign
               Out</router-link>
           </div>
         </div>
@@ -145,6 +160,7 @@ export default {
     // Set the user if available in storage
     this.user = savedUser ? JSON.parse(savedUser) : null;
 
+
     // Watch Firebase auth state changes
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -204,7 +220,7 @@ export default {
           console.log("User signed out");
           this.user = null;
           this.userType = null; // Reset user type
-          this.$router.push("/homePage"); // Redirect to home page
+          this.$router.push("/"); // Redirect to home page
         })
         .catch((error) => {
           console.error("Error signing out:", error);
@@ -236,7 +252,7 @@ export default {
     closeNavbar() {
       // Close the navbar (set state to false)
       this.isNavbarOpen = false;
-    }
+    },
   }
 };
 </script>

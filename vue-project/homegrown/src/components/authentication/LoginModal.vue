@@ -55,6 +55,8 @@
 import { Modal } from "bootstrap";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase/initialize.js'; // Import Firebase auth instance
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/firebase/initialize.js'; // Import Firestore instance
 
 export default {
   emits: ['startLoading', 'stopLoading'],
@@ -116,28 +118,46 @@ export default {
 
         // Check the "Remember Me" preference and save accordingly
         if (this.rememberMe) {
-          // Save "Remember Me" state and user data in localStorage
           localStorage.setItem('rememberMe', true);
           localStorage.setItem('user', JSON.stringify(user));
         } else {
-          // Save user data in sessionStorage for the session only
           sessionStorage.setItem('user', JSON.stringify(user));
           localStorage.removeItem('rememberMe'); // Clear "Remember Me" from local storage
         }
 
-        // Emit event with user info if needed
+        // Fetch userType from Firestore
+        const docRef = doc(db, 'profiles', user.uid);
+        const docSnap = await getDoc(docRef);
+        let userType;
+
+        if (docSnap.exists()) {
+          userType = docSnap.data().userType;
+          console.log('UserType fetched:', userType);
+
+          // Redirect based on userType
+          if (userType === 'worker') {
+            this.$router.push({ name: 'homePage' });
+          } else if (userType === 'volunteer') {
+            this.$router.push({ name: 'volunteerHomePage' });
+          } else {
+            console.warn('Unknown userType:', userType);
+            this.$router.push({ name: '/' }); // Default or error page if needed
+          }
+        } else {
+          console.log('No such document!');
+          this.$router.push({ name: '/' }); // Redirect to a default or error page if no userType is found
+        }
+
         // Emit login event to parent if needed
         this.$emit('login', { user: user, rememberMe: this.rememberMe });
 
-        // redirect to home page
-        this.$router.push({ name: 'homePage' });
         // Hide login modal
         this.hideModal();
       } catch (error) {
         console.error("Error logging in:", error.message);
         alert("Login failed: " + error.message);
-      } 
-    },
+      }
+},
     openSignup() {
       this.$emit("openSignup");
       this.hideModal();

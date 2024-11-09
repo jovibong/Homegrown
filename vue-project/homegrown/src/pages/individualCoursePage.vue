@@ -142,12 +142,12 @@
               <h5 class="fw-bold h4">{{ mentor.name }}</h5>
               <p class="text-muted">{{ mentor.description }}</p>
               <!-- Ask for Help Button -->
-              <a
-                href="#"
+              <div
                 class="btn btn-primary d-inline-flex align-items-center"
+                @click.prevent="addChat(mentor.id, user)"
               >
                 Ask for help <i class="bi bi-arrow-right ms-2"></i>
-              </a>
+              </div>
             </div>
           </div>
         </div>
@@ -278,7 +278,16 @@
 
 <script>
 import loadingAnimation from "../components/loadingAnimation.vue";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  addDoc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 export default {
@@ -310,8 +319,12 @@ export default {
         const courseDoc = await getDoc(courseDocRef);
 
         if (courseDoc.exists()) {
-          this.percentage_completed = courseDoc.data().percentage_completed || 0;
-          console.log("Fetched percentage completed:", this.percentage_completed);
+          this.percentage_completed =
+            courseDoc.data().percentage_completed || 0;
+          console.log(
+            "Fetched percentage completed:",
+            this.percentage_completed
+          );
         } else {
           console.warn("Course document not found in user's ongoing_courses.");
         }
@@ -323,10 +336,7 @@ export default {
     },
     async fetchLessons() {
       try {
-        const lessonsRef = collection(
-          db,
-          `courses/${this.course.id}/lessons`
-        );
+        const lessonsRef = collection(db, `courses/${this.course.id}/lessons`);
         const lessonDocs = await getDocs(lessonsRef);
 
         let latestFound = false; // Flag to indicate if the latest item has been found
@@ -370,10 +380,9 @@ export default {
                 ...itemData,
                 id: itemDoc.id,
                 icon:
-                  itemData.typeof === "quiz"
-                    ? "bi-lightbulb"
-                    : "bi-play-fill",
-                route_link: itemData.typeof === "quiz" ? "quizPage" : "videoPage",
+                  itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
+                route_link:
+                  itemData.typeof === "quiz" ? "quizPage" : "videoPage",
                 completed: completed,
                 latest: latest,
               };
@@ -499,7 +508,9 @@ export default {
               console.warn("Mentor not found in the mentors collection.");
             }
           } else {
-            console.warn("No mentor ID found for this course in ongoing_courses.");
+            console.warn(
+              "No mentor ID found for this course in ongoing_courses."
+            );
           }
         } else {
           console.warn("Course document not found in user's ongoing_courses.");
@@ -518,11 +529,51 @@ export default {
         this.$router.push(item.route_link);
       }
     },
+    async addChat(chatterId1, chatterId2) {
+      try {
+        // Step 1: Create a new chat document in the "chats" collection
+        const newChatRef = await addDoc(collection(db, "chats"), {
+          chat_type: "contact",
+          chat_name: "contact",
+          chat_img: "default_image_url", // Set a default image or customize this
+          group_members: [chatterId1, chatterId2],
+        });
+
+        const chatId = newChatRef.id;
+        console.log("New chat created with ID:", chatId);
+
+        // Step 2: Function to add chat ID to a chatter's `chats` array or create `chats` array if it doesn't exist
+        for (const chatterId of [chatterId1, chatterId2]) {
+          const chatterRef = doc(db, "chatters", chatterId);
+          const chatterDoc = await getDoc(chatterRef);
+
+          if (chatterDoc.exists()) {
+            // If `chats` array exists, add chatId to it, else create the array with the new chat ID
+            await updateDoc(chatterRef, {
+              chats: arrayUnion(chatId),
+            });
+          } else {
+            // If chatter document doesn't exist, create it with a `chats` array containing the new chat ID
+            await setDoc(chatterRef, {
+              chats: [chatId],
+            });
+          }
+          console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
+        }
+
+        console.log("Chat successfully created and added to both chatters.");
+      } catch (error) {
+        console.error("Error creating chat:", error);
+      } finally {
+        this.$router.push("chatPage");
+      }
+    },
   },
   async mounted() {
-    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+    const userObject =
+      JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
-    if(userObject){
+    if (userObject) {
       this.user = userObject.uid;
     }
     const storedCourse = sessionStorage.getItem("selectedCourse");

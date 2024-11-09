@@ -2,7 +2,7 @@
     <div class="page-wrapper">
       <!-- Certification Content -->
       <div class="certifications-page">
-        <h2 class="title text-primary fw-bold text-center mb-3 display-4">Your Completed Certifications</h2>
+        <h2 class="title text-primary fw-bold text-center mb-3 display-4">Your Achievements</h2>
   
         <div v-if="completedCertifications.length" class="certifications-grid">
           <div
@@ -10,7 +10,7 @@
             :key="cert.id"
             class="cert-card"
           >
-            <!-- Certification Image and Rank -->
+            <!-- Achievement Image and Rank -->
             <div class="cert-image-container">
               <img :src="cert.imageUrl" alt="Certification Image" class="cert-image" />
               <div class="rank-number">
@@ -24,7 +24,7 @@
               <h3 class="cert-title">{{ cert.title }}</h3>
               <p class="cert-grade">
                 <i class="bi bi-star-fill"></i> <!-- Star icon for score -->
-                Score: {{ cert.grade }}%
+                Hours Obtained: {{ cert.hours }}%
               </p>
               <div class="badge completed">
                 <i class="bi bi-award"></i> <!-- Award icon for "Completed" -->
@@ -35,7 +35,7 @@
         </div>
   
         <div v-else class="no-certifications">
-          <p>You haven’t completed any certifications yet. Start learning now!</p>
+          <p>You haven’t obtained any achievements yet. Start volunteering now!</p>
         </div>
       </div>
   </div>
@@ -45,17 +45,16 @@
   export default {
     data() {
       return {
-        certifications: [
-          { id: 1, title: 'Introduction to Python', grade: 98, status: 'completed', imageUrl: 'path/to/python.jpg' },
-          { id: 2, title: 'Advanced CSS Design', grade: 92, status: 'completed', imageUrl: 'path/to/css.jpg' },
-          { id: 3, title: 'JavaScript Essentials', grade: 87, status: 'completed', imageUrl: 'path/to/js.jpg' },
-          // Add more certification data as needed
+        achievements: [
+          { id: 1, title: 'Introduction to Python', hours: 25, status: 'completed', imageUrl: 'path/to/python.jpg' },
+          { id: 2, title: 'Advanced CSS Design', hours: 30, status: 'completed', imageUrl: 'path/to/css.jpg' },
+          { id: 3, title: 'JavaScript Essentials', hours: 45, status: 'completed', imageUrl: 'path/to/js.jpg' },
         ]
       };
     },
     computed: {
       completedCertifications() {
-        return this.certifications.filter(cert => cert.status === 'completed');
+        return this.achievements.filter(cert => cert.status === 'completed');
       }
     }
   };

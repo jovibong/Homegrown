@@ -7,15 +7,13 @@
       <section id="intro" class="container pt-5 pb-0 fade-in">
         <div class="row align-items-center">
           <div class="col-lg-6">
-            <h1 class="display-4 fw-bold">Feel at home, while you grow</h1>
+            <h1 class="display-4 fw-bold home">Welcome!</h1>
             <p class="lead text-muted">
-              Join our platform to improve your skills, manage your finances, and connect with a supportive community.
-              Access free courses, track payments, and get personalized mentorship and resources to enhance your life in
-              Singapore. Sign up today and start building a brighter future!
+              Thank you for joining our vibrant community! Step into the rewarding role of a mentor and make a real impact by guiding foreign workers through various courses. Engage with them at enriching events across Singapore, fostering connections and making a difference. Ready to embark on this meaningful journey? Let’s get started!
             </p>
             <div class="mt-4 d-flex align-items-center">
-                <button @click="openSignUpModal" class="btn btn-secondary btn-lg me-3 text-dark">JOIN NOW</button>
-                <a href="#" class="d-flex align-items-center text-primary">
+              <router-link to='/mentorshipPage' class="btn btn-warning btn-secondary btn-lg me-3 text-dark">MENTOR NOW</router-link>
+              <a href="#" class="d-flex align-items-center text-primary">
                 <span class="ms-4">
                   <i class="bi bi-play-circle-fill me-2 fs-3"></i>
                 </span>
@@ -92,7 +90,7 @@
           <div id="app_steps" class="col-lg-7">
             <h2 class="fw-bold mb-3 display-5">Effortless Enrollment</h2>
             <p class="lead text-dark mb-4">
-              Follow these simple steps to learn something new!
+              Follow these simple steps to start you journey!
             </p>
             <ul class="list-unstyled">
               <li
@@ -116,14 +114,15 @@
       <!-- Events Section -->
       <section class="events-section fade-in">
         <div class="container">
-          <h2 class="text-center">Popular Past Events</h2>
+          <h2 class="text-center fw-bold">
+            Popular Past Events</h2>
           <div class="row">
             <div class="col-md-4">
               <div class="card">
                 <img src="../img/cultural.jpg" class="card-img-top" alt="Event 1" />
                 <div class="card-body">
                   <h5 class="card-title">Cultural Exchange</h5>
-                  <p class="card-text">Learn and share your culture with others in Singapore.</p>
+                  <p class="card-text">Learn and immerse yourself in the various cultures of migrant workers.</p>
                 </div>
               </div>
             </div>
@@ -132,7 +131,7 @@
                 <img src="../img/heritagewalk.jpg" class="card-img-top" alt="Event 2" />
                 <div class="card-body">
                   <h5 class="card-title">Heritage Walk</h5>
-                  <p class="card-text">Explore Singapore's historical landmarks with fellow workers.</p>
+                  <p class="card-text">Explore Singapore's historical landmarks with workers.</p>
                 </div>
               </div>
             </div>
@@ -145,6 +144,11 @@
                 </div>
               </div>
             </div>
+            <div class="mt-3 text-end">
+                <router-link to="/eventPage" class="text-primary">
+                    See more events
+                </router-link>
+            </div>
           </div>
         </div>
       </section>
@@ -153,56 +157,46 @@
       <section class="testimonial-section py-5 fade-in">
         <div class="container text-center">
           <h2 class="fw-bold">
-            <span class="text-primary">What</span> fellow Migrant Workers Say
+            <span class="text-primary">What</span> Fellow Volunteers Say
           </h2>
           <p class="mb-4"></p>
   
           <div class="testimonial-box position-relative p-4 mx-auto mb-5">
-            <div class="quote-icon position-absolute top-0 start-0" style="font-size: 3rem;">
+            <div class="quote-icon position-absolute top-0 start-0" style="font-size: 3rem; margin-right: 10px;">
               <i class="bi bi-quote text-dark"></i>
             </div>
-            <p class="text-white fs-5">
-              Homegrown has truly transformed my experience in Singapore. I’ve been able to improve my skills through the courses, easily track my finances, and connect with other workers and mentors who understand the challenges we face. It’s like having a support system in my pocket, helping me feel more confident and supported every day.
+            <p class="text-white fs-5" style="padding-left: 2.5rem;"> <!-- Adjust padding-left as needed -->
+              Homegrown has truly changed my outlook on Migrant Workers in Singapore. I’ve been able to use my skills to mentor some of the workers, connect with them and understand their stories. Beyond the hours accumulated, I'm glad that I got to make a difference in their lives.
             </p>
           </div>
   
           <div class="profile-box d-flex justify-content-center">
             <div class="text-center">
-              <img src="../img/marine_worker.jpg" alt="James Thomas" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
-              <h5 class="fw-bold mt-3">Hossain Sokkur</h5>
-              <p class="text-muted">Marine Trade Worker</p>
+              <img src="../img/student_male.jpeg" alt="James Thomas" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
+              <h5 class="fw-bold mt-3">Tan Hong Wen</h5>
+              <p class="text-muted">SMU Student</p>
             </div>
           </div>
         </div>
       </section>
     </div>
-    <SignUpModal :visible="isSignUpModalVisible" @update:visible="isSignUpModalVisible = $event" />
   </template>
   
   <script>
-  import SignUpModal from '../components/authentication/SignupModal.vue';
+
   export default {
-    components: {
-      SignUpModal
-    },
     data() {
     return {
-      isSignUpModalVisible: false, // Add this to avoid the "undefined" error
       steps: [
         'Sign up for an account on Homegrown.',
         'Browse through the available courses and select one that interests you.',
-        'Enroll in the course and start learning at your own pace.',
-        'Complete the course and receive a certificate of completion.',
-        'Share your achievements with the Homegrown community!'
+        'Become a mentor.',
+        'Track your hours.',
+        'Go for events and impact the lives of the migrant workers!',
       ]
     };
     },
     name: 'HomegrownApp',
-    methods: {
-    openSignUpModal() {
-    this.isSignUpModalVisible = true;
-    }
-    },
     mounted() {
       const faders = document.querySelectorAll(".fade-in");
   

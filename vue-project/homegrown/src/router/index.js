@@ -19,6 +19,8 @@ import HomePage from '../pages/homePage.vue';
 import ChatPage from '../pages/chatPage.vue';
 import LandingPage from '../pages/landingPage.vue';
 import QuizMentorPage from '../pages/quizMentorPage.vue'
+import VolunteerHomePage from '../pages/volunteerHomePage.vue';
+import VolunteerAchievement from '../pages/volunteerAchievement.vue';
 
 
 const routes = [
@@ -153,13 +155,30 @@ const routes = [
         path: '/quizMentorPage',
         name: 'quizMentorPage',
         component: QuizMentorPage
+    },
+    {
+        path: '/volunteerHomePage',
+        name: 'volunteerHomePage',
+        component: VolunteerHomePage
+    },
+    {
+        path: '/volunteerAchievement',
+        name: 'volunteerAchievement',
+        component: VolunteerAchievement
     }
 
 ];
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
-    routes
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+          return savedPosition; // when using browser back/forward buttons, restore scroll position.
+        } else {
+          return { top: 0 }; // scroll to the top for all new navigations.
+        }
+      },
 });
 
 export default router;
