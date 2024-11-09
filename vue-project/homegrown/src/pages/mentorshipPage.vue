@@ -223,7 +223,7 @@ export default {
             }
         },
         goToMentorshipCoursePage(course) {
-            sessionStorage.setItem("selectedCourse", JSON.stringify(course));
+            sessionStorage.setItem("selectedCourseId", JSON.stringify(course));
             this.$router.push({ name: "mentorshipCourse" });
             return course;
         },
