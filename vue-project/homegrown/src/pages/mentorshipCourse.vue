@@ -202,6 +202,7 @@ export default {
         // If the id does not exist in the route parameters, pull it from sessionStorage
         const selectedCourse = sessionStorage.getItem("selectedCourseId");
         const id = JSON.parse(selectedCourse);
+        
         if (selectedCourse) {
           console.log("Course retrieved from sessionStorage:", id);
           sessionStorage.setItem("selectedCourseId", JSON.stringify(id));

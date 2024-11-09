@@ -13,7 +13,8 @@
                     <!-- Mentorship Cards -->
                     <div v-for="course in courses" :key="course.id" class="col-md-4 mb-4">
                         <div class="card shadow-sm position-relative hover-animate">
-                            <router-link :to="`/mentorshipCourse`" class="text-decoration-none" @click="goToMentorshipCoursePage(course.id)">
+                            <router-link :to="`/mentorshipCourse`" class="text-decoration-none"
+                                @click="goToMentorshipCoursePage(course.id)">
                                 <span v-if="course.noti_count > 0"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
                                     {{ course.noti_count }}
@@ -123,7 +124,7 @@
 
 <script>
 import { Modal, Toast } from 'bootstrap';
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -151,10 +152,29 @@ export default {
     methods: {
         fetchLessons: async function () {
             try {
-                const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
-                const uid = user.uid;
-                // console.log(user)
-                const docRef = doc(db, "profiles", uid);
+                const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+                console.log('session in progress');
+                console.log(sessionUser.uid);
+
+                const userId = sessionUser.uid;
+                const userDocRef = doc(db, 'mentors', userId); // Reference to the user's document
+                // const paymentLogsCollectionRef = collection(userDocRef, 'paymentlogs'); // Reference to the user's paymentlogs subcollection
+
+                // Check if the user document exists
+                const userDocSnapshot = await getDoc(userDocRef);
+
+                // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+                if (!userDocSnapshot.exists()) {
+                    await setDoc(userDocRef, { userId: userId });
+                    const docRef = doc(db, "profiles", userId);
+                    const docSnap = await getDoc(docRef);
+                    const mentorName = docSnap.data().name;
+                    await setDoc(userDocRef, { name: mentorName });
+                    await setDoc(userDocRef, { description: "Hi I am a new mentor!" });
+                }
+                
+                // EDIT FROM THIS PART ONWARD SEAN
+                const docRef = doc(db, "profiles", userId);
                 const docSnap = await getDoc(docRef);
                 const mentorID = docSnap.data().mentor;
 
