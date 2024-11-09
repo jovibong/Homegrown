@@ -4,18 +4,19 @@
 
         <!-- Volunteer Hour Goals -->
         <section class="mb-5">
-            <h2 class="mb-4 text-primary text-start"><i class="bi bi-flag-fill me-2"></i>Set Your Volunteer Hour Goals</h2>
+            <h2 class="mb-4 text-primary text-start"><i class="bi bi-flag-fill me-2"></i>Set Your Volunteer Hour Goals
+            </h2>
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Current Goal: {{ yearlyGoal }} hours</h3>
                     <div class="progress mb-3">
                         <div class="progress-bar bg-success" role="progressbar"
                             :style="{ width: progressPercentage + '%' }" :aria-valuenow="progressPercentage"
-                            aria-valuemin="0" aria-valuemax="100">
+                            aria-valuemin="0" aria-valuemax="100" v-if="totalHours != 0">
                             {{ progressPercentage }}%
                         </div>
-                        <div class="progress-bar bg-info" role="progressbar"
-                            :style="{ width: futurePercentage + '%' }">
+                        <div class="progress-bar bg-info" role="progressbar" :style="{ width: futurePercentage + '%' }"
+                            v-if="futureHours != 0">
                             {{ futurePercentage }}%
                         </div>
                     </div>
@@ -39,7 +40,7 @@
         </section>
 
         <!-- Current Mentored Course -->
-        <section class="mb-5">
+        <section class="mb-5" v-if="currentMentorships.length > 0">
             <h2 class="mb-4 text-primary text-start"><i class="bi bi-book-fill me-2"></i>Current Mentored Course</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="course in currentMentorships" :key="course.id" class="col">
@@ -60,7 +61,7 @@
         </section>
 
         <!-- Past Mentorships -->
-        <section class="mb-5">
+        <section class="mb-5" v-if="pastMentorships.length > 0">
             <h2 class="mb-4 text-primary text-start"><i class="bi bi-journal-check me-2"></i>Past Mentorships</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="course in pastMentorships" :key="course.id" class="col">
@@ -81,7 +82,7 @@
         </section>
 
         <!-- Upcoming Events -->
-        <section class="mb-5">
+        <section class="mb-5" v-if="upcomingEvents.length > 0">
             <h2 class="mb-4 text-primary text-start"><i class="bi bi-calendar-event me-2"></i>Upcoming Events</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="event in upcomingEvents" :key="event.id" class="col">
@@ -102,7 +103,7 @@
         </section>
 
         <!-- Past Events -->
-        <section>
+        <section class="mb-5" v-if="pastEvents.length > 0">
             <h2 class="mb-4 text-primary text-start"><i class="bi bi-calendar-check me-2"></i>Past Events</h2>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div v-for="event in pastEvents" :key="event.id" class="col">
@@ -146,67 +147,17 @@
 
 <script>
 import { Modal } from 'bootstrap';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/initialize";
 
 export default {
     data() {
         return {
-            yearlyGoal: 80,
-            currentMentorships: [
-                {
-                    name: "Introduction to Python",
-                    description: "Teaching beginners the basics of Python programming, including syntax and simple applications.",
-                    mentees: 5,
-                    hours: 3
-                }
-            ],
-            pastMentorships: [
-                {
-                    id: 1,
-                    name: "Web Development Fundamentals",
-                    description: "Guided students through HTML, CSS, and basic JavaScript to build simple websites.",
-                    mentees: 3,
-                    hours: 7
-                },
-                {
-                    id: 2,
-                    name: "Data Analysis with Excel",
-                    description: "Taught advanced Excel techniques for data analysis and visualization.",
-                    mentees: 4,
-                    hours: 6
-                }
-            ],
-            upcomingEvents: [
-                {
-                    id: 1,
-                    name: "Community Code Workshop",
-                    description: "A day-long workshop teaching coding basics to local students.",
-                    date: "2024-05-15",
-                    expectedHours: 8
-                },
-                {
-                    id: 2,
-                    name: "Tech for Seniors",
-                    description: "Helping senior citizens learn to use smartphones and tablets.",
-                    date: "2024-06-01",
-                    expectedHours: 4
-                }
-            ],
-            pastEvents: [
-                {
-                    id: 1,
-                    name: "Environmental Data Collection",
-                    description: "Collected and analyzed local environmental data with a team of volunteers.",
-                    date: "2024-03-20",
-                    hours: 6
-                },
-                {
-                    id: 2,
-                    name: "Youth Coding Camp",
-                    description: "Week-long summer camp teaching basic programming concepts to middle school students.",
-                    date: "2023-07-10",
-                    hours: 30
-                }
-            ]
+            yearlyGoal: 0,
+            currentMentorships: [],
+            pastMentorships: [],
+            upcomingEvents: [],
+            pastEvents: []
         };
     },
     computed: {
@@ -241,6 +192,24 @@ export default {
         },
     },
     methods: {
+        fetchVolunteerData: async function () {
+            try {
+                const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
+                const uid = user.uid;
+                // console.log(user)
+                const docRef = doc(db, "profiles", uid);
+                const docSnap = await getDoc(docRef);
+                const mentorID = docSnap.data().mentor;
+                console.log(mentorID)
+
+                // if (mentorID == "mentor_00001")
+
+            } catch (error) {
+                console.error("Error fetching volunteer:", error);
+            } finally {
+                this.lessons_loading = false;
+            }
+        },
         showModal() {
             const modal = new Modal(document.getElementById('goalModal'));
             modal.show();
@@ -253,7 +222,10 @@ export default {
                 modal.hide();
             }
         }
-    }
+    },
+    async mounted() {
+    await this.fetchVolunteerData();
+  },
 }
 </script>
 

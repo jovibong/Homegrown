@@ -100,11 +100,9 @@
   </div>
 
   <div class="container-fluid row mx-auto my-5 d-flex justify-content-center">
-    <div class="col-lg-2 col-md-1"></div>
     <router-link
-      to="individualCoursePage"
-      class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2"
-    >
+      to="mentorshipCourse"
+      class="btn btn-warning text-dark d-flex align-items-center justify-content-center col-lg-3 col-md-4 hover-animate py-3 my-2">
       <i class="bi bi-arrow-left me-2"></i>
       <span class="d-none d-md-inline">Back to course overview</span>
       <span class="d-inline d-md-none">Course Overview</span>
@@ -177,7 +175,8 @@ export default {
   },
   async mounted() {
     this.course = JSON.parse(sessionStorage.getItem("selectedCourse"));
-    console.log("course:", this.course);
+    const course = JSON.parse(sessionStorage.getItem("selectedCourseId"));
+    console.log("course:", course);
 
     if (this.course) {
       this.course_name = this.course.name;

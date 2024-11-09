@@ -116,12 +116,12 @@
                 <div class="col-md-9 text-md-start text-center">
                   <p class="text-muted">{{ mentee.description }}</p>
                   <!-- Ask for Help Button -->
-                  <a
-                    href="#"
+                  <router-link
+                    to="chatPage"
                     class="btn btn-primary d-inline-flex align-items-center"
                   >
                     Chat <i class="bi bi-arrow-right ms-2"></i>
-                  </a>
+                </router-link>
                 </div>
               </div>
             </div>
@@ -200,10 +200,12 @@ export default {
     fetchLessons: async function () {
       try {
         // If the id does not exist in the route parameters, pull it from sessionStorage
-        const selectedCourse = sessionStorage.getItem("selectedCourse");
+        const selectedCourse = sessionStorage.getItem("selectedCourseId");
         const id = JSON.parse(selectedCourse);
+        
         if (selectedCourse) {
           console.log("Course retrieved from sessionStorage:", id);
+          sessionStorage.setItem("selectedCourseId", JSON.stringify(id));
         } else {
           console.log("No course data found in sessionStorage");
         }
@@ -281,7 +283,7 @@ export default {
         // console.log(mentorID)
 
         // If the id does not exist in the route parameters, pull it from sessionStorage
-        const selectedCourse = sessionStorage.getItem("selectedCourse");
+        const selectedCourse = sessionStorage.getItem("selectedCourseId");
         const courseID = JSON.parse(selectedCourse);
         // console.log(courseID)
 
