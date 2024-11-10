@@ -1,7 +1,7 @@
 <template>
     <div id="app" class="container py-5">
         <h1 class="text-center mb-5 display-4 fw-bold text-primary">Volunteer Progress</h1>
-        <loading-animation v-if="eventLoading && eventLoading && mentorshipLoading"></loading-animation>
+        <loading-animation v-if="eventLoading || goalLoading || mentorshipLoading"></loading-animation>
         <div v-else>
 
             <!-- Volunteer Hour Goals -->
@@ -218,7 +218,7 @@ export default {
         fetchEventsData: async function () {
             try {
                 const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
-                const uid = user.uid;
+                const uid = await user.uid;
                 console.log(uid)
 
                 const querySnapshot = await getDocs(collection(db, 'events'));
