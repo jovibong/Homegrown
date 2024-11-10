@@ -119,9 +119,11 @@ export default {
         // Check the "Remember Me" preference and save accordingly
         if (this.rememberMe) {
           localStorage.setItem('rememberMe', true);
+          localStorage.removeItem('user');
           sessionStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('user', JSON.stringify(user));
         } else {
+          localStorage.removeItem('user');
           sessionStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('user', JSON.stringify(user));
         }
