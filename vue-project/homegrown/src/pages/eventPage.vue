@@ -77,7 +77,7 @@
                             </ul>
                         </div>
 
-                        <span class="title col-2"> or </span>
+                        <span class="title col-2"> OR </span>
 
                         <button @click="allowCreate"
                             :class="showCreate ? 'createButton col-3 pressed' : 'createButton col-3 notPressed'">

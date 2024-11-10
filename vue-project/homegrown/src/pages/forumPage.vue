@@ -16,9 +16,9 @@
                 <div class="col-4">
                     <h2 class="title"> Popular Categories</h2>
                     <div class="d-flex flex-column mb-3">
-                        <button class="p-2 category shadow-sm bg-body-tertiary">Flex item 1</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary">Flex item 2</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary">Flex item 3</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary">General</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary">Learning</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary">Events</button>
                     </div>
                 </div>
 
@@ -118,15 +118,31 @@
             </div>
 
             <!-- Dynamic forum page-->
-            <div>
-                <div v-if="forums.length == 0">
+            <div class="forum-container m-3">
+
+                <div v-if="forums.length === 0">
                     No forums yet. Post your own!
                 </div>
+
+                <div v-else>
+                    <div v-for="forum in forums" :key="forum.id" class="indivForum m-3">
+                        <h2 class="title">{{ forum.title }}</h2>
+                        <p class="desc"> {{ forum.description }}</p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1"></div> <!-- This will push the button to the right -->
+
+                            <router-link :to="{ name: 'forumDetail', params: { id: forum.id } }">
+                                <i class="bi bi-arrow-right-circle directButton"></i>
+                            </router-link>
+
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
 
-            <!-- <router-link :to="{ name: 'forumDetail', params: { id: forumID }}" class="btn btn-primary">
-        Go somewhere
-      </router-link> -->
         </section>
 
     </div>
@@ -134,8 +150,14 @@
 </template>
 
 <script>
+import { collection, getDocs } from "firebase/firestore";
+import { db } from '../firebase/initialize'
 
 export default{
+    mounted() {
+        this.getAllForums()
+    },
+
     data (){
         return {
             selectedCategory: "",
@@ -149,7 +171,18 @@ export default{
 
     methods: {
         async getAllForums (){
-
+            const querySnapshot = await getDocs(collection(db, "forums"));
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                this.forums.push({ 
+                    id: doc.id,
+                    title: doc.data().title,
+                    description: doc.data().description, 
+                    category: doc.data().category,
+                });
+            });
+            console.log("forums", this.forums)
         },
 
         async getTopForums(){
@@ -167,3 +200,26 @@ export default{
 
 }
 </script>
+
+<style scoped>
+@import '../css/events.css';
+
+.createButton {
+  cursor: pointer;
+  width: fit-content;
+  padding: 10px 20px;
+  font-family: 'Poppins';
+  border-radius: 5px;
+  border: none;
+  background-color: #525FE1;
+}
+
+.indivForum {
+    border: 2px solid #525FE1;
+    padding: 10px;
+}
+
+.directButton {
+    font-size: 30px;
+}
+</style>
