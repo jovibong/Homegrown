@@ -533,40 +533,62 @@ export default {
         this.$router.push(item.route_link);
       }
     },
-     async checkAndCreateuser(userId, userName, profilePicture) {
-      try {
-        // Reference to the user document in the users collection
-        const userDocRef = doc(db, "chatters", userId);
+async checkAndCreateuser(userId, userName, profilePicture) {
+  try {
+    const userDocRef = doc(db, "chatters", userId);
+    const userDocSnap = await getDoc(userDocRef);
 
-        // Check if the document exists
-        const userDocSnap = await getDoc(userDocRef);
+    if (userDocSnap.exists()) {
+      console.log("User document exists:", userDocSnap.data());
+    } else {
+      console.log("Creating new user");
+      const newUser = {
+        id: userId,
+        name: userName || "New User",
+        profile_picture: profilePicture || "https://thispersondoesnotexist.com/",
+      };
+      await setDoc(userDocRef, newUser);
+      console.log("User document created successfully:", newUser);
+    }
+  } catch (error) {
+    console.error("Error checking or creating user document:", error);
+  }
+},
 
-        if (userDocSnap.exists()) {
-          console.log("User document exists:", userDocSnap.data());
-        } else {
-          // If user document doesn't exist, create a new one
-          console.log("Creating new user");
-          const newUser = {
-            id: userId,
-            name: userName || "New User", // Default name, adjust as needed
-            profile_picture:
-              profilePicture || "https://thispersondoesnotexist.com/",
-          };
+async getUserDocument(userId) {
+  const collections = ["profiles", "users", "mentors"];
+  for (const collectionName of collections) {
+    try {
+      const docRef = doc(db, collectionName, userId);
+      const docSnap = await getDoc(docRef);
 
-          // Set the new document in Firestore
-          await setDoc(userDocRef, newUser);
-          console.log("User document created successfully:", newUser);
-        }
-      } catch (error) {
-        console.error("Error checking or creating user document:", error);
+      if (docSnap.exists()) {
+        return { data: docSnap.data(), collection: collectionName };
       }
-    },
-   async addChat(chatterId1, chatterId2) {
+    } catch (error) {
+      console.error(`Error retrieving document from ${collectionName}:`, error);
+    }
+  }
+  return { message: "User not found in profiles, users, or mentors collections" };
+},
+
+async addChat(chatterId1, chatterId2) {
   try {
     this.add_chat_button_disabled = true;
-    this.checkAndCreateuser(chatterId1);
-    this.checkAndCreateuser(chatterId2);
-    // Step 1: Check if a chat with both users already exists
+
+    // Step 1: Ensure both chatters exist by checking each ID in the relevant collections
+    for (const chatterId of [chatterId1, chatterId2]) {
+      const userDoc = await this.getUserDocument(chatterId);
+
+      if (!userDoc.data) {
+        console.log(`User ${chatterId} not found in profiles, users, or mentors, creating a new one.`);
+        await this.checkAndCreateuser(chatterId, "New User", "https://thispersondoesnotexist.com/");
+      } else {
+        console.log(`User ${chatterId} found in ${userDoc.collection} collection.`);
+      }
+    }
+
+    // Step 2: Check if a chat with both users already exists
     const chatsCollection = collection(db, "chats");
     const chatQuery = query(
       chatsCollection,
@@ -594,7 +616,7 @@ export default {
       return;
     }
 
-    // Step 2: Create a new chat document if no existing chat was found
+    // Step 3: Create a new chat document if no existing chat was found
     const newChatRef = await addDoc(collection(db, "chats"), {
       chat_type: "contact",
       chat_name: "contact",
@@ -605,7 +627,7 @@ export default {
     const chatId = newChatRef.id;
     console.log("New chat created with ID:", chatId);
 
-    // Step 3: Add chat ID to each chatter's `chats` array
+    // Step 4: Add chat ID to each chatter's `chats` array
     for (const chatterId of [chatterId1, chatterId2]) {
       const chatterRef = doc(db, "chatters", chatterId);
       const chatterDoc = await getDoc(chatterRef);
@@ -626,8 +648,11 @@ export default {
     this.$router.push({ name: "chatPage", params: { chatId } });
   } catch (error) {
     console.error("Error creating chat:", error);
+  } finally {
+    this.add_chat_button_disabled = false;
   }
 }
+,
   },
   async mounted() {
     const userObject =
