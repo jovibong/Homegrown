@@ -531,8 +531,38 @@ export default {
         this.$router.push(item.route_link);
       }
     },
+     async checkAndCreateuser(userId, userName, profilePicture) {
+      try {
+        // Reference to the user document in the users collection
+        const userDocRef = doc(db, "chatters", userId);
+
+        // Check if the document exists
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          console.log("User document exists:", userDocSnap.data());
+        } else {
+          // If user document doesn't exist, create a new one
+          console.log("Creating new user");
+          const newUser = {
+            id: userId,
+            name: userName || "New User", // Default name, adjust as needed
+            profile_picture:
+              profilePicture || "https://thispersondoesnotexist.com/",
+          };
+
+          // Set the new document in Firestore
+          await setDoc(userDocRef, newUser);
+          console.log("User document created successfully:", newUser);
+        }
+      } catch (error) {
+        console.error("Error checking or creating user document:", error);
+      }
+    },
    async addChat(chatterId1, chatterId2) {
   try {
+    this.checkAndCreateuser(chatterId1);
+    this.checkAndCreateuser(chatterId2);
     // Step 1: Check if a chat with both users already exists
     const chatsCollection = collection(db, "chats");
     const chatQuery = query(
