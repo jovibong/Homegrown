@@ -119,10 +119,11 @@ export default {
         // Check the "Remember Me" preference and save accordingly
         if (this.rememberMe) {
           localStorage.setItem('rememberMe', true);
+          sessionStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('user', JSON.stringify(user));
         } else {
           sessionStorage.setItem('user', JSON.stringify(user));
-          localStorage.removeItem('rememberMe'); // Clear "Remember Me" from local storage
+          localStorage.setItem('user', JSON.stringify(user));
         }
 
         // Fetch userType from Firestore

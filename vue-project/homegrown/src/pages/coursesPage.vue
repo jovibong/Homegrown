@@ -17,82 +17,81 @@
           View All <i class="bi bi-play-circle ms-2"></i>
         </router-link>
       </div>
-      <div class="row">
-        <div v-if="loading">
-          <loading-animation></loading-animation>
-        </div>
-        <div v-if="!loading && !has_ongoing" class="text-center fs-4">
-          Looks like you have no ongoing course. Click on a course below to
-          start learning!
-        </div>
-        <!-- Ongoing Course Card -->
-        <section v-if="!loading && has_ongoing">
-          <div
-            v-for="course in ongoing_courses"
-            :key="course.id"
-            class="col-md-4 mb-4 card-flip fade-in-top"
-          >
-            <div class="card shadow-sm position-relative h-100 card-inner">
-              <div class="card-front">
-                <div
-                  v-if="mentor_available(course)"
-                  class="mentor-badge bg-primary"
-                >
-                  <span class="text-black">Mentor Included</span>
-                </div>
-                <img
-                  :src="course_images[course.id]"
-                  :alt="course.name + ' img'"
-                  class="card-img h-100"
-                />
 
-                <div
-                  class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-75 w-100"
-                >
-                  <div class="container-fluid">
-                    <div class="row text-center">
-                      <i
-                        class="bi bi-code-slash text-primary text-center h1 fw-bold text-shadow"
-                      ></i>
-                    </div>
-                    <div class="row text-center">
-                      <h5 class="card-title fw-bold text-center px-2">
-                        {{ course.name }}
-                      </h5>
-                    </div>
-                  </div>
-                </div>
+      <div v-if="loading">
+        <loading-animation></loading-animation>
+      </div>
+      <div v-if="!loading && !has_ongoing" class="text-center fs-4">
+        Looks like you have no ongoing course. Click on a course below to start
+        learning!
+      </div>
+      <!-- Ongoing Course Card -->
+      <div v-if="!loading && has_ongoing" class="row">
+        <div
+          v-for="course in ongoing_courses"
+          :key="course.id"
+          class="col-md-4 mb-4 card-flip fade-in-top d-inline-block"
+        >
+          <div class="card shadow-sm position-relative h-100 card-inner">
+            <div class="card-front">
+              <div
+                v-if="mentor_available(course)"
+                class="mentor-badge bg-primary"
+              >
+                <span class="text-black">Mentor Included</span>
               </div>
-              <div class="card-back">
-                <div class="card-body h-100">
-                  <h5 class="card-title fw-bold text-center px-2">
-                    {{ course.name }}
-                  </h5>
-                  <div class="text-center mb-2">
-                    <span
-                      v-html="getRatingStars(course.rating)"
-                      class="text-warning"
-                    ></span>
-                    <small class="text-muted d-block">
-                      {{ course.num_reviews }} Reviews
-                    </small>
+              <img
+                :src="course_images[course.id]"
+                :alt="course.name + ' img'"
+                class="card-img h-100"
+              />
+
+              <div
+                class="card-body h-50 position-absolute bottom-0 mb-2 bg-white bg-opacity-75 w-100"
+              >
+                <div class="container-fluid">
+                  <div class="row text-center">
+                    <i
+                      class="bi bi-code-slash text-primary text-center h1 fw-bold text-shadow"
+                    ></i>
                   </div>
-                  <div class="card-text text-center">
-                    <p class="card-text text-muted">
-                      {{ course.description }}
-                    </p>
-                  </div>
-                  <div
-                    class="clickable rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
-                    @click="goToCoursePage(course)"
-                  >
-                    Go to course
+                  <div class="row text-center">
+                    <h5 class="card-title fw-bold text-center px-2">
+                      {{ course.name }}
+                    </h5>
                   </div>
                 </div>
               </div>
             </div>
+            <div class="card-back">
+              <div class="card-body h-100">
+                <h5 class="card-title fw-bold text-center px-2">
+                  {{ course.name }}
+                </h5>
+                <div class="text-center mb-2">
+                  <span
+                    v-html="getRatingStars(course.rating)"
+                    class="text-warning"
+                  ></span>
+                  <small class="text-muted d-block">
+                    {{ course.num_reviews }} Reviews
+                  </small>
+                </div>
+                <div class="card-text text-center">
+                  <p class="card-text text-muted">
+                    {{ course.description }}
+                  </p>
+                </div>
+                <div
+                  class="clickable rounded-pill bg-primary text-center text-secondary w-50 p-2 mt-3 fs-4 fw-bold mx-auto"
+                  @click="goToCoursePage(course)"
+                >
+                  Go to course
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
+        </div>
       </div>
     </section>
 
@@ -348,7 +347,7 @@ export default {
         console.error("Error fetching courses:", error);
       }
     },
-    async checkAndCreateuser(userId,userName) {
+    async checkAndCreateuser(userId, userName) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "users", userId);
@@ -362,7 +361,7 @@ export default {
           // If user document doesn't exist, create a new one
           const newUser = {
             id: userId,
-            name: userName|| "New User", // Default name, adjust as needed
+            name: userName || "New User", // Default name, adjust as needed
           };
 
           // Set the new document in Firestore
@@ -380,7 +379,7 @@ export default {
       JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
     if (userObject) {
-      this.checkAndCreateuser(userObject.uid,userObject.name);
+      this.checkAndCreateuser(userObject.uid, userObject.name);
       this.user = userObject.uid;
     }
     // Check if user exists before calling fetchCourses
