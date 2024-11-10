@@ -142,12 +142,13 @@
               <h5 class="fw-bold h4">{{ mentor.name }}</h5>
               <p class="text-muted">{{ mentor.description }}</p>
               <!-- Ask for Help Button -->
-              <div
+              <button
                 class="btn btn-primary d-inline-flex align-items-center"
                 @click.prevent="addChat(mentor.id, user)"
+                :disabled = "add_chat_button_disabled"
               >
                 Ask for help <i class="bi bi-arrow-right ms-2"></i>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -309,6 +310,7 @@ export default {
       mentor_loading: true,
       percentage_loading: true,
       percentage_completed: 0, // Initialize percentage_completed to 0
+      add_chat_button_disabled: false,
     };
   },
   methods: {
@@ -561,6 +563,7 @@ export default {
     },
    async addChat(chatterId1, chatterId2) {
   try {
+    this.add_chat_button_disabled = true;
     this.checkAndCreateuser(chatterId1);
     this.checkAndCreateuser(chatterId2);
     // Step 1: Check if a chat with both users already exists
