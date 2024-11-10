@@ -130,7 +130,7 @@
 
 <script>
 import { Modal, Toast } from 'bootstrap';
-import { getDocs, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { getDocs, collection, doc, getDoc, setDoc , updateDoc} from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -252,6 +252,8 @@ export default {
         goToMentorshipCoursePage(course) {
             sessionStorage.setItem("selectedCourseId", JSON.stringify(course));
             this.$router.push({ name: "mentorshipCourse" });
+            const docRef = doc(db, "courses", course);
+            updateDoc(docRef, {noti_count: 0});
             return course;
         },
         openModal(course) {
