@@ -6,7 +6,10 @@
         <div class="row align-items-center">
           <!-- Back Button -->
           <div class="col-3">
-            <router-link to="ongoingCoursesPage" class="btn btn-warning text-dark"><i class="bi bi-arrow-left"></i>
+            <router-link
+              to="ongoingCoursesPage"
+              class="btn btn-warning text-dark"
+              ><i class="bi bi-arrow-left"></i>
               <span class="d-none d-lg-inline">Back to ongoing courses</span>
               <span class="d-inline d-lg-none">Back</span>
             </router-link>
@@ -34,8 +37,13 @@
               <a href="#course_reviews" class="text-decoration-none">
                 <i class="bi bi-book fs-1 text-primary"></i>
                 <div class="d-block">
-                  <span class="text-secondary fs-4" v-html="getRatingStars(course.rating)"></span>
-                  <span class="text-muted d-block fs-4">{{ course.num_reviews }} Reviews</span>
+                  <span
+                    class="text-secondary fs-4"
+                    v-html="getRatingStars(course.rating)"
+                  ></span>
+                  <span class="text-muted d-block fs-4"
+                    >{{ course.num_reviews }} Reviews</span
+                  >
                 </div>
               </a>
             </div>
@@ -46,9 +54,16 @@
                   {{ course.name }}
                 </h5>
                 <div class="text-center col-md-2 my-0 d-md-block d-none">
-                  <button class="rounded-circle bg-white border border-0" type="button" @click="toggleAccordion()">
-                    <i class="bi bi-chevron-down display-5 text-shadow-soft" :class="{ 'text-light': lessons_loading }"
-                      ref="chevron"></i>
+                  <button
+                    class="rounded-circle bg-white border border-0"
+                    type="button"
+                    @click="toggleAccordion()"
+                  >
+                    <i
+                      class="bi bi-chevron-down display-5 text-shadow-soft"
+                      :class="{ 'text-light': lessons_loading }"
+                      ref="chevron"
+                    ></i>
                   </button>
                 </div>
               </div>
@@ -60,15 +75,23 @@
           <div class="row">
             <div class="text-center mt-2 mt-md-0">
               <div class="fw-bold h3" v-if="!percentage_loading">
-                <span :ref="'progression' + course.id" class="count-animate"
-                  :data-count-limit="percentage_completed">0</span>% complete
+                <span
+                  :ref="'progression' + course.id"
+                  class="count-animate"
+                  :data-count-limit="percentage_completed"
+                  >0</span
+                >% complete
               </div>
               <div v-else class="h3">&nbsp;</div>
               <div class="d-flex justify-content-center my-3">
                 <div class="progress" style="width: 80%; height: 15px">
-                  <div class="progress-bar bg-dark progress-animate" role="progressbar"
-                    :ref="'courseProgress' + course.id" :data-progress="percentage_completed + '%'" style="width: 0%">
-                  </div>
+                  <div
+                    class="progress-bar bg-dark progress-animate"
+                    role="progressbar"
+                    :ref="'courseProgress' + course.id"
+                    :data-progress="percentage_completed + '%'"
+                    style="width: 0%"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -76,9 +99,16 @@
 
           <!--Dropdown Button on small screens-->
           <div class="text-center my-0 d-md-none d-block">
-            <button class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg" type="button"
-              @click="toggleAccordion()">
-              <i class="triangle-btn" :class="lessons_loading ? 'bg-primary' : 'bg-secondary'" ref="triangle"></i>
+            <button
+              class="triangle-btn-bg bg-primary border border-white border-3 shadow-lg"
+              type="button"
+              @click="toggleAccordion()"
+            >
+              <i
+                class="triangle-btn"
+                :class="lessons_loading ? 'bg-primary' : 'bg-secondary'"
+                ref="triangle"
+              ></i>
             </button>
           </div>
         </div>
@@ -86,7 +116,11 @@
     </section>
 
     <!--Mentor-->
-    <section v-if="mentor && !mentor_loading" id="mentor" class="container my-2 fade-in-top">
+    <section
+      v-if="mentor && !mentor_loading"
+      id="mentor"
+      class="container my-2 fade-in-top"
+    >
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white text-center fw-bold h4">
           My Mentor
@@ -95,15 +129,24 @@
           <div class="row">
             <!-- Mentor Image -->
             <div class="col-md-3 d-flex justify-content-center">
-              <img :src="mentor.img" alt="Mentor Img" class="rounded-circle" height="150px" width="150px" />
+              <img
+                :src="mentor.img"
+                alt="Mentor Img"
+                class="rounded-circle"
+                height="150px"
+                width="150px"
+              />
             </div>
             <!-- Mentor Information -->
             <div class="col-md-9 text-md-start text-center">
               <h5 class="fw-bold h4">{{ mentor.name }}</h5>
               <p class="text-muted">{{ mentor.description }}</p>
               <!-- Ask for Help Button -->
-              <button class="btn btn-primary d-inline-flex align-items-center" @click.prevent="addChat(mentor.id, user)"
-                :disabled="add_chat_button_disabled">
+              <button
+                class="btn btn-primary d-inline-flex align-items-center"
+                @click.prevent="addChat(mentor.id, user)"
+                :disabled = "add_chat_button_disabled"
+              >
                 Ask for help <i class="bi bi-arrow-right ms-2"></i>
               </button>
             </div>
@@ -119,43 +162,64 @@
           <div class="card-body position-relative">
             <h4 class="fw-bold mb-3">{{ lesson.title }}</h4>
             <div class="row">
-              <div v-for="item in lesson.lesson_items" :key="item.id" class="col-12">
-                <router-link :to="item.completed || item.latest ? item.route_link : '#'" class="text-decoration-none"
+              <div
+                v-for="item in lesson.lesson_items"
+                :key="item.id"
+                class="col-12"
+              >
+                <router-link
+                  :to="item.completed || item.latest ? item.route_link : '#'"
+                  class="text-decoration-none"
                   :class="{
                     'pointer-events-none': !item.completed && !item.latest, // Disable click if not completed or latest
-                  }" @click.prevent="handleLessonItemClick(item, lessonId)">
-                  <div :class="[
-                    'd-flex align-items-center p-3 mb-3 rounded',
-                    item.completed
-                      ? 'bg-secondary hover-animate hover-less'
-                      : item.latest
+                  }"
+                  @click.prevent="handleLessonItemClick(item, lessonId)"
+                >
+                  <div
+                    :class="[
+                      'd-flex align-items-center p-3 mb-3 rounded',
+                      item.completed
+                        ? 'bg-secondary hover-animate hover-less'
+                        : item.latest
                         ? 'bg-success hover-animate hover-less'
                         : 'bg-white border border-muted',
-                  ]">
+                    ]"
+                  >
                     <div class="me-3">
-                      <div class="rounded-circle d-flex align-items-center justify-content-center text-secondary"
+                      <div
+                        class="rounded-circle d-flex align-items-center justify-content-center text-secondary"
                         :class="[
                           item.completed || item.latest
                             ? 'bg-primary'
                             : 'bg-light',
-                        ]" style="width: 60px; height: 60px">
+                        ]"
+                        style="width: 60px; height: 60px"
+                      >
                         <i :class="item.icon" class="h2 pt-2"></i>
                       </div>
                     </div>
                     <div>
-                      <p :class="[
-                        'mb-1',
-                        item.latest ? 'text-secondary' : 'text-primary',
-                      ]">
+                      <p
+                        :class="[
+                          'mb-1',
+                          item.latest ? 'text-secondary' : 'text-primary',
+                        ]"
+                      >
                         {{ formatType(item.typeof) }}
                       </p>
-                      <p class="fw-bold mb-1" :class="[
-                        item.latest ? 'text-secondary' : 'text-primary',
-                      ]">
+                      <p
+                        class="fw-bold mb-1"
+                        :class="[
+                          item.latest ? 'text-secondary' : 'text-primary',
+                        ]"
+                      >
                         {{ item.name }}
                       </p>
                     </div>
-                    <div class="badge bg-white text-success ms-5 fs-5" v-if="item.latest">
+                    <div
+                      class="badge bg-white text-success ms-5 fs-5"
+                      v-if="item.latest"
+                    >
                       Next Up
                     </div>
                   </div>
@@ -174,7 +238,10 @@
         <div>
           <h2 class="mb-1">Reviews</h2>
           <div>
-            <span class="text-secondary fs-4" v-html="getRatingStars(course.rating)"></span>
+            <span
+              class="text-secondary fs-4"
+              v-html="getRatingStars(course.rating)"
+            ></span>
             <span class="ms-3 fw-bold">{{ course.num_reviews }} Reviews</span>
           </div>
         </div>
@@ -182,13 +249,25 @@
       <!-- Review List -->
       <loading-animation v-if="loading"></loading-animation>
       <div v-else class="list-group">
-        <div v-for="(review, review_key) in reviews" :key="review_key"
-          class="list-group-item list-group-item-action d-flex align-items-start push-in-right">
-          <img :src="review.img" alt="Profile" class="rounded-circle me-3" height="50px" width="50px" />
+        <div
+          v-for="(review, review_key) in reviews"
+          :key="review_key"
+          class="list-group-item list-group-item-action d-flex align-items-start push-in-right"
+        >
+          <img
+            :src="review.img"
+            alt="Profile"
+            class="rounded-circle me-3"
+            height="50px"
+            width="50px"
+          />
           <div>
             <h5 class="mb-1">
               {{ review.name }}
-              <span class="text-secondary fs-6" v-html="getRatingStars(review.rating)"></span>
+              <span
+                class="text-secondary fs-6"
+                v-html="getRatingStars(review.rating)"
+              ></span>
             </h5>
             <p class="mb-0">{{ review.comments }}</p>
           </div>
@@ -454,7 +533,7 @@ export default {
         this.$router.push(item.route_link);
       }
     },
-    async checkAndCreateuser(userId, userName, profilePicture) {
+     async checkAndCreateuser(userId, userName, profilePicture) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "chatters", userId);
@@ -482,73 +561,73 @@ export default {
         console.error("Error checking or creating user document:", error);
       }
     },
-    async addChat(chatterId1, chatterId2) {
-      try {
-        this.add_chat_button_disabled = true;
-        this.checkAndCreateuser(chatterId1);
-        this.checkAndCreateuser(chatterId2);
-        // Step 1: Check if a chat with both users already exists
-        const chatsCollection = collection(db, "chats");
-        const chatQuery = query(
-          chatsCollection,
-          where("chat_type", "==", "contact")
-        );
-        const chatSnapshot = await getDocs(chatQuery);
+   async addChat(chatterId1, chatterId2) {
+  try {
+    this.add_chat_button_disabled = true;
+    this.checkAndCreateuser(chatterId1);
+    this.checkAndCreateuser(chatterId2);
+    // Step 1: Check if a chat with both users already exists
+    const chatsCollection = collection(db, "chats");
+    const chatQuery = query(
+      chatsCollection,
+      where("chat_type", "==", "contact")
+    );
+    const chatSnapshot = await getDocs(chatQuery);
 
-        let existingChat = null;
-        chatSnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (
-            data.group_members &&
-            data.group_members.length === 2 &&
-            data.group_members.includes(chatterId1) &&
-            data.group_members.includes(chatterId2)
-          ) {
-            existingChat = { id: doc.id, ...data };
-          }
-        });
-
-        // If an existing chat is found, navigate to it and return
-        if (existingChat) {
-          console.log("Chat already exists with ID:", existingChat.id);
-          this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
-          return;
-        }
-
-        // Step 2: Create a new chat document if no existing chat was found
-        const newChatRef = await addDoc(collection(db, "chats"), {
-          chat_type: "contact",
-          chat_name: "contact",
-          chat_img: "default_image_url",
-          group_members: [chatterId1, chatterId2],
-        });
-
-        const chatId = newChatRef.id;
-        console.log("New chat created with ID:", chatId);
-
-        // Step 3: Add chat ID to each chatter's `chats` array
-        for (const chatterId of [chatterId1, chatterId2]) {
-          const chatterRef = doc(db, "chatters", chatterId);
-          const chatterDoc = await getDoc(chatterRef);
-
-          if (chatterDoc.exists()) {
-            await updateDoc(chatterRef, {
-              chats: arrayUnion(chatId),
-            });
-          } else {
-            await setDoc(chatterRef, {
-              chats: [chatId],
-            });
-          }
-          console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
-        }
-
-        console.log("Chat successfully created and added to both chatters.");
-        this.$router.push({ name: "chatPage", params: { chatId } });
-      } catch (error) {
-        console.error("Error creating chat:", error);
+    let existingChat = null;
+    chatSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (
+        data.group_members &&
+        data.group_members.length === 2 &&
+        data.group_members.includes(chatterId1) &&
+        data.group_members.includes(chatterId2)
+      ) {
+        existingChat = { id: doc.id, ...data };
       }
+    });
+
+    // If an existing chat is found, navigate to it and return
+    if (existingChat) {
+      console.log("Chat already exists with ID:", existingChat.id);
+      this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
+      return;
     }
+
+    // Step 2: Create a new chat document if no existing chat was found
+    const newChatRef = await addDoc(collection(db, "chats"), {
+      chat_type: "contact",
+      chat_name: "contact",
+      chat_img: "default_image_url",
+      group_members: [chatterId1, chatterId2],
+    });
+
+    const chatId = newChatRef.id;
+    console.log("New chat created with ID:", chatId);
+
+    // Step 3: Add chat ID to each chatter's `chats` array
+    for (const chatterId of [chatterId1, chatterId2]) {
+      const chatterRef = doc(db, "chatters", chatterId);
+      const chatterDoc = await getDoc(chatterRef);
+
+      if (chatterDoc.exists()) {
+        await updateDoc(chatterRef, {
+          chats: arrayUnion(chatId),
+        });
+      } else {
+        await setDoc(chatterRef, {
+          chats: [chatId],
+        });
+      }
+      console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
+    }
+
+    console.log("Chat successfully created and added to both chatters.");
+    this.$router.push({ name: "chatPage", params: { chatId } });
+  } catch (error) {
+    console.error("Error creating chat:", error);
+  }
+}
   },
   async mounted() {
     const userObject =
@@ -577,8 +656,7 @@ export default {
 .content {
   height: 0px;
   overflow: hidden;
-  transition: height 0.5s ease;
-  /* Adjust duration as needed */
+  transition: height 0.5s ease; /* Adjust duration as needed */
 }
 
 .pointer-events-none {

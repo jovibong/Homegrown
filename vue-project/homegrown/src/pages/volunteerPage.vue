@@ -166,7 +166,7 @@ export default {
     },
     data() {
         return {
-            yearlyGoal: 0,
+            yearlyGoal: null,
             newGoal: null,
             currentMentorships: [],
             pastMentorships: [],
@@ -272,7 +272,7 @@ export default {
                     } else {
                         console.log('hourGoal does not exist.');
                         await updateDoc(mentorDocRef, {
-                            hourGoal: 0
+                            hourGoal: null
                         });
                     }
                 }
