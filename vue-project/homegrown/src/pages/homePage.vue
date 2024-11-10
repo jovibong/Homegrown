@@ -244,5 +244,63 @@
   object-position: center; /* Centers the image within the container */
   border: 2px solid #000; /* Optional: add a border */
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  width: 100%;
+}
+
+#main-container {
+  margin: 0 auto;
+  padding: 0;
+  max-width: 100%; /* Ensures it doesn't overflow */
+  box-sizing: border-box; /* Includes padding and border in the element’s total width and height */
+}
+
+.container {
+  max-width: 100%; /* Prevents container overflow */
+  padding: 0 15px; /* Add padding as needed */
+  box-sizing: border-box;
+}
+
+/* Additional section-specific styles */
+.section-decor {
+  margin: 0 auto;
+}
+
+/* Ensures images don't cause overflow */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Navbar */
+#navbar {
+  width: 100%;
+}
+
+/* Specific sections */
+.intro, .events-section, .testimonial-section, .enrollment {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.decorative-element {
+  position: absolute;
+  top: 50%; /* Adjust based on where you want it vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Center the element perfectly */
+  max-width: 100%; /* Prevents the element from overflowing */
+  overflow: hidden;
+}
+
+/* Ensure no decorative elements are causing overflow */
+.container, #main-container {
+  position: relative; /* Allows positioning relative to this container */
+  overflow: hidden; /* Clipping ensures no overflow */
+}
   </style>
   
