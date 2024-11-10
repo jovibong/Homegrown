@@ -39,7 +39,10 @@
         <div class="text-primary display-5 fw-bold text-center mb-5">
           Go to new courses below to start learning!
         </div>
-        <router-link to="allNewCoursesPage" class="d-flex align-items-center btn btn-primary rounded-pill text-secondary">
+        <router-link
+          to="allNewCoursesPage"
+          class="d-flex align-items-center btn btn-primary rounded-pill text-secondary"
+        >
           <span class="fw-bold">View new course</span>
           <i class="bi bi-caret-right-fill fs-4 ms-3"></i>
         </router-link>
@@ -104,62 +107,24 @@
               >
                 <!-- Lesson Timeline Start -->
                 <div class="timeline-container mt-4">
-                  <div class="timeline-line d-none d-md-inline"></div>
-                  <div class="row justify-content-center">
-                    <!-- Lesson 1 -->
-                    <div class="col-auto lesson d-none d-lg-inline">
+                  <div class="timeline-line"></div>
+
+                  <div class="lesson-list">
+                    <!-- Lessons -->
+                    <div
+                      v-for="(lesson, key) in course.lessons"
+                      :key="key"
+                      class="lesson"
+                    >
                       <div class="lesson-content text-center">
-                        <h6 class="fw-bold">Lesson 1</h6>
-                        <div class="lesson-item mx-2">
-                          <p>Video 1</p>
-                          <div class="circle"></div>
-                        </div>
-                        <div class="lesson-item mx-2">
-                          <p>Quiz 1</p>
-                          <div class="circle"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Lesson 2 -->
-                    <div class="col-auto lesson">
-                      <div class="lesson-content text-center">
-                        <h6 class="fw-bold">Lesson 2</h6>
-                        <div class="lesson-item mx-2">
-                          <p>Video 2</p>
-                          <div class="circle"></div>
-                        </div>
-                        <div class="lesson-item mx-2">
-                          <p>Quiz 2</p>
-                          <div class="circle"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Lesson 3 -->
-                    <div class="col-auto lesson">
-                      <div class="lesson-content text-center">
-                        <h6 class="fw-bold">Lesson 3</h6>
-                        <div class="lesson-item mx-2">
-                          <p>Video 3</p>
-                          <div class="circle active"></div>
-                        </div>
-                        <div class="lesson-item mx-2">
-                          <p>Quiz 3</p>
-                          <div class="circle active"></div>
-                        </div>
-                        <div class="you-are-here text-center mt-2">
-                          <span class="badge bg-primary mb-2"
-                            >You are here</span
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Review -->
-                    <div class="col-auto lesson">
-                      <div class="lesson-content text-center">
-                        <h6 class="fw-bold">Review</h6>
-                        <div class="lesson-item mx-2">
-                          <p>Review 1</p>
-                          <div class="circle"></div>
+                        <h6 class="fw-bold lesson-title">{{ lesson.title }}</h6>
+                        <div
+                          v-for="(lesson_item, index) in lesson.lesson_items"
+                          :key="index"
+                          class="lesson-item mx-2"
+                        >
+                          <p>{{ formatName(lesson_item.name) }}</p>
+                          <div class="circle" :class="{ active: lesson_item.completed }"></div>
                         </div>
                       </div>
                     </div>
@@ -196,7 +161,7 @@
 
 
 <script>
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -211,9 +176,106 @@ export default {
       loading: true,
       selected_course: null,
       has_ongoing: false,
+      percentage_loading: true,
     };
   },
   methods: {
+    formatName(name) {
+      const words = name.trim().split(" ");
+      // Return the last element in the array
+      return words[words.length - 1];
+    },
+    async fetchLessons(course) {
+      try {
+        const lessonsRef = collection(db, `courses/${course.id}/lessons`);
+        const lessonDocs = await getDocs(lessonsRef);
+
+        let latestFound = false; // Flag to indicate if the latest item has been found
+
+        const lessonsData = {}; // Initialize as an object (map) instead of an array
+
+        await Promise.all(
+          lessonDocs.docs.map(async (lessonDoc) => {
+            const lessonData = lessonDoc.data();
+            const lessonId = lessonDoc.id;
+
+            // Fetch lesson items for each lesson
+            const lessonItemsRef = collection(lessonDoc.ref, "lesson_items");
+            const lessonItemsDocs = await getDocs(lessonItemsRef);
+
+            // Reference to user's progress for the specific lesson in ongoing_courses
+            const userLessonProgressRef = collection(
+              db,
+              `users/${this.user}/ongoing_courses/${course.id}/progress/${lessonId}/lesson_items`
+            );
+            const userLessonProgressDocs = await getDocs(userLessonProgressRef);
+
+            // Map progress data to easily check if lesson items are completed
+            const progressData = userLessonProgressDocs.docs.reduce(
+              (acc, doc) => {
+                acc[doc.id] = doc.data().completed || false; // Default to false if completed field is missing
+                return acc;
+              },
+              {}
+            );
+
+            const lessonItemsData = lessonItemsDocs.docs.map((itemDoc) => {
+              const itemData = itemDoc.data();
+              const completed = progressData[itemDoc.id] || false;
+
+              // Set the `latest` flag on the first non-completed item if it hasn't been set yet
+              const latest = !completed && !latestFound;
+              if (latest) latestFound = true; // Mark that we've found the latest item
+
+              return {
+                ...itemData,
+                id: itemDoc.id,
+                completed: completed,
+                latest: latest,
+              };
+            });
+
+            // Store each lesson using lessonId as the key in lessonsData
+            lessonsData[lessonId] = {
+              title: lessonData.title,
+              lesson_items: lessonItemsData,
+            };
+          })
+        );
+
+        // Add lessons data to the course object
+        course.lessons = lessonsData;
+      } catch (error) {
+        console.error("Error fetching lessons and items:", error);
+      } finally {
+        this.lessons_loading = false;
+        console.log("Updated course with lessons:", course);
+      }
+    },
+    async fetchCourseProgress(course) {
+      try {
+        const courseDocRef = doc(
+          db,
+          `users/${this.user}/ongoing_courses/${course.id}`
+        );
+        const courseDoc = await getDoc(courseDocRef);
+
+        if (courseDoc.exists()) {
+          course.percentageCompleted =
+            courseDoc.data().percentage_completed || 0;
+          console.log(
+            "Fetched percentage completed:",
+            course.percentage_completed
+          );
+        } else {
+          console.warn("Course document not found in user's ongoing_courses.");
+        }
+      } catch (error) {
+        console.error("Error fetching course progress:", error);
+      } finally {
+        this.percentage_loading = false;
+      }
+    },
     toggleAccordion(event, courseId) {
       const triangle = event.querySelector(".triangle-btn");
       triangle.classList.toggle("rotate");
@@ -281,6 +343,13 @@ export default {
 
         console.log("Filtered Ongoing Courses:", ongoing);
 
+        await Promise.all(
+          ongoing.map(async (course) => {
+            await this.fetchCourseProgress(course);
+            await this.fetchLessons(course);
+          })
+        );
+
         this.ongoing_courses = ongoing;
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -291,9 +360,10 @@ export default {
     },
   },
   mounted() {
-    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+    const userObject =
+      JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
-    if(userObject){
+    if (userObject) {
       this.user = userObject.uid;
     }
     this.fetchCourses();
@@ -303,6 +373,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 .content {
   height: 0px;
   overflow: hidden;
@@ -367,6 +438,22 @@ export default {
 }
 
 /*Timeline CSS*/
+.lesson-list {
+  display: flex;
+  overflow-x: auto; /* Allows horizontal scrolling */
+  scroll-behavior: smooth; /* Smooth scrolling */
+  padding-bottom: 10px; /* To prevent elements from being cut off */
+}
+
+/* Hide scrollbar but allow scrolling */
+.lesson-list::-webkit-scrollbar {
+  display: none;
+}
+.lesson-list {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .timeline-container {
   position: relative;
   padding: 1rem 0;
@@ -376,7 +463,7 @@ export default {
 
 .timeline-line {
   position: absolute;
-  top: 54%;
+  top: 66%;
   left: 0;
   right: 0;
   height: 2px;
@@ -384,14 +471,21 @@ export default {
   z-index: 0; /* Ensures the line stays behind the circles */
 }
 
+.lesson-title {
+  white-space: nowrap; /* Prevents wrapping of lesson title */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .lesson {
-  position: relative;
-  z-index: 1;
-  padding: 1 rem;
+  flex: 0 0 auto; /* Ensures each lesson takes up its natural width and doesn’t wrap */
+  padding: 1rem;
   border: 2px solid #ffcf59; /* Secondary color border */
   border-radius: 15px;
   background-color: transparent;
-  margin: 20px;
+  margin-right: 20px;
+  min-width: 180px; /* Increase width to accommodate longer titles */
+  max-width: 250px; /* Optional max-width for better control */
 }
 
 .lesson-content {
@@ -400,9 +494,8 @@ export default {
 }
 
 .lesson-item {
-  position: relative;
-  margin-top: 0rem;
   display: inline-block;
+  margin-top: 0.5rem;
 }
 
 .lesson-item p {
