@@ -100,7 +100,7 @@
 <script>
 import { auth, db, storage } from '@/firebase/initialize.js';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { onAuthStateChanged,reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { onAuthStateChanged,reauthenticateWithCredential, EmailAuthProvider, updatePassword, } from 'firebase/auth';
 import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 export default {
@@ -177,49 +177,51 @@ export default {
             const file = event.target.files[0];
             if (file) {
                 try {
-                    // Reference to the image location in Firebase Storage
                     const imageRef = storageRef(storage, `profileImages/${this.userId}.jpg`);
-                    
-                    // Attempt to delete the existing image if it exists
+
+                    // Delete existing image if needed
                     try {
                         await deleteObject(imageRef);
                         console.log("Previous image deleted successfully.");
                     } catch (error) {
-                        // Log a warning if there was no image to delete or an issue deleting it
                         console.warn("No existing image to delete or error deleting image:", error);
                     }
 
                     // Upload the new image
                     await uploadBytes(imageRef, file);
-
-                    // Get the download URL for the uploaded image
                     const imageUrl = await getDownloadURL(imageRef);
 
-                    // Update the Firestore document with the new image URL
+                    // Update Firestore document with new image URL
                     await setDoc(doc(db, "profiles", this.userId), { profileImageUrl: imageUrl }, { merge: true });
 
-                    // Update the UI with the new image URL
-                    this.profileImageSrc = imageUrl;
+                    // Emit an event to notify NavMenu about the new image URL
+                    this.$emit('profileImageUpdated', imageUrl);
 
-                    // Notify the user of success
                     alert("Profile image updated successfully!");
+                    window.location.reload();
                 } catch (error) {
                     console.error("Error uploading image:", error);
                     alert("There was an error uploading your profile image.");
                 }
             }
-        },
+},
 
         async updateField(field) {
             try {
                 await setDoc(doc(db, "profiles", this.userId), {
                     [field]: this.formData[field]
                 }, { merge: true });
+                
+                // Close the editing mode for the respective field
                 if (field === 'name') this.isEditingName = false;
                 if (field === 'username') {
                     this.isEditingUsername = false;
+                    // Emit an event to notify the parent component to update the username
+                    this.$emit('usernameUpdated', this.formData[field]);
                 }
+
                 alert(`${field} updated successfully!`);
+                window.location.reload();
             } catch (error) {
                 console.error(`Error updating ${field}:`, error);
                 alert(`There was an error updating your ${field}.`);

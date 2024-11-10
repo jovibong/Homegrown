@@ -7,7 +7,7 @@
 
       <!-- start of nav without sign in/up -->
       <div class="col-lg-10 col-9 align-items-start">
-        <nav class="navbar navbar-expand-lg ">
+        <nav class="navbar navbar-expand-lg">
           <div class="container">
             <!-- Logo -->
             <a class="navbar-brand me-auto" href="#">
@@ -18,7 +18,7 @@
             <!-- Hamburger Menu and Profile Button Container -->
             <div class="d-flex align-items-center"></div>
               <!-- flex and hamburger menu only for mobile -->
-              <button class="navbar-toggler d-flex d-lg-none flex-column justify-content-around"
+              <button class="navbar-toggler d-flex d-lg-none flex-column"
                   type="button" :class="{ collapsed: !isNavbarOpen }" @click="toggleNavbar"
                   aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
                   v-if="userType === 'worker' || userType === 'volunteer'">
@@ -35,27 +35,27 @@
                   <router-link 
                     :to="userType === 'worker' ? '/homePage' : '/volunteerHomePage'" 
                     class="nav-link active text-light" 
-                    aria-current="page">
+                    aria-current="page"  @click="closeNavbar">
                     Home
                   </router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker'">
-                  <router-link to="/coursesPage" class="nav-link text-light">Upskilling</router-link>
+                  <router-link to="/coursesPage" class="nav-link text-light" @click="closeNavbar">Upskilling</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'volunteer'">
-                  <router-link to="/volunteerPage" class="nav-link text-light">Volunteer</router-link>
+                  <router-link to="/volunteerPage" class="nav-link text-light" @click="closeNavbar">Volunteer</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/eventPage" class="nav-link text-light">Events</router-link>
+                  <router-link to="/eventPage" class="nav-link text-light" @click="closeNavbar">Events</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/chatPage" class="nav-link text-light">Chat</router-link>
+                  <router-link to="/chatPage" class="nav-link text-light" @click="closeNavbar">Chat</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker'">
-                  <router-link to="/financePage" class="nav-link text-light">Finance</router-link>
+                  <router-link to="/financePage" class="nav-link text-light" @click="closeNavbar">Finance</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'volunteer'">
-                  <router-link to="/mentorshipPage" class="nav-link text-light">Mentorship</router-link>
+                  <router-link to="/mentorshipPage" class="nav-link text-light" @click="closeNavbar">Mentorship</router-link>
                 </li>
               </ul>
             </div>
@@ -107,15 +107,19 @@
           <!-- if want the sign in to remain as a navlink use class below -->
           <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
           <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openLoginModal">Sign In</a>
-          <a class="btn btn-warning fw-bold glow-on-hover mx-1 " @click="openSignUpModal">Sign Up</a>
+          <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openSignUpModal">Sign Up</a>
         </nav>
       </div>
     </div>
-
-    <!-- end of row -->
-
   </div>
   <!---end of navbar-->
+
+  <!-- handle profile image updates -->
+  <EditProfile @profileImageUpdated="handleProfileImageUpdate" /> 
+
+  <!-- handle username updates -->
+  <EditProfile @usernameUpdated="handleUsernameUpdate" />
+
   <!-- // Show Sign Out Popup when user clicks Sign Out -->
 
   <LoginModal :visible="isLoginModalVisible" @login="handleLogin" @openSignup="switchToSignUpModal"
@@ -150,7 +154,7 @@ export default {
   computed: {
     userPhoto() {
       return this.user?.photoURL || require('@/img/blankprofile.png'); // Fallback to default profile pic if none is provided
-    }
+  }
   },
   created() {
     // Check storage for "Remember Me" and user data on page load
@@ -160,34 +164,29 @@ export default {
     // Set the user if available in storage
     this.user = savedUser ? JSON.parse(savedUser) : null;
 
-
-    // Watch Firebase auth state changes
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        this.user = user;
-        const docRef = doc(db, "profiles", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          this.userType = docSnap.data().userType;
+          if (user) {
+            const docRef = doc(db, "profiles", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                this.user = {
+                    ...user,
+                    displayName: docSnap.data().username || user.displayName,
+                    photoURL: docSnap.data().profileImageUrl || user.photoURL
+                };
+                this.userType = docSnap.data().userType;
+            } else {
+                this.user = user;
+                this.userType = null;
+            }
+        } else {
+            this.user = null;
+            this.userType = null;
         }
-      } else {
-        this.user = null;
-        this.userType = null;
-      }
-    });
-  },
-  async mounted() {
-    // Listen for authentication state changes and fetch user type
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const docRef = doc(db, "profiles", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          this.userType = docSnap.data().userType; // Retrieve and set user type
-        }
-      }
-    });
+  });
 
+  },
+ mounted() {
     // Listen for clicks on the document to detect clicks outside the dropdown
     document.addEventListener("click", this.handleClickOutside);
   },
@@ -253,6 +252,17 @@ export default {
       // Close the navbar (set state to false)
       this.isNavbarOpen = false;
     },
+    handleProfileImageUpdate(newImageUrl) {
+            if (this.user) {
+                this.user.photoURL = newImageUrl; // Update user object with new image URL
+      }
+    },
+    handleUsernameUpdate(newUsername) {
+      if (this.user) {
+            // Update the user object in a reactive way
+            this.$set(this.user, 'displayName', newUsername);
+        }
+    }
   }
 };
 </script>
@@ -378,7 +388,8 @@ export default {
   background-color: transparent !important;  /* Make background transparent */
   box-shadow: none !important;     /* Remove any box shadow */
   outline: none !important;        /* Remove focus outline */
-  padding: 0 !important;           /* Reset padding if needed */
+  padding: 0 !important;     /* Reset padding if needed */
+  align-items: center !important; /* Center vertically */  
 }
 
 .toggler-icon {
@@ -405,4 +416,38 @@ export default {
   background-color: red; /* Change to red when transformed */
 }
 
+/* General button styling */
+.btn {
+  white-space: nowrap; /* Prevents text from wrapping */
+  display: inline-block; /* Ensures buttons stay inline */
+  min-width: 100px; /* Set a consistent minimum width */
+  padding: 10px 16px; /* Ensure consistent padding */
+  font-size: 1rem; /* Set a consistent font size */
+  text-align: center; /* Center text */
+}
+
+/* Media query to handle different screen sizes */
+@media (max-width: 1230px) {
+  .btn {
+    min-width: 100px; /* Maintain minimum width */
+    font-size: 0.95rem; /* Slightly adjust font size if needed */
+  }
+}
+
+@media (max-width: 820px) {
+  .btn {
+    min-width: 90px; /* Adjust if necessary for smaller screens */
+    font-size: 0.9rem; /* Adjust font size for readability */
+  }
+}
+
+@media (max-width: 470px) {
+  .profile-dropdown {
+    margin-left: 10px; /* Adjust the spacing between the profile button and the hamburger */
+  }
+}
+
+.navbar {
+    justify-content: space-between !important; /* Ensure navbar items are evenly spaced */
+  }
 </style>
