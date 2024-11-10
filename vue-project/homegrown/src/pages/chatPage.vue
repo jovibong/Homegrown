@@ -1,40 +1,48 @@
 <template>
   <div>
     <div class="row container-fluid px-0 mx-0 h-100">
-      <section id="chats" class="col-lg-4 bg-white">
-        <div class="row container-fluid mt-2 fade-in-top">
-          <div class="col-2 pe-2">
-            <button class="btn btn-secondary btn-sm my-2" id="hamburgerBtn">
-              <i class="bi bi-list h4"></i>
-            </button>
-          </div>
-          <div class="col-10 p-1 my-2 rounded-pill">
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Search"
-              class="form-control border border-2 rounded-pill"
-            />
-          </div>
+      <section
+        id="chats"
+        class="col-lg-4 bg-white"
+        :class="{ 'full-width': isMobileView && showChats }"
+        v-show="showChats || !isMobileView"
+      >
+        <div class="container-fluid mt-2 fade-in-top p-1 rounded-pill">
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search"
+            class="form-control border border-2 rounded-pill"
+          />
         </div>
         <nav class="navbar navbar-expand">
           <div class="container-fluid">
             <div id="navbarNav">
               <ul class="navbar-nav">
                 <li class="nav-item me-2">
-                  <a class="nav-link active" aria-current="page" href="#"
+                  <a
+                    class="nav-link"
+                    :class="{ active: currentFilter === 'all' }"
+                    href="#"
+                    @click.prevent="setFilter('all')"
                     >All Chats</a
                   >
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Mentors</a>
+                  <a
+                    class="nav-link"
+                    :class="{ active: currentFilter === 'contact' }"
+                    href="#"
+                    @click.prevent="setFilter('contact')"
+                    >Contacts</a
+                  >
                 </li>
               </ul>
             </div>
           </div>
         </nav>
         <!-- Chat List -->
-        <div style="height: 65vh; overflow-y: auto">
+        <div style="height: 75vh; overflow-y: auto">
           <loading-animation
             v-if="chats_loading"
             class="mt-5"
@@ -88,11 +96,21 @@
       <!-- Conversation Section -->
       <section
         id="conversation"
-        class="col-lg-8 d-none d-lg-inline bg-secondary px-0 fade-in-right"
+        :class="{ 'full-width': isMobileView && !showChats }"
+        class="col-lg-8 bg-secondary px-0"
+        v-show="selected_chat_obj && (!showChats || !isMobileView)"
         style="height: 90vh"
       >
-        <div v-if="selected_chat_obj">
-          <div class="row p-2 bg-primary container-fluid mx-0 mb-4">
+        <div v-if="selected_chat_obj" class="fade-in-top">
+          <div class="row p-2 bg-primary container-fluid mx-0">
+            <div v-if="isMobileView" class="col-1">
+              <button
+                class="btn btn-secondary btn-sm m-2"
+                @click="showChats = true"
+              >
+                Back
+              </button>
+            </div>
             <div class="col-1 me-2 d-flex align-items-center">
               <div
                 class="overflow-hidden rounded-circle border border-black clickable"
@@ -116,7 +134,7 @@
               </div>
             </div>
           </div>
-          <div style="height: 60vh; overflow-y: auto">
+          <div style="height: 70vh; overflow-y: auto">
             <div
               v-for="(conversation, index) in selected_chat_obj.conversations"
               :key="index"
@@ -130,7 +148,7 @@
                 "
                 class="container-fluid d-flex justify-content-center p-0"
               >
-                <span class="badge bg-white text-secondary text-center">
+                <span class="badge bg-white text-secondary text-center mt-2">
                   <!-- Check if `timestamp` has a `toDate` method -->
                   {{
                     conversation.timestamp.toDate
@@ -270,9 +288,15 @@ export default {
       showImagePopup: false,
       popupImageUrl: "",
       searchQuery: "", // Search input value
+      currentFilter: "all", // default
+      isMobileView: window.innerWidth < 992, // Detect if screen is smaller than large size (992px)
+      showChats: true, // Toggles between chats and conversation views on mobile
     };
   },
   methods: {
+    setFilter(type) {
+      this.currentFilter = type;
+    },
     openImagePopup(imageUrl) {
       this.popupImageUrl = imageUrl;
       this.showImagePopup = true;
@@ -282,7 +306,7 @@ export default {
     },
     async fetchUsers() {
       try {
-        const usersCollection = collection(db, "users");
+        const usersCollection = collection(db, "chatters");
         const usersSnapshot = await getDocs(usersCollection);
         this.users_arr = usersSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -336,12 +360,13 @@ export default {
               // Get that user's name from the users collection
               if (otherUserId) {
                 const otherUserDoc = await getDoc(
-                  doc(db, "users", otherUserId)
+                  doc(db, "chatters", otherUserId)
                 );
                 if (otherUserDoc.exists()) {
                   const otherUserData = otherUserDoc.data();
                   chatObj.chat_name = otherUserData.name || "Unknown Contact";
-                  chatObj.chat_img = otherUserData.profile_picture || "default_image_url";
+                  chatObj.chat_img =
+                    otherUserData.profile_picture || "default_image_url";
                 } else {
                   console.error("Other user not found in users collection");
                 }
@@ -402,6 +427,9 @@ export default {
       if (selectedChat && selectedChat.id) {
         this.selected_chat_obj = selectedChat;
         console.log(this.selected_chat_obj);
+        if (this.isMobileView) {
+          this.showChats = false;
+        }
       } else {
         console.error("Error: Selected chat does not have a valid chat_id.");
       }
@@ -452,7 +480,7 @@ export default {
 
       return currentDate.toDateString() !== previousDate.toDateString();
     },
-    async checkAndCreateuser(userId, userName,profilePicture) {
+    async checkAndCreateuser(userId, userName, profilePicture) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "chatters", userId);
@@ -468,7 +496,8 @@ export default {
           const newUser = {
             id: userId,
             name: userName || "New User", // Default name, adjust as needed
-            profile_picture: profilePicture || "https://thispersondoesnotexist.com/"
+            profile_picture:
+              profilePicture || "https://thispersondoesnotexist.com/",
           };
 
           // Set the new document in Firestore
@@ -557,12 +586,21 @@ export default {
     // Filtered chat list based on search query
     filteredChats() {
       const query = this.searchQuery.toLowerCase();
-      return this.chat_arr.filter((chat) =>
-        chat.chat_name.toLowerCase().startsWith(query)
+      return this.chat_arr.filter(
+        (chat) =>
+          (this.currentFilter === "all" ||
+            chat.chat_type === this.currentFilter) &&
+          chat.chat_name.toLowerCase().includes(query)
       );
     },
   },
   mounted() {
+    window.addEventListener("resize", () => {
+      this.isMobileView = window.innerWidth < 992;
+      if (!this.isMobileView) {
+        this.showChats = true;
+      }
+    });
     this.$nextTick(() => {
       window.scrollTo(0, 0);
     });
@@ -570,7 +608,11 @@ export default {
       JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
     if (userObject) {
-      this.checkAndCreateuser(userObject.uid, userObject.name, userObject.profile_picture);
+      this.checkAndCreateuser(
+        userObject.uid,
+        userObject.name,
+        userObject.profile_picture
+      );
       this.user = userObject.uid;
       console.log(this.user);
     }
@@ -583,6 +625,25 @@ export default {
 </script>
 
  <style scoped>
+#chats,
+#conversation {
+  transition: all 0.3s ease;
+}
+.full-width {
+  width: 100% !important;
+}
+
+[style*="display: none"] {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+#conversation[style*="display: none"],
+#chats[style*="display: none"] {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
 body {
   overflow-y: hidden;
 }
@@ -663,7 +724,7 @@ body {
 }
 
 .close-button:hover {
-  background-color: darken(var(--bs-primary), 10%);
+  background-color: white;
   transform: scale(1.1);
   color: var(--bs-primary);
 }
