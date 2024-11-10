@@ -15,13 +15,14 @@
           style="border-radius: 20px; max-height: 80vh; height: auto; overflow-y: auto;"
         >
           <!-- Close Button (Top Right) -->
+          <!-- Custom Red X Button (Top Right) -->
           <button
             type="button"
-            class="btn-close position-absolute top-0 end-0 m-3"
-            data-bs-dismiss="modal"
-            aria-label="Close"
+            class="custom-close"
             @click="closeModal"
-          ></button>
+          >
+            &times;
+          </button>
   
           <div class="modal-body p-0 d-flex flex-row" style="height: 100%;">
             <!-- Left Side: Image -->
@@ -282,7 +283,7 @@ export default {
     max-height: 90vh;
     height: auto;
     overflow-y: auto;
-    overflow: hidden !important; /* Ensure no scrollbars show */
+   /* Ensure no scrollbars show */
   }
   
   .modal-signup h2 {
@@ -313,6 +314,23 @@ export default {
 
 #home {
   color: #525FE1;
+}
+
+.custom-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  color: red;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1051; /* Ensure it stays on top */
+}
+
+.custom-close:hover {
+  color: darkred;
 }
   </style>
   
