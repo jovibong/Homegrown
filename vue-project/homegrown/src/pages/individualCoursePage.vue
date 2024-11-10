@@ -145,7 +145,7 @@
               <button
                 class="btn btn-primary d-inline-flex align-items-center"
                 @click.prevent="addChat(mentor.id, user)"
-                :disabled = "add_chat_button_disabled"
+                :disabled="add_chat_button_disabled"
               >
                 Ask for help <i class="bi bi-arrow-right ms-2"></i>
               </button>
@@ -289,7 +289,7 @@ import {
   arrayUnion,
   getDocs,
   query,
-  where
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
@@ -533,7 +533,7 @@ export default {
         this.$router.push(item.route_link);
       }
     },
-     async checkAndCreateuser(userId, userName, profilePicture) {
+    async checkAndCreateuser(userId, userName, profilePicture) {
       try {
         // Reference to the user document in the users collection
         const userDocRef = doc(db, "chatters", userId);
@@ -561,73 +561,103 @@ export default {
         console.error("Error checking or creating user document:", error);
       }
     },
-   async addChat(chatterId1, chatterId2) {
-  try {
-    this.add_chat_button_disabled = true;
-    this.checkAndCreateuser(chatterId1);
-    this.checkAndCreateuser(chatterId2);
-    // Step 1: Check if a chat with both users already exists
-    const chatsCollection = collection(db, "chats");
-    const chatQuery = query(
-      chatsCollection,
-      where("chat_type", "==", "contact")
-    );
-    const chatSnapshot = await getDocs(chatQuery);
+    async getUserDocument(userId) {
+      const collections = ["profiles", "users", "mentors"];
 
-    let existingChat = null;
-    chatSnapshot.forEach((doc) => {
-      const data = doc.data();
-      if (
-        data.group_members &&
-        data.group_members.length === 2 &&
-        data.group_members.includes(chatterId1) &&
-        data.group_members.includes(chatterId2)
-      ) {
-        existingChat = { id: doc.id, ...data };
+      for (const collectionName of collections) {
+        try {
+          const docRef = doc(db, collectionName, userId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            return { data: docSnap.data(), collection: collectionName };
+          }
+        } catch (error) {
+          console.error(
+            `Error retrieving document from ${collectionName}:`,
+            error
+          );
+        }
       }
-    });
 
-    // If an existing chat is found, navigate to it and return
-    if (existingChat) {
-      console.log("Chat already exists with ID:", existingChat.id);
-      this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
-      return;
-    }
+      return {
+        message: "User not found in profiles, users, or mentors collections",
+      };
+    },
+    async addChat(chatterId1, chatterId2) {
+      try {
+        const user1 = await this.getUserDocument(chatterId1);
+        await this.checkAndCreateuser(user1);
 
-    // Step 2: Create a new chat document if no existing chat was found
-    const newChatRef = await addDoc(collection(db, "chats"), {
-      chat_type: "contact",
-      chat_name: "contact",
-      chat_img: "default_image_url",
-      group_members: [chatterId1, chatterId2],
-    });
+        const user2 = await this.getUserDocument(chatterId2);
+        await this.checkAndCreateuser(user2);
 
-    const chatId = newChatRef.id;
-    console.log("New chat created with ID:", chatId);
+        this.add_chat_button_disabled = true;
+        // Step 1: Check if a chat with both users already exists
+        const chatsCollection = collection(db, "chats");
+        const chatQuery = query(
+          chatsCollection,
+          where("chat_type", "==", "contact")
+        );
+        const chatSnapshot = await getDocs(chatQuery);
 
-    // Step 3: Add chat ID to each chatter's `chats` array
-    for (const chatterId of [chatterId1, chatterId2]) {
-      const chatterRef = doc(db, "chatters", chatterId);
-      const chatterDoc = await getDoc(chatterRef);
-
-      if (chatterDoc.exists()) {
-        await updateDoc(chatterRef, {
-          chats: arrayUnion(chatId),
+        let existingChat = null;
+        chatSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (
+            data.group_members &&
+            data.group_members.length === 2 &&
+            data.group_members.includes(chatterId1) &&
+            data.group_members.includes(chatterId2)
+          ) {
+            existingChat = { id: doc.id, ...data };
+          }
         });
-      } else {
-        await setDoc(chatterRef, {
-          chats: [chatId],
+
+        // If an existing chat is found, navigate to it and return
+        if (existingChat) {
+          console.log("Chat already exists with ID:", existingChat.id);
+          this.$router.push({
+            name: "chatPage",
+            params: { chatId: existingChat.id },
+          });
+          return;
+        }
+
+        // Step 2: Create a new chat document if no existing chat was found
+        const newChatRef = await addDoc(collection(db, "chats"), {
+          chat_type: "contact",
+          chat_name: "contact",
+          chat_img: "default_image_url",
+          group_members: [chatterId1, chatterId2],
         });
+
+        const chatId = newChatRef.id;
+        console.log("New chat created with ID:", chatId);
+
+        // Step 3: Add chat ID to each chatter's `chats` array
+        for (const chatterId of [chatterId1, chatterId2]) {
+          const chatterRef = doc(db, "chatters", chatterId);
+          const chatterDoc = await getDoc(chatterRef);
+
+          if (chatterDoc.exists()) {
+            await updateDoc(chatterRef, {
+              chats: arrayUnion(chatId),
+            });
+          } else {
+            await setDoc(chatterRef, {
+              chats: [chatId],
+            });
+          }
+          console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
+        }
+
+        console.log("Chat successfully created and added to both chatters.");
+        this.$router.push({ name: "chatPage", params: { chatId } });
+      } catch (error) {
+        console.error("Error creating chat:", error);
       }
-      console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
-    }
-
-    console.log("Chat successfully created and added to both chatters.");
-    this.$router.push({ name: "chatPage", params: { chatId } });
-  } catch (error) {
-    console.error("Error creating chat:", error);
-  }
-}
+    },
   },
   async mounted() {
     const userObject =
