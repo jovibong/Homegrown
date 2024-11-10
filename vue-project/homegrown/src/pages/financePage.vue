@@ -264,7 +264,7 @@
             <input name="nav" type="radio" id="BudgetPlanner" />
             <div class="page">
                 <div class="container">
-                    <p>fill up here too</p>
+                    <budget-chart></budget-chart>
                 </div>
             </div>
             <label class="nav" for="BudgetPlanner">
@@ -441,6 +441,7 @@ onMounted(() => {
 import StatsTile from '../components/statsTile.vue';
 import SummaryChart from '../components/summaryChart.vue';
 import paymentLogs from '../components/paymentLogs.vue';
+import budgetChart from '@/components/budgetChart.vue';
 
 export default {
 
@@ -451,7 +452,8 @@ export default {
     {
         'stats-tile': StatsTile,
         'summary-chart': SummaryChart,
-        'payment-logs': paymentLogs
+        'payment-logs': paymentLogs,
+        'budget-chart': budgetChart
 
     }
 
