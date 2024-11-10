@@ -21,7 +21,7 @@
       <div v-if="loading">
         <loading-animation></loading-animation>
       </div>
-      <div v-if="!loading && !has_ongoing" class="text-center fs-4">
+      <div v-if="!loading && !has_ongoing" class="text-center fs-4 text-muted">
         Looks like you have no ongoing course. Click on a course below to start
         learning!
       </div>
@@ -30,7 +30,7 @@
         <div
           v-for="course in ongoing_courses"
           :key="course.id"
-          class="col-md-4 mb-4 card-flip fade-in-top d-inline-block"
+          class="col-lg-4 col-md-6 mb-4 card-flip fade-in-top d-inline-block"
         >
           <div class="card shadow-sm position-relative h-100 card-inner">
             <div class="card-front">
@@ -121,7 +121,7 @@
           v-else
           v-for="course in new_courses"
           :key="course.id"
-          class="col-md-4 mb-4 card-flip fade-in-top"
+          class="col-lg-4 col-md-6 mb-4 card-flip fade-in-top"
         >
           <div class="card shadow-sm position-relative h-100 card-inner">
             <div class="card-front">
