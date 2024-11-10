@@ -1,26 +1,42 @@
 <template>
     <div id="app">
-        <apexchart :options="chartOptions" :series="series" type="donut" height="350"></apexchart>
+        <apexchart :options="chartOptions" :series="filteredSeries" type="donut" height="350"></apexchart>
 
         <div class="buttons">
             <button @click="appendData">Add Data</button>
-            <button @click="removeData">Remove Data</button>
-            <button @click="randomize">Randomize Data</button>
             <button @click="reset">Reset Data</button>
         </div>
 
-        <!-- Table showing series and corresponding values -->
+        <!-- Display overflow message if the sum exceeds 500 -->
+        <div v-if="totalExceedsLimit" class="alert">
+            <p>You are over by {{ overflowAmount }}. Please adjust the values to stay within 500.</p>
+        </div>
+
+        <!-- Table for editable labels and values -->
         <table class="series-table">
             <thead>
                 <tr>
-                    <th>Index</th>
+                    <th>Label</th>
                     <th>Value</th>
+                    <th>Action</th> <!-- Add action column for remove buttons -->
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(value, index) in series" :key="index">
-                    <td>{{ customLabels[index] }}</td>
-                    <td>{{ value }}</td>
+                    <td>
+                        <!-- Show "Left" as a fixed label for the first item -->
+                        <span v-if="index === 0">{{ customLabels[index] }}</span>
+                        <input v-else type="text" v-model="customLabels[index]" @input="updateChart" />
+                    </td>
+                    <td>
+                        <!-- Make the first value non-editable -->
+                        <span v-if="index === 0">{{ series[index] }}</span>
+                        <input v-else type="number" v-model.number="series[index]" @input="updateChart" />
+                    </td>
+                    <td>
+                        <!-- Show remove button only for non-"Left" rows -->
+                        <button v-if="index !== 0" @click="removeData(index)">Remove</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -37,11 +53,11 @@ export default defineComponent({
     },
     data() {
         return {
-            // Series data
-            series: [44, 55, 13, 33],
+            // Series data with the first item set to 500
+            series: [500],
 
-            // Custom category labels
-            customLabels: ['Category 1', 'Category 2', 'Category 3', 'Category 4'],
+            // Custom category labels with the first item labeled as "Left"
+            customLabels: ['Left'],
 
             // Chart options
             chartOptions: {
@@ -56,59 +72,84 @@ export default defineComponent({
                     position: 'right',
                     offsetY: 0,
                     height: 230,
-                    // Format legend labels with custom names
                     formatter: (seriesName, opts) => {
-                        // Use custom label for the legend
                         return this.customLabels[opts.seriesIndex];
                     }
                 },
                 tooltip: {
                     y: {
                         formatter: (val) => {
-                            return `${val}`;},
-                        title:{
-                            // Tooltip formatter to show custom category name and value
-                        formatter: (val, opts) => {
-                            const category = this.customLabels[opts.seriesIndex];
-                            return `${category}:`;
+                            return `${val}`;
+                        },
+                        title: {
+                            formatter: (val, opts) => {
+                                const category = this.customLabels[opts.seriesIndex];
+                                return `${category}:`;
+                            }
                         }
-                        }
-                        
                     },
-                    
                 }
             }
         };
     },
+    computed: {
+        filteredSeries() {
+            return this.series;
+        },
+
+        // Calculate total of the series excluding the first item ("Left")
+        totalSum() {
+            return this.series.reduce((acc, val) => acc + val, 0);
+        },
+
+        // Check if the total sum exceeds 500
+        totalExceedsLimit() {
+            return this.totalSum > 500;
+        },
+
+        // Calculate how much the total exceeds the limit
+        overflowAmount() {
+            return this.totalSum - 500;
+        }
+    },
+    watch: {
+        // Watch for changes in the series array and update "Left" to keep total 500
+        series: {
+            handler(newSeries) {
+                const totalOtherValues = newSeries.slice(1).reduce((acc, val) => acc + val, 0);
+                this.series[0] = Math.max(0, 500 - totalOtherValues); // Adjust "Left" value to keep total 500
+            },
+            deep: true
+        }
+    },
     methods: {
         appendData() {
-            const arr = this.series.slice();
-            arr.push(Math.floor(Math.random() * (100 - 1 + 1)) + 1);
-            this.series = arr;
-
-            // Add a custom label for the new series
+            this.series.push(0); // Start with 0 for new entries
             this.customLabels.push(`Category ${this.customLabels.length + 1}`);
         },
 
-        removeData() {
-            if (this.series.length === 1) return;
-            const arr = this.series.slice();
-            arr.pop();
-            this.series = arr;
-
-            // Remove the last custom label as well
-            this.customLabels.pop();
-        },
-
-        randomize() {
-            this.series = this.series.map(() => {
-                return Math.floor(Math.random() * (100 - 1 + 1)) + 1;
-            });
+        removeData(index) {
+            // Remove data at the specified index (if it's not "Left")
+            if (this.series.length > 1 && index !== 0) {
+                this.series.splice(index, 1);
+                this.customLabels.splice(index, 1);
+            }
         },
 
         reset() {
-            this.series = [44, 55, 13, 33];
-            this.customLabels = ['Category 1', 'Category 2', 'Category 3', 'Category 4'];
+            this.series = [500];
+            this.customLabels = ['Left'];
+            this.updateChart();
+        },
+
+        updateChart() {
+            // Trigger reactivity for series updates
+            this.series = [...this.series];
+        },
+
+        getMaxValue(index) {
+            // Ensure the max value is based on the first item in the series
+            return index === 0 ? 500 : this.series[0];
         }
     }
 });
@@ -147,5 +188,23 @@ button:hover {
 
 .series-table th {
     background-color: #f4f4f4;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: 100%;
+    padding: 4px;
+    text-align: center;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
 }
 </style>
