@@ -21,7 +21,8 @@
                         <div class="col-md-6">
                             <div class="bento-tile  h-100 p-3">
                                 <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
-                                    :statEditable="stats.goal.statEditable" :descriptionNonEditable="stats.goal.descriptionNonEditable"
+                                    :statEditable="stats.goal.statEditable"
+                                    :descriptionNonEditable="stats.goal.descriptionNonEditable"
                                     :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
                             </div>
                         </div>
@@ -264,7 +265,11 @@
             <input name="nav" type="radio" id="BudgetPlanner" />
             <div class="page">
                 <div class="container">
-                    <budget-chart></budget-chart>
+                    <div class="row my-5 g-3">
+                        <div class="col-12 p-3 bento-tile">
+                        <budget-chart></budget-chart>
+                        </div>
+                    </div>
                 </div>
             </div>
             <label class="nav" for="BudgetPlanner">
@@ -297,22 +302,27 @@
 
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="stats.totalEarned.title" :statNonEditable="stats.totalEarned.statNonEditable"
-                                    :statEditable="stats.totalEarned.statEditable" :descriptionNonEditable="stats.totalEarned.descriptionNonEditable"
+                                <stats-tile :title="stats.totalEarned.title"
+                                    :statNonEditable="stats.totalEarned.statNonEditable"
+                                    :statEditable="stats.totalEarned.statEditable"
+                                    :descriptionNonEditable="stats.totalEarned.descriptionNonEditable"
                                     :descriptionEditable="stats.totalEarned.descriptionEditable"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
                                 <stats-tile :title="stats.payday.title" :statNonEditable="stats.payday.statNonEditable"
-                                    :statEditable="stats.payday.statEditable" :descriptionNonEditable="stats.payday.descriptionNonEditable"
+                                    :statEditable="stats.payday.statEditable"
+                                    :descriptionNonEditable="stats.payday.descriptionNonEditable"
                                     :descriptionEditable="stats.payday.descriptionEditable"></stats-tile>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="stats.latePayments.title" :statNonEditable="stats.latePayments.statNonEditable"
-                                    :statEditable="stats.latePayments.statEditable" :descriptionNonEditable="stats.latePayments.descriptionNonEditable"
+                                <stats-tile :title="stats.latePayments.title"
+                                    :statNonEditable="stats.latePayments.statNonEditable"
+                                    :statEditable="stats.latePayments.statEditable"
+                                    :descriptionNonEditable="stats.latePayments.descriptionNonEditable"
                                     :descriptionEditable="stats.latePayments.descriptionEditable"></stats-tile>
                             </div>
                         </div>
@@ -413,7 +423,7 @@ onMounted(() => {
 
     docsToFetch.forEach(({ key, name }) => {
         const docRef = doc(statsRef, name);
-        
+
         // Set up a real-time listener for each document
         onSnapshot(docRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
