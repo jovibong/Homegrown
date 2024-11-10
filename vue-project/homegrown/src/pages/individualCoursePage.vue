@@ -102,8 +102,11 @@
               <h5 class="fw-bold h4">{{ mentor.name }}</h5>
               <p class="text-muted">{{ mentor.description }}</p>
               <!-- Ask for Help Button -->
-              <button class="btn btn-primary d-inline-flex align-items-center" @click.prevent="addChat(mentor.id, user)"
-                :disabled="add_chat_button_disabled">
+              <button
+                class="btn btn-primary d-inline-flex align-items-center"
+                @click.prevent="addChat(mentor.id, user)"
+                :disabled="add_chat_button_disabled"
+              >
                 Ask for help <i class="bi bi-arrow-right ms-2"></i>
               </button>
             </div>
@@ -210,7 +213,7 @@ import {
   arrayUnion,
   getDocs,
   query,
-  where
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
@@ -482,11 +485,38 @@ export default {
         console.error("Error checking or creating user document:", error);
       }
     },
+    async getUserDocument(userId) {
+      const collections = ["profiles", "users", "mentors"];
+
+      for (const collectionName of collections) {
+        try {
+          const docRef = doc(db, collectionName, userId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            return { data: docSnap.data(), collection: collectionName };
+          }
+        } catch (error) {
+          console.error(
+            `Error retrieving document from ${collectionName}:`,
+            error
+          );
+        }
+      }
+
+      return {
+        message: "User not found in profiles, users, or mentors collections",
+      };
+    },
     async addChat(chatterId1, chatterId2) {
       try {
+        const user1 = await this.getUserDocument(chatterId1);
+        await this.checkAndCreateuser(user1);
+
+        const user2 = await this.getUserDocument(chatterId2);
+        await this.checkAndCreateuser(user2);
+
         this.add_chat_button_disabled = true;
-        this.checkAndCreateuser(chatterId1);
-        this.checkAndCreateuser(chatterId2);
         // Step 1: Check if a chat with both users already exists
         const chatsCollection = collection(db, "chats");
         const chatQuery = query(
@@ -511,7 +541,10 @@ export default {
         // If an existing chat is found, navigate to it and return
         if (existingChat) {
           console.log("Chat already exists with ID:", existingChat.id);
-          this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
+          this.$router.push({
+            name: "chatPage",
+            params: { chatId: existingChat.id },
+          });
           return;
         }
 
@@ -543,12 +576,12 @@ export default {
           console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
         }
 
-        console.log("Chat successfully created and added to both chatters.");
-        this.$router.push({ name: "chatPage", params: { chatId } });
-      } catch (error) {
-        console.error("Error creating chat:", error);
-      }
-    }
+    console.log("Chat successfully created and added to both chatters.");
+    this.$router.push({ name: "chatPage", params: { chatId } });
+  } catch (error) {
+    console.error("Error creating chat:", error);
+  }
+}
   },
   async mounted() {
     const userObject =
