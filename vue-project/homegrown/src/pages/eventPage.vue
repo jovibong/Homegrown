@@ -164,7 +164,7 @@
 <script>
 import EventCards from '../components/eventCard.vue';
 import createEvent from '../components/createEvents.vue';
-import { collection, getDocs, getDoc, setDoc, query, where, doc } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from '../firebase/initialize'
 
 
@@ -198,7 +198,7 @@ export default {
     },
 
     mounted() {
-        // this.getUser();     
+        this.getUser();     
         this.getAllEvents();
     },
 
@@ -226,16 +226,16 @@ export default {
             const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
             console.log(sessionUser.uid);
 
-            const userId = sessionUser.uid;
-            const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+            // const userId = sessionUser.uid;
+            // const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
 
-            // Check if the user document exists
-            const userDocSnapshot = await getDoc(userDocRef);
+            // // Check if the user document exists
+            // const userDocSnapshot = await getDoc(userDocRef);
 
-            // If the user document doesn't exist, create it (you can optionally add some initial data to it)
-            if (!userDocSnapshot.exists()) {
-                await setDoc(userDocRef, { userId: userId });
-            }
+            // // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+            // if (!userDocSnapshot.exists()) {
+            //     await setDoc(userDocRef, { userId: userId });
+            // }
         },
 
         toggleShowAllEvents() {
@@ -292,7 +292,7 @@ export default {
 
                 // Check if the event date is in the past
                 if (eventDate < today) {
-                    console.log("i made it")
+                    console.log("successful check of eventDate<today")
                     console.log(doc.id, " => ", doc.data());
 
                     // Push the event into the array if it's in the past

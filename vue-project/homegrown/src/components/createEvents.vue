@@ -38,7 +38,7 @@
         <div class="row mb-3">
             <label for="image" class="col-sm-2 col-form-label">Image</label>
             <div class="col-sm-10">
-                <input id="image" type="file" class="form-control" @change="uploadImage" />
+                <input id="image" type="file" class="form-control" @change="handleFileUpload" />
             </div>
         </div>
 
@@ -92,20 +92,25 @@ export default {
 
     methods: {
         async submitInput(e) {
-          console.log(e.value);
-          const dateTimeString = `${this.eventDate}T${this.eventTime}`;
-          const combinedDateTime = new Date(dateTimeString);
+        await this.uploadImage();
 
-            const docData = {
-                name: this.eventTitle,
-                description: this.eventDescription,
-                date: Timestamp.fromDate(new Date(combinedDateTime)),
-                location: this.eventLocation,
-                imageURL: this.imageURL,
-                createdBy: this.createdBy,
-                category: this.category
+        console.log("Image URL after upload:", this.imageURL);
 
-                }
+        console.log(this.imageURL)
+        console.log(e.value);
+        const dateTimeString = `${this.eventDate}T${this.eventTime}`;
+        const combinedDateTime = new Date(dateTimeString);
+
+        const docData = {
+            name: this.eventTitle,
+            description: this.eventDescription,
+            date: Timestamp.fromDate(new Date(combinedDateTime)),
+            location: this.eventLocation,
+            imageURL: this.imageURL,
+            createdBy: 'user001',
+            category: this.eventCategory
+
+            }
 
             // Add a new document in collection "events"
             const docRef = await addDoc(collection(db, "events"), docData);
@@ -115,57 +120,50 @@ export default {
             console.log(this.eventID)
         },
 
-        async uploadImage(event) {
+        handleFileUpload(event) {
+            this.file = event.target.files[0];
+        },
+
+        async uploadImage() {
             const storage = getStorage();
-            const file = event.target.files[0];
+            const imageFile = this.file;
 
-            if (file) {
-                const storageRef = ref(storage, `eventImages/${file.name}`);
-
-                // Create file metadata including the content type
+            if (imageFile) {
+                const storageRef = ref(storage, `eventImages/${imageFile.name}`);
                 const metadata = {
                     name: `${this.eventTitle} Image`,
-                    contentType: 'image/jpeg',
+                    contentType: imageFile.type,
                 };
 
-                const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+                return new Promise((resolve, reject) => {
+                    const uploadTask = uploadBytesResumable(storageRef, imageFile, metadata);
 
-                // Register three observers:
-                // 1. 'state_changed' observer, called any time the state changes
-                // 2. Error observer, called on failure
-                // 3. Completion observer, called on successful completion
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        // Observe state change events such as progress, pause, and resume
-                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload is ' + progress + '% done');
-                        switch (snapshot.state) {
-                            case 'paused':
-                                console.log('Upload is paused');
-                                break;
-                            case 'running':
-                                console.log('Upload is running');
-                                break;
+                    uploadTask.on(
+                        'state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload is ' + progress + '% done');
+                        },
+                        (error) => {
+                            console.error("Upload unsuccessful:", error);
+                            reject(error);
+                        },
+                        async () => {
+                            try {
+                                this.imageURL = await getDownloadURL(uploadTask.snapshot.ref);
+                                console.log('File available at', this.imageURL);
+                                resolve(this.imageURL);
+                            } catch (error) {
+                                reject(error);
+                            }
                         }
-                    },
-                    (error) => {
-                        // Handle unsuccessful uploads
-                        console.error("Upload unsuccessful:", error)
-                    },
-                    () => {
-                        // Handle successful uploads on complete
-                        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            console.log('File available at', downloadURL);
-                            this.imageURL = downloadURL;
-                        });
-                    }
-                )
-            }else{
-                console.log(`cannot get image. file: ${file}`)
-            } 
-        }
+                    );
+                });
+            } else {
+                console.log("No file selected.");
+                return Promise.resolve(null); // No file to upload
+            }
+        },
     }
 }
 </script>
