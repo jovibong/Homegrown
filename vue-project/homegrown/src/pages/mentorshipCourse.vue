@@ -277,17 +277,14 @@ export default {
           JSON.parse(localStorage.getItem("user"));
         const uid = user.uid;
         // console.log(uid)
-        const mentorRef = doc(db, "profiles", uid);
-        const mentorSnap = await getDoc(mentorRef);
-        const mentorID = mentorSnap.data().mentor;
-        // console.log(mentorID)
+        
 
         // If the id does not exist in the route parameters, pull it from sessionStorage
         const selectedCourse = sessionStorage.getItem("selectedCourseId");
         const courseID = JSON.parse(selectedCourse);
         // console.log(courseID)
 
-        const menteeRef = doc(db, "mentors", mentorID, "mentorships", courseID);
+        const menteeRef = doc(db, "mentors", uid, "mentorship", courseID);
         const menteeDoc = await getDoc(menteeRef);
         const menteesList = menteeDoc.data().mentees;
         this.mentees = menteesList;

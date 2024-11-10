@@ -1,46 +1,50 @@
 <template>
     <div>
-        <div v-if="courses.length > 0">
-            <section id="ongoing_app" class="container py-3">
-                <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
-                <p class="text-center text-muted mb-0 h5 pb-5">
-                    You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them
-                    unlock
-                    their full potential with every step they take.
-                </p>
-                <loading-animation v-if="mentorships_loading"></loading-animation>
-                <div v-else>
-                    <div class="row">
-                        <!-- Mentorship Cards -->
-                        <div v-for="course in courses" :key="course.id" class="col-md-4 mb-4">
-                            <div class="card shadow-sm position-relative hover-animate">
-                                <router-link :to="`/mentorshipCourse`" class="text-decoration-none"
-                                    @click="goToMentorshipCoursePage(course.id)">
-                                    <span v-if="course.noti_count > 0"
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
-                                        {{ course.noti_count }}
-                                    </span>
-                                    <div class="card-body">
-                                        <div class="text-center mb-3">
-                                            <i class="bi bi-book fs-2 text-primary"></i>
-                                        </div>
-                                        <h5 class="card-title fw-bold text-center">{{ course.name }}</h5>
-                                        <h6 class="text-secondary card-text text-center fst-italic enter-text">click to
-                                            enter
-                                        </h6>
-                                        <!-- Updated here -->
-                                        <p class="card-text text-muted">
-                                            {{ course.description }}
-                                        </p>
-                                    </div>
 
-                                </router-link>
-                            </div>
+        <section id="ongoing_app" class="container py-3">
+            <h2 class="text-primary fw-bold text-center mb-3 display-4">Ongoing Mentorships</h2>
+            <p class="text-center text-muted mb-0 h5 pb-5">
+                You're doing an incredible job as a mentor! Keep supporting and guiding your mentees, helping them
+                unlock
+                their full potential with every step they take.
+            </p>
+
+            <loading-animation v-if="mentorships_loading"></loading-animation>
+            <div v-if="!mentorships_loading && courses.length == 0" class="text-center fs-4">
+                Looks like you have no ongoing course. Sign up to be a mentor today!
+            </div>
+            <div v-if="!mentorships_loading && courses.length > 0">
+                <div class="row">
+                    <!-- Mentorship Cards -->
+                    <div v-for="course in courses" :key="course.id" class="col-md-4 mb-4">
+                        <div class="card shadow-sm position-relative hover-animate">
+                            <router-link :to="`/mentorshipCourse`" class="text-decoration-none"
+                                @click="goToMentorshipCoursePage(course.id)">
+                                <span v-if="course.noti_count > 0"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge_notifiction">
+                                    {{ course.noti_count }}
+                                </span>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-book fs-2 text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-center">{{ course.name }}</h5>
+                                    <h6 class="text-secondary card-text text-center fst-italic enter-text">click to
+                                        enter
+                                    </h6>
+                                    <!-- Updated here -->
+                                    <p class="card-text text-muted">
+                                        {{ course.description }}
+                                    </p>
+                                </div>
+
+                            </router-link>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
+
 
         <section id="new_app">
             <div class="container py-5">
