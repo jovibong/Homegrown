@@ -209,6 +209,8 @@ export default {
         // Update the user's display name in Firebase Auth
         await updateProfile(user, { displayName: this.username });
 
+        localStorage.removeItem('user'); // Clear any previous user data
+
         // Store additional user information (username) in Firestore
         await setDoc(doc(db, 'profiles', user.uid), {
           username: this.username,
@@ -217,8 +219,12 @@ export default {
           name: this.name // Save the user's name
         });
 
+        sessionStorage.setItem('user', JSON.stringify(user)); // Save user info in session storage
+        localStorage.setItem('user', JSON.stringify(user)); // Save user info in local storage
+
         console.log("Signed up user:", user);
         this.$emit("signup", user); // Emit event with user info if needed
+
 
         // Redirect based on userType
         if (this.userType === 'worker') {
