@@ -43,19 +43,22 @@
                   <router-link to="/coursesPage" class="nav-link text-light" @click="closeNavbar">Upskilling</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'volunteer'">
-                  <router-link to="/volunteerPage" class="nav-link text-light" @click="closeNavbar">Volunteer</router-link>
+                  <router-link to="/mentorshipPage" class="nav-link text-light" @click="closeNavbar">Mentorships</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
                   <router-link to="/eventPage" class="nav-link text-light" @click="closeNavbar">Events</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/chatPage" class="nav-link text-light" @click="closeNavbar">Chat</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'worker'">
                   <router-link to="/financePage" class="nav-link text-light" @click="closeNavbar">Finance</router-link>
                 </li>
                 <li class="nav-item mx-3" v-if="userType === 'volunteer'">
-                  <router-link to="/mentorshipPage" class="nav-link text-light" @click="closeNavbar">Mentorship</router-link>
+                  <router-link to="/volunteerPage" class="nav-link text-light" @click="closeNavbar">Volunteer</router-link>
+                </li>
+                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+                  <router-link to="/chatPage" class="nav-link text-light" @click="closeNavbar">Chat</router-link>
+                </li>
+                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+                  <router-link to="/forum" class="nav-link text-light" @click="closeNavbar">Forum</router-link>
                 </li>
               </ul>
             </div>
