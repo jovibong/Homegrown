@@ -1,9 +1,20 @@
 <template>
     <div>
-        <button class="btn btn-outline-light btn-add-light w-100 mb-2" @click="addLog">
+        <button class="btn btn-outline-light btn-add-light w-100 mb-2" id="show-modal" @click="showModal = true">
             <i class="fas fa-plus-circle fs-5"></i>
             <span> Add Logs</span>
         </button>
+        <Teleport to="body">
+            <!-- use the modal component, pass in the prop -->
+            <expense-modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
+                <template #header>
+                    <div class="w-100">
+                        <h2>Add Expense</h2>
+                        <hr>
+                    </div>
+                </template>
+            </expense-modal>
+        </Teleport>
         <div class="table-responsive logs-scroll">
             <table class="table table-striped text-center mb-0">
                 <thead class="table-dark">
@@ -13,7 +24,7 @@
                         <th scope="col">Amount</th>
                         <th scope="col">Category</th>
                         <th scope="col">Date</th>
-                        <th scope="col"></th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
@@ -40,8 +51,18 @@
     </div>
 </template>
 
+<script setup>
+import Modal from './expenseModal.vue'
+import {ref} from 'vue'
+const showModal = ref(false)
+</script>
+
 <script>
 export default {
+    components:
+    {
+        'expense-modal': Modal,
+    },
     data() {
         return {
             logs: [
