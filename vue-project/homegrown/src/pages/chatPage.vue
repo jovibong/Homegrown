@@ -312,7 +312,7 @@ export default {
       isMobileView: window.innerWidth < 992, // Detect if screen is smaller than large size (992px)
       emojis: [],
       showEmojiPicker: false,
-      api: process.env.EMOJI_API,
+      api:  process.env.VUE_APP_EMOJI_API,
     };
   },
   methods: {
