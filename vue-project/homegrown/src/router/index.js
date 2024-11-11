@@ -50,7 +50,8 @@ const routes = [
     {
         path: '/eventPage/:id',
         name: 'eventDetail',
-        component: () => import('../components/eventDetail.vue')
+        component: () => import('../components/eventDetail.vue'),
+        props: true
     },
 
     {

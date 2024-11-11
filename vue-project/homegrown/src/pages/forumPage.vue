@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, addDoc, query, where, getDoc, doc } from "firebase/firestore";
 import { db } from '../firebase/initialize';
 
 export default{
@@ -234,8 +234,18 @@ export default{
             console.log("show selected forums", this.selectedForums)
         },
 
-        async getTopForums(){
-            // Condition for top: comments >= 3
+        async fetchUserProfile() {
+            try {
+                const userDoc = await getDoc(doc(db, "profiles", this.userId));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    this.formData.name = data.name || "";
+                    this.formData.username = data.username || "";
+                    this.profileImageSrc = data.profileImageUrl || require('@/img/blankprofile.png');
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
         },
 
         async addForum() {

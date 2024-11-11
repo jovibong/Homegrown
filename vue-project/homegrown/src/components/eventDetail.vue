@@ -1,5 +1,6 @@
 <template>
   <!-- Header -->
+  <loading-animation v-if="event_loading"></loading-animation>
   <div class="header-container">
 
     <img class="headerImage" :src="eventImage">
@@ -7,22 +8,24 @@
 
   </div>
 
-  <div class="container">
+  <loading-animation v-if="event_loading"></loading-animation>
+  <div v-if="!event_loading" class="container">
 
     <!-- Event Details -->
     <div class="row">
       <div class="col-12 d-grid grid-template">
-        <div class="event-details text-muted mb-4 h5">
-          {{ eventDay }}
-          {{ eventDate }}
+        <div class="text-muted mb-4 h5 timing-details">
+          {{ eventDay }} |
+          {{ eventDate }} |
           {{ eventTime }}
         </div>
 
-        <div class="event-details text-muted mb-4 h5">
+        <div class="text-muted mb-4 h5 location-details">
+          @
           {{ location }}
         </div>
 
-        <div class="event-details text-muted mb-4 h5">
+        <div class="text-muted mb-4 h5 category-details">
           {{ eventCategory }}
         </div>
       </div>
@@ -42,7 +45,7 @@
 
     <!-- Groups -->
     <div class="groupContainer mt-4">
-      <h2 class="text-primary fw-bold text-center mb-3 display-4"> Groups </h2> 
+      <h2 class="text-primary fw-bold text-center mb-3 display-4"> Groups </h2>
 
       <button type="button" @click="modalVisible = true" class="createButton" data-bs-toggle="modal"
         data-bs-target="#createGroup">
@@ -75,7 +78,7 @@
 
               <!-- Description -->
               <div class="row mb-3">
-                <label for="description" class="col-sm-2 col-form-label">Description</label>
+                <label for="description" class="col-form-label">Description</label>
                 <div class="col-sm-10">
                   <textarea rows="4" cols="50" id="description" v-model="groupDesc" class="form-control"></textarea>
 
@@ -95,34 +98,38 @@
                 </div>
               </div> -->
 
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Create Group</button>
+              </div>
+
             </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Create Group</button>
           </div>
         </div>
       </div>
     </div>
 
+    <div v-if="loading" class="loading-overlay">
+      <div class="spinner">Loading...</div> <!-- This can be a custom spinner -->
+    </div>
     <!-- to display dynamically the list of created groups -->
-    <div v-if="groups.length == 0" class="text-muted mb-4 h5 text-center"> No groups yet. Create your own!
+    <div v-if="!groups_loading && groups.length == 0" class="text-muted mb-4 h5 text-center">
+      No groups yet. Create your own!
     </div>
 
-    <div v-else>
+    <div v-if="!groups_loading && !loading && groups.length > 0">
       <div v-for="group in groups" :key="group.id" class="eventGroup">
         <div class="group-info">
+          <div class="profile-images">
+            <div v-for="member in group.members" :key="member.id">
+              <img :src="member.profilePic" class="profile-pic" />
+            </div>
 
-          <div class="group-members">
-            <div class="profile-images">
-              <img v-for="member in group.members" :key="member" :src="profilePic" 
-                class="profile-pic" />
-
-              <div v-if="extraCount > 0" class="extra-count">
-                +{{ extraCount }}
-              </div>
+            <div v-if="extraCount > 0" class="extra-count">
+              +{{ extraCount }}
             </div>
           </div>
+
 
           <span id="divider"> | </span>
 
@@ -130,9 +137,13 @@
 
         </div>
 
-        <button type="button" class="chatButton m-3" @click="joinGroup(group.id)"> JOIN GROUP </button>
+        <button type="button" class="chatButton m-3" @click="joinGroup(group.id)" :disabled="loading || false"
+          :class="{ disabled: loading || false }"> {{ loading ? 'Joining...' : 'JOIN GROUP' }}
+        </button>
 
-        <button type="button" class="chatButton" @click="addChat(group.id)"> VIEW CHAT </button>
+        <button type="button" class="chatButton" @click="addChat(group.members, group.name)"
+        :disabled="group.members.length <= 1"> 
+          VIEW CHAT </button>
 
       </div>
     </div>
@@ -156,16 +167,23 @@
 import { collection, doc, getDoc, getDocs, addDoc, query, where, updateDoc, arrayUnion, arrayRemove, setDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import EventCards from '../components/eventCard.vue';
+import loadingAnimation from "../components/loadingAnimation.vue";
+
 
 export default {
   components:
   {
     "event-cards": EventCards,
+    loadingAnimation,
   },
 
   data() {
     return {
       modalVisible: false,
+
+      event_loading: true,
+      groups_loading: true,
+      loading: false,
 
       eventID: this.$route.params.id,
       eventTitle: '',
@@ -220,11 +238,11 @@ export default {
   computed: {
     visibleMembers() {
       // Display only the first three members
-      return this.groupMembers.slice(0, 3);
+      return this.groups.slice(0, 3);
     },
     extraCount() {
       // Calculate the remaining members beyond the first three
-      return this.groupMembers.length > 3 ? this.groupMembers.length - 3 : 0;
+      return this.groups.length > 3 ? this.groups.length - 3 : 0;
     }
   },
 
@@ -282,12 +300,15 @@ export default {
 
           console.log(this.eventDay, this.eventDate, this.eventTime)
 
+          this.relatedEvents = [];
           this.getRelatedEvents();
         } else {
           console.log("Unable to retrieve event");
         }
       } catch (error) {
         console.error("Error fetching document:", error); // Catch any errors
+      } finally {
+        this.event_loading = false;
       }
     },
 
@@ -301,7 +322,7 @@ export default {
       // Create a new document in the "groups" subcollection with an auto-generated ID
 
       const newGroupData = {
-        name: this.groupName,
+        groupName: this.groupName,
         description: this.groupDesc,
         members: [sessionUser.uid],
       };
@@ -316,6 +337,29 @@ export default {
       }
     },
 
+    async fetchUserProfile(userID) {
+      console.log(userID)
+      try {
+        const userDoc = await getDoc(doc(db, "profiles", userID)); // Fetch the user document
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+
+          // Return the user profile information as an object
+          return {
+            name: data.name || "", // Provide a default empty string if name is missing
+            username: data.username || "", // Default to empty string if username is missing
+            profilePic: data.profileImageUrl || require('@/img/blankprofile.png'), // Default to a placeholder if no image
+          };
+        } else {
+          console.log("User not found");
+          return null; // Return null if the document doesn't exist
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        return null; // Return null in case of an error
+      }
+    },
+
     async getGroups(eventID) {
       const eventRef = doc(db, "events", eventID); // Reference to the specific event document
       const groupsRef = collection(eventRef, "groups"); // Reference to the "groups" subcollection
@@ -325,13 +369,27 @@ export default {
         const querySnapshot = await getDocs(groupsRef);
 
         // Loop through the documents and extract data
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach(async (doc) => {
+          const groupMembers = []; // Array to hold members with their UID and profile picture
+
+          // Loop through each member in the group
+          for (const userID of doc.data().members) {
+            const userInfo = await this.fetchUserProfile(userID); // Fetch user info using getUserInfo
+
+            // Push member info including their UID and profile picture
+            groupMembers.push({
+              uid: userID,
+              username: userInfo.username,
+              profilePic: userInfo.profilePic, // Assuming getUserInfo returns an object with a profilePic field
+            });
+          }
+
 
           this.groups.push({
             id: doc.id,
             name: doc.data().groupName,
             groupDesc: doc.data().description,
-            members: doc.data().members,
+            members: groupMembers,
           });
         });
 
@@ -339,6 +397,8 @@ export default {
         return
       } catch (error) {
         console.error("Error fetching groups: ", error);
+      } finally {
+        this.groups_loading = false;
       }
     },
 
@@ -465,6 +525,7 @@ export default {
       const groupRef = doc(eventRef, "groups", groupID);
 
       try{
+        this.loading = true;
         const docSnap = await getDoc(groupRef);
         if (docSnap.exists()) {
           console.log("Group data:", docSnap.data());
@@ -475,6 +536,8 @@ export default {
             await updateDoc(groupRef, {
               members: arrayUnion(sessionUser.uid)
             });
+
+            this.loading = false;
         
             console.log(joinedMembers)
             window.location.reload();
@@ -539,8 +602,12 @@ export default {
       return { message: "User not found in profiles, users, or mentors collections" };
     },
 
-    async addChat(chatterIds, groupChatName) { //chatterIds is an array of Ids (string) and groupChatName is a string (leave as null for default gc name)
+    async addChat(members, groupChatName) { //chatterIds is an array of Ids (string) and groupChatName is a string (leave as null for default gc name)
       try {
+        console.log(members)
+        const chatterIds = members.map(member => member.uid);
+        console.log(chatterIds);
+
         this.add_chat_button_disabled = true;
 
         // Step 1: Ensure all chatters exist by checking each ID in the relevant collections
@@ -621,8 +688,13 @@ export default {
   },
 
   watch: {
-    
-  }
+    '$route.params.id': {
+      handler(newID) {
+        this.getEventDetails(newID); // call a method to fetch the new event details
+      },
+      immediate: true // load data on initial render as well
+    }
+}
 }
 
 
@@ -689,10 +761,32 @@ export default {
   color: white;
   font-size: 14px;
   padding: 6px 12px;
+  font-family: 'Poppins';
   border: none;
   border-radius: 20px;
   cursor: pointer;
 }
+
+/* Disabled button styling */
+.chatButton:disabled,
+.chatButton.disabled {
+  background-color: #bdc3c7;  /* Gray background */
+  color: #7f8c8d;             /* Gray text */
+  cursor: not-allowed;        /* Change cursor to indicate disabled state */
+}
+
+.createButton {
+  width: fit-content;
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #525FE1;
+  color: yellow;
+  font-family: 'Poppins';
+  border-radius: 55px;
+  border: 0px;
+}
+
 
 /* to center the remaining member count within the circle */
 .extra-count {
@@ -721,33 +815,39 @@ export default {
   font-weight: bold;
 }
 
-
-.event-details {
-  border: 2px solid #525FE1;
+.timing-details {
+  padding: 3px;
+  border: 3px solid #fb8500;
+  border-radius: 8px;
   margin-right: 10px;
   height: 70px;
-  color: black;
+  text-align: center;
+  align-content: center;
+}
+
+.location-details {
+  border: 3px solid #355070;
+  border-radius: 8px;
+  margin-right: 10px;
+  height: 70px;
+  text-align: center;
+  align-content: center;
+}
+
+.category-details {
+  border: 3px solid  #023047;
+  border-radius: 8px;
+  margin-right: 10px;
+  height: 70px;
   text-align: center;
   align-content: center;
 }
 
 .eventDesc {
-  border: 2px solid #525FE1;
+  border: 3px solid #5e14c6;
+  border-radius: 8px;
   height: fit-content;
-  color: black;
   padding: 10px;
-}
-
-.createButton {
-  width: fit-content;
-  padding: 5px;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-color: #525FE1;
-  color: yellow;
-  font-family: 'Poppins';
-  border-radius: 55px;
-  border: 0px;
 }
 
 /* Grid template for responsive layout - for eventDetails */

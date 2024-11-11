@@ -5,7 +5,7 @@
         <label for="title" class="col-sm-2 col-form-label"> Event Name</label>
             <div class="col-sm-10">
                 <input id="title" v-model="eventTitle" type="text" class="form-control" required/>
-                <div v-if="titleError" class="text-danger">Event name is required and should not exceed 30 characters</div>
+                <div v-if="titleError" class="text-danger">Event name is required and should not exceed 60 characters</div>
             </div>
         </div>
 
@@ -123,7 +123,7 @@ export default {
         },
 
         validateForm() {
-            this.titleError = !this.eventTitle || this.eventTitle.length > 15;
+            this.titleError = !this.eventTitle || this.eventTitle.length > 30;
             this.descError = !this.eventDescription;
             this.categoryErrorError = !this.eventCategory;
             this.dateError = !this.eventDate

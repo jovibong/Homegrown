@@ -2,7 +2,7 @@
     
     <div class="card eventCard">
 
-    <img :src="image" class="card-img-top" :alt="title">
+    <img :src="image" class="card-img-top cropped-img" :alt="title">
     <div class="card-body d-flex flex-column">
     <h5 class="card-title text-center">{{ title }}</h5>
     <p class="card-text"> {{ croppedDescription }}</p>
@@ -48,8 +48,13 @@ export default {
 
 .eventCard {
   width: 250px;
-  height: 350px;
+  height: 370px;
   flex: 0 0 auto;
  }
 
+ .cropped-img {
+  height: 220px; /* Set the desired height */
+  width: 100%; /* Ensures it covers the width of the card */
+  object-fit: cover; /* Crops the image without stretching */
+}
 </style>

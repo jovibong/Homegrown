@@ -59,8 +59,8 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
 
                 <div class="container text-center">
                     <div class="row align-items-center">
-
-                        <div class="col-12 col-sm-6 search-container">
+                        <div class="col-md-9 col-sm-12">
+                        <div class="search-container">
                             <input type="text" class="searchBar" id="dropdownTextbox"
                                 :aria-expanded="(filteredEvents.length > 0).toString()" placeholder="Search for events"
                                 @keyup.enter="eventSearch" v-model="searchQuery" 
@@ -73,7 +73,7 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
                                 </li>
                             </ul>
                         </div>
-
+                        </div>
                         <span class="text-muted h5 col-1"> | </span>
 
                         <button @click="allowCreate" style="height: 50px; width: 180px"
@@ -99,6 +99,7 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
             <section class="my-5">
                 <h2 class="text-primary fw-bold mb-3 display-4"> My Events </h2>
                 <hr>
+                <loading-animation v-if="myEvent_loading"></loading-animation>
                 <div v-if="myEvents.length == 0" class="text-center text-muted mb-4 h5">
                     You have yet to join an event!
                 </div>
@@ -156,7 +157,8 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
 import EventCards from '../components/eventCard.vue';
 import createEvent from '../components/createEvents.vue';
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from '../firebase/initialize'
+import { db } from '../firebase/initialize';
+import loadingAnimation from "../components/loadingAnimation.vue";
 
 
 export default {
@@ -164,12 +166,15 @@ export default {
   components:
     {
         "event-cards": EventCards,
-        "create-event": createEvent
+        "create-event": createEvent,
+        loadingAnimation
     },
 
     data() {
         return {
             currentUser: "",
+            myEvent_loading: true,
+            allEvent_loading: true,
 
             pastEvents:[],
             myEvents:[],
@@ -228,6 +233,7 @@ export default {
         },
 
         async getEventsByCategory(){
+            try{
             this.selectedEvents = [];
             const eventCategory = this.selectedCategory;
             const q = query(collection(db, "events"), where("category", "==", eventCategory));
@@ -243,10 +249,16 @@ export default {
                     imageURL: doc.data().imageURL,
                 });
             }); 
+        } catch (error) {
+            console.log("Error fetching events by category", error)
+        } finally {
+            this.allEvent_loading = false;
+        }
 
         },
 
         async getAllEvents(){
+            try {
             const querySnapshot = await getDocs(collection(db, "events"));
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
@@ -258,11 +270,17 @@ export default {
                     imageURL: doc.data().imageURL,
                 });
             });
+            } catch (error ){
+                console.log("Error fetching all events", error)
+            } finally {
+                this.allEvent_loading = false;
+            }
 
             // this.getPastEvents();
         },
 
         async getMyEvents(){
+            try {
             const sessionUser = await(JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user')));
             const currentUser = sessionUser.uid
 
@@ -282,6 +300,11 @@ export default {
                     })
                 console.log("my event", this.myEvents)
             })  
+        }catch(error) {
+            console.log("Error fetching my events", error)
+        }finally{
+            this.myEvent_loading = false;
+        }
         },
 
         async getPastEvents() {
@@ -404,7 +427,6 @@ export default {
 .search-container {
     position: relative;
     width: 100%;
-    max-width: 400px; /* Optional: set a maximum width */
 }
 
 .searchBar {
