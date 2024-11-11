@@ -34,18 +34,12 @@
         <!--Lesson Description-->
         <p v-html="lesson.description"></p>
       </div>
-      <div class="container-fluid d-flex justify-content-center fade-in-bottom">
-        <div class="position-relative d-inline-block w-50">
-          <img :src="image" alt="" class="img-fluid" />
-          <a
-            :href="lesson.link"
-            target="_blank"
-            class="position-absolute top-50 start-50 translate-middle text-white"
-            @click="watchvideo"
-          >
-            <i class="bi bi-play-circle-fill display-2"></i>
-          </a>
-        </div>
+      <div v-if="lesson.link" class="container-fluid d-flex justify-content-center fade-in-bottom">
+         <iframe  width="640" height="340" :src="getVideoLink(lesson.link)"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen class="rounded-5">
+              </iframe>
       </div>
       <div
         v-if="video_watched"
@@ -157,6 +151,10 @@ export default {
     }
   },
   methods: {
+    getVideoLink(url){
+      console.log("url",url);
+       return url.replace("www.youtube.com/watch?", "www.youtube.com/embed/watch?");
+    },
     waitForLessonData() {
       return new Promise((resolve) => {
         const interval = setInterval(() => {
