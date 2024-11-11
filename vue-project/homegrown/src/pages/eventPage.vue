@@ -76,12 +76,6 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
 
                         <span class="text-muted h5 col-1"> | </span>
 
-                        <router-link to="/forum" class="btn btn-primary col-2" style="height: 50px; width: 180px">
-                            Go to Forum
-                        </router-link>
-
-                        <span class="text-muted h5 col-1"> | </span>
-
                         <button @click="allowCreate" style="height: 50px; width: 180px"
                             :class="showCreate ? 'btn btn-primary col-2' : 'btn btn-primary col-2'">
                             Create Event </button>

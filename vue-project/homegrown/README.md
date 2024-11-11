@@ -1,5 +1,8 @@
 # homegrown
 
+## Events Page
+When creating new events, or posting comments, or creating new forums, please wait for awhile to see the results.
+
 ## Project setup
 ```
 npm install
