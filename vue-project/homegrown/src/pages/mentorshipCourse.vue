@@ -28,7 +28,7 @@
       </div>
     </section>
 
-    <loading-animation v-if="mentees_loading && lessons_loading"></loading-animation>
+    <loading-animation v-if="mentees_loading || lessons_loading"></loading-animation>
     <div v-else>
       <section v-if="course" id="course_info" class="container py-2 fade-in-top">
         <div class="card shadow-sm mb-md-2 mb-3">
@@ -58,7 +58,7 @@
           </div>
         </div>
       </section>
-    </div>
+    
 
     <!--Mentor-->
 
@@ -78,12 +78,12 @@
             <div class="card-body d-flex align-items-center">
               <div class="row">
                 <!-- Mentor Image -->
-                <div class="col-md-3 d-flex justify-content-center">
+                <div class="col-md-4 d-flex justify-content-center">
                   <img :src="mentee.profile_picture" alt="Mentee Img" class="rounded-circle" height="100px"
                     width="100px" style="object-fit: cover" />
                 </div>
                 <!-- Mentor Information -->
-                <div class="col-md-9 text-md-start text-center">
+                <div class="col-md-8 text-md-start text-center">
                   <p class="text-muted">{{ mentee.description }}</p>
                   <!-- Ask for Help Button -->
                   <button class="btn btn-primary d-inline-flex align-items-center" :disabled="add_chat_button_disabled"
@@ -131,6 +131,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>

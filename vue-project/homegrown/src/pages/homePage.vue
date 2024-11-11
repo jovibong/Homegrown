@@ -66,15 +66,18 @@
             </div>
           </div>
           <div class="row mt-4">
-            <div class="col-lg-8 mx-auto">
-              <div class="position-relative">
-                <img src="../img/video.png" alt="Workers" class="img-fluid rounded-5 shadow" />
-                <a href="#" class="play-button position-absolute top-50 start-50 translate-middle">
-                  <i class="bi bi-play-circle-fill text-white" style="font-size: 3rem;"></i>
-                </a>
-              </div>
+          <div class="col-2"></div>
+          <div class="col-lg-8">
+            <div class="position-relative d-flex justify-content-center">
+              <iframe width="640" height="360" src="https://www.youtube.com/embed/UmFDHXrvW-8"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen class="rounded-5 mx-auto">
+              </iframe>
             </div>
           </div>
+          <div class="col-2"></div>
+        </div>
         </div>
       </section>
   
