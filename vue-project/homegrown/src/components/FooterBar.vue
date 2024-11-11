@@ -6,19 +6,17 @@
             <div class="row">
                 <!-- Branding and Description -->
                 <div class="col-md-5">
-                    <h1 class="fw-bold pt-0">Education</h1>
+                    <h1 class="fw-bold pt-0">HomeGrown</h1>
                     <p class="mb-3">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                        the
-                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of
-                        type and
-                        scrambled it to make a type specimen book.
+                        Founded in 2024, by a group of passionate students from Singapore Management University.
+                        HomeGrown is a platform that helps foreign workers integrate into Singaporean society while focusing on upskilling opportunities.
+                        It connects workers with volunteers who provide training in essential skills like language, digital literacy, and technical expertise.
                     </p>
                     <div class="social-icons">
-                        <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-youtube"></i></a>
-                        <a href="#"><i class="bi bi-twitter"></i></a>
+                        <a href="https://www.facebook.com/smudallas/" class="me-2"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com/sgsmu/?hl=en" class="me-2"><i class="bi bi-instagram"></i></a>
+                        <a href="https://youtu.be/dQw4w9WgXcQ?feature=shared" class="me-2"><i class="bi bi-youtube"></i></a>
+                        <a href="https://x.com/elonmusk"><i class="bi bi-twitter"></i></a>
                     </div>
                 </div>
                 <div class="col-md-7">
@@ -27,10 +25,9 @@
                         <div class="col-md-4">
                             <h5 class="fw-bold">About</h5>
                             <ul class="list-unstyled footer-list">
-                                <li><a href="#">Menu</a></li>
-                                <li><a href="#">Features</a></li>
-                                <li><a href="#">News & Blogs</a></li>
-                                <li><a href="#">Help & Supports</a></li>
+                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Our Team</a></li>
+                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Help & Support</a></li>
+                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">FAQ</a></li>
                             </ul>
                         </div>
 
@@ -38,10 +35,9 @@
                         <div class="col-md-4">
                             <h5 class="fw-bold">Company</h5>
                             <ul class="list-unstyled footer-list">
-                                <li><a href="#">How we work</a></li>
-                                <li><a href="#">Terms of service</a></li>
-                                <li><a href="#">Pricing</a></li>
-                                <li><a href="#">FAQ</a></li>
+                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">How we work</a></li>
+                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Terms of service</a></li>
+                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Pricing</a></li>
                             </ul>
                         </div>
 
@@ -50,9 +46,9 @@
                             <h5 class="fw-bold">Contact Us</h5>
                             <ul class="list-unstyled">
                                 <li>80 Stamford Rd, Singapore 178902</li>
-                                <li>+1 202-918-2132</li>
-                                <li>education@mail.com</li>
-                                <li>www.education.com</li>
+                                <li>+65 6828 0569</li>
+                                <li>contact@homegrown.com</li>
+                                <li>www.HomeGrown.com</li>
                             </ul>
                         </div>
                     </div>

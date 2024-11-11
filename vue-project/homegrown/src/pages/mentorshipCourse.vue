@@ -317,13 +317,6 @@ export default {
       }
       this.expanded = !this.expanded;
     },
-
-    deleteNoti() {
-      for (const uid of this.menteesList) {
-        const docRef = doc(db, "users", uid);
-        updateDoc(docRef, { noti_count: 0 });
-      }
-    },
     async checkAndCreateuser(userId, userName, profilePicture) {
       try {
         const userDocRef = doc(db, "chatters", userId);
@@ -365,6 +358,16 @@ export default {
 
     async addChat(chatterId1, chatterId2) {
       try {
+        for (const uid of this.menteesList) {
+          console.log(uid)
+          console.log(uid);
+          const docRef = doc(db, "users", uid);
+          try {
+            await updateDoc(docRef, { noti_count: 0 });
+          } catch (error) {
+            console.error(`Failed to update notification count for ${uid}:`, error);
+          }
+        }
         this.add_chat_button_disabled = true;
 
         // Step 1: Ensure both chatters exist by checking each ID in the relevant collections
@@ -437,6 +440,7 @@ export default {
 
         console.log("Chat successfully created and added to both chatters.");
         this.$router.push({ name: "chatPage", params: { chatId } });
+
       } catch (error) {
         console.error("Error creating chat:", error);
       } finally {
