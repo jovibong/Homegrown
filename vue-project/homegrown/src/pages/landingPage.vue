@@ -6,7 +6,7 @@
     <!-- Intro Section -->
     <section id="intro" class="container pt-5 pb-0 fade-in">
         <div class="row align-items-center">
-          <div class="col-lg-6 text-start" style="padding-left: 7rem;"> <!-- Adjust padding here -->
+          <div class="col-lg-6 text-start"> 
             <h1 class="display-4 fw-bold">Feel at home, while you grow</h1>
             <p class="lead text-muted">
               Join our platform to improve your skills, manage your finances, and connect with a supportive community.
@@ -253,43 +253,7 @@ export default {
   /* Optional: adds a border */
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  /* Prevent horizontal scrolling */
-  width: 100%;
-}
 
-#main-container {
-  margin: 0 auto;
-  padding: 0;
-  max-width: 100%;
-  /* Ensures it doesn't overflow */
-  box-sizing: border-box;
-  /* Includes padding and border in the element’s total width and height */
-}
-
-.container {
-  max-width: 100%;
-  /* Prevents container overflow */
-  padding: 0 15px;
-  /* Add padding as needed */
-  box-sizing: border-box;
-}
-
-/* Additional section-specific styles */
-.section-decor {
-  margin: 0 auto;
-}
-
-/* Ensures images don't cause overflow */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
 
 /* Navbar */
 #navbar {

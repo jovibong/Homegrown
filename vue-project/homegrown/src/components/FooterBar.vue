@@ -15,7 +15,7 @@
                     <div class="social-icons">
                         <a href="https://www.facebook.com/smudallas/" class="me-2"><i class="bi bi-facebook"></i></a>
                         <a href="https://www.instagram.com/sgsmu/?hl=en" class="me-2"><i class="bi bi-instagram"></i></a>
-                        <a href="https://youtu.be/dQw4w9WgXcQ?feature=shared" class="me-2"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.youtube.com/embed/dQw4w9WgXcQ" class="me-2"><i class="bi bi-youtube"></i></a>
                         <a href="https://x.com/elonmusk"><i class="bi bi-twitter"></i></a>
                     </div>
                 </div>
