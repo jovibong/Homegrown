@@ -46,7 +46,7 @@
                     <th scope="col">Status</th>
                     <th scope="col">Date of Payment</th>
                     <th scope="col">Image</th>
-                    <th scope="col"></th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider" v-if="hasLogs">
