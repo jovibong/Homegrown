@@ -42,7 +42,7 @@
           </div>
         </nav>
         <!-- Chat List -->
-        <div style="height: 75vh; overflow-y: auto">
+        <div id="chats-scroll" style="height: 75vh;">
           <loading-animation
             v-if="chats_loading"
             class="mt-5"
@@ -101,176 +101,174 @@
       </section>
 
       <!-- Conversation Section -->
-        <section
-          id="conversation"
-          :class="{ 'full-width': isMobileView && !showChats }"
-          class="col-lg-8 bg-secondary px-0"
-          v-show="selected_chat_obj && (!showChats || !isMobileView)"
-          style="height: 90vh"
-        >
-          <div v-if="selected_chat_obj" class="fade-in-top">
-            <div class="row p-2 bg-primary container-fluid mx-0">
-              <div v-if="isMobileView" class="col-1">
-                <button
-                  class="btn btn-secondary btn-sm m-2"
-                  @click="backToChats"
-                >
-                  Back
-                </button>
-              </div>
-              <div class="col-1 me-2 d-flex align-items-center">
-                <div
-                  class="overflow-hidden rounded-circle border border-black clickable"
-                  style="width: 40px; height: 40px"
-                  @click="openImagePopup(selected_chat_obj.chat_img)"
-                >
-                  <img
-                    :src="selected_chat_obj.chat_img"
-                    alt="Selected Chat Image"
-                    height="40"
-                    width="40"
-                  />
-                </div>
-              </div>
-              <div class="col-auto d-flex align-items-center text-white">
-                <div>
-                  <div class="row fw-bold">
-                    {{ selected_chat_obj.chat_name }}
-                  </div>
-                  <div
-                    v-if="selected_chat_obj.chat_type == 'group'"
-                    class="row"
-                  >
-                    {{ getNumMembers(selected_chat_obj) }} members
-                  </div>
-                </div>
-              </div>
+      <section
+        id="conversation"
+        :class="{ 'full-width': isMobileView && !showChats }"
+        class="col-lg-8 bg-secondary px-0"
+        v-show="selected_chat_obj && (!showChats || !isMobileView)"
+        style="height: 90vh"
+      >
+        <div v-if="selected_chat_obj" class="fade-in-top">
+          <div class="row p-2 bg-primary container-fluid mx-0">
+            <div v-if="isMobileView" class="col-1">
+              <button class="btn btn-secondary btn-sm m-2" @click="backToChats">
+                Back
+              </button>
             </div>
-            <div style="height: 70vh; overflow-y: auto">
+            <div class="col-1 me-2 d-flex align-items-center">
               <div
-                v-for="(conversation, index) in selected_chat_obj.conversations"
-                :key="index"
+                class="overflow-hidden rounded-circle border border-black clickable"
+                style="width: 40px; height: 40px"
+                @click="openImagePopup(selected_chat_obj.chat_img)"
               >
-                <div
-                  v-if="
-                    isNewDay(
-                      conversation,
-                      selected_chat_obj.conversations[index - 1]
-                    )
-                  "
-                  class="container-fluid d-flex justify-content-center p-0"
-                >
-                  <span class="badge bg-white text-secondary text-center mt-2">
-                    <!-- Check if `timestamp` has a `toDate` method -->
-                    {{
-                      conversation.timestamp.toDate
-                        ? conversation.timestamp.toDate().toLocaleDateString()
-                        : new Date(conversation.timestamp).toLocaleDateString()
-                    }}
-                  </span>
-                </div>
-                <div
-                  v-if="conversation.user == user"
-                  class="container-fluid w-100 d-flex justify-content-end"
-                >
-                  <span
-                    class="bg-white rounded text-end px-3 py-2 d-inline-block"
-                  >
-                    {{ conversation.message }}
-                    <div class="mt-2 text-end">
-                      <!-- Display timestamp with loading indicator for each message -->
-                      {{ getTime(conversation) }}
-                      <span
-                        v-if="conversation.isLoading"
-                        class="loading-spinner ms-2"
-                        >⏳</span
-                      >
-                    </div>
-                  </span>
-                </div>
-
-                <div
-                  v-else
-                  class="container-fluid w-100 d-flex justify-content-start align-items-center my-4"
-                >
-                  <span
-                    class="overflow-hidden rounded-circle d-inline-block border border-black me-3 clickable"
-                    style="width: 40px; height: 40px"
-                    @click="openImagePopup(getProfilePic(conversation))"
-                  >
-                    <img
-                      :src="getProfilePic(conversation)"
-                      alt="User Image"
-                      height="40"
-                      width="40"
-                    />
-                  </span>
-                  <span class="bg-white rounded px-3 py-2 d-inline-block">
-                    <b>{{ getUserName(conversation) }}</b
-                    ><br />{{ conversation.message }}
-                    <div class="mt-2 text-end">{{ getTime(conversation) }}</div>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Image Popup and Overlay -->
-            <div
-              v-if="showImagePopup"
-              class="popup-overlay"
-              @click="closeImagePopup"
-            >
-              <div class="popup-image-container" @click.stop>
                 <img
-                  :src="popupImageUrl"
-                  alt="Popup Image"
-                  class="popup-image"
+                  :src="selected_chat_obj.chat_img"
+                  alt="Selected Chat Image"
+                  height="40"
+                  width="40"
                 />
-                <button class="close-button" @click="closeImagePopup">×</button>
               </div>
             </div>
-
-            <div
-              class="row container-fluid p-0 m-0 mt-2 d-flex justify-content-center align-items-center"
-            >
-              <div
-                class="rounded-pill col-7 py-2 bg-white d-flex align-items-center pe-0"
-              >
-                <div class="row container-fluid d-flex align-items-center p-0">
-                  <div class="col-1">
-                    <i class="bi bi-emoji-smile me-2 fs-3"></i>
-                  </div>
-                  <div class="col-11 p-0">
-                    <div class="row container-fluid d-flex align-items-center">
-                      <div class="col-11 pe-0">
-                        <input
-                          v-model="message"
-                          type="text"
-                          placeholder="Message"
-                          class="form-control border border-0 p-0"
-                        />
-                      </div>
-
-                      <i class="col-1 bi bi-paperclip fs-3"></i>
-                    </div>
-                  </div>
+            <div class="col-auto d-flex align-items-center text-white">
+              <div>
+                <div class="row fw-bold">
+                  {{ selected_chat_obj.chat_name }}
                 </div>
-              </div>
-              <div
-                class="col-1 rounded-circle bg-primary ms-2 d-flex justify-content-center align-items-center"
-                style="width: 45px; height: 45px"
-              >
-                <transition name="icon-transition">
-                  <i
-                    v-if="message.trim().length !== 0"
-                    class="text-white bi bi-send fs-5 clickable"
-                    @click="sendMessage"
-                  ></i>
-                </transition>
+                <div v-if="selected_chat_obj.chat_type == 'group'" class="row">
+                  {{ getNumMembers(selected_chat_obj) }} members
+                </div>
               </div>
             </div>
           </div>
-        </section>
+          <div id="conversation-scroll" style="height: 70vh;">
+            <div
+              v-for="(conversation, index) in selected_chat_obj.conversations"
+              :key="index"
+            >
+              <div
+                v-if="
+                  isNewDay(
+                    conversation,
+                    selected_chat_obj.conversations[index - 1]
+                  )
+                "
+                class="container-fluid d-flex justify-content-center p-0"
+              >
+                <span class="badge bg-white text-secondary text-center my-2">
+                  <!-- Check if `timestamp` has a `toDate` method -->
+                  {{
+                    conversation.timestamp.toDate
+                      ? conversation.timestamp.toDate().toLocaleDateString()
+                      : new Date(conversation.timestamp).toLocaleDateString()
+                  }}
+                </span>
+              </div>
+              <div
+                v-if="conversation.user == user"
+                class="container-fluid w-100 d-flex justify-content-end"
+              >
+                <span
+                  class="bg-white rounded text-end px-3 py-2 d-inline-block"
+                >
+                  {{ conversation.message }}
+                  <div class="mt-2 text-end">
+                    <!-- Display timestamp with loading indicator for each message -->
+                    {{ getTime(conversation) }}
+                    <span
+                      v-if="conversation.isLoading"
+                      class="loading-spinner ms-2"
+                      >⏳</span
+                    >
+                  </div>
+                </span>
+              </div>
+
+              <div
+                v-else
+                class="container-fluid w-100 d-flex justify-content-start align-items-center my-4"
+              >
+                <span
+                  class="overflow-hidden rounded-circle d-inline-block border border-black me-3 clickable"
+                  style="width: 40px; height: 40px"
+                  @click="openImagePopup(getProfilePic(conversation))"
+                >
+                  <img
+                    :src="getProfilePic(conversation)"
+                    alt="User Image"
+                    height="40"
+                    width="40"
+                  />
+                </span>
+                <span class="bg-white rounded px-3 py-2 d-inline-block">
+                  <b>{{ getUserName(conversation) }}</b
+                  ><br />{{ conversation.message }}
+                  <div class="mt-2 text-end">{{ getTime(conversation) }}</div>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Popup and Overlay -->
+          <div
+            v-if="showImagePopup"
+            class="popup-overlay"
+            @click="closeImagePopup"
+          >
+            <div class="popup-image-container" @click.stop>
+              <img :src="popupImageUrl" alt="Popup Image" class="popup-image" />
+              <button class="close-button" @click="closeImagePopup">×</button>
+            </div>
+          </div>
+
+          <div
+            class="row container-fluid p-0 m-0 mt-2 d-flex justify-content-center align-items-center"
+          >
+            <div
+              class="rounded-pill col-7 py-2 bg-white d-flex align-items-center pe-0"
+            >
+              <div class="row container-fluid d-flex align-items-center p-0">
+                <div class="col-1">
+                  <i
+                    class="bi bi-emoji-smile me-2 fs-3 clickable"
+                    @click="showEmojiPicker = !showEmojiPicker"
+                  ></i>
+                  <emoji-picker
+                    v-if="showEmojiPicker"
+                    :emojis="emojis"
+                    @emoji-selected="addEmojiToMessage"
+                  />
+                </div>
+                <div class="col-11 p-0">
+                  <div class="row container-fluid d-flex align-items-center">
+                    <div class="col-11 pe-0">
+                      <input
+                        v-model="message"
+                        type="text"
+                        placeholder="Message"
+                        class="form-control border border-0 p-0"
+                      />
+                    </div>
+
+                    <i class="col-1 bi bi-paperclip fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-1 rounded-circle bg-primary ms-2 d-flex justify-content-center align-items-center"
+              style="width: 45px; height: 45px"
+            >
+              <transition name="icon-transition">
+                <i
+                  v-if="message.trim().length !== 0"
+                  class="text-white bi bi-send fs-5 clickable"
+                  @click="sendMessage"
+                ></i>
+              </transition>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -288,10 +286,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
+import emojiPicker from "../components/emojiPicker.vue";
 
 export default {
   components: {
     loadingAnimation,
+    emojiPicker,
   },
   data() {
     return {
@@ -306,9 +306,30 @@ export default {
       searchQuery: "", // Search input value
       currentFilter: "all", // default
       isMobileView: window.innerWidth < 992, // Detect if screen is smaller than large size (992px)
+      emojis: [],
+      showEmojiPicker: false,
+      api: "38f25995a5649023d25724587c09d445559faee3",
     };
   },
   methods: {
+    toggleEmojiPicker() {
+      this.showEmojiPicker = !this.showEmojiPicker;
+    },
+    addEmojiToMessage(emoji) {
+      this.message += emoji;
+      this.showEmojiPicker = false;
+    },
+    async fetchEmojis() {
+      try {
+        const response = await fetch(
+          `https://emoji-api.com/emojis?access_key=${this.api}`
+        );
+        const data = await response.json();
+        this.emojis = data.splice(0, data.length - 300);
+      } catch (error) {
+        console.error("Error fetching emojis:", error);
+      }
+    },
     setFilter(type) {
       this.currentFilter = type;
     },
@@ -620,6 +641,7 @@ export default {
     this.$nextTick(() => {
       window.scrollTo(0, 0);
     });
+    this.fetchEmojis();
     const userObject =
       JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
@@ -748,4 +770,40 @@ body {
 .close-button:active {
   transform: scale(0.95);
 }
+
+/* Custom Scrollbar for #chats and #conversation */
+
+/* Ensure overflow-y: auto is applied to the correct elements */
+#chats-scroll, #conversation-scroll {
+  overflow-y: auto !important;
+}
+
+/* Custom Scrollbar Styling */
+#chats-scroll::-webkit-scrollbar,
+#conversation-scroll::-webkit-scrollbar {
+  width: 12px !important; /* Adjust width for visibility */
+}
+
+#chats-scroll::-webkit-scrollbar-track,
+#conversation-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 123, 255, 0.1) !important; /* Soft background color */
+  border-radius: 10px !important; /* Rounded corners */
+}
+
+#chats-scroll::-webkit-scrollbar-thumb,
+#conversation-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #007bff, #0056b3) !important; /* Gradient thumb */
+  border-radius: 10px !important; /* Smooth rounded edges */
+  border: 3px solid rgba(255, 255, 255, 0.3) !important; /* Adds a subtle white border */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important; /* 3D shadow effect */
+}
+
+#chats-scroll::-webkit-scrollbar-thumb:hover,
+#conversation-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0056b3, #003580) !important; /* Darker hover gradient */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; /* Enhanced shadow on hover */
+}
+
+
+
 </style>
