@@ -8,12 +8,12 @@ import { getStorage } from "firebase/storage"; // storage service
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDoIazOnYVJEuRJ9ANjRXeYPoVYX7jbHk4",
-  authDomain: "homegrown-52ddc.firebaseapp.com",
-  projectId: "homegrown-52ddc",
-  storageBucket: "homegrown-52ddc.firebasestorage.app",
-  messagingSenderId: "237220468485",
-  appId: "1:237220468485:web:7c51d659c78e029a61096c"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.AUTHDOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID
 };
 
 // Initialize Firebase
