@@ -105,7 +105,7 @@
             <h4 class="fw-bold mb-3">{{ lesson.title }}</h4>
             <div class="row">
               <div v-for="item in lesson.lesson_items" :key="item.id" class="col-12">
-                <router-link :to="`/${item.link}`" class="text-decoration-none"
+                <router-link :to="`/${item.videoLink}`" class="text-decoration-none"
                   @click.prevent="handleLessonItemClick(item, lesson.id)">
                   <div class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less">
                     <div class="me-3">
@@ -201,7 +201,7 @@ export default {
                 id: itemDoc.id,
                 icon:
                   itemData.typeof === "quiz" ? "bi-lightbulb" : "bi-play-fill",
-                link:
+                videoLink:
                   itemData.typeof === "quiz" ? "quizMentorPage" : "videoPage",
               };
             });
@@ -229,7 +229,7 @@ export default {
       sessionStorage.setItem("selectedCourse", JSON.stringify(this.course));
 
       if (item.completed || item.latest) {
-        this.$router.push(item.route_link);
+        this.$router.push(item.videoLink);
       }
     },
     fetchMentees: async function () {
