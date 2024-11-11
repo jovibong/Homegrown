@@ -27,7 +27,7 @@
                             <ul class="list-unstyled footer-list">
                                 <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Our Team</a></li>
                                 <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Help & Support</a></li>
-                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">FAQ</a></li>
+                                <li><a href="https://www.afterclass.io/professor/smu-mok-heng-ngee">FAQ</a></li>
                             </ul>
                         </div>
 
@@ -35,8 +35,8 @@
                         <div class="col-md-4">
                             <h5 class="fw-bold">Company</h5>
                             <ul class="list-unstyled footer-list">
-                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">How we work</a></li>
-                                <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Terms of service</a></li>
+                                <li><a href="https://cheinwong.me/#">How we work</a></li>
+                                <li><a href="https://faculty.smu.edu.sg/profile/mok-heng-ngee-5841">Terms of service</a></li>
                                 <li><a href="https://matriculation.smu.edu.sg/undergraduate/2024/resources/withdrawal">Pricing</a></li>
                             </ul>
                         </div>
