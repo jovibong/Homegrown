@@ -170,9 +170,9 @@
             </p>
           </div>
   
-          <div class="profile-box d-flex justify-content-center">
+          <div class="profile-box d-flex flex-column align-items-center">
             <div class="text-center">
-              <img src="../img/student_male.jpeg" alt="James Thomas" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
+              <img src="../img/student_male.jpeg" alt="James Thomas" class="rounded-circle profile-picture mb-3" />
               <h5 class="fw-bold mt-3">Tan Hong Wen</h5>
               <p class="text-muted">SMU Student</p>
             </div>
@@ -238,7 +238,7 @@
   width: 150px; /* Adjust as needed */
   height: 150px; /* Adjust as needed */
   border-radius: 50%; /* Makes the image circular */
-  object-fit: contain; /* Resizes the image to fit within the container */
+  object-fit: cover; /* Resizes the image to fit within the container */
   object-position: center; /* Centers the image within the container */
   border: 2px solid #000; /* Optional: add a border */
 }
@@ -299,6 +299,20 @@ img {
 .container, #main-container {
   position: relative; /* Allows positioning relative to this container */
   overflow: hidden; /* Clipping ensures no overflow */
+}
+
+.profile-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* Ensures text is centered */
+}
+
+.testimonial-box {
+  background-color: #525FE1; /* Matches theme */
+  border-radius: 15px;
+  max-width: 800px; /* Center and prevent overflow */
+  margin: 0 auto; /* Center the testimonial */
 }
   </style>
   
