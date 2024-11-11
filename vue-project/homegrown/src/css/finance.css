@@ -156,7 +156,15 @@ input[type="radio"]:checked+.page {
 }
 
 .btn-add {
-    outline: 3px solid black;
+    outline: 3px solid 	#212529;
+}
+
+.btn-add:hover {
+    outline: 3px solid #212529;
+}
+
+.btn-add-light {
+    outline: 3px solid white;
 }
 
 /* Select the immediate sibling with class `.add` when `.btn-add` is hovered */

@@ -43,102 +43,8 @@
                                 <div>
                                     <h1 class=" display-5 fw-bold">Expense</h1>
                                 </div>
-                                <button class="btn btn-outline-light btn-add w-100 my-2" id="show-modal"
-                                    @click="showModal = true">
-                                    <i class='fas fa-plus-circle fs-5'></i>
-                                    <span> Add Logs</span>
-                                </button>
-                                <div>
-                                    <div class="table-responsive logs-scroll">
-                                        <table class="table table-striped text-center mb-0">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th scope="col">Select</th>
-                                                    <!-- titles should be clickable to view the details if needed -->
-                                                    <th scope="col">Title</th>
-                                                    <th scope="col">Amount</th>
-                                                    <th scope="col">Category</th>
-                                                    <th scope="col">Date</th>
-                                                    <!-- if some selected, it should show the total number of items selected and the actions should be shown -->
-                                                    <th scope="col"></th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody class="table-group-divider">
-                                                <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
-                                                    </td>
-                                                    <th scope="row">June Payment</th>
-                                                    <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-primary">ON
-                                                            TIME</span>
-                                                    </td>
-                                                    <td>15/06/2024</td>
-                                                    <td class="text-nowrap">
-
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-trash'></i>
-                                                            |</a>
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-edit'></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
-                                                    </td>
-                                                    <th scope="row">May Payment</th>
-                                                    <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-success">Early</span>
-                                                    </td>
-                                                    <td>10/05/2024</td>
-                                                    <td class="text-nowrap">
-
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-trash'></i>
-                                                            |</a>
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-edit'></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
-                                                    </td>
-                                                    <th scope="row">April Payment</th>
-                                                    <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-danger">LATE</span>
-                                                    </td>
-                                                    <td>20/04/2024</td>
-                                                    <td class="text-nowrap">
-
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-trash'></i>
-                                                            |</a>
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-edit'></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
-                                                    </td>
-                                                    <th scope="row">April Bonus</th>
-                                                    <td>$1111</td>
-                                                    <td><span class="badge rounded-pill text-bg-success">Bonus</span>
-                                                    </td>
-                                                    <td>11/04/2024</td>
-                                                    <td class="text-nowrap">
-
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-trash'></i>
-                                                            |</a>
-                                                        <a href='#' class="text-decoration-none text-dark"><i
-                                                                class='fas fa-edit'></i></a>
-                                                    </td>
-                                                </tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <expense-log></expense-log>
+                                
                             </div>
                         </div>
 
@@ -413,7 +319,7 @@ import StatsTile from '../components/statsTile.vue';
 import SummaryChart from '../components/summaryChart.vue';
 import paymentLogs from '../components/paymentLogs.vue';
 import budgetChart from '@/components/budgetChart.vue';
-
+import expenseLog from '@/components/expenseLog.vue'; 
 export default {
 
     props: {
@@ -425,6 +331,7 @@ export default {
         'summary-chart': SummaryChart,
         'payment-logs': paymentLogs,
         'budget-chart': budgetChart,
+        'expense-log': expenseLog,
 
     }
 
