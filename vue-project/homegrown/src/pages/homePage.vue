@@ -66,15 +66,18 @@
             </div>
           </div>
           <div class="row mt-4">
-            <div class="col-lg-8 mx-auto">
-              <div class="position-relative">
-                <img src="../img/video.png" alt="Workers" class="img-fluid rounded-5 shadow" />
-                <a href="#" class="play-button position-absolute top-50 start-50 translate-middle">
-                  <i class="bi bi-play-circle-fill text-white" style="font-size: 3rem;"></i>
-                </a>
-              </div>
+          <div class="col-2"></div>
+          <div class="col-lg-8">
+            <div class="position-relative d-flex justify-content-center">
+              <iframe width="640" height="360" src="https://www.youtube.com/embed/UmFDHXrvW-8"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen class="rounded-5 mx-auto">
+              </iframe>
             </div>
           </div>
+          <div class="col-2"></div>
+        </div>
         </div>
       </section>
   
@@ -119,16 +122,16 @@
           <h2 class="text-center fw-bold">
             Popular Past Events</h2>
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-12 col-lg-4 mb-4">
               <div class="card">
                 <img src="../img/cultural.jpg" class="card-img-top" alt="Event 1" />
                 <div class="card-body">
                   <h5 class="card-title">Cultural Exchange</h5>
-                  <p class="card-text">Learn and share your culture with others in Singapore.<br><br></p>
+                  <p class="card-text">Learn and share your culture with others in Singapore.</p>
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-lg-4 mb-4">
               <div class="card">
                 <img src="../img/heritagewalk.jpg" class="card-img-top" alt="Event 2" />
                 <div class="card-body">
@@ -137,12 +140,12 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-lg-4 mb-4">
               <div class="card">
                 <img src="../img/volunteering.jpeg" class="card-img-top" alt="Event 3" />
                 <div class="card-body">
                   <h5 class="card-title">Volunteering Fair</h5>
-                  <p class="card-text">Discover opportunities to give back to the community.<br><br></p>
+                  <p class="card-text">Discover opportunities to give back to the community.</p>
                 </div>
               </div>
             </div>
@@ -243,37 +246,6 @@
   border: 2px solid #000; /* Optional: add a border */
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  width: 100%;
-}
-
-#main-container {
-  margin: 0 auto;
-  padding: 0;
-  max-width: 100%; /* Ensures it doesn't overflow */
-  box-sizing: border-box; /* Includes padding and border in the element’s total width and height */
-}
-
-.container {
-  max-width: 100%; /* Prevents container overflow */
-  padding: 0 15px; /* Add padding as needed */
-  box-sizing: border-box;
-}
-
-/* Additional section-specific styles */
-.section-decor {
-  margin: 0 auto;
-}
-
-/* Ensures images don't cause overflow */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
 
 /* Navbar */
 #navbar {

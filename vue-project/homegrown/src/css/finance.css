@@ -2,6 +2,27 @@
     background-color: #e5e5e5;
 }
 
+
+.animated-background {
+    background: linear-gradient(270deg, #fff6b5, #d8e7ff);
+    background-size: 400% 400%;
+    animation: backgroundShift 20s ease infinite;
+}
+
+@keyframes backgroundShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 /* start of text styles */
 /* .text-custom-blue{
     color:  rgba(82, 95, 225, 1);
@@ -135,7 +156,15 @@ input[type="radio"]:checked+.page {
 }
 
 .btn-add {
-    outline: 3px solid black;   
+    outline: 3px solid 	#212529;
+}
+
+.btn-add:hover {
+    outline: 3px solid #212529;
+}
+
+.btn-add-light {
+    outline: 3px solid white;
 }
 
 /* Select the immediate sibling with class `.add` when `.btn-add` is hovered */
