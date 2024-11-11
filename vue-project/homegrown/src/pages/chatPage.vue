@@ -42,7 +42,7 @@
           </div>
         </nav>
         <!-- Chat List -->
-        <div id="chats-scroll" style="height: 75vh;">
+        <div id="chats-scroll" style="height: 75vh">
           <loading-animation
             v-if="chats_loading"
             class="mt-5"
@@ -140,7 +140,11 @@
               </div>
             </div>
           </div>
-          <div id="conversation-scroll" style="height: 70vh;">
+          <div
+            ref="conversationScroll"
+            id="conversation-scroll"
+            style="height: 70vh"
+          >
             <div
               v-for="(conversation, index) in selected_chat_obj.conversations"
               :key="index"
@@ -568,6 +572,11 @@ export default {
       this.selected_chat_obj.conversations.push(new_message);
       this.message = ""; // Clear the input field
 
+      // Scroll to bottom immediately after adding the temporary message
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+
       try {
         const conversationRef = collection(
           db,
@@ -605,6 +614,11 @@ export default {
 
         // Sort messages after adding to maintain correct order
         this.sortConversations();
+
+        // Scroll to bottom after sorting
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
       } catch (error) {
         console.error("Error sending message to Firestore:", error);
 
@@ -615,6 +629,14 @@ export default {
         if (index !== -1) {
           this.selected_chat_obj.conversations.splice(index, 1);
         }
+      }
+    },
+
+    // Method to scroll to the bottom of the conversation div
+    scrollToBottom() {
+      const conversationScrollDiv = this.$refs.conversationScroll;
+      if (conversationScrollDiv) {
+        conversationScrollDiv.scrollTop = conversationScrollDiv.scrollHeight;
       }
     },
   },
@@ -774,7 +796,14 @@ body {
 /* Custom Scrollbar for #chats and #conversation */
 
 /* Ensure overflow-y: auto is applied to the correct elements */
-#chats-scroll, #conversation-scroll {
+#conversation-scroll {
+  height: 70vh;
+  overflow-y: auto;
+  scroll-behavior: smooth; /* Enables smooth scrolling */
+}
+
+#chats-scroll,
+#conversation-scroll {
   overflow-y: auto !important;
 }
 
@@ -792,7 +821,11 @@ body {
 
 #chats-scroll::-webkit-scrollbar-thumb,
 #conversation-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #007bff, #0056b3) !important; /* Gradient thumb */
+  background: linear-gradient(
+    180deg,
+    #007bff,
+    #0056b3
+  ) !important; /* Gradient thumb */
   border-radius: 10px !important; /* Smooth rounded edges */
   border: 3px solid rgba(255, 255, 255, 0.3) !important; /* Adds a subtle white border */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important; /* 3D shadow effect */
@@ -800,10 +833,11 @@ body {
 
 #chats-scroll::-webkit-scrollbar-thumb:hover,
 #conversation-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0056b3, #003580) !important; /* Darker hover gradient */
+  background: linear-gradient(
+    180deg,
+    #0056b3,
+    #003580
+  ) !important; /* Darker hover gradient */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; /* Enhanced shadow on hover */
 }
-
-
-
 </style>
