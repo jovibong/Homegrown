@@ -285,7 +285,7 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="bento-tile p-4 h-100">
+                            <div class="bento-tile p-4 h-100" :style="toggleBackgroundColor()">
                                 <div class="d-flex justify-content-start align-items-center mb-3">
                                     <span class="fw-bold ps-2">Achieve goal by</span>
 
@@ -295,7 +295,7 @@
                                     </h1>
                                 </div>
                                 <div>
-                                    <p class="text-center text-muted">Note: if you save this amount monthly
+                                    <p class="text-center text-muted">Note: if you save ${{ savings }} amount monthly
                                     </p>
                                 </div>
                             </div>
@@ -312,7 +312,7 @@
 
                         <div class="col-12 ">
                             <div class="p-3 bento-tile">
-                                <budget-chart></budget-chart>
+                                <budget-chart :savings="savings" ></budget-chart>
                             </div>
                         </div>
                     </div>
@@ -410,6 +410,17 @@ const GoalDate = computed(() => {
 
     return `${goalDay}/${goalMonth}/${goalYear}`;
 });
+
+function toggleBackgroundColor() {
+  const acieveBy = new Date(stats.value.goal.descriptionEditable);
+  console.log('this is ahhhhhh');
+  console.log(new Date(GoalDate.value));
+  if (acieveBy > new Date(GoalDate.value)) {
+    return { backgroundColor: 'rgb(188, 225, 188)' };  
+  } else {
+    return { backgroundColor: 'rgb(255, 188, 188)' };  
+  }
+}
 
 const stats = ref({
     totalEarned: {

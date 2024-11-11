@@ -43,6 +43,12 @@
     </div>
 </template>
 
+<script setup>
+// const props = defineProps({
+//     savings: Number,
+
+// })
+</script>
 
 <script>
 import { defineComponent } from 'vue';
@@ -55,10 +61,10 @@ export default defineComponent({
     data() {
         return {
             // Series data with the first item set to 500
-            series: [500],
+            series: [100,20],
 
             // Custom category labels with the first item labeled as "Savings"
-            customLabels: ['Savings'],
+            customLabels: ['Amount left','Savings'],
 
             // Chart options
             chartOptions: {
