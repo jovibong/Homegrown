@@ -69,7 +69,7 @@
           <div class="col-2"></div>
           <div class="col-lg-8">
             <div class="position-relative d-flex justify-content-center">
-              <iframe width="640" height="360" src="https://youtu.be/eJAGcCUp6wQ?feature=shared"
+              <iframe width="640" height="360" src="https://www.youtube.com/embed/UmFDHXrvW-8"
                 title="YouTube video player" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen class="rounded-5 mx-auto">

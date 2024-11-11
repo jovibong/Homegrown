@@ -1,7 +1,9 @@
 <template>
-    <div class="finance">
 
-        <div class="layout" id="financeApp">
+    <div class="finance ">
+        
+        <div class="layout animated-background" id="financeApp">
+
             <!-- start Summary tab nav -->
             <input name="nav" type="radio" id="Summary" checked="checked" />
             <div class="page">
@@ -58,10 +60,12 @@
                                             </thead>
                                             <tbody class="table-group-divider">
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">June Payment</th>
                                                     <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-primary">ON TIME</span>
+                                                    <td><span class="badge rounded-pill text-bg-primary">ON
+                                                            TIME</span>
                                                     </td>
                                                     <td>15/06/2024</td>
                                                     <td class="text-nowrap">
@@ -76,7 +80,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">May Payment</th>
                                                     <td>$5000</td>
                                                     <td><span class="badge rounded-pill text-bg-success">Early</span>
@@ -94,10 +99,12 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">April Payment</th>
                                                     <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-danger">LATE</span></td>
+                                                    <td><span class="badge rounded-pill text-bg-danger">LATE</span>
+                                                    </td>
                                                     <td>20/04/2024</td>
                                                     <td class="text-nowrap">
                                                         <a href='#' class="text-decoration-none text-dark"><i
@@ -111,7 +118,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">April Bonus</th>
                                                     <td>$1111</td>
                                                     <td><span class="badge rounded-pill text-bg-success">Bonus</span>
@@ -163,10 +171,12 @@
                                             </thead>
                                             <tbody class="table-group-divider">
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">June Payment</th>
                                                     <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-primary">ON TIME</span>
+                                                    <td><span class="badge rounded-pill text-bg-primary">ON
+                                                            TIME</span>
                                                     </td>
                                                     <td>15/06/2024</td>
                                                     <td class="text-nowrap">
@@ -181,7 +191,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">May Payment</th>
                                                     <td>$5000</td>
                                                     <td><span class="badge rounded-pill text-bg-success">Early</span>
@@ -199,10 +210,12 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">April Payment</th>
                                                     <td>$5000</td>
-                                                    <td><span class="badge rounded-pill text-bg-danger">LATE</span></td>
+                                                    <td><span class="badge rounded-pill text-bg-danger">LATE</span>
+                                                    </td>
                                                     <td>20/04/2024</td>
                                                     <td class="text-nowrap">
                                                         <a href='#' class="text-decoration-none text-dark"><i
@@ -216,7 +229,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)"></td>
+                                                    <td><input type="checkbox" onclick="toggleRowSelection(this)">
+                                                    </td>
                                                     <th scope="row">April Bonus</th>
                                                     <td>$1111</td>
                                                     <td><span class="badge rounded-pill text-bg-success">Bonus</span>
@@ -248,8 +262,9 @@
                     </div>
 
 
-
                 </div>
+
+            
             </div>
             <label class="nav" for="Summary">
                 <span>
@@ -265,6 +280,7 @@
             <!-- start BudgetPlanner tab nav -->
             <input name="nav" type="radio" id="BudgetPlanner" />
             <div class="page">
+
                 <div class="container">
                     <div class="row my-5 g-3">
                         <div class="col-12">
@@ -276,7 +292,7 @@
                             </div>
                         </div>
 
-                        <div class="col-6">
+                        <div class="col-xl-4 col-md-6">
                             <div class="bento-tile p-3 h-100">
                                 <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
                                     :statEditable="stats.goal.statEditable"
@@ -284,7 +300,7 @@
                                     :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-xl-4 col-md-6">
                             <div class="bento-tile p-4 h-100" :style="toggleBackgroundColor()">
                                 <div class="d-flex justify-content-start align-items-center mb-3">
                                     <span class="fw-bold ps-2">Achieve goal by</span>
@@ -295,28 +311,30 @@
                                     </h1>
                                 </div>
                                 <div>
-                                    <p class="text-center text-muted">Note: if you save ${{ savings }} amount monthly
+                                    <p class="text-center text-muted">Note: if you save ${{ savings }} amount
+                                        monthly
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="p-3 bento-tile">
+                        <div class="col-xl-4 col-md-12">
+                            <div class="p-3 bento-tile h-100 my-auto">
                                 <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
                                 </h1>
                                 <label for="customRange2" class="form-label">Monthly Savings</label>
-                                <input type="range" class="form-range" min="1" :max="stats.totalEarned.descriptionEditable"
-                                    id="customRange2" v-model="savings">
+                                <input type="range" class="form-range" min="1"
+                                    :max="stats.totalEarned.descriptionEditable" id="customRange2" v-model="savings">
                             </div>
                         </div>
 
                         <div class="col-12 ">
                             <div class="p-3 bento-tile">
-                                <budget-chart :savings="savings" ></budget-chart>
+                                <budget-chart :savings="savings"></budget-chart>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
             <label class="nav" for="BudgetPlanner">
                 <span>
@@ -412,14 +430,14 @@ const GoalDate = computed(() => {
 });
 
 function toggleBackgroundColor() {
-  const acieveBy = new Date(stats.value.goal.descriptionEditable);
-  console.log('this is ahhhhhh');
-  console.log(new Date(GoalDate.value));
-  if (acieveBy > new Date(GoalDate.value)) {
-    return { backgroundColor: 'rgb(188, 225, 188)' };  
-  } else {
-    return { backgroundColor: 'rgb(255, 188, 188)' };  
-  }
+    const acieveBy = new Date(stats.value.goal.descriptionEditable);
+    console.log('this is ahhhhhh');
+    console.log(new Date(GoalDate.value));
+    if (acieveBy > new Date(GoalDate.value)) {
+        return { backgroundColor: 'rgb(188, 225, 188)' };
+    } else {
+        return { backgroundColor: 'rgb(255, 188, 188)' };
+    }
 }
 
 const stats = ref({
@@ -523,7 +541,7 @@ export default {
         'stats-tile': StatsTile,
         'summary-chart': SummaryChart,
         'payment-logs': paymentLogs,
-        'budget-chart': budgetChart
+        'budget-chart': budgetChart,
 
     }
 
