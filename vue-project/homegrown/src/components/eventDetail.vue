@@ -115,8 +115,9 @@
 
           <div class="group-members">
             <div class="profile-images">
-              <img v-for="(member, index) in visibleMembers" :key="index" :src="member.profilePicUrl" :alt="member.name"
+              <img v-for="member in group.members" :key="member" :src="profilePic" 
                 class="profile-pic" />
+
               <div v-if="extraCount > 0" class="extra-count">
                 +{{ extraCount }}
               </div>
@@ -128,7 +129,10 @@
           <div id="groupName">{{ group.name }}</div>
 
         </div>
-        <button type="button" class="chatButton"> JOIN CHAT </button>
+
+        <button type="button" class="chatButton m-3" @click="joinGroup(group.id)"> JOIN GROUP </button>
+
+        <button type="button" class="chatButton" @click="addChat(group.id)"> VIEW CHAT </button>
 
       </div>
     </div>
@@ -174,36 +178,14 @@ export default {
       eventCategory: '',
       location: '',
       groups: [],
+      profilePic: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg",
 
       // for adding groups
       groupName: "",
       groupDesc: "",
       groupDate: null,
       groupTime: null,
-      groupMembers:
-        // dummy data
-        [
-          {
-            name: "Alice",
-            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
-          },
-          {
-            name: "Bob",
-            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
-          },
-          {
-            name: "Charlie",
-            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
-          },
-          {
-            name: "David",
-            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
-          },
-          {
-            name: "Eve",
-            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
-          }
-        ],
+      groupMembers: [],
 
       // for related events
       relatedEvents: [],
@@ -220,16 +202,19 @@ export default {
     console.log('Event ID:', this.eventID); // Check if eventID is valid
 
     await this.getUserEvent();
+    
 
     this.getEventDetails(this.eventID); // Call the function to get event details
     this.getGroups(this.eventID); // get event groups
+
 
     if (this.joinedEvent == false) {
       this.buttonText = "Join Event"
     } else {
       this.iconClass = "bi bi-calendar-minus"
       this.buttonText = "Leave Event"
-    }
+    } 
+    
   },
 
   computed: {
@@ -346,6 +331,7 @@ export default {
             id: doc.id,
             name: doc.data().groupName,
             groupDesc: doc.data().description,
+            members: doc.data().members,
           });
         });
 
@@ -370,7 +356,7 @@ export default {
           description: doc.data().description,
           imageURL: doc.data().imageURL,
         });
-        console.log(this.relatedEvents);
+        console.log("related events", this.relatedEvents);
       });
 
     },
@@ -473,16 +459,44 @@ export default {
       }
     },
 
-    async joinGroup(){
+    async joinGroup(groupID){
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
       const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
-      const groupsRef = collection(eventRef, "groups");
+      const groupRef = doc(eventRef, "groups", groupID);
 
       try{
-        const querySnapshot = await getDocs(groupsRef);
-        console.log(querySnapshot)
+        const docSnap = await getDoc(groupRef);
+        if (docSnap.exists()) {
+          console.log("Group data:", docSnap.data());
+          const joinedMembers = docSnap.data().members || []; // Ensure `joined` is an array
+          if (!joinedMembers.includes(sessionUser.uid)) {
+
+            // Update the 'joined' array in Firestore
+            await updateDoc(groupRef, {
+              members: arrayUnion(sessionUser.uid)
+            });
+        
+            console.log(joinedMembers)
+            window.location.reload();
+        } else {
+          console.log("No such group!");
+        }
+      }
       }catch(error){
         console.log(error)
       }
+    },
+
+    async checkMember(groupID) {
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+      const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
+      const groupRef = doc(eventRef, "groups", groupID);
+
+      const docSnap = await getDoc(groupRef);
+      console.log("Group data:", docSnap.data());
+      const joinedMembers = docSnap.data().members || []; // Ensure `joined` is an array
+      console.log(joinedMembers.includes(sessionUser.uid))
+      return joinedMembers.includes(sessionUser.uid)     
     },
 
     // For CHATS
@@ -604,9 +618,7 @@ export default {
         this.add_chat_button_disabled = false;
       }
     }
-
-
-  }
+  },
 }
 
 
