@@ -13,6 +13,16 @@
       <div class="modal-content" style="border-radius: 20px; max-height: 80vh; height: auto; overflow-y: auto;">
         <!-- Set max-height and overflow -->
         <div class="modal-body p-0 d-flex flex-row" style="height: 100%;">
+
+          <!-- Custom Red X Button (Top Right) -->
+          <button
+            type="button"
+            class="custom-close"
+            @click="hideModal"
+          >
+            &times;
+          </button>
+
           <!-- Left Side: Image -->
           <div
             class="modal-image"
@@ -225,6 +235,22 @@ export default {
 
 .bold-label {
     font-weight: bold;
+}
+.custom-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  color: red;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1051; /* Ensure it stays on top */
+}
+
+.custom-close:hover {
+  color: darkred;
 }
 </style>
 

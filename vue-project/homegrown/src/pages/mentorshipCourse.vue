@@ -39,7 +39,7 @@
                 {{ course.name }}
               </h5>
               <div class="text-center col-md-2 my-0 d-md-block d-none">
-                <button class="rounded-circle bg-white border border-0" type="button" @click.prevent="toggleAccordion()">
+                <button class="rounded-circle bg-white border border-0" type="button" @click="toggleAccordion()">
                   <i class="bi bi-chevron-down display-5" :class="{ 'text-black-50': lessons_loading }"
                     ref="chevron"></i>
                 </button>
@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { collection, getDocs, doc, getDoc, updateDoc, addDoc, arrayUnion, setDoc, where, query } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, updateDoc, addDoc, arrayUnion, setDoc, query, where } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import loadingAnimation from "../components/loadingAnimation.vue";
 
@@ -238,7 +238,7 @@ export default {
           JSON.parse(localStorage.getItem("user"));
         const uid = user.uid;
         this.uid = uid;
-        console.log(uid)
+        // console.log(uid)
 
 
         // If the id does not exist in the route parameters, pull it from sessionStorage
@@ -256,7 +256,8 @@ export default {
         const menteePromises = menteesList.map(async (userId) => {
           const userRef = doc(db, "users", userId);
           const userSnap = await getDoc(userRef);
-          return { id: userId, ...userSnap.data() };
+
+          return { ...userSnap.data(), id: userId };
         });
 
         this.mentees = await Promise.all(menteePromises);
@@ -316,136 +317,138 @@ export default {
       }
       this.expanded = !this.expanded;
     },
-  },
-  deleteNoti() {
-    for (const uid of this.menteesList) {
-      const docRef = doc(db, "users", uid);
-      updateDoc(docRef, { noti_count: 0 });
-    }
-  },
-  async checkAndCreateuser(userId, userName, profilePicture) {
-    try {
-      const userDocRef = doc(db, "chatters", userId);
-      const userDocSnap = await getDoc(userDocRef);
 
-      if (userDocSnap.exists()) {
-        console.log("User document exists:", userDocSnap.data());
-      } else {
-        console.log("Creating new user");
-        const newUser = {
-          id: userId,
-          name: userName || "New User",
-          profile_picture: profilePicture || "https://thispersondoesnotexist.com/",
-        };
-        await setDoc(userDocRef, newUser);
-        console.log("User document created successfully:", newUser);
+    deleteNoti() {
+      for (const uid of this.menteesList) {
+        const docRef = doc(db, "users", uid);
+        updateDoc(docRef, { noti_count: 0 });
       }
-    } catch (error) {
-      console.error("Error checking or creating user document:", error);
-    }
-  },
-
-  async getUserDocument(userId) {
-    const collections = ["profiles", "users", "mentors"];
-    for (const collectionName of collections) {
+    },
+    async checkAndCreateuser(userId, userName, profilePicture) {
       try {
-        const docRef = doc(db, collectionName, userId);
-        const docSnap = await getDoc(docRef);
+        const userDocRef = doc(db, "chatters", userId);
+        const userDocSnap = await getDoc(userDocRef);
 
-        if (docSnap.exists()) {
-          return { data: docSnap.data(), collection: collectionName };
+        if (userDocSnap.exists()) {
+          console.log("User document exists:", userDocSnap.data());
+        } else {
+          console.log("Creating new user");
+          const newUser = {
+            id: userId,
+            name: userName || "New User",
+            profile_picture: profilePicture || "https://thispersondoesnotexist.com/",
+          };
+          await setDoc(userDocRef, newUser);
+          console.log("User document created successfully:", newUser);
         }
       } catch (error) {
-        console.error(`Error retrieving document from ${collectionName}:`, error);
+        console.error("Error checking or creating user document:", error);
       }
-    }
-    return { message: "User not found in profiles, users, or mentors collections" };
-  },
+    },
 
-  async addChat(chatterId1, chatterId2) {
-    try {
-      this.add_chat_button_disabled = true;
+    async getUserDocument(userId) {
+      const collections = ["profiles", "users", "mentors"];
+      for (const collectionName of collections) {
+        try {
+          const docRef = doc(db, collectionName, userId);
+          const docSnap = await getDoc(docRef);
 
-      // Step 1: Ensure both chatters exist by checking each ID in the relevant collections
-      for (const chatterId of [chatterId1, chatterId2]) {
-        const userDoc = await this.getUserDocument(chatterId);
-
-        if (!userDoc.data) {
-          console.log(`User ${chatterId} not found in profiles, users, or mentors, creating a new one.`);
-          await this.checkAndCreateuser(chatterId, "New User", "https://thispersondoesnotexist.com/");
-        } else {
-          console.log(`User ${chatterId} found in ${userDoc.collection} collection.`);
+          if (docSnap.exists()) {
+            return { data: docSnap.data(), collection: collectionName };
+          }
+        } catch (error) {
+          console.error(`Error retrieving document from ${collectionName}:`, error);
         }
       }
+      return { message: "User not found in profiles, users, or mentors collections" };
+    },
 
-      // Step 2: Check if a chat with both users already exists
-      const chatsCollection = collection(db, "chats");
-      const chatQuery = query(
-        chatsCollection,
-        where("chat_type", "==", "contact")
-      );
-      const chatSnapshot = await getDocs(chatQuery);
+    async addChat(chatterId1, chatterId2) {
+      try {
+        this.add_chat_button_disabled = true;
 
-      let existingChat = null;
-      chatSnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (
-          data.group_members &&
-          data.group_members.length === 2 &&
-          data.group_members.includes(chatterId1) &&
-          data.group_members.includes(chatterId2)
-        ) {
-          existingChat = { id: doc.id, ...data };
+        // Step 1: Ensure both chatters exist by checking each ID in the relevant collections
+        for (const chatterId of [chatterId1, chatterId2]) {
+          const userDoc = await this.getUserDocument(chatterId);
+
+          if (!userDoc.data) {
+            console.log(`User ${chatterId} not found in profiles, users, or mentors, creating a new one.`);
+            await this.checkAndCreateuser(chatterId, "New User", "https://thispersondoesnotexist.com/");
+          } else {
+            console.log(`User ${chatterId} found in ${userDoc.collection} collection.`);
+          }
         }
-      });
 
-      // If an existing chat is found, navigate to it and return
-      if (existingChat) {
-        console.log("Chat already exists with ID:", existingChat.id);
-        this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
-        return;
-      }
+        // Step 2: Check if a chat with both users already exists
+        const chatsCollection = collection(db, "chats");
+        const chatQuery = query(
+          chatsCollection,
+          where("chat_type", "==", "contact")
+        );
+        const chatSnapshot = await getDocs(chatQuery);
 
-      // Step 3: Create a new chat document if no existing chat was found
-      const newChatRef = await addDoc(collection(db, "chats"), {
-        chat_type: "contact",
-        chat_name: "contact",
-        chat_img: "default_image_url",
-        group_members: [chatterId1, chatterId2],
-      });
+        let existingChat = null;
+        chatSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (
+            data.group_members &&
+            data.group_members.length === 2 &&
+            data.group_members.includes(chatterId1) &&
+            data.group_members.includes(chatterId2)
+          ) {
+            existingChat = { id: doc.id, ...data };
+          }
+        });
 
-      const chatId = newChatRef.id;
-      console.log("New chat created with ID:", chatId);
-
-      // Step 4: Add chat ID to each chatter's `chats` array
-      for (const chatterId of [chatterId1, chatterId2]) {
-        const chatterRef = doc(db, "chatters", chatterId);
-        const chatterDoc = await getDoc(chatterRef);
-
-        if (chatterDoc.exists()) {
-          await updateDoc(chatterRef, {
-            chats: arrayUnion(chatId),
-          });
-        } else {
-          await setDoc(chatterRef, {
-            chats: [chatId],
-          });
+        // If an existing chat is found, navigate to it and return
+        if (existingChat) {
+          console.log("Chat already exists with ID:", existingChat.id);
+          this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
+          return;
         }
-        console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
-      }
 
-      console.log("Chat successfully created and added to both chatters.");
-      this.$router.push({ name: "chatPage", params: { chatId } });
-    } catch (error) {
-      console.error("Error creating chat:", error);
-    } finally {
-      this.add_chat_button_disabled = false;
-    }
+        // Step 3: Create a new chat document if no existing chat was found
+        const newChatRef = await addDoc(collection(db, "chats"), {
+          chat_type: "contact",
+          chat_name: "contact",
+          chat_img: "default_image_url",
+          group_members: [chatterId1, chatterId2],
+        });
+
+        const chatId = newChatRef.id;
+        console.log("New chat created with ID:", chatId);
+
+        // Step 4: Add chat ID to each chatter's `chats` array
+        for (const chatterId of [chatterId1, chatterId2]) {
+          const chatterRef = doc(db, "chatters", chatterId);
+          const chatterDoc = await getDoc(chatterRef);
+
+          if (chatterDoc.exists()) {
+            await updateDoc(chatterRef, {
+              chats: arrayUnion(chatId),
+            });
+          } else {
+            await setDoc(chatterRef, {
+              chats: [chatId],
+            });
+          }
+          console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
+        }
+
+        console.log("Chat successfully created and added to both chatters.");
+        this.$router.push({ name: "chatPage", params: { chatId } });
+      } catch (error) {
+        console.error("Error creating chat:", error);
+      } finally {
+        this.add_chat_button_disabled = false;
+      }
+    },
   },
   async mounted() {
     await this.fetchLessons();
     await this.fetchMentees();
   },
+
 };
 </script>
 

@@ -20,9 +20,11 @@
 
                         <div class="col-md-6">
                             <div class="bento-tile  h-100 p-3">
-                                <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
-                                    :statEditable="stats.goal.statEditable" :descriptionNonEditable="stats.goal.descriptionNonEditable"
-                                    :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
+                                <stats-tile :title="stats.totalEarned.title"
+                                    :statNonEditable="stats.totalEarned.statNonEditable"
+                                    :statEditable="stats.totalEarned.statEditable"
+                                    :descriptionNonEditable="stats.totalEarned.descriptionNonEditable"
+                                    :descriptionEditable="stats.totalEarned.descriptionEditable"></stats-tile>
                             </div>
                         </div>
 
@@ -264,7 +266,56 @@
             <input name="nav" type="radio" id="BudgetPlanner" />
             <div class="page">
                 <div class="container">
-                    <budget-chart></budget-chart>
+                    <div class="row my-5 g-3">
+                        <div class="col-12">
+                            <div class="bento-tile h-100 p-3 text-center">
+                                <div>
+                                    <h1 class="display-1 fw-bold text-primary">Budget Planner</h1>
+                                    <p class="text-muted">Plan ahead to achieve your financial freedom</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="bento-tile p-3 h-100">
+                                <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
+                                    :statEditable="stats.goal.statEditable"
+                                    :descriptionNonEditable="stats.goal.descriptionNonEditable"
+                                    :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bento-tile p-4 h-100">
+                                <div class="d-flex justify-content-start align-items-center mb-3">
+                                    <span class="fw-bold ps-2">Achieve goal by</span>
+
+                                </div>
+                                <div>
+                                    <h1 class="text-center text-primary fw-bolder display-5"> {{ GoalDate }}
+                                    </h1>
+                                </div>
+                                <div>
+                                    <p class="text-center text-muted">Note: if you save this amount monthly
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-3 bento-tile">
+                                <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
+                                </h1>
+                                <label for="customRange2" class="form-label">Monthly Savings</label>
+                                <input type="range" class="form-range" min="1" :max="stats.totalEarned.descriptionEditable"
+                                    id="customRange2" v-model="savings">
+                            </div>
+                        </div>
+
+                        <div class="col-12 ">
+                            <div class="p-3 bento-tile">
+                                <budget-chart></budget-chart>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <label class="nav" for="BudgetPlanner">
@@ -293,26 +344,20 @@
                                 </div>
                             </div>
                         </div>
-
-
-                        <div class="col-lg-4">
-                            <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="stats.totalEarned.title" :statNonEditable="stats.totalEarned.statNonEditable"
-                                    :statEditable="stats.totalEarned.statEditable" :descriptionNonEditable="stats.totalEarned.descriptionNonEditable"
-                                    :descriptionEditable="stats.totalEarned.descriptionEditable"></stats-tile>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
+                        <div class="col-md-6">
                             <div class="bento-tile p-3 h-100">
                                 <stats-tile :title="stats.payday.title" :statNonEditable="stats.payday.statNonEditable"
-                                    :statEditable="stats.payday.statEditable" :descriptionNonEditable="stats.payday.descriptionNonEditable"
+                                    :statEditable="stats.payday.statEditable"
+                                    :descriptionNonEditable="stats.payday.descriptionNonEditable"
                                     :descriptionEditable="stats.payday.descriptionEditable"></stats-tile>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-md-6">
                             <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="stats.latePayments.title" :statNonEditable="stats.latePayments.statNonEditable"
-                                    :statEditable="stats.latePayments.statEditable" :descriptionNonEditable="stats.latePayments.descriptionNonEditable"
+                                <stats-tile :title="stats.latePayments.title"
+                                    :statNonEditable="stats.latePayments.statNonEditable"
+                                    :statEditable="stats.latePayments.statEditable"
+                                    :descriptionNonEditable="stats.latePayments.descriptionNonEditable"
                                     :descriptionEditable="stats.latePayments.descriptionEditable"></stats-tile>
                             </div>
                         </div>
@@ -348,9 +393,23 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { doc, onSnapshot, collection } from "firebase/firestore";
 import { db } from "../firebase/initialize";
+
+const savings = ref(1);
+const GoalDate = computed(() => {
+    var toEarn = stats.value.goal.statEditable - stats.value.totalEarned.statEditable;
+    var numMonths = Math.ceil(toEarn / savings.value);
+
+    var currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() + numMonths);
+    const goalMonth = currentDate.getMonth() + 1;
+    const goalYear = currentDate.getFullYear();
+    const goalDay = stats.value.payday.descriptionEditable;
+
+    return `${goalDay}/${goalMonth}/${goalYear}`;
+});
 
 const stats = ref({
     totalEarned: {
@@ -413,7 +472,7 @@ onMounted(() => {
 
     docsToFetch.forEach(({ key, name }) => {
         const docRef = doc(statsRef, name);
-        
+
         // Set up a real-time listener for each document
         onSnapshot(docRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
