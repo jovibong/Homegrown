@@ -1,9 +1,9 @@
 <template>
-    <div id="app">
+    <div >
         <apexchart :options="chartOptions" :series="filteredSeries" type="donut" height="350"></apexchart>
 
-        <div class="buttons">
-            <button @click="appendData">Add Data</button>
+        <div class="buttons d-flex justify-content-center p-2">
+            <button @click="appendData" :disabled="totalExceedsLimit">Add Data</button> <!-- Disable button if total exceeds 500 -->
             <button @click="reset">Reset Data</button>
         </div>
 
@@ -24,7 +24,7 @@
             <tbody>
                 <tr v-for="(value, index) in series" :key="index">
                     <td>
-                        <!-- Show "Left" as a fixed label for the first item -->
+                        <!-- Show "Savings" as a fixed label for the first item -->
                         <span v-if="index === 0">{{ customLabels[index] }}</span>
                         <input v-else type="text" v-model="customLabels[index]" @input="updateChart" />
                     </td>
@@ -34,7 +34,7 @@
                         <input v-else type="number" v-model.number="series[index]" @input="updateChart" />
                     </td>
                     <td>
-                        <!-- Show remove button only for non-"Left" rows -->
+                        <!-- Show remove button only for non-"Savings" rows -->
                         <button v-if="index !== 0" @click="removeData(index)">Remove</button>
                     </td>
                 </tr>
@@ -42,6 +42,7 @@
         </table>
     </div>
 </template>
+
 
 <script>
 import { defineComponent } from 'vue';
@@ -56,8 +57,8 @@ export default defineComponent({
             // Series data with the first item set to 500
             series: [500],
 
-            // Custom category labels with the first item labeled as "Left"
-            customLabels: ['Left'],
+            // Custom category labels with the first item labeled as "Savings"
+            customLabels: ['Savings'],
 
             // Chart options
             chartOptions: {
@@ -97,7 +98,7 @@ export default defineComponent({
             return this.series;
         },
 
-        // Calculate total of the series excluding the first item ("Left")
+        // Calculate total of the series excluding the first item ("Savings")
         totalSum() {
             return this.series.reduce((acc, val) => acc + val, 0);
         },
@@ -113,11 +114,11 @@ export default defineComponent({
         }
     },
     watch: {
-        // Watch for changes in the series array and update "Left" to keep total 500
+        // Watch for changes in the series array and update "Savings" to keep total 500
         series: {
             handler(newSeries) {
                 const totalOtherValues = newSeries.slice(1).reduce((acc, val) => acc + val, 0);
-                this.series[0] = Math.max(0, 500 - totalOtherValues); // Adjust "Left" value to keep total 500
+                this.series[0] = Math.max(0, 500 - totalOtherValues); // Adjust "Savings" value to keep total 500
             },
             deep: true
         }
@@ -129,7 +130,7 @@ export default defineComponent({
         },
 
         removeData(index) {
-            // Remove data at the specified index (if it's not "Left")
+            // Remove data at the specified index (if it's not "Savings")
             if (this.series.length > 1 && index !== 0) {
                 this.series.splice(index, 1);
                 this.customLabels.splice(index, 1);
@@ -138,7 +139,7 @@ export default defineComponent({
 
         reset() {
             this.series = [500];
-            this.customLabels = ['Left'];
+            this.customLabels = ['Savings'];
             this.updateChart();
         },
 
