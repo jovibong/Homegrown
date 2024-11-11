@@ -3,34 +3,30 @@
     <!-- Navbar -->
     <div id="navbar"></div>
 
-    <!-- Intro Section -->
     <section id="intro" class="container pt-5 pb-0 fade-in">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h1 class="display-4 fw-bold home">Welcome!</h1>
-          <p class="lead text-muted">
-            Thank you for joining our vibrant community! Step into the rewarding role of a mentor and make a real impact
-            by guiding foreign workers through various courses. Engage with them at enriching events across Singapore,
-            fostering connections and making a difference. Ready to embark on this meaningful journey? Let’s get
-            started!
-          </p>
-          <div class="mt-4 d-flex align-items-center">
-            <router-link to='/mentorshipPage' class="btn btn-warning btn-secondary btn-lg me-3 text-dark">MENTOR
-              NOW</router-link>
-            <a href="#" class="d-flex align-items-center text-primary">
-              <span class="ms-4">
+        <div class="row align-items-center">
+          <div class="col-lg-6 text-start" style="padding-left: 7rem;"> <!-- Adjust padding here -->
+            <h1 class="display-4 fw-bold home">Welcome!</h1>
+            <p class="lead text-muted">
+              Thank you for joining our vibrant community! Step into the rewarding role of a mentor and make a real impact
+              by guiding foreign workers through various courses. Engage with them at enriching events across Singapore,
+              fostering connections and making a difference. Ready to embark on this meaningful journey? Let’s get
+              started!
+            </p>
+            <div class="mt-4">
+              <router-link to='/mentorshipPage' class="btn btn-warning btn-secondary btn-lg me-3 text-dark">MENTOR
+                NOW</router-link>
+              <a href="#" class="ms-3 text-primary d-inline-flex align-items-center">
                 <i class="bi bi-play-circle-fill me-2 fs-3"></i>
-              </span>
-              See how it works?
-            </a>
+                See how it works?
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6 d-flex justify-content-center">
+            <img src="../img/smiling-happy-indian.png" alt="Smiling Happy Worker" class="img-fluid centered-img" />
           </div>
         </div>
-        <div class="col-lg-6 text-center">
-          <img src="../img/smiling-happy-indian.png" alt="Smiling Happy Worker" class="img-fluid" />
-        </div>
-      </div>
-    </section>
-
+      </section>
     <!-- Stats Section -->
     <section id="stats" class="bg-primary py-3 section-decor fade-in">
       <div class="container">

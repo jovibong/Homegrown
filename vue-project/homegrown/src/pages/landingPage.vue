@@ -5,29 +5,27 @@
 
     <!-- Intro Section -->
     <section id="intro" class="container pt-5 pb-0 fade-in">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h1 class="display-4 fw-bold">Feel at home, while you grow</h1>
-          <p class="lead text-muted">
-            Join our platform to improve your skills, manage your finances, and connect with a supportive community.
-            Access free courses, track payments, and get personalized mentorship and resources to enhance your life in
-            Singapore. Sign up today and start building a brighter future!
-          </p>
-          <div class="mt-4 d-flex align-items-center">
-            <button @click="openSignUpModal" class="btn btn-secondary btn-lg me-3 text-dark">JOIN NOW</button>
-            <a href="#" class="d-flex align-items-center text-primary">
-              <span class="ms-4">
+        <div class="row align-items-center">
+          <div class="col-lg-6 text-start" style="padding-left: 7rem;"> <!-- Adjust padding here -->
+            <h1 class="display-4 fw-bold">Feel at home, while you grow</h1>
+            <p class="lead text-muted">
+              Join our platform to improve your skills, manage your finances, and connect with a supportive community.
+              Access free courses, track payments, and get personalized mentorship and resources to enhance your life in
+              Singapore. Sign up today and start building a brighter future!
+            </p>
+            <div class="mt-4">
+              <button @click="openSignUpModal" class="btn btn-secondary btn-lg text-dark">JOIN NOW</button>
+              <a href="#" class="ms-3 text-primary d-inline-flex align-items-center">
                 <i class="bi bi-play-circle-fill me-2 fs-3"></i>
-              </span>
-              See how it works?
-            </a>
+                See how it works?
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6 d-flex justify-content-center">
+            <img src="../img/smiling-happy-indian.png" alt="Smiling Happy Worker" class="img-fluid centered-img" />
           </div>
         </div>
-        <div class="col-lg-6 text-center">
-          <img src="../img/smiling-happy-indian.png" alt="Smiling Happy Worker" class="img-fluid" />
-        </div>
-      </div>
-    </section>
+      </section>
 
     <!-- Stats Section -->
     <section id="stats" class="bg-primary py-3 section-decor fade-in">
