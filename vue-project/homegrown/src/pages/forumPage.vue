@@ -17,18 +17,36 @@
                 <div class="col-5 me-5">
                     <h2 class="text-primary fw-bold mb-3 display-5 mt-2"> Popular Categories</h2>
                     <div class="d-flex flex-column mb-3">
-                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5">General</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5">Learning</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5">Events</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5"
+                            @click="goToCategory('general')">General</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5"
+                            @click="goToCategory('learning')">Learning</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5"
+                            @click="goToCategory('events')">Events</button>
                     </div>
                 </div>
 
+                <!-- Top Discussions -->
                 <div class="col-5">
                     <h2 class="text-primary fw-bold mb-3 display-5 mt-2"> Top Discussions </h2>
                     <div class="d-flex flex-column mb-3">
-                        <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">Flex item 1</button>
-                        <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">Flex item 2</button>
-                        <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">Flex item 3</button>
+                        <router-link :to="{ name: 'forumDetail', params: { id: 'aXjcPZLpHYbY3esPZY3m' } }">
+                            <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
+                                Flex item 1
+                            </button>
+                        </router-link>
+
+                        <router-link :to="{ name: 'forumDetail', params: { id: 'forum2' } }">
+                            <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
+                                Flex item 2
+                            </button>
+                        </router-link>
+
+                        <router-link :to="{ name: 'forumDetail', params: { id: 'forum3' } }">
+                            <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
+                                Flex item 3
+                            </button>
+                        </router-link>
                     </div>
                 </div>
             </div>
@@ -38,21 +56,25 @@
         <section id="forum">
             <!-- Filter Buttons -->
             <div class="filter-buttons d-flex">
-                <button :class="['filter-button', { 'active': selectedCategory === 'all' }]" @click="selectedCategory = 'all'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'all' }]"
+                    @click="selectedCategory = 'all'">
                     All
                 </button>
 
-                <button :class="['filter-button', { 'active': selectedCategory === 'general' }]" @click="selectedCategory = 'general'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'general' }]"
+                    @click="selectedCategory = 'general'">
                     <i class="bi bi-chat-dots"></i>
                     General
                 </button>
 
-                <button :class="['filter-button', { 'active': selectedCategory === 'learning' }]" @click="selectedCategory = 'learning'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'learning' }]"
+                    @click="selectedCategory = 'learning'">
                     <i class="bi bi-book"></i>
                     Learning
                 </button>
 
-                <button :class="['filter-button', { 'active': selectedCategory === 'events' }]" @click="selectedCategory = 'events'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'events' }]"
+                    @click="selectedCategory = 'events'">
                     <i class="bi bi-calendar3"></i>
                     Events
                 </button>
@@ -126,7 +148,8 @@
                         <p class="desc"> {{ forum.description }}</p>
 
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="flex-grow-1 align-content-center"></div> <!-- This will push the button to the right -->
+                            <div class="flex-grow-1 align-content-center"></div>
+                            <!-- This will push the button to the right -->
 
                             <router-link :to="{ name: 'forumDetail', params: { id: forum.id } }">
                                 <i class="bi bi-arrow-right-circle directButton"></i>
@@ -148,10 +171,13 @@ import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { db } from '../firebase/initialize';
 
 export default{
+    mounted(){
+        this.getAllForums()
+    },
 
     data (){
         return {
-            selectedCategory: "",
+            selectedCategory: "all",
             selectedForums: [],
 
             forumTitle: '',
@@ -161,6 +187,14 @@ export default{
     },
 
     methods: {
+        goToCategory(category) {
+            this.selectedCategory = category;
+            const forumSection = document.getElementById('forum');
+            if (forumSection) {
+                forumSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+
         async getAllForums(){
 
             const querySnapshot = await getDocs(collection(db, "forums"));
@@ -208,7 +242,7 @@ export default{
             const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
 
             const newForumData = {
-                name: this.forumTitle,
+                title: this.forumTitle,
                 description: this.forumDesc,
                 category: this.forumCategory,
                 postedBy: sessionUser.uid
@@ -231,7 +265,16 @@ export default{
         selectedCategory() {
             this.getSelectedForums();
         }
+    },
+
+    computed: {
+    croppedDescription() {
+      const maxLength = 50; // Max length for the description
+      return this.description.length > maxLength
+        ? this.description.slice(0, maxLength) + '...'  // Crop and append ellipsis
+        : this.description;  // Return original description if it's short enough
     }
+   },
 
 }
 </script>
