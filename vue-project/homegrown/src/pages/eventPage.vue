@@ -18,18 +18,19 @@
 
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="../img/cultural.jpg" class="d-block w-100" alt="...">
+                        <img src="https://www.giving.sg/res/GetOpportunityImage/697add88-9f52-405c-a265-620fd6bff968.jpg" class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
                         </div>
                     </div>
 
                     <div class="carousel-item">
-                        <img src="../img/heritagewalk.jpg" class="d-block w-100" alt="...">
+                        <img src="https://www.singaporetech.edu.sg/sites/default/files/digital_newsroom_uploads/groupphotoofsitintegratesandmigrantbrothers.jpg?10000" class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <img src="../img/volunteering.jpeg" class="d-block w-100" alt="...">
+                        <img src="
+https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-HealthServe.jpg" class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
                         </div>
                     </div>
@@ -73,16 +74,16 @@
                             </ul>
                         </div>
 
-                        <span class="text-muted h5 col-1"> OR </span>
+                        <span class="text-muted h5 col-1"> | </span>
 
-                        <router-link to="/forum" class="btn btn-primary col-2">
+                        <router-link to="/forum" class="btn btn-primary col-2" style="height: 50px; width: 180px">
                             Go to Forum
                         </router-link>
 
-                        <span class="text-muted h5 col-1"> OR </span>
+                        <span class="text-muted h5 col-1"> | </span>
 
-                        <button @click="allowCreate"
-                            :class="showCreate ? 'createButton col-2 pressed' : 'createButton col-2 notPressed'">
+                        <button @click="allowCreate" style="height: 50px; width: 180px"
+                            :class="showCreate ? 'btn btn-primary col-2' : 'btn btn-primary col-2'">
                             Create Event </button>
                     </div>
                 </div>
@@ -120,7 +121,7 @@
                 <h2 class="text-primary fw-bold mb-3 display-4"> Events By Category </h2>
 
                 <select v-model="selectedCategory" @change="getEventsByCategory" class="form-select">
-                    <option disabled value="">Select a category</option>
+                    <option value="All" selected>All</option>
                     <option value="Holidays">Holidays</option>
                     <option value="Festivals">Festivals</option>
                     <option value="Outdoors">Outdoors</option>
@@ -128,21 +129,16 @@
                     <option value="Meet-ups">Meet-ups</option>
                     <option value="Others">Others</option>
                 </select>
-
-
-                <div v-if="selectedEvents.length == 0" class="text-center text-muted mb-4 h5">
-                    No event in selected category
-                </div>
-                <div v-else>
+                
                     <div class="scroll-container">
-                        <event-cards v-for="event in selectedEvents" :key="event.id" :eventID="event.id"
+                        <event-cards v-for="event in eventsToDisplay" :key="event.id" :eventID="event.id"
                             :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
                     </div>
-                </div>
+              
             </section>
 
-            <!-- Event Cards -->
-            <section class="my-5">
+            <!-- All Events -->
+            <!-- <section class="my-5">
                 <h2 class="text-primary fw-bold mb-3 display-4"> All Events </h2>
                 <hr>
                 <transition-group name="fade" tag="div" class="event-grid">
@@ -154,7 +150,7 @@
                     {{ displayAllEvents ? 'Show Less' : 'Show More' }}
                 </button>
 
-            </section>
+            </section> -->
 
         </div> <!-- for container -->
 
@@ -191,12 +187,12 @@ export default {
 
             // category filter
             selectedEvents: [],
-            selectedCategory: '',
+            selectedCategory: 'All',
 
             showCreate: false,
 
-            maxVisibleEvents: 3, // Set the initial number of events to display
-            displayAllEvents: false, // Toggle to show all events or only limited number
+            // maxVisibleEvents: 3, // Set the initial number of events to display
+            // displayAllEvents: false, // Toggle to show all events or only limited number
 
             eventSuggestVisible: false,
             searchQuery: '',
@@ -221,10 +217,14 @@ export default {
             );
         },
 
-        showAllEvents() {
-            return this.displayAllEvents ? this.allEvents : this.allEvents.slice(0, this.maxVisibleEvents);
-        }
+        // showAllEvents() {
+        //     return this.displayAllEvents ? this.allEvents : this.allEvents.slice(0, this.maxVisibleEvents);
+        // },
+
+        eventsToDisplay() {
+        return this.selectedCategory === 'All' ? this.allEvents : this.selectedEvents;
     },
+},
 
 
     methods: {
@@ -265,7 +265,7 @@ export default {
                 });
             });
 
-            this.getPastEvents();
+            // this.getPastEvents();
         },
 
         async getMyEvents(){
@@ -326,41 +326,6 @@ export default {
             this.searchQuery = selectedTitle; // Update searchQuery with the selected title
             this.selectedEventID = selectedID;
         }
-        // async getRelevantSearches() {
-        //     console.log(this.searchQuery)
-        //     this.searchQuery = this.searchQuery.toLowerCase()
-        //     this.eventSuggestVisible = true;
-
-        //     if (!this.searchQuery) {
-        //         this.suggestEvents = []; // Clear results if search is empty
-        //         this.eventSuggestVisible = false;
-        //         return;
-        //     }
-
-        //     // Fetch events based on partial matches
-        //     const q = query(collection(db, "events"), 
-        //     where("name", ">=", this.searchQuery), where("name", "<=", this.searchQuery + "\uf8ff"));
-
-        //     try {
-        //         const querySnapshot = await getDocs(q);
-        //         querySnapshot.forEach((doc) => {
-        //             // Manually extract fields from doc.data()
-        //             const eventData = doc.data();
-        //             const event = {
-        //                 id: doc.id,
-        //                 name: eventData.name,
-        //             };
-        //             console.log(event)
-
-        //             if (!this.suggestEvents.find(e => e.id === event.id)) {
-        //                 this.suggestEvents.push(event);
-        //                 console.log(this.suggestEvents);
-        //             }
-        //         });
-        //     } catch (error) {
-        //         console.error("Error fetching related event searches: ", error);
-        //     }
-        // },
 
     },
 
@@ -384,23 +349,8 @@ export default {
   /* Ensure images cover the area without distortion */
   object-position: center;
   /* Center the image */
-  height: 300px;
+  height: 400px;
   /* Set a fixed height to control cropping */
-}
-
-
-
-/* For button pressed and not pressed*/
-/* Not pressed state */
-.notPressed {
-  background-color: #525FE1;
-  color: white;
-}
-
-/* Pressed state */
-.pressed {
-  border: 2px solid darkblue;
-  color:white;
 }
 
 
@@ -468,6 +418,7 @@ export default {
   border: 2px solid #525FE1;
   height: 50px;
   width: 100%;
+  border-radius: 5px;
 }
 
 .dropdown-content {

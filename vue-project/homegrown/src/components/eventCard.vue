@@ -9,7 +9,7 @@
 
     <div class="mt-auto text-center">
     <router-link :to="{ name: 'eventDetail', params: { id: eventID }}" class="btn btn-primary">
-        Go somewhere
+        View More
         <i class="bi bi-arrow-right-circle"></i>
     </router-link>
     </div>
@@ -39,7 +39,7 @@ export default {
         ? this.description.slice(0, maxLength) + '...'  // Crop and append ellipsis
         : this.description;  // Return original description if it's short enough
     }
-   } 
+   },
 }; 
 </script>
 
