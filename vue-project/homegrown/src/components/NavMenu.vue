@@ -214,18 +214,30 @@ export default {
       this.isSignUpModalVisible = false;
     },
     logout() {
-      signOut(auth)
+    signOut(auth)
         .then(() => {
-          console.log("User signed out");
-          this.user = null;
-          this.userType = null; // Reset user type
-          this.$router.push("/"); // Redirect to home page
+            console.log("User signed out");
+            this.user = null;
+            this.userType = null; // Reset user type
+
+            // Redirect to the landing page
+            this.$router.push('/').then(() => {
+                // Replace the current history entry with the landing page URL
+                window.history.replaceState(null, '', '/');
+            });
+
+            // Optional: Add an event listener to prevent using the back button
+            window.addEventListener('popstate', () => {
+                if (!this.user) { // Check if the user is logged out
+                    this.$router.push('/'); // Redirect to the landing page if navigating back
+                }
+            });
         })
         .catch((error) => {
-          console.error("Error signing out:", error);
-          this.$emit('stopLoading'); // Hide spinner on error
+            console.error("Error signing out:", error);
+            this.$emit('stopLoading'); // Hide any loading spinners on error
         });
-    },
+  },
     toggleDropdown(event) {
       // Toggle dropdown visibility
       this.isDropdownVisible = !this.isDropdownVisible;

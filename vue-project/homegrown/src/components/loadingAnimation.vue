@@ -14,7 +14,8 @@ export default {
       radius: 5,
       boundaryX: 200,
       boundaryY: 200,
-      numberOfPoints: 30
+      numberOfPoints: 30,
+      primaryColor: '#525FE1',
     };
   },
   mounted() {
@@ -67,17 +68,17 @@ export default {
         point.vx = Math.sqrt(vx2) * (Math.random() * 2 - 1);
       }
     },
-    drawCircle(x, y) {
+     drawCircle(x, y) {
       this.context.beginPath();
       this.context.arc(x, y, this.radius, 0, 2 * Math.PI, false);
-      this.context.fillStyle = "#97badc";
+      this.context.fillStyle = this.primaryColor;
       this.context.fill();
     },
     drawLine(x1, y1, x2, y2) {
       this.context.beginPath();
       this.context.moveTo(x1, y1);
       this.context.lineTo(x2, y2);
-      this.context.strokeStyle = "#8ab2d8";
+      this.context.strokeStyle = this.primaryColor;
       this.context.stroke();
     },
     draw() {
