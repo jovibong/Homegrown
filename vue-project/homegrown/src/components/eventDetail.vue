@@ -1,36 +1,34 @@
 <template>
-
-
-    <!-- Header -->
-    <div class="header-container">
+  <!-- Header -->
+  <div class="header-container">
 
     <img class="headerImage" :src="eventImage">
-    <h1 class="row justify-content-center m-3 headerTitle">{{ eventTitle }}</h1>
+    <h1 class="row justify-content-center m-3 text-primary fw-bold text-center mb-3 display-4">{{ eventTitle }}</h1>
 
-    </div>
+  </div>
 
-    <div class="container">
+  <div class="container">
 
     <!-- Event Details -->
     <div class="row">
       <div class="col-12 d-grid grid-template">
-        <div class="event-details">
-          {{eventDay}}
-          {{eventDate}}
-          {{eventTime}} 
+        <div class="event-details text-muted mb-4 h5">
+          {{ eventDay }}
+          {{ eventDate }}
+          {{ eventTime }}
         </div>
 
-        <div class="event-details">
-          {{location}}
+        <div class="event-details text-muted mb-4 h5">
+          {{ location }}
         </div>
 
-        <div class="event-details">
-          {{eventCategory}}
+        <div class="event-details text-muted mb-4 h5">
+          {{ eventCategory }}
         </div>
       </div>
     </div>
 
-    <div class="row eventDesc m-4">
+    <div class="row eventDesc text-muted mb-4 h5">
       {{ eventDescription }}
     </div>
 
@@ -44,15 +42,20 @@
 
     <!-- Groups -->
     <div class="groupContainer mt-4">
-      <h2 class="title"> Groups </h2>
-      <button type="button" @click="modalVisible = true" class="createButton" data-bs-toggle="modal" data-bs-target="#createGroup"> CREATE YOUR OWN
-        GROUP </button>
+      <h2 class="text-primary fw-bold text-center mb-3 display-4"> Groups </h2> 
+
+      <button type="button" @click="modalVisible = true" class="createButton" data-bs-toggle="modal"
+        data-bs-target="#createGroup">
+        CREATE YOUR OWN GROUP </button>
 
     </div>
+
+    <hr>
     <!-- create group popup -->
 
     <!-- Modal -->
-    <div class="modal fade" v-show="modalVisible" id="createGroup" tabindex="-1" aria-labelledby="createGroupLabel" aria-hidden="true">
+    <div class="modal fade" v-show="modalVisible" id="createGroup" tabindex="-1" aria-labelledby="createGroupLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
 
@@ -80,7 +83,7 @@
               </div>
 
               <!-- Date and Time -->
-              <div class="row mb-3">
+              <!-- <div class="row mb-3">
                 <label for="date" class="col-sm-2 col-form-label">Date</label>
                 <div class="col-sm-4">
                   <input id="date" v-model="groupDate" type="date" class="form-control" />
@@ -90,33 +93,52 @@
                 <div class="col-sm-4">
                   <input id="time" v-model="groupTime" type="time" class="form-control" />
                 </div>
-              </div>
+              </div> -->
 
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" @click="addGroups" class="btn btn-primary">Create Group</button>
+            <button type="button" class="btn btn-primary">Create Group</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- to display dynamically the list of created groups -->
-    <div v-if="groups.length == 0"> No groups yet. Create your own!
+    <div v-if="groups.length == 0" class="text-muted mb-4 h5 text-center"> No groups yet. Create your own!
     </div>
 
     <div v-else>
-      <div v-for="group in groups" :key="group.name" class="eventGroup">
-        <div id="groupName">{{ group.name }}</div>
+      <div v-for="group in groups" :key="group.id" class="eventGroup">
+        <div class="group-info">
+
+          <div class="group-members">
+            <div class="profile-images">
+              <img v-for="(member, index) in visibleMembers" :key="index" :src="member.profilePicUrl" :alt="member.name"
+                class="profile-pic" />
+              <div v-if="extraCount > 0" class="extra-count">
+                +{{ extraCount }}
+              </div>
+            </div>
+          </div>
+
+          <span id="divider"> | </span>
+
+          <div id="groupName">{{ group.name }}</div>
+
+        </div>
+        <button type="button" class="chatButton"> JOIN CHAT </button>
+
       </div>
     </div>
 
     <!-- Event Cards -->
-    <div class="my-5">
-      <h2 class="title"> Related Events </h2>
+    <div class="my-5 ">
+      <h2 class="text-primary fw-bold mb-3 display-4"> Related Events </h2>
+      <hr>
+
       <div class="scroll-container">
-        <!-- row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-5 -->
         <event-cards v-for="event in relatedEvents" :key="event.id" :eventID="event.id" :title="event.title"
           :description="event.description" :image="event.imageURL"></event-cards>
       </div>
@@ -127,16 +149,15 @@
 </template>
 
 <script>
-import { collection, doc, getDoc, getDocs, addDoc, query, where, Timestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, addDoc, query, where, updateDoc, arrayUnion, arrayRemove, setDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import EventCards from '../components/eventCard.vue';
-import { gapi } from 'gapi-script';
 
 export default {
   components:
-    {
-        "event-cards": EventCards,
-    },
+  {
+    "event-cards": EventCards,
+  },
 
   data() {
     return {
@@ -146,10 +167,10 @@ export default {
       eventTitle: '',
       eventImage: '',
       eventDescription: '',
-      eventTiming:null,
-      eventDay:'',
-      eventDate:'',
-      eventTime:'',
+      eventTiming: null,
+      eventDay: '',
+      eventDate: '',
+      eventTime: '',
       eventCategory: '',
       location: '',
       groups: [],
@@ -159,7 +180,30 @@ export default {
       groupDesc: "",
       groupDate: null,
       groupTime: null,
-      groupMembers: [],
+      groupMembers:
+        // dummy data
+        [
+          {
+            name: "Alice",
+            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
+          },
+          {
+            name: "Bob",
+            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
+          },
+          {
+            name: "Charlie",
+            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
+          },
+          {
+            name: "David",
+            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
+          },
+          {
+            name: "Eve",
+            profilePicUrl: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg"
+          }
+        ],
 
       // for related events
       relatedEvents: [],
@@ -168,24 +212,66 @@ export default {
       isLayerActive: false,
       iconClass: "bi bi-calendar-plus",
       buttonText: "",
-      joinedEvent: false,
+      joinedEvent: null,
     };
   },
 
-  mounted() {
+  async mounted() {
     console.log('Event ID:', this.eventID); // Check if eventID is valid
+
+    await this.getUserEvent();
+
     this.getEventDetails(this.eventID); // Call the function to get event details
-    this.getGroups(this.eventID) // get event groups
+    this.getGroups(this.eventID); // get event groups
 
     if (this.joinedEvent == false) {
-      this.buttonText = "Add to Calendar"
+      this.buttonText = "Join Event"
     } else {
       this.iconClass = "bi bi-calendar-minus"
-      this.buttonText = "Remove from Calendar"
+      this.buttonText = "Leave Event"
+    }
+  },
+
+  computed: {
+    visibleMembers() {
+      // Display only the first three members
+      return this.groupMembers.slice(0, 3);
+    },
+    extraCount() {
+      // Calculate the remaining members beyond the first three
+      return this.groupMembers.length > 3 ? this.groupMembers.length - 3 : 0;
     }
   },
 
   methods: {
+    async getUserEvent() {
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+
+      try {
+        const eventDocRef = doc(db, "events", this.eventID); // Replace 'this.eventID' with the actual event ID
+        const eventDocSnap = await getDoc(eventDocRef);
+
+        console.log(this.joinedEvent)
+        if (eventDocSnap.exists()) {
+          const data = eventDocSnap.data();
+
+          // Check if the user has joined this event
+          if (data.joined && data.joined.includes(sessionUser.uid)) {
+            this.joinedEvent = true; // Set to true if the user is in the joined array
+          } else {
+            this.joinedEvent = false; // Set to false if the user is not in the joined array
+          }
+        } else {
+          console.log("No such event!");
+          this.joinedEvent = false;
+        }
+
+        console.log(this.joinedEvent); // Log final value
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    },
+
     async getEventDetails(eventID) {
       try {
         console.log("Firestore instance:", db); // Debugging: Check db initialization
@@ -223,31 +309,29 @@ export default {
 
     async addGroups() {
       const eventID = this.eventID;
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
       const eventRef = doc(db, "events", eventID);
       const groupsRef = collection(eventRef, "groups");
 
       // Create a new document in the "groups" subcollection with an auto-generated ID
-      const dateTimeString = `${this.groupDate}T${this.groupTime}`;
-      const combinedDateTime = new Date(dateTimeString);
 
       const newGroupData = {
         name: this.groupName,
-        description: this.groupDesc, 
-        timing: Timestamp.fromDate(new Date(combinedDateTime)),
-      
+        description: this.groupDesc,
+        members: [sessionUser.uid],
       };
 
       try {
         const docRef = await addDoc(groupsRef, newGroupData); // Add the document
         console.log("Group created with ID: ", docRef.id); // Log the new document ID
-        this.modalVisible = false;
+        window.location.reload();
 
       } catch (error) {
         console.error("Error adding group: ", error); // Handle errors
       }
     },
 
-    async getGroups(eventID){
+    async getGroups(eventID) {
       const eventRef = doc(db, "events", eventID); // Reference to the specific event document
       const groupsRef = collection(eventRef, "groups"); // Reference to the "groups" subcollection
 
@@ -257,21 +341,11 @@ export default {
 
         // Loop through the documents and extract data
         querySnapshot.forEach((doc) => {
-          const timing = doc.data().date.toDate();
 
-          // Get the date 
-          const groupDate = timing.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
-          // Get the time (e.g., 18:00:00)
-          const groupTime = timing.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-
-          this.groups.push({ 
+          this.groups.push({
             id: doc.id,
             name: doc.data().groupName,
             groupDesc: doc.data().description,
-            date: groupDate,
-            time: groupTime,
           });
         });
 
@@ -282,114 +356,255 @@ export default {
       }
     },
 
-    async getRelatedEvents(){
+    async getRelatedEvents() {
       console.log(this.eventCategory);
       const q = query(collection(db, "events"), where("category", "==", this.eventCategory));
 
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          this.relatedEvents.push({ 
-              id: doc.id,
-              title: doc.data().name,
-              description: doc.data().description, 
-              imageURL: doc.data().imageURL,
-          });
-          console.log(this.relatedEvents);
-      }); 
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        this.relatedEvents.push({
+          id: doc.id,
+          title: doc.data().name,
+          description: doc.data().description,
+          imageURL: doc.data().imageURL,
+        });
+        console.log(this.relatedEvents);
+      });
 
-  },
+    },
 
-  async addMyEvent(){
-    // add to calendar
-    // push into user's events
-    const addedEvent = {
-      summary: this.eventTitle,
-      location: this.location,
-      description: "Description of the event.",
-      start: {
-        date: '2024-11-20', // Only the date, no specific time
-        timeZone: 'America/Los_Angeles'
-      },
-      end: {
-        date: '2024-11-20', // Same date for an all-day event
-        timeZone: 'America/Los_Angeles'
-      },
-      attendees: [
-        { email: 'example@example.com' },
-      ]
-    };
+    async addMyEvent() {
+      // push into user's events
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+      const eventRef = doc(db, "events", this.eventID);
 
+      try {
+        const docSnap = await getDoc(eventRef); // Get the document snapshot
 
-    gapi.client.calendar.events.insert({
-      calendarId: 'primary',  // 'primary' is the user's default calendar
-      resource: addedEvent
-    }).then(function (response) {
-      console.log('Event created: ', response);
-    }, function (error) {
-      console.error('Error creating event: ', error);
-    });
-  },
+        if (docSnap.exists()) {
+          const eventData = docSnap.data();
+          const joined = eventData.joined || []; // Ensure `joined` is an array
+          console.log(docSnap.id)
+          console.log(joined);
 
-  async removeMyEvent(){
+          // Only add the user ID if it's not already in the array
+          if (!joined.includes(sessionUser.uid)) {
 
-  },
+            // Update the 'joined' array in Firestore
+            await updateDoc(eventRef, {
+              joined: arrayUnion(sessionUser.uid)
+            });
 
-  animateButton() {
+            console.log("User added to the event.");
+
+          } else {
+            console.log("User already joined the event.");
+          }
+        } else {
+          console.log("Event does not exist.");
+        }
+      } catch (error) {
+        console.error("Error adding user to event:", error);
+      }
+    },
+
+    async removeMyEvent() {
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+      const docRef = doc(db, "events", this.eventID); // Create a reference to the specific event document
+
+      try {
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const eventData = docSnap.data();
+          const joined = eventData.joined || []; // Ensure `joined` is an array
+
+          // Only add the user ID if it's not already in the array
+          if (joined.includes(sessionUser.uid)) {
+
+            await updateDoc(docRef, {
+              joined: arrayRemove(sessionUser.uid)
+            });
+
+            console.log("User removed the event.");
+          } else {
+            console.log("User not in event.");
+          }
+        } else {
+          console.log("Event does not exist.");
+        }
+      } catch (error) {
+        console.error("Error removing user to event:", error);
+      }
+    },
+
+    animateButton() {
       this.isLayerActive = true;
 
       if (this.joinedEvent == false) {
         setTimeout(() => {
+          this.addMyEvent();
           this.isLayerActive = false;
           this.iconClass = "bi bi-calendar-check";
-          this.buttonText = "Added to Calendar";
+          this.buttonText = "Event Joined";
           this.joinedEvent = !this.joinedEvent;
 
           setTimeout(() => {
             this.iconClass = "bi bi-calendar-minus";
-            this.buttonText = "Remove from Calendar";
+            this.buttonText = "Leave from Event";
           }, 1000)
         }, 1500)
 
       } else {
         setTimeout(() => {
           this.isLayerActive = false;
+          this.removeMyEvent();
           this.iconClass = "bi bi-calendar-check";
-          this.buttonText = "Removed from Calendar";
+          this.buttonText = "Left from Event";
           this.joinedEvent = !this.joinedEvent;
 
           setTimeout(() => {
             this.iconClass = "bi bi-calendar-plus";
-            this.buttonText = "Add to Calendar";
+            this.buttonText = "Join Event";
           }, 1000)
         }, 1500)
       }
     },
 
+    async joinGroup(){
+      const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
+      const groupsRef = collection(eventRef, "groups");
 
-  // loadClient() {
-  //     const CLIENT_ID = '748881168394-maspb08ner814udj63b7fdieikgh2gev.apps.googleusercontent.com';
-  //     const API_KEY = 'AIzaSyAiOMsPpvQqYh276xDd3wFxSRCg_Msf_6E';
+      try{
+        const querySnapshot = await getDocs(groupsRef);
+        console.log(querySnapshot)
+      }catch(error){
+        console.log(error)
+      }
+    },
 
-  //     gapi.client.init({
-  //       apiKey: API_KEY,
-  //       clientId:CLIENT_ID,
-  //       discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-  //       scope: "https://www.googleapis.com/auth/calendar.events",
-  //     }).then(function () {
-  //       // Check if the user is signed in
-  //       if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-  //         console.log("User is signed in");
-  //       } else {
-  //         gapi.auth2.getAuthInstance().signIn();
-  //       }
-  //     });
-  //   },
+    // For CHATS
+    async checkAndCreateuser(userId, userName, profilePicture) {
+      try {
+        const userDocRef = doc(db, "chatters", userId);
+        const userDocSnap = await getDoc(userDocRef);
 
-  // handleClientLoad() {
-  //       gapi.load('client:auth2', loadClient);
-  //   },
+        if (userDocSnap.exists()) {
+          console.log("User document exists:", userDocSnap.data());
+        } else {
+          console.log("Creating new user");
+          const newUser = {
+            id: userId,
+            name: userName || "New User",
+            profile_picture: profilePicture || "https://thispersondoesnotexist.com/",
+          };
+          await setDoc(userDocRef, newUser);
+          console.log("User document created successfully:", newUser);
+        }
+      } catch (error) {
+        console.error("Error checking or creating user document:", error);
+      }
+    },
+
+    async getUserDocument(userId) {
+      const collections = ["profiles", "users", "mentors"];
+      for (const collectionName of collections) {
+        try {
+          const docRef = doc(db, collectionName, userId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            return { data: docSnap.data(), collection: collectionName };
+          }
+        } catch (error) {
+          console.error(`Error retrieving document from ${collectionName}:`, error);
+        }
+      }
+      return { message: "User not found in profiles, users, or mentors collections" };
+    },
+
+    async addChat(chatterIds, groupChatName) { //chatterIds is an array of Ids (string) and groupChatName is a string (leave as null for default gc name)
+      try {
+        this.add_chat_button_disabled = true;
+
+        // Step 1: Ensure all chatters exist by checking each ID in the relevant collections
+        for (const chatterId of chatterIds) {
+          const userDoc = await this.getUserDocument(chatterId);
+
+          if (!userDoc.data) {
+            console.log(`User ${chatterId} not found in profiles, users, or mentors, creating a new one.`);
+            await this.checkAndCreateuser(chatterId, "New User", "https://thispersondoesnotexist.com/");
+          } else {
+            console.log(`User ${chatterId} found in ${userDoc.collection} collection.`);
+          }
+        }
+
+        // Step 2: Check if a chat with the exact group of users already exists
+        const chatsCollection = collection(db, "chats");
+        const chatQuery = query(
+          chatsCollection,
+          where("chat_type", "==", "group")
+        );
+        const chatSnapshot = await getDocs(chatQuery);
+
+        let existingChat = null;
+        chatSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (
+            data.group_members &&
+            data.group_members.length === chatterIds.length &&
+            chatterIds.every(id => data.group_members.includes(id))
+          ) {
+            existingChat = { id: doc.id, ...data };
+          }
+        });
+
+        // If an existing chat is found, navigate to it and return
+        if (existingChat) {
+          console.log("Chat already exists with ID:", existingChat.id);
+          this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
+          return;
+        }
+
+        // Step 3: Create a new chat document if no existing chat was found
+        const newChatRef = await addDoc(collection(db, "chats"), {
+          chat_type: "group",
+          chat_name: groupChatName || "Group Chat",
+          chat_img: "data:image/png;base64,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",
+          group_members: chatterIds,
+        });
+
+        const chatId = newChatRef.id;
+        console.log("New group chat created with ID:", chatId);
+
+        // Step 4: Add chat ID to each chatter's `chats` array
+        for (const chatterId of chatterIds) {
+          const chatterRef = doc(db, "chatters", chatterId);
+          const chatterDoc = await getDoc(chatterRef);
+
+          if (chatterDoc.exists()) {
+            await updateDoc(chatterRef, {
+              chats: arrayUnion(chatId),
+            });
+          } else {
+            await setDoc(chatterRef, {
+              chats: [chatId],
+            });
+          }
+          console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
+        }
+
+        console.log("Group chat successfully created and added to all chatters.");
+        this.$router.push({ name: "chatPage", params: { chatId } });
+      } catch (error) {
+        console.error("Error creating group chat:", error);
+      } finally {
+        this.add_chat_button_disabled = false;
+      }
+    }
+
 
   }
 }
@@ -400,12 +615,82 @@ export default {
 <style scoped>
 @import '../css/events.css';
 
-/* .header-container {
-  position: relative;
-  width: 100%;                 
-  max-height: 300px;           
-  overflow: hidden;
-} */
+/* group container */
+
+.eventGroup {
+  border: 2px solid #525FE1;
+  border-radius: 55px;
+  width: 100%;
+  margin: 10px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.group-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  /* Makes the group info take available space */
+}
+
+#groupName {
+  font-weight: bold;
+  margin-left: 15px;
+  display: flex;
+  color: #525FE1;
+}
+
+.divider {
+  font-weight: bold;
+  color: #525FE1;
+}
+
+
+/* for the pfp of members displayed for each group*/
+
+.profile-images {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  /* Space between profile images and group name */
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin-left: -10px;
+  /* To create overlapping effect */
+  object-fit: cover;
+}
+
+
+.chatButton {
+  background-color: #525fe1;
+  color: white;
+  font-size: 14px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* to center the remaining member count within the circle */
+.extra-count {
+  background-color: #ccc;
+  color: #fff;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -10px;
+}
 
 .headerImage {
   width: 100%;
@@ -418,15 +703,6 @@ export default {
   font-family: 'Poppins';
   color: #525FE1;
   font-weight: bold;
-
-  /* position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%); 
-  color: white;                   
-  font-size: 2.5rem;              
-  text-align: center;
-  z-index: 1;                      */
 }
 
 
@@ -436,6 +712,7 @@ export default {
   height: 70px;
   color: black;
   text-align: center;
+  align-content: center;
 }
 
 .eventDesc {
@@ -559,5 +836,4 @@ export default {
 .joinButton.inactive .button-text {
   transform: translateY(0);
 }
-
 </style>

@@ -90,7 +90,7 @@
           <div id="app_steps" class="col-lg-7">
             <h2 class="fw-bold mb-3 display-5">Effortless Enrollment</h2>
             <p class="lead text-dark mb-4">
-              Follow these simple steps to start you journey!
+              Follow these simple steps to start your journey!
             </p>
             <ul class="list-unstyled">
               <li

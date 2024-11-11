@@ -2,32 +2,33 @@
     <div>
         <section class="container mx-auto text-center">
             <div>
-                <h2 class="title">Community Forum</h2>
+                <h2 class="text-primary fw-bold text-center mb-3 display-4">Community Forum</h2>
             </div>
 
-            <div>
-                <input type="text" class="searchBar" placeholder="Search something">
+            <div class="text-muted mb-4 h5 text-center">
+                We are happy to have you here.
             </div>
         </section>
 
         <!-- Categories -->
         <section id="forumCategories" class="my-3">
             <div class="row d-flex justify-content-center">
-                <div class="col-4">
-                    <h2 class="title"> Popular Categories</h2>
+
+                <div class="col-5 me-5">
+                    <h2 class="text-primary fw-bold mb-3 display-5 mt-2"> Popular Categories</h2>
                     <div class="d-flex flex-column mb-3">
-                        <button class="p-2 category shadow-sm bg-body-tertiary">General</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary">Learning</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary">Events</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5">General</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5">Learning</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5">Events</button>
                     </div>
                 </div>
 
-                <div class="col-4">
-                    <h2 class="title"> Top Discussions </h2>
+                <div class="col-5">
+                    <h2 class="text-primary fw-bold mb-3 display-5 mt-2"> Top Discussions </h2>
                     <div class="d-flex flex-column mb-3">
-                        <button class="p-2 discussion shadow-sm bg-body-tertiary">Flex item 1</button>
-                        <button class="p-2 discussion shadow-sm bg-body-tertiary">Flex item 2</button>
-                        <button class="p-2 discussion shadow-sm bg-body-tertiary">Flex item 3</button>
+                        <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">Flex item 1</button>
+                        <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">Flex item 2</button>
+                        <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">Flex item 3</button>
                     </div>
                 </div>
             </div>
@@ -37,26 +38,21 @@
         <section id="forum">
             <!-- Filter Buttons -->
             <div class="filter-buttons d-flex">
-                <button :class="{ 'active': selectedCategory === 'all' }" @click="selectedCategory = 'all'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'all' }]" @click="selectedCategory = 'all'">
                     All
                 </button>
 
-                <button :class="{ 'active': selectedCategory === 'top' }" @click="selectedCategory = 'top'">
-                    <i class="bi bi-fire"></i>
-                    Top
-                </button>
-
-                <button :class="{ 'active': selectedCategory === 'general' }" @click="selectedCategory = 'general'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'general' }]" @click="selectedCategory = 'general'">
                     <i class="bi bi-chat-dots"></i>
                     General
                 </button>
 
-                <button :class="{ 'active': selectedCategory === 'learning' }" @click="selectedCategory = 'learning'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'learning' }]" @click="selectedCategory = 'learning'">
                     <i class="bi bi-book"></i>
                     Learning
                 </button>
 
-                <button :class="{ 'active': selectedCategory === 'events' }" @click="selectedCategory = 'events'">
+                <button :class="['filter-button', { 'active': selectedCategory === 'events' }]" @click="selectedCategory = 'events'">
                     <i class="bi bi-calendar3"></i>
                     Events
                 </button>
@@ -105,12 +101,12 @@
                                         </div>
                                     </div>
 
-
                                 </form>
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" @click="addGroups" class="btn btn-primary">Create Group</button>
+                                <button type="submit" class="btn btn-primary" @click="addForum">Post</button>
                             </div>
                         </div>
                     </div>
@@ -120,17 +116,17 @@
             <!-- Dynamic forum page-->
             <div class="forum-container m-3">
 
-                <div v-if="forums.length === 0">
+                <div v-if="selectedForums.length === 0">
                     No forums yet. Post your own!
                 </div>
 
                 <div v-else>
-                    <div v-for="forum in forums" :key="forum.id" class="indivForum m-3">
+                    <div v-for="forum in selectedForums" :key="forum.id" class="indivForum m-3">
                         <h2 class="title">{{ forum.title }}</h2>
                         <p class="desc"> {{ forum.description }}</p>
 
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="flex-grow-1"></div> <!-- This will push the button to the right -->
+                            <div class="flex-grow-1 align-content-center"></div> <!-- This will push the button to the right -->
 
                             <router-link :to="{ name: 'forumDetail', params: { id: forum.id } }">
                                 <i class="bi bi-arrow-right-circle directButton"></i>
@@ -142,64 +138,106 @@
 
 
             </div>
-
         </section>
-
     </div>
 
 </template>
 
 <script>
-import { collection, getDocs } from "firebase/firestore";
-import { db } from '../firebase/initialize'
+import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import { db } from '../firebase/initialize';
 
 export default{
-    mounted() {
-        this.getAllForums()
-    },
 
     data (){
         return {
             selectedCategory: "",
-            forums: [],
+            selectedForums: [],
 
             forumTitle: '',
             forumDesc:'',
-            forumCategory:''
+            forumCategory:'',
         }
     },
 
     methods: {
-        async getAllForums (){
+        async getAllForums(){
+
             const querySnapshot = await getDocs(collection(db, "forums"));
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
-                this.forums.push({ 
+                this.selectedForums.push({ 
                     id: doc.id,
                     title: doc.data().title,
                     description: doc.data().description, 
                     category: doc.data().category,
                 });
             });
-            console.log("forums", this.forums)
+        },
+
+        async getSelectedForums (){
+            this.selectedForums = [];
+
+            if (this.selectedCategory == "all"){
+                return this.getAllForums();
+            }
+
+            const q = query(collection(db, "forums"), where("category", "==", this.selectedCategory));
+
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                this.selectedForums.push({ 
+                    id: doc.id,
+                    title: doc.data().title,
+                    description: doc.data().description, 
+                    category: doc.data().category,
+                });
+            });
+
+            console.log("show selected forums", this.selectedForums)
         },
 
         async getTopForums(){
             // Condition for top: comments >= 3
         },
 
-        async getForumByCategory (selectedCategory) {
-            console.log(selectedCategory)
-        },
+        async addForum() {
+            const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
 
-        async addForum(){
+            const newForumData = {
+                name: this.forumTitle,
+                description: this.forumDesc,
+                category: this.forumCategory,
+                postedBy: sessionUser.uid
+            };
 
+            try {
+                const docRef = await addDoc(collection(db, "forums"), newForumData);
+                console.log("Document written with ID: ", docRef.id);
+                this.forumID = docRef.id;
+                window.location.reload();
+
+            } catch (error) {
+                console.error("Error Posting: ", error); // Handle errors
+            }
+        }
+    },
+
+    watch: {
+        // Watch for changes to selectedCategory and filter forums accordingly
+        selectedCategory() {
+            this.getSelectedForums();
         }
     }
 
 }
 </script>
+
+
+
 
 <style scoped>
 @import '../css/events.css';
@@ -216,10 +254,19 @@ export default{
 
 .indivForum {
     border: 2px solid #525FE1;
+    border-radius: 20px;
     padding: 10px;
 }
 
 .directButton {
     font-size: 30px;
 }
+
+.filter-button {
+    border-radius: 55px;
+    width: 130px;
+    margin: 2px;
+}
+
+
 </style>

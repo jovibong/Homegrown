@@ -60,7 +60,7 @@ const routes = [
     },
 
     {
-        path: '/forumPage/:id',
+        path: '/forumDetail/:id',
         name: 'forumDetail',
         component: () => import('../components/forumDetail.vue')
     },

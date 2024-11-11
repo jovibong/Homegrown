@@ -1,5 +1,3 @@
-<!-- how to lead to personal page, under profile? 
--->
 
 <template>
     <!-- For overall root element -->
@@ -7,7 +5,6 @@
 
         <!-- For Carousel -->
         <section class="row">
-
             <div id="carouselHeader" class="carousel slide mx-auto carouselHeaderwidth" data-bs-ride="carousel">
 
                 <div class="carousel-indicators">
@@ -21,25 +18,19 @@
 
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="../img/deepavali.png" class="d-block w-100" alt="...">
+                        <img src="../img/cultural.jpg" class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>Deepavali</h5>
-                            <p>Some representative placeholder content for the first slide.</p>
                         </div>
                     </div>
 
                     <div class="carousel-item">
-                        <img src="../img/deepavali.png" class="d-block w-100" alt="...">
+                        <img src="../img/heritagewalk.jpg" class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>First slide label</h5>
-                            <p>Some representative placeholder content for the first slide.</p>
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <img src="../img/deepavali.png" class="d-block w-100" alt="...">
+                        <img src="../img/volunteering.jpeg" class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>First slide label</h5>
-                            <p>Some representative placeholder content for the first slide.</p>
                         </div>
                     </div>
                 </div>
@@ -58,31 +49,41 @@
 
         </section>
 
-        <div class="container mt-5">
+        <div class="container mt-3">
 
             <!-- Explore more or Search -->
             <section class="row">
-                <h2 class="title my-3">Explore more here</h2>
+                <h2 class="text-primary fw-bold mb-3 display-4 my-3">Explore more here</h2>
+                <hr>
 
                 <div class="container text-center">
                     <div class="row align-items-center">
 
-                        <div class="col-12 col-sm-6">
+                        <div class="col-12 col-sm-6 search-container">
                             <input type="text" class="searchBar" id="dropdownTextbox"
-                                :aria-expanded="eventSuggestVisible.toString()" placeholder="Search for events"
-                                @input="getRelevantSearches" @keyup.enter="eventSearch" v-model="searchQuery" />
+                                :aria-expanded="(filteredEvents.length > 0).toString()" placeholder="Search for events"
+                                @keyup.enter="eventSearch" v-model="searchQuery" 
+                                autocomplete="off"/>
 
-                            <ul v-show="eventSuggestVisible" class="dropdown-content" aria-labelledby="dropdownTextbox">
-                                <li v-for="event in suggestEvents" :key="event.name"> {{ event.name }}</li>
+                            <!-- Dropdown for search results -->
+                            <ul v-show="searchQuery.length > 0 && filteredEvents.length > 0" class="dropdown-content"
+                                aria-labelledby="dropdownTextbox">
+                                <li v-for="event in filteredEvents" :key="event.id" @click="selectEvent(event.title, event.id)">{{ event.title }}
+                                </li>
                             </ul>
                         </div>
 
-                        <span class="title col-2"> OR </span>
+                        <span class="text-muted h5 col-1"> OR </span>
+
+                        <router-link to="/forum" class="btn btn-primary col-2">
+                            Go to Forum
+                        </router-link>
+
+                        <span class="text-muted h5 col-1"> OR </span>
 
                         <button @click="allowCreate"
-                            :class="showCreate ? 'createButton col-3 pressed' : 'createButton col-3 notPressed'">
+                            :class="showCreate ? 'createButton col-2 pressed' : 'createButton col-2 notPressed'">
                             Create Event </button>
-                        <!-- <input type="text" class="searchBar col-6" placeholder="search"> -->
                     </div>
                 </div>
 
@@ -97,32 +98,30 @@
 
                 </div>
 
-                <router-link to="/forum" class="btn btn-primary mt-4">
-                    to Forum
-                </router-link>
-
-                <router-link to="/calender" class="btn btn-primary mt-4">
-                    to calender
-                </router-link>
             </section>
 
             <!-- Event Cards -->
             <section class="my-5">
-                <h2 class="title"> My Events </h2>
-                <div class="scroll-container">
-                    <!-- row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-5 -->
-                    <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id" :title="event.title"
-                        :description="event.description" :image="event.imageURL"></event-cards>
+                <h2 class="text-primary fw-bold mb-3 display-4"> My Events </h2>
+                <hr>
+                <div v-if="myEvents.length == 0" class="text-center text-muted mb-4 h5">
+                    You have yet to join an event!
+                </div>
+                <div v-else>
+                    <div class="scroll-container">
+                        <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id"
+                            :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
+                    </div>
                 </div>
             </section>
 
             <!-- Event Cards - Category -->
             <section class="my-5">
-                <h2 class="title"> Events By Category </h2>
+                <h2 class="text-primary fw-bold mb-3 display-4"> Events By Category </h2>
 
                 <select v-model="selectedCategory" @change="getEventsByCategory" class="form-select">
                     <option disabled value="">Select a category</option>
-                    <option value="Holiday">Holiday</option>
+                    <option value="Holidays">Holidays</option>
                     <option value="Festivals">Festivals</option>
                     <option value="Outdoors">Outdoors</option>
                     <option value="Cultural">Cultural</option>
@@ -130,26 +129,28 @@
                     <option value="Others">Others</option>
                 </select>
 
-                <div class="scroll-container">
-                <div v-if="selectedEvents.length == 0">
-                    No event in selected category 
+
+                <div v-if="selectedEvents.length == 0" class="text-center text-muted mb-4 h5">
+                    No event in selected category
                 </div>
                 <div v-else>
-                    <event-cards v-for="event in selectedEvents" :key="event.id" :eventID="event.id"
-                        :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
-                </div>
+                    <div class="scroll-container">
+                        <event-cards v-for="event in selectedEvents" :key="event.id" :eventID="event.id"
+                            :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
+                    </div>
                 </div>
             </section>
 
             <!-- Event Cards -->
             <section class="my-5">
-                <h2 class="title"> All Events </h2>
-                <div class="allEventlist">
+                <h2 class="text-primary fw-bold mb-3 display-4"> All Events </h2>
+                <hr>
+                <transition-group name="fade" tag="div" class="event-grid">
                     <event-cards v-for="event in showAllEvents" :key="event.id" :eventID="event.id" :title="event.title"
                         :description="event.description" :image="event.imageURL"></event-cards>
-                </div>
+                </transition-group>
 
-                <button @click="toggleShowAllEvents">
+                <button class="showButton m-2" @click="toggleShowAllEvents">
                     {{ displayAllEvents ? 'Show Less' : 'Show More' }}
                 </button>
 
@@ -178,42 +179,47 @@ export default {
 
     data() {
         return {
-            currentEvents:[],
+            currentUser: "",
+
             pastEvents:[],
             myEvents:[],
             allEvents:[],
 
+            //search bar
+            searchedEventTitle: '',
+            searchedEventID:'',
+
+            // category filter
             selectedEvents: [],
             selectedCategory: '',
 
             showCreate: false,
 
-            maxVisibleEvents: 2, // Set the initial number of events to display
+            maxVisibleEvents: 3, // Set the initial number of events to display
             displayAllEvents: false, // Toggle to show all events or only limited number
 
             eventSuggestVisible: false,
             searchQuery: '',
-            suggestEvents: []
         }
     },
 
     mounted() {
-        this.getUser();     
+        this.getMyEvents();  
         this.getAllEvents();
     },
 
     computed: {
-        // filteredEvents() {
-        //     // Convert search query to lowercase for a case-insensitive search
-        //     const query = this.searchQuery.toLowerCase();
+        filteredEvents() {
+            // Convert search query to lowercase for a case-insensitive search
+            const query = this.searchQuery.toLowerCase();
 
-        //     // Filter `myEvents` based on `searchQuery`
-        //     return this.myEvents.filter(
-        //         (event) =>
-        //             event.title.toLowerCase().includes(query) ||
-        //             event.description.toLowerCase().includes(query)
-        //     );
-        // },
+            // Filter `myEvents` based on `searchQuery`
+            return this.allEvents.filter(
+                (event) =>
+                    event.title.toLowerCase().includes(query) 
+                    // || event.description.toLowerCase().includes(query)
+            );
+        },
 
         showAllEvents() {
             return this.displayAllEvents ? this.allEvents : this.allEvents.slice(0, this.maxVisibleEvents);
@@ -222,21 +228,6 @@ export default {
 
 
     methods: {
-        async getUser(){
-            const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-            console.log(sessionUser.uid);
-
-            // const userId = sessionUser.uid;
-            // const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
-
-            // // Check if the user document exists
-            // const userDocSnapshot = await getDoc(userDocRef);
-
-            // // If the user document doesn't exist, create it (you can optionally add some initial data to it)
-            // if (!userDocSnapshot.exists()) {
-            //     await setDoc(userDocRef, { userId: userId });
-            // }
-        },
 
         toggleShowAllEvents() {
         this.displayAllEvents = !this.displayAllEvents;
@@ -277,8 +268,26 @@ export default {
             this.getPastEvents();
         },
 
-        async getMyEvents(userID){
-            console.log(userID)
+        async getMyEvents(){
+            const sessionUser = await(JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user')));
+            const currentUser = sessionUser.uid
+
+            console.log("user is",currentUser)
+
+            const querySnapshot = await getDocs(collection(db, 'events'));
+
+            querySnapshot.docs
+                .filter(doc => doc.data().joined && doc.data().joined.includes(currentUser))
+                .forEach(doc => {
+                    console.log(doc.id, " => ", doc.data());
+                    this.myEvents.push({
+                        id: doc.id,
+                        title: doc.data().name,
+                        description: doc.data().description,
+                        imageURL: doc.data().imageURL,
+                    })
+                console.log("my event", this.myEvents)
+            })  
         },
 
         async getPastEvents() {
@@ -309,41 +318,49 @@ export default {
             this.showCreate = !this.showCreate;
         },
 
-        async getRelevantSearches() {
-            console.log(this.searchQuery)
-            this.searchQuery = this.searchQuery.toLowerCase()
-            this.eventSuggestVisible = true;
-
-            if (!this.searchQuery) {
-                this.suggestEvents = []; // Clear results if search is empty
-                this.eventSuggestVisible = false;
-                return;
-            }
-
-            // Fetch events based on partial matches
-            const q = query(collection(db, "events"), 
-            where("name", ">=", this.searchQuery), where("name", "<=", this.searchQuery + "\uf8ff"));
-
-            try {
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    // Manually extract fields from doc.data()
-                    const eventData = doc.data();
-                    const event = {
-                        id: doc.id,
-                        name: eventData.name,
-                    };
-                    console.log(event)
-
-                    if (!this.suggestEvents.find(e => e.id === event.id)) {
-                        this.suggestEvents.push(event);
-                        console.log(this.suggestEvents);
-                    }
-                });
-            } catch (error) {
-                console.error("Error fetching related event searches: ", error);
-            }
+        async eventSearch(){
+            this.$router.push({ name: 'eventDetail', params: { id: this.selectedEventID } });
         },
+
+        selectEvent(selectedTitle, selectedID){
+            this.searchQuery = selectedTitle; // Update searchQuery with the selected title
+            this.selectedEventID = selectedID;
+        }
+        // async getRelevantSearches() {
+        //     console.log(this.searchQuery)
+        //     this.searchQuery = this.searchQuery.toLowerCase()
+        //     this.eventSuggestVisible = true;
+
+        //     if (!this.searchQuery) {
+        //         this.suggestEvents = []; // Clear results if search is empty
+        //         this.eventSuggestVisible = false;
+        //         return;
+        //     }
+
+        //     // Fetch events based on partial matches
+        //     const q = query(collection(db, "events"), 
+        //     where("name", ">=", this.searchQuery), where("name", "<=", this.searchQuery + "\uf8ff"));
+
+        //     try {
+        //         const querySnapshot = await getDocs(q);
+        //         querySnapshot.forEach((doc) => {
+        //             // Manually extract fields from doc.data()
+        //             const eventData = doc.data();
+        //             const event = {
+        //                 id: doc.id,
+        //                 name: eventData.name,
+        //             };
+        //             console.log(event)
+
+        //             if (!this.suggestEvents.find(e => e.id === event.id)) {
+        //                 this.suggestEvents.push(event);
+        //                 console.log(this.suggestEvents);
+        //             }
+        //         });
+        //     } catch (error) {
+        //         console.error("Error fetching related event searches: ", error);
+        //     }
+        // },
 
     },
 
@@ -404,5 +421,80 @@ export default {
   border-radius: 5px;
   border: none;
 }
+
+.showButton {
+    width: 100%;
+    cursor: pointer;
+    font-family: 'Poppins';
+    background-color: #525FE1;
+    color: white;
+}
+
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive columns */
+    gap: 20px; /* Space between cards */
+    max-width: 100%; /* Ensures grid is responsive */
+}
+
+@media (min-width: 992px) {
+    .event-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 cards per row on large screens */
+    }
+}
+
+.fade-enter-active {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-enter-from {
+    opacity: 0;
+    transform: translateY(10px); /* Start slightly lower */
+}
+
+.fade-enter-to {
+    opacity: 1;
+    transform: translateY(0); /* End at the original position */
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* Optional: set a maximum width */
+}
+
+.searchBar {
+  padding-left: 30px;
+  border: 2px solid #525FE1;
+  height: 50px;
+  width: 100%;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%; /* Position directly below the input */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+
+    list-style-type: none; /* Remove bullet points */
+    padding: 0;
+    max-height: 200px; /* Limit height for scrolling */
+    overflow-y: auto;
+    border-radius: 4px;
+}
+
+.dropdown-content li {
+    cursor: pointer;
+    padding: 5px;
+    text-align: start;
+}
+
+.dropdown-content li:hover {
+    background-color: #f1f1f1;
+}
+
 
 </style>

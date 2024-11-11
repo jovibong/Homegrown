@@ -2,7 +2,7 @@
     
     <div class="card eventCard">
 
-    <img :src="image" class="card-img-top" alt="">
+    <img :src="image" class="card-img-top" :alt="title">
     <div class="card-body d-flex flex-column">
     <h5 class="card-title text-center">{{ title }}</h5>
     <p class="card-text"> {{ croppedDescription }}</p>
@@ -10,7 +10,6 @@
     <div class="mt-auto text-center">
     <router-link :to="{ name: 'eventDetail', params: { id: eventID }}" class="btn btn-primary">
         Go somewhere
-        <!-- <i class="bi bi-arrow-right"></i> -->
         <i class="bi bi-arrow-right-circle"></i>
     </router-link>
     </div>
@@ -48,8 +47,8 @@ export default {
 @import '../css/events.css';
 
 .eventCard {
-  width: 200px;
-  height: 320px;
+  width: 250px;
+  height: 350px;
   flex: 0 0 auto;
  }
 
