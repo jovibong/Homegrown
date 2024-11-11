@@ -122,16 +122,16 @@
           <h2 class="text-center fw-bold">
             Popular Past Events</h2>
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-12 col-lg-4 mb-4">
               <div class="card">
                 <img src="../img/cultural.jpg" class="card-img-top" alt="Event 1" />
                 <div class="card-body">
                   <h5 class="card-title">Cultural Exchange</h5>
-                  <p class="card-text">Learn and share your culture with others in Singapore.<br><br></p>
+                  <p class="card-text">Learn and share your culture with others in Singapore.</p>
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-lg-4 mb-4">
               <div class="card">
                 <img src="../img/heritagewalk.jpg" class="card-img-top" alt="Event 2" />
                 <div class="card-body">
@@ -140,12 +140,12 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-lg-4 mb-4">
               <div class="card">
                 <img src="../img/volunteering.jpeg" class="card-img-top" alt="Event 3" />
                 <div class="card-body">
                   <h5 class="card-title">Volunteering Fair</h5>
-                  <p class="card-text">Discover opportunities to give back to the community.<br><br></p>
+                  <p class="card-text">Discover opportunities to give back to the community.</p>
                 </div>
               </div>
             </div>

@@ -113,7 +113,7 @@
         <h2 class="text-center fw-bold">
           Popular Past Events</h2>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-12 col-lg-4 mb-4">
             <div class="card">
               <img src="../img/cultural.jpg" class="card-img-top" alt="Event 1" />
               <div class="card-body">
@@ -122,7 +122,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-12 col-lg-4 mb-4">
             <div class="card">
               <img src="../img/heritagewalk.jpg" class="card-img-top" alt="Event 2" />
               <div class="card-body">
@@ -131,7 +131,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-12 col-lg-4 mb-4">
             <div class="card">
               <img src="../img/volunteering.jpeg" class="card-img-top" alt="Event 3" />
               <div class="card-body">
