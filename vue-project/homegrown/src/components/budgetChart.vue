@@ -1,15 +1,15 @@
 <template>
     <div>
         <apexchart :options="chartOptions" :series="filteredSeries" type="donut" height="350"></apexchart>
-        
+
         <div class="buttons d-flex justify-content-center p-2">
-            <button @click="appendData" :disabled="totalExceedsLimit || hasBlankInput" class="btn btn-secondary fw-bold mx-1">Add Data</button>
-            <button @click="reset" class="btn btn-secondary fw-bold mx-1" >Reset Data</button>
+            <button @click="appendData" :disabled="totalExceedsLimit || hasBlankInput"
+                class="btn btn-secondary fw-bold mx-1">Add Data</button>
+            <button @click="reset" class="btn btn-secondary fw-bold mx-1">Reset Data</button>
         </div>
 
         <div v-if="totalExceedsLimit" class="alert text-center">
-            <p class="my-auto">You are over by {{ overflowAmount }}. Please adjust the values to stay within amount
-                left.</p>
+            <p class="my-auto ">You are over by ${{ overflowAmount }}. Please adjust the values to stay within ${{ max }}.</p>
         </div>
 
         <table class="series-table">
@@ -24,14 +24,14 @@
                 <tr v-for="(value, index) in series" :key="index">
                     <td>
                         <span v-if="index == 0">{{ customLabels[index] }}</span>
-                        <input v-else type="text" v-model="customLabels[index]" @input="updateChart" />
+                        <input class="form-control" v-else type="text" v-model="customLabels[index]" @input="updateChart" />
                     </td>
                     <td>
                         <span v-if="index == 0">{{ series[index] }}</span>
-                        <input v-else type="number" min=1 v-model.number="series[index]" @input="updateChart" />
+                        <input class="form-control" v-else type="number" min=1 v-model.number="series[index]" @input="updateChart" />
                     </td>
                     <td>
-                        <button v-if="index !== 0" @click="removeData(index)">Remove</button>
+                        <button v-if="index !== 0" @click="removeData(index)" class="btn btn-danger">Remove</button>
                     </td>
                 </tr>
             </tbody>
@@ -42,7 +42,7 @@
 <script>
 import { defineComponent, ref, computed, watch, onMounted } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 export default defineComponent({
@@ -53,6 +53,7 @@ export default defineComponent({
         const left = ref(0); // Default to 0, will be overwritten by Firebase data
         const series = ref([left.value]); // First item is initially set to left's value
         const customLabels = ref(['Total Earned']);
+        const max = ref(0);
 
         const chartOptions = {
             chart: { width: 380, type: 'donut' },
@@ -124,13 +125,15 @@ export default defineComponent({
 
                 // Access the user's finance collection and specific stats document
                 const goalRef = doc(db, 'finance', userId, 'stats', 'Total earned');
-                const goalSnap = await getDoc(goalRef);
-
-                if (goalSnap.exists()) {
-                    left.value = goalSnap.data().statEditable; // Set left to "Total earned" or 500 if undefined
-                    series.value[0] = left.value; // Initialize the first item in series with left's value
-                    updateChart();
-                }
+                const unsubscribe = onSnapshot(goalRef, (goalSnap) => {
+                    if (goalSnap.exists()) {
+                        left.value = goalSnap.data().statEditable ; // Fallback to 500 if undefined
+                        max.value = goalSnap.data().statEditable ;
+                        series.value[0] = left.value; // Initialize the first item in series with left's value
+                        updateChart(); // Call your updateChart function to update the chart with new data
+                    }
+                });
+                console.log(unsubscribe);
             } catch (error) {
                 console.error('Error fetching Total earned:', error);
             }
@@ -147,7 +150,8 @@ export default defineComponent({
             removeData,
             reset,
             updateChart,
-            hasBlankInput
+            hasBlankInput,
+            max
         };
     }
 });
