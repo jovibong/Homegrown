@@ -55,13 +55,10 @@
 
 
             </div>
-            <label class="nav" for="Summary">
-                <span>
-                    <svg width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round">
-                    </svg>
+            <label class="nav pb-2" for="Summary">
+                <span class="text-center">
                     <i class="fa fa-university text-primary"></i>
-                    <p class="d-inline"> Summary</p>
+                    <p class=""> Summary</p>
                 </span>
             </label>
             <!-- end Summary tab nav -->
@@ -130,13 +127,10 @@
                 </div>
 
             </div>
-            <label class="nav" for="BudgetPlanner">
-                <span>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                    </svg>
+            <label class="nav pb-2" for="BudgetPlanner">
+                <span class="text-center">
                     <i class="fa fa-trophy text-primary"></i>
-                    <p class="d-inline"> Budget Planner</p>
+                    <p class="text-center p-auto"> Budget Planner</p>
                 </span>
             </label>
             <!-- end BudgetPlanner tab nav -->
@@ -195,13 +189,11 @@
                     </div>
                 </div>
             </div>
-            <label class="nav" for="PaymentTracker">
-                <span>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                    </svg>
+            <label class="nav pb-2" for="PaymentTracker">
+                <span class="text-center">
+
                     <i class="fa fa-list-alt text-primary"></i>
-                    <p class="d-inline"> Payment Tracker</p>
+                    <p class=""> Payment Tracker</p>
                 </span>
             </label>
             <!-- start PaymentTracker tab nav -->
