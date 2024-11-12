@@ -9,7 +9,8 @@
         </div>
 
         <div v-if="totalExceedsLimit" class="alert text-center">
-            <p class="my-auto ">You are over by ${{ overflowAmount }}. Please adjust the values to stay within ${{ max }}.</p>
+            <p class="my-auto ">You are over by ${{ overflowAmount }}. Please adjust the values to stay within ${{ max
+                }}.</p>
         </div>
 
         <table class="series-table">
@@ -24,11 +25,13 @@
                 <tr v-for="(value, index) in series" :key="index">
                     <td>
                         <span v-if="index == 0">{{ customLabels[index] }}</span>
-                        <input class="form-control" v-else type="text" v-model="customLabels[index]" @input="updateChart" />
+                        <input class="form-control" v-else type="text" v-model="customLabels[index]"
+                            @input="updateChart" />
                     </td>
                     <td>
                         <span v-if="index == 0">{{ series[index] }}</span>
-                        <input class="form-control" v-else type="number" min=1 v-model.number="series[index]" @input="updateChart" />
+                        <input class="form-control" v-else type="number" min=1 v-model.number="series[index]"
+                            @input="updateChart" />
                     </td>
                     <td>
                         <button v-if="index !== 0" @click="removeData(index)" class="btn btn-danger">Remove</button>
@@ -42,7 +45,7 @@
 <script>
 import { defineComponent, ref, computed, watch, onMounted } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, Timestamp, where, query, orderBy, collection } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 export default defineComponent({
@@ -54,6 +57,8 @@ export default defineComponent({
         const series = ref([left.value]); // First item is initially set to left's value
         const customLabels = ref(['Total Earned']);
         const max = ref(0);
+
+
 
         const chartOptions = {
             chart: { width: 380, type: 'donut' },
@@ -81,6 +86,15 @@ export default defineComponent({
         const totalSum = computed(() => series.value.reduce((acc, val) => acc + val, 0));
         const totalExceedsLimit = computed(() => totalSum.value > left.value);
         const overflowAmount = computed(() => totalSum.value - left.value);
+
+        const currentDate = new Date();
+        // Calculate the start of the current month
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const startOfMonthTimestamp = Timestamp.fromDate(startOfMonth);
+
+        // Calculate the end of the current month
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59); // Last day of the current month
+        const endOfMonthTimestamp = Timestamp.fromDate(endOfMonth);
 
         // Watch for changes to the series and adjust the "Amount Left" accordingly
         watch(series, (newSeries) => {
@@ -127,17 +141,51 @@ export default defineComponent({
                 const goalRef = doc(db, 'finance', userId, 'stats', 'Total earned');
                 const unsubscribe = onSnapshot(goalRef, (goalSnap) => {
                     if (goalSnap.exists()) {
-                        left.value = goalSnap.data().statEditable ; // Fallback to 500 if undefined
-                        max.value = goalSnap.data().statEditable ;
+                        left.value = goalSnap.data().descriptionEditable; // Fallback to 500 if undefined
+                        max.value = goalSnap.data().descriptionEditable;
                         series.value[0] = left.value; // Initialize the first item in series with left's value
-                        updateChart(); // Call your updateChart function to update the chart with new data
+
                     }
+
+                    const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+                const expenseRef = collection(userDocRef, 'expenseLogs'); // Reference to the user's paymentlogs subcollection
+                const userExpenseQuery = query(
+                    expenseRef,
+
+                    where('date', '>=', startOfMonthTimestamp), // Filter for start of the current month
+                    where('date', '<=', endOfMonthTimestamp),   // Filter for end of the current month
+                    orderBy('date') // Optional: order expenses by date
+                );
+
+                const unsubscribe2 = onSnapshot(userExpenseQuery, (expenseSnap) => {
+                    let total = 0;
+
+                    expenseSnap.forEach((doc) => {
+                        const expenseData = doc.data();
+                        total += expenseData.amount; // Assuming 'amount' field stores the expense amount
+                    });
+
+                    left.value = left.value - total; // Update the total expenses
+                    series.value[0] = left.value;
+                    updateChart();
                 });
+                console.log(unsubscribe2)
+
+
+
                 console.log(unsubscribe);
+                });
+
+
             } catch (error) {
                 console.error('Error fetching Total earned:', error);
             }
         });
+
+        watch(left, (newLeft) => {
+            series.value[0] = newLeft; // Update the first item in the series whenever left value changes
+            updateChart();
+        }, { immediate: true });
 
         return {
             series,
