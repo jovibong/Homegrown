@@ -1,135 +1,159 @@
 <template>
   <!---start of navbar-->
   <div class="container-fluid bg-custom-blue sticky-top">
-
-    <!-- start row for using grid -->
-    <div class="row">
-
-      <!-- start of nav without sign in/up -->
-      <div class="col-lg-10 col-9 align-items-start">
+    <div class="row align-items-center">
+      <!-- Brand -->
+      <div class="col-lg-2 col-6">
         <nav class="navbar navbar-expand-lg">
-          <div class="container">
-            <!-- Logo -->
-            <a class="navbar-brand me-auto" href="#">
-              <span class="text-light fw-bold">Home</span><span class="text-warning fw-bold">Grown</span>
-            </a>
-
-            <!-- hamburger collapsible icon -->
-            <!-- Hamburger Menu and Profile Button Container -->
-            <div class="d-flex align-items-center"></div>
-              <!-- flex and hamburger menu only for mobile -->
-              <button class="navbar-toggler d-flex d-lg-none flex-column"
-                  type="button" :class="{ collapsed: !isNavbarOpen }" @click="toggleNavbar"
-                  aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
-                  v-if="userType === 'worker' || userType === 'volunteer'">
-                  <!-- custom 3 lines for animation for menu -->
-                  <span class="toggler-icon top-bar"></span>
-                  <span class="toggler-icon middle-bar"></span>
-                  <span class="toggler-icon bottom-bar"></span>
-              </button>
-
-              <!-- list of links/navs -->
-              <div :class="['collapse', 'navbar-collapse', 'justify-content-center', { show: isNavbarOpen }]" id="navbarNav">
-                <ul class="navbar-nav">
-                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link 
-                    :to="userType === 'worker' ? '/homePage' : '/volunteerHomePage'" 
-                    class="nav-link active text-light" 
-                    aria-current="page"  @click="closeNavbar">
-                    Home
-                  </router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'worker'">
-                  <router-link to="/coursesPage" class="nav-link text-light" @click="closeNavbar">Upskilling</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'volunteer'">
-                  <router-link to="/mentorshipPage" class="nav-link text-light" @click="closeNavbar">Mentorships</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/eventPage" class="nav-link text-light" @click="closeNavbar">Events</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'worker'">
-                  <router-link to="/financePage" class="nav-link text-light" @click="closeNavbar">Finance</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'volunteer'">
-                  <router-link to="/volunteerPage" class="nav-link text-light" @click="closeNavbar">Volunteer</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/chatPage" class="nav-link text-light" @click="closeNavbar">Chat</router-link>
-                </li>
-                <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
-                  <router-link to="/forum" class="nav-link text-light" @click="closeNavbar">Forum</router-link>
-                </li>
-              </ul>
-            </div>
-          </div>
+          <a class="navbar-brand" href="#">
+            <span class="text-light fw-bold">Home</span><span class="text-warning fw-bold">Grown</span>
+          </a>
         </nav>
       </div>
-      <!-- end of nav without sign in/up -->
 
-      <!-- profile dropdown and sign in/up buttons using v-if else conditions -->
-      <div class="col-lg-2 col-3 d-flex justify-content-end align-items-center">
-        <div v-if="user" class="profile-dropdown" @click="toggleDropdown">
-          <button class="profile-btn" id="profileDropdownBtn">
-            <img :src="userPhoto" alt="Profile Picture" class="profile-img" />
-            <div class="profile-name btn-warning">
-              <span>{{ user.displayName || 'User' }}</span>
-              <i :class="isDropdownVisible ? 'arrow-up' : 'arrow-down'"></i>
-            </div>
+      <!-- Navigation Links for Large Screens -->
+      <div class="col-lg-8 d-none d-lg-flex justify-content-center">
+        <nav class="navbar navbar-expand-lg">
+          <ul class="navbar-nav mx-auto">
+            <!-- Your nav links here -->
+            <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+              <router-link :to="userType === 'worker' ? '/homePage' : '/volunteerHomePage'" class="nav-link active text-light" @click="closeNavbar">
+                Home
+              </router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'worker'">
+              <router-link to="/coursesPage" class="nav-link text-light" @click="closeNavbar">Upskilling</router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'volunteer'">
+              <router-link to="/mentorshipPage" class="nav-link text-light" @click="closeNavbar">Mentorships</router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+              <router-link to="/eventPage" class="nav-link text-light" @click="closeNavbar">Events</router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'worker'">
+              <router-link to="/financePage" class="nav-link text-light" @click="closeNavbar">Finance</router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'volunteer'">
+              <router-link to="/volunteerPage" class="nav-link text-light" @click="closeNavbar">Volunteer</router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+              <router-link to="/chatPage" class="nav-link text-light" @click="closeNavbar">Chat</router-link>
+            </li>
+            <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+              <router-link to="/forum" class="nav-link text-light" @click="closeNavbar">Forum</router-link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Profile dropdown, Hamburger Icon, and Sign In/Up Buttons -->
+      <div class="col-lg-2 col-6 d-flex justify-content-end align-items-center">
+        <div class="d-flex align-items-center">
+          <!-- Hamburger Menu -->
+          <button
+            class="navbar-toggler d-flex d-lg-none flex-column me-2"
+            type="button"
+            :class="{ collapsed: !isNavbarOpen }"
+            @click="toggleNavbar"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            v-if="userType === 'worker' || userType === 'volunteer'">
+            <span class="toggler-icon top-bar"></span>
+            <span class="toggler-icon middle-bar"></span>
+            <span class="toggler-icon bottom-bar"></span>
           </button>
 
-          <!-- Dropdown Content -->
-          <div v-if="isDropdownVisible" class="dropdown-content bg-warning" id="dropdownContent">
-            <div class="dropdown-header">
-              <img :src="userPhoto" alt="Profile Picture" class="dropdown-img" />
-              <span class="dropdown-username">{{ user.displayName || 'User' }}</span>
-            </div>
-            <hr>
-            <router-link to="/editProfile" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile
-              Settings</router-link>
-              <router-link 
-              v-if="userType === 'worker'" 
-              to="/workersCertification" 
-              class="dropdown-item">
-              <i class="bi bi-award-fill"></i> Certifications
-            </router-link>
-            <router-link 
-              v-else-if="userType === 'volunteer'" 
-              to="/volunteerAchievement" 
-              class="dropdown-item">
-              <i class="bi bi-award-fill"></i> Achievements
-            </router-link>
-            <hr>
-            <router-link to="/" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign
-              Out</router-link>
-          </div>
-        </div>
+          <!-- Profile Dropdown -->
+          <div v-if="user" class="profile-dropdown" @click="toggleDropdown">
+            <button class="profile-btn" id="profileDropdownBtn">
+              <img :src="userPhoto" alt="Profile Picture" class="profile-img" />
+              <div class="profile-name btn-warning">
+                <span>{{ user.displayName || 'User' }}</span>
+                <i :class="isDropdownVisible ? 'arrow-up' : 'arrow-down'"></i>
+              </div>
+            </button>
 
-        <!-- Show Sign In/Up Buttons when User is not logged in -->
-        <nav v-else class="navbar d-flex flex-nowrap">
-          <!-- if want the sign in to remain as a navlink use class below -->
-          <!-- nav-link fw-bold text-light me-3 btn glow-on-hover -->
-          <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openLoginModal">Sign In</a>
-          <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openSignUpModal">Sign Up</a>
-        </nav>
+            <!-- Dropdown Content -->
+            <div v-if="isDropdownVisible" class="dropdown-content bg-warning" id="dropdownContent">
+              <div class="dropdown-header">
+                <img :src="userPhoto" alt="Profile Picture" class="dropdown-img" />
+                <span class="dropdown-username">{{ user.displayName || 'User' }}</span>
+              </div>
+              <hr>
+              <router-link to="/editProfile" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile Settings</router-link>
+              <router-link v-if="userType === 'worker'" to="/workersCertification" class="dropdown-item">
+                <i class="bi bi-award-fill"></i> Certifications
+              </router-link>
+              <router-link v-else-if="userType === 'volunteer'" to="/volunteerAchievement" class="dropdown-item">
+                <i class="bi bi-award-fill"></i> Achievements
+              </router-link>
+              <hr>
+              <router-link to="/" class="dropdown-item" @click="logout"><i class="bi bi-box-arrow-right"></i> Sign Out</router-link>
+            </div>
+          </div>
+
+          <!-- Sign In/Up Buttons for Unauthenticated Users -->
+          <nav v-else class="navbar d-flex flex-nowrap">
+            <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openLoginModal">Sign In</a>
+            <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openSignUpModal">Sign Up</a>
+          </nav>
+        </div>
       </div>
+    </div>
+
+    <!-- Mobile Navigation Links -->
+    <div v-if="isNavbarOpen" class="d-lg-none bg-custom-blue p-3">
+      <ul class="navbar-nav text-center">
+        <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+            <router-link 
+              :to="userType === 'worker' ? '/homePage' : '/volunteerHomePage'" 
+              class="nav-link active text-light" 
+              aria-current="page"  
+              @click="closeNavbar">
+              Home
+            </router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'worker'">
+            <router-link to="/coursesPage" class="nav-link text-light" @click="closeNavbar">Upskilling</router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'volunteer'">
+            <router-link to="/mentorshipPage" class="nav-link text-light" @click="closeNavbar">Mentorships</router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+            <router-link to="/eventPage" class="nav-link text-light" @click="closeNavbar">Events</router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'worker'">
+            <router-link to="/financePage" class="nav-link text-light" @click="closeNavbar">Finance</router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'volunteer'">
+            <router-link to="/volunteerPage" class="nav-link text-light" @click="closeNavbar">Volunteer</router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+            <router-link to="/chatPage" class="nav-link text-light" @click="closeNavbar">Chat</router-link>
+          </li>
+          <li class="nav-item mx-3" v-if="userType === 'worker' || userType === 'volunteer'">
+            <router-link to="/forum" class="nav-link text-light" @click="closeNavbar">Forum</router-link>
+          </li>
+      </ul>
     </div>
   </div>
   <!---end of navbar-->
 
-  <!-- handle profile image updates -->
+  <!-- Handle profile image updates -->
   <EditProfile @profileImageUpdated="handleProfileImageUpdate" /> 
 
-  <!-- handle username updates -->
+  <!-- Handle username updates -->
   <EditProfile @usernameUpdated="handleUsernameUpdate" />
 
-  <!-- // Show Sign Out Popup when user clicks Sign Out -->
-
+  <!-- Show Sign Out Popup when user clicks Sign Out -->
   <LoginModal :visible="isLoginModalVisible" @login="handleLogin" @openSignup="switchToSignUpModal"
     @update:visible="isLoginModalVisible = $event" />
 
   <SignupModal :visible="isSignUpModalVisible" @signup="handleSignup" @update:visible="isSignUpModalVisible = $event" />
 </template>
+
+
 
 <script>
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -262,10 +286,12 @@ export default {
     toggleNavbar() {
       // Toggle the open/closed state of the navbar
       this.isNavbarOpen = !this.isNavbarOpen;
+      console.log("Navbar toggled");
     },
     closeNavbar() {
       // Close the navbar (set state to false)
       this.isNavbarOpen = false;
+      console.log("Navbar closed");
     },
     handleProfileImageUpdate(newImageUrl) {
             if (this.user) {
@@ -300,6 +326,9 @@ export default {
   font-weight: bold;
   transition: background-color 0.3s ease;
   position: relative;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow if text is too long */
+  text-overflow: ellipsis; /* Truncate text if it's too long */
 }
 
 .profile-btn:hover {
@@ -393,10 +422,6 @@ export default {
   margin-right: 8px;
 }
 
-.hidden {
-  display: none;
-}
-
 /* Navbar Toggler Icon */
 .navbar-toggler {
   border: none !important;         /* Remove border */
@@ -441,28 +466,77 @@ export default {
   text-align: center; /* Center text */
 }
 
-/* Media query to handle different screen sizes */
-@media (max-width: 1230px) {
-  .btn {
-    min-width: 100px; /* Maintain minimum width */
-    font-size: 0.95rem; /* Slightly adjust font size if needed */
-  }
+/* Flex alignment to ensure hamburger and profile are centered */
+.d-flex.align-items-center.gap-2 {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add space between the hamburger and profile button */
 }
 
-@media (max-width: 820px) {
-  .btn {
-    min-width: 90px; /* Adjust if necessary for smaller screens */
-    font-size: 0.9rem; /* Adjust font size for readability */
-  }
+.navbar-toggler {
+  border: none !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center; /* Center the icon vertically */
+  justify-content: center;
+  width: 30px; /* Adjust width to keep it aligned next to the profile button */
+  height: 30px;
+  transition: 0.3s ease;
+  z-index: 11; /* Bring it above other elements if needed */
 }
 
-@media (max-width: 470px) {
-  .profile-dropdown {
-    margin-left: 10px; /* Adjust the spacing between the profile button and the hamburger */
-  }
+.navbar-toggler .toggler-icon {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: darkred;
+  margin: 4px 0;
+  transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
 }
 
-.navbar {
-    justify-content: space-between !important; /* Ensure navbar items are evenly spaced */
-  }
+/* Styling for the "X" icon when the hamburger is active */
+.navbar-toggler:not(.collapsed) .top-bar {
+  transform: rotate(45deg) translate(7px, 7px);
+  background-color: red;
+}
+
+.navbar-toggler:not(.collapsed) .middle-bar {
+  opacity: 0;
+}
+
+.navbar-toggler:not(.collapsed) .bottom-bar {
+  transform: rotate(-45deg) translate(7px, -7px);
+  background-color: red;
+}
+
+/* Ensure toggler is collapsed back to hamburger icon */
+.navbar-toggler.collapsed .top-bar,
+.navbar-toggler.collapsed .bottom-bar {
+  transform: rotate(0);
+}
+
+.navbar-toggler.collapsed .middle-bar {
+  opacity: 1;
+}
+
+/* Color of 3 lines for hamburger icon */
+.navbar-toggler.collapsed .toggler-icon {
+    background: linear-gradient(90deg, rgba(255, 233, 179, 1) 0%, rgba(255, 207, 89, 1) 100%);
+}
+
+/* Mobile Nav Styles */
+.mobile-nav {
+  position: absolute; /* Ensures it doesn’t push content */
+  top: 100%; /* Aligns it right below the main navbar */
+  left: 0;
+  width: 100%;
+  padding: 1rem 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+}
+
+.container-fluid {
+  position: relative;
+  overflow: visible; /* Ensure no clipping */
+}
 </style>

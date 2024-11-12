@@ -110,7 +110,7 @@
     </div>
 
     <div v-if="loading" class="loading-overlay">
-      <div class="spinner">Loading...</div> <!-- This can be a custom spinner -->
+      <div class="spinner">Loading...</div> 
     </div>
     <!-- to display dynamically the list of created groups -->
     <div v-if="!groups_loading && groups.length == 0" class="text-muted mb-4 h5 text-center">
@@ -143,7 +143,7 @@
         </button>
 
         <button type="button" class="chatButton" @click="addChat(group.members, group.name)"
-          :disabled="group.members.length == 1 && !isCurrentUserMember(group.members)">
+          :disabled="group.members.length == 1 || !isCurrentUserMember(group.members)">
           VIEW CHAT </button>
 
       </div>
