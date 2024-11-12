@@ -26,20 +26,16 @@
         <table class="table table-striped text-center mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th scope="col">Select</th>
                     <th scope="col">Title</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date of Payment</th>
-                    <th scope="col">Image</th>
                     <th scope="col">Actions</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody class="table-group-divider" v-if="hasLogs">
                 <tr v-for="(row, index) in tableData" :key="index" :class="{ 'selected-row': isSelected(index) }">
-                    <td>
-                        <input type="checkbox" @change="toggleRowSelection(index)" :checked="isSelected(index)" />
-                    </td>
                     <th scope="row">{{ row.title }}</th>
                     <td>${{ row.amount }}</td>
                     <td>
@@ -48,9 +44,7 @@
                     <td>{{ row.date }}</td>
                     <td><a href='#' class="text-dark">{{ row.image }}</a></td>
                     <td class="text-nowrap">
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-eye'></i>|</a>
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-trash'></i>|</a>
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-edit'></i></a>
+                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-trash'></i></a>
                     </td>
                 </tr>
             </tbody>

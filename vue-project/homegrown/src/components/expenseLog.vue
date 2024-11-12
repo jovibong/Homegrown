@@ -36,11 +36,9 @@
                         <td>{{ log.date }}</td>
                         <td class="text-nowrap">
                             <a href="#" class="text-decoration-none text-dark" @click.prevent="deleteLog(log.id, index)">
-                                <i class="fas fa-trash"></i> |
+                                <i class="fas fa-trash"></i>
                             </a>
-                            <a href="#" class="text-decoration-none text-dark" @click.prevent="editLog(index)">
-                                <i class="fas fa-edit"></i>
-                            </a>
+
                         </td>
                     </tr>
                 </tbody>
