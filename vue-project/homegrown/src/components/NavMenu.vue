@@ -326,6 +326,9 @@ export default {
   font-weight: bold;
   transition: background-color 0.3s ease;
   position: relative;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow if text is too long */
+  text-overflow: ellipsis; /* Truncate text if it's too long */
 }
 
 .profile-btn:hover {
