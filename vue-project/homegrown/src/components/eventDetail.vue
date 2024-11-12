@@ -143,7 +143,7 @@
         </button>
 
         <button type="button" class="chatButton" @click="addChat(group.members, group.name)"
-          :disabled="group.members.length <= 1">
+          :disabled="group.members.length == 1">
           VIEW CHAT </button>
 
       </div>
@@ -197,7 +197,6 @@ export default {
       eventCategory: '',
       location: '',
       groups: [],
-      profilePic: "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-image-gray-blank-silhouette-vector-illustration-305503988.jpg",
 
       // for adding groups
       groupName: "",
@@ -790,7 +789,7 @@ export default {
 
 /* Disabled button styling */
 .joinGroupButton:disabled,
-.chatButton.disabled {
+.chatButton:disabled {
   background-color: #bdc3c7;  /* Gray background */
   color: #7f8c8d;             /* Gray text */
   cursor: not-allowed;        /* Change cursor to indicate disabled state */
