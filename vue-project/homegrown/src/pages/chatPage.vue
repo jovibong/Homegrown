@@ -80,7 +80,7 @@
                   <div class="fw-bold">{{ chat.chat_name }}</div>
                   <div class="text-nowrap">
                     <span
-                      v-if="chat.chat_type == 'group'"
+                      v-if="chat.chat_type == 'group' && chat.conversations && chat.conversations.length > 0"
                       class="d-inline-block me-1"
                     >
                       {{ getUserName(getLastConvo(chat)) }}:
