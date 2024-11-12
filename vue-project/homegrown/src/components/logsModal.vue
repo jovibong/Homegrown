@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-danger m-3" type="button" @click="$emit('close')">Cancel</button>
+                    <button class="btn btn-danger m-3" type="button" @click="{$emit('close'), clearFields();}">Cancel</button>
                     <!-- add addlogs fucntion here -->
                     <button class="btn btn-success" type="submit" @click="() => { $emit('close'); addLogs(); }">Add
                         log</button>
