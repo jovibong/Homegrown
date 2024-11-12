@@ -9,7 +9,7 @@
                 <template #header>
                     <div class="w-100">
                         <h2>Add Expense</h2>
-                        <hr> 
+                        <hr>
                     </div>
                 </template>
             </expense-modal>
@@ -35,7 +35,7 @@
                         <td>{{ log.category }}</td>
                         <td>{{ log.date }}</td>
                         <td class="text-nowrap">
-                            <a href="#" class="text-decoration-none text-dark" @click.prevent="deleteLog(index)">
+                            <a href="#" class="text-decoration-none text-dark" @click.prevent="deleteLog(log.id, index)">
                                 <i class="fas fa-trash"></i> |
                             </a>
                             <a href="#" class="text-decoration-none text-dark" @click.prevent="editLog(index)">
@@ -64,7 +64,7 @@ import Modal from './expenseModal.vue'
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { doc, getDoc, collection, onSnapshot, query, orderBy, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 // import { getAuth } from 'firebase/auth';
 
@@ -117,6 +117,7 @@ onMounted(async () => {
             const logs = [];
             querySnapshot.forEach((doc) => {
                 logs.push({
+                    id: doc.id, 
                     title: doc.data().title,
                     amount: doc.data().amount,
                     date: formatDate(doc.data().date),
@@ -139,6 +140,28 @@ onMounted(async () => {
 
 
 })
+
+function deleteLog(logId, index) {
+    const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    console.log('session in progress');
+    console.log(sessionUser.uid);
+
+    // if (!user) {
+    //     console.log("No user is logged in");
+    //     return;
+    // }
+
+    const userId = sessionUser.uid;
+    const logRef = doc(db, 'finance', userId, 'expenseLogs', logId);
+
+    deleteDoc(logRef)
+        // .then(() => {
+        //     // Remove log from tableData on successful deletion
+        //     tableData.value.splice(index, 1);
+        //     hasLogs.value = tableData.value.length > 0;
+        // })
+        // .catch(error => console.error("Error deleting log: ", error));
+}
 </script>
 
 <script>
@@ -156,20 +179,7 @@ export default {
         };
     },
     methods: {
-        updateSelectedCount() {
-            this.selectedCount = this.tableData.filter(log => log.selected).length;
-        },
-        addLog() {
-            // Logic to add a new log entry
-        },
-        deleteLog(index) {
-            this.tableData.splice(index, 1);
-            this.updateSelectedCount();
-        },
-        editLog(index) {
-            // Logic to edit an existing log entry
-            return index;
-        },
+
     },
 };
 </script>

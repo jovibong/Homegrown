@@ -108,9 +108,10 @@
                         </div>
                         <div class="col-xl-4 col-md-12">
                             <div class="p-3 bento-tile h-100 my-auto">
+                                <h3 class="text-center  fw-bolder "> Monthly Savings</h3>
                                 <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
                                 </h1>
-                                <label for="customRange2" class="form-label">Monthly Savings</label>
+                                
                                 <input type="range" class="form-range" min="1"
                                     :max="stats.totalEarned.descriptionEditable" id="customRange2" v-model="savings">
                             </div>
