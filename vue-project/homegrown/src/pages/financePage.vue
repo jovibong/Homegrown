@@ -221,9 +221,12 @@ const GoalDate = computed(() => {
 
 function toggleBackgroundColor() {
     const acieveBy = new Date(stats.value.goal.descriptionEditable);
+    const goalDateParts = GoalDate.value.split('/');
+    const goal = new Date(`${goalDateParts[2]}-${goalDateParts[1]}-${goalDateParts[0]}`); // YYYY-MM-DD
+
     console.log('this is ahhhhhh');
-    console.log(new Date(GoalDate.value));
-    if (acieveBy > new Date(GoalDate.value)) {
+    console.log(goal);
+    if (acieveBy > goal) {
         return { backgroundColor: 'rgb(188, 225, 188)' };
     } else {
         return { backgroundColor: 'rgb(255, 188, 188)' };
