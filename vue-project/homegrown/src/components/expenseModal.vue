@@ -61,21 +61,6 @@
                             </div> -->
                             <hr>
                         </div>
-
-
-
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input border-1 border-dark" type="checkbox" value=""
-                                    id="invalidCheck" required>
-                                <label class="form-check-label" for="invalidCheck">
-                                    I have checked that the infromation is accurate to the best of my abillity
-                                </label>
-                                <div class="invalid-feedback">
-                                    You must agree before submitting.
-                                </div>
-                            </div>
-                        </div>
                     </form>
 
                 </div>
