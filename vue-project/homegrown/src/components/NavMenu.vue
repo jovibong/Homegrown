@@ -527,13 +527,13 @@ export default {
 
 /* Styling for the active router link */
 .router-link-active {
-  color: #ffd700 !important; /* Gold color for active link */
+  color: #ffd700 !important; /* gold color for nav bar links */
   font-weight: bold;
 }
 
 .active-link {
   font-weight: bolder;
-  color: black !important; /* Gold color for active link */
+  color: black !important; /* black color for profile dropdown links */
 }
 
 </style>
