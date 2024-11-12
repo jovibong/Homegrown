@@ -25,6 +25,9 @@
                         </div>
                     </div>
 
+                    <!-- success message -->
+                     
+
                     <div class="profile-details">
                         <p><strong>Email: </strong> {{ email }}</p>
 
@@ -69,6 +72,10 @@
                 <!-- Change Password Section -->
                 <div v-if="currentSection === 'changePassword'" class="profile-box container py-3 fade-in-top">
                     <h2 class="text-primary fw-bold text-center mb-3 display-4">Change Password</h2>
+                    
+                    <!-- Error Message Display for Change Password Section -->
+                    <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+
                     <form @submit.prevent="submitPasswordChange">
                         <div class="mb-3">
                             <label for="password" class="form-label">New Password</label>
@@ -120,7 +127,8 @@ export default {
             isEditingName: false,
             isEditingUsername: false,
             showReauthModal: false, 
-            currentPassword: "" 
+            currentPassword: "",
+            errorMessage: "" // New property for error messages
         };
     },
     created() {
@@ -201,7 +209,7 @@ export default {
                     window.location.reload();
                 } catch (error) {
                     console.error("Error uploading image:", error);
-                    alert("There was an error uploading your profile image.");
+                    this.errorMessage = "There was an error uploading your profile image.";
                 }
             }
 },
@@ -224,12 +232,12 @@ export default {
                 window.location.reload();
             } catch (error) {
                 console.error(`Error updating ${field}:`, error);
-                alert(`There was an error updating your ${field}.`);
+               this.errorMessage = "Passwords do not match.";
             }
         },
         async submitPasswordChange() {
         if (this.formData.password !== this.formData.confirmPassword) {
-            alert("Passwords do not match.");
+            this.errorMessage = "Passwords do not match."
             return;
         }
         try {
@@ -245,7 +253,7 @@ export default {
                 this.showReauthModal = true;
             } else {
                 console.error("Error updating password:", error);
-                alert("There was an error updating your password: " + error.message);
+                this.errorMessage = "There was an error updating your password.";
             }
         }
     },
@@ -258,7 +266,7 @@ export default {
             this.showReauthModal = false; // Hide the modal after successful re-authentication
         } catch (error) {
             console.error("Re-authentication failed:", error);
-            alert("Re-authentication failed: " + error.message);
+            this.errorMessage = "Re-authentication failed: "
         }
     },
     closeReauthModal() {
@@ -428,6 +436,12 @@ export default {
 
 .btn-cancel:hover {
   background-color: #e0a106;
+}
+
+.error-text {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 </style>
   
