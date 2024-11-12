@@ -13,7 +13,7 @@
                         <div class="col-md-6">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
-                                required v-model="title">
+                                required v-model="title" >
                             <div class="invalid-feedback">
                                 Please enter a title.
                             </div>
@@ -216,7 +216,7 @@ async function addLogs() {
             badgeClass: badgeClass.value
         });
 
-        
+
 
         // Clear input fields after adding the log
         clearFields();

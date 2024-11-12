@@ -209,7 +209,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { doc, onSnapshot, collection } from "firebase/firestore";
+import { doc, collection, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 const savings = ref(1);
@@ -299,6 +299,78 @@ onMounted(() => {
     }
 
     const userId = sessionUser.uid;
+    const userDocRef = doc(db, 'finance', userId);
+
+    // Check if the finance document for this user exists. If not, initialize it.
+    getDoc(userDocRef).then(docSnapshot => {
+        if (!docSnapshot.exists()) {
+            // Initialize the user document with userId and stats subcollections
+            setDoc(userDocRef, {
+                userId: userId // Add the userId as a field
+            }).then(() => {
+                console.log("User document initialized.");
+
+                // Initialize the stats collection with the required subcollections
+                const statsCollectionRef = collection(userDocRef, 'stats');
+                const defaultStats = [
+                    {
+                        name: 'Total earned',
+                        data: {
+                            title: 'Total earned',
+                            statNonEditable: '$',
+                            statEditable: 0,
+                            descriptionNonEditable: 'Per month: $',
+                            descriptionEditable: 0
+                        }
+                    },
+                    {
+                        name: 'Late Payments',
+                        data: {
+                            title: 'Late Payments',
+                            statNonEditable: '',
+                            statEditable: 0,
+                            descriptionNonEditable: 'Considered late (days): >',
+                            descriptionEditable: 0
+                        }
+                    },
+                    {
+                        name: 'Payday',
+                        data: {
+                            title: 'Payday',
+                            statNonEditable: 'Days left: ',
+                            statEditable: 0,
+                            descriptionNonEditable: 'Pay date every month:',
+                            descriptionEditable: 1
+                        }
+                    },
+                    {
+                        name: 'Goal',
+                        data: {
+                            title: 'Goal',
+                            statNonEditable: '$',
+                            statEditable: 0,
+                            descriptionNonEditable: 'By: ',
+                            descriptionEditable: new Date().toISOString(), // current timestamp
+                        }
+                    }
+
+
+                ];
+
+                defaultStats.forEach(async ({ name, data }) => {
+                    const statRef = doc(statsCollectionRef, name);
+                    await setDoc(statRef, data); // Initialize each stat subcollection
+                    console.log(`${name} stat initialized.`);
+                });
+
+            }).catch(error => {
+                console.error("Error initializing user document: ", error);
+            });
+        }
+    }).catch(error => {
+        console.error("Error checking if user document exists: ", error);
+    });
+
     const statsRef = collection(db, 'finance', userId, 'stats');
 
     const docsToFetch = [
@@ -329,6 +401,7 @@ onMounted(() => {
     });
 });
 </script>
+
 
 
 
