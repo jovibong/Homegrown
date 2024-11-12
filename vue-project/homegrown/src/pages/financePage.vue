@@ -119,6 +119,7 @@
 
                         <div class="col-12 ">
                             <div class="p-3 bento-tile">
+                                
                                 <budget-chart :savings="savings"></budget-chart>
                             </div>
                         </div>

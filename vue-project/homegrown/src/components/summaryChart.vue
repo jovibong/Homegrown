@@ -14,10 +14,11 @@
 </template>
 
 <script>
-import { ref, onMounted, defineComponent } from 'vue';
+import { ref, onMounted, defineComponent, watch } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { doc, getDoc, getDocs, collection, query, orderBy, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, orderBy, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from "../firebase/initialize";
+
 
 export default defineComponent({
     components: {
@@ -26,6 +27,7 @@ export default defineComponent({
     setup() {
         const cumulativeLogs = ref([]);
         const series = ref([{ data: [] }]);  // Start with an empty array for data
+
 
         const chartOptions = ref({
             chart: {
@@ -58,18 +60,18 @@ export default defineComponent({
             },
 
             tooltip: {
-        x: { format: 'dd MMM yyyy' },
-        y: {
-            formatter: function(value) {
-                return `$${value.toFixed(2)}`;  // Format y value with dollar sign and 2 decimal places
-            },
-            title:{
-                formatter:()=>{
-                return 'Total Amount';
+                x: { format: 'dd MMM yyyy' },
+                y: {
+                    formatter: function (value) {
+                        return `$${value.toFixed(2)}`;  // Format y value with dollar sign and 2 decimal places
+                    },
+                    title: {
+                        formatter: () => {
+                            return 'Total Amount';
+                        }
+                    }
                 }
-            }
-        }
-    },
+            },
             fill: {
                 type: 'gradient',
                 gradient: {
@@ -84,6 +86,14 @@ export default defineComponent({
 
         const selection = ref('one_year');
         const chart = ref(null);
+
+        watch(cumulativeLogs, (newValue) => {
+            // Update the series data whenever the cumulativeLogs array changes
+            series.value = [{ data: newValue }];
+            if (chart.value) {
+                chart.value.updateSeries(series.value);
+            }
+        }, { deep: true });
 
         const updateData = (timeline) => {
             if (chart.value && cumulativeLogs.value.length > 0) {
@@ -122,103 +132,119 @@ export default defineComponent({
             return timeline;
         };
 
-       onMounted(async () => {
-    try {
-        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        const userId = sessionUser.uid;
+        onMounted(() => {
+            try {
+                const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+                const userId = sessionUser.uid;
 
-        // Access the user's finance collection and specific stats document
-        const goalRef = doc(db, 'finance', userId, 'stats', 'Goal');
-        const goalSnap = await getDoc(goalRef);
-
-        if (goalSnap.exists()) {
-            const statEditable = goalSnap.data().statEditable;
-            chartOptions.value = {
-                ...chartOptions.value,
-                annotations: {
-                    yaxis: [{
-                        y: statEditable,
-                        borderColor: '#999',
-                        label: {
-                            show: true,
-                            text: 'GOAL',
-                            style: {
-                                color: "#fff",
-                                background: '#00E396'
+                // Access the user's finance collection and specific stats document
+                const goalRef = doc(db, 'finance', userId, 'stats', 'Goal');
+                getDoc(goalRef).then(goalSnap => {
+                    if (goalSnap.exists()) {
+                        const statEditable = goalSnap.data().statEditable;
+                        chartOptions.value = {
+                            ...chartOptions.value,
+                            annotations: {
+                                yaxis: [{
+                                    y: statEditable,
+                                    borderColor: '#999',
+                                    label: {
+                                        show: true,
+                                        text: 'GOAL',
+                                        style: {
+                                            color: "#fff",
+                                            background: '#00E396'
+                                        }
+                                    }
+                                }]
                             }
+                        };
+                    } else {
+                        console.log('No such document!');
+                    }
+                });
+
+                // Real-time listener for payment logs
+                const paymentLogsCollectionRef = collection(db, 'finance', userId, 'paymentlogs');
+                const paymentLogsQuery = query(paymentLogsCollectionRef, orderBy('date', 'asc'));
+                onSnapshot(paymentLogsQuery, (querySnapshot) => {
+                    const paymentLogs = querySnapshot.docs.map(doc => {
+                        const data = doc.data();
+                        const timestamp = data.date.toMillis();
+                        return { timestamp, amount: data.amount, type: 'payment' };
+                    });
+
+                    // Real-time listener for expense logs
+                    const expenseLogsCollectionRef = collection(db, 'finance', userId, 'expenseLogs');
+                    const expenseLogsQuery = query(expenseLogsCollectionRef, orderBy('date', 'asc'));
+                    onSnapshot(expenseLogsQuery, (expenseSnapshot) => {
+                        const expenseLogs = expenseSnapshot.docs.map(doc => {
+                            const data = doc.data();
+                            const timestamp = data.date.toMillis();
+                            return { timestamp, amount: data.amount, type: 'expense' };
+                        });
+
+                        // Combine both logs and sort by timestamp
+                        const allLogs = [...paymentLogs, ...expenseLogs].sort((a, b) => a.timestamp - b.timestamp);
+
+                        // Calculate cumulative sum for each transaction and keep only the last entry of each day
+                        let cumulativeSum = 0;
+                        const dailyLogs = {}; // Store only the last entry per day
+
+                        allLogs.forEach(log => {
+                            if (log.type === 'payment') {
+                                cumulativeSum += log.amount;
+                            } else if (log.type === 'expense') {
+                                cumulativeSum -= log.amount;
+                            }
+
+                            // Format date to YYYY-MM-DD to use as key for grouping by day
+                            const logDate = new Date(log.timestamp);
+                            const day = `${logDate.getFullYear()}-${logDate.getMonth() + 1}-${logDate.getDate()}`;
+
+                            // Update the last entry for this day
+                            dailyLogs[day] = [log.timestamp, cumulativeSum];
+                        });
+
+                        // Store only the last entry for each day in cumulativeLogs
+                        cumulativeLogs.value = Object.values(dailyLogs);
+
+                        // Update Firebase with the last cumulative amount
+                        if (cumulativeLogs.value.length > 0) {
+                            const lastAmount = cumulativeLogs.value[cumulativeLogs.value.length - 1][1];
+                            const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
+                            updateDoc(statsRef, {
+                                statEditable: lastAmount,
+                            });
+                        } else {
+                            const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
+                            updateDoc(statsRef, {
+                                statEditable: 0,
+                            });
                         }
-                    }]
-                }
-            };
-        } else {
-            console.log('No such document!');
-        }
 
-        // Fetch payment logs
-        const paymentLogsCollectionRef = collection(db, 'finance', userId, 'paymentlogs');
-        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'asc'));
-        const querySnapshot = await getDocs(logsQuery);
+                        series.value = [{ data: cumulativeLogs.value }];
 
-        const paymentLogs = querySnapshot.docs.map(doc => {
-            const data = doc.data();
-            const timestamp = data.date.toMillis();
-            return { timestamp, amount: data.amount, type: 'payment' };
-        });
+                    }, (error) => {
+                        console.error('Error fetching expense logs:', error);
+                    });
+                }, (error) => {
+                    console.error('Error fetching payment logs:', error);
+                });
 
-        // Fetch expense logs
-        const expenseLogsCollectionRef = collection(db, 'finance', userId, 'expenseLogs');
-        const expenseQuery = query(expenseLogsCollectionRef, orderBy('date', 'asc'));
-        const expenseSnapshot = await getDocs(expenseQuery);
+            } catch (error) {
+                console.error('Error setting up real-time updates or fetching data:', error);
 
-        const expenseLogs = expenseSnapshot.docs.map(doc => {
-            const data = doc.data();
-            const timestamp = data.date.toMillis();
-            return { timestamp, amount: data.amount, type: 'expense' };
-        });
-
-        // Combine both logs and sort by timestamp
-        const allLogs = [...paymentLogs, ...expenseLogs].sort((a, b) => a.timestamp - b.timestamp);
-
-        // Calculate cumulative sum for each transaction and keep only the last entry of each day
-        let cumulativeSum = 0;
-        const dailyLogs = {}; // Store only the last entry per day
-
-        allLogs.forEach(log => {
-            if (log.type === 'payment') {
-                cumulativeSum += log.amount;
-            } else if (log.type === 'expense') {
-                cumulativeSum -= log.amount;
+                // Fallback for when an error occurs
+                const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+                const userId = sessionUser.uid;
+                const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
+                updateDoc(statsRef, {
+                    statEditable: 0,
+                });
             }
-
-            // Format date to YYYY-MM-DD to use as key for grouping by day
-            const logDate = new Date(log.timestamp);
-            const day = `${logDate.getFullYear()}-${logDate.getMonth() + 1}-${logDate.getDate()}`;
-
-            // Update the last entry for this day
-            dailyLogs[day] = [log.timestamp, cumulativeSum];
         });
 
-        // Store only the last entry for each day in cumulativeLogs
-        cumulativeLogs.value = Object.values(dailyLogs);
-
-        // Update Firebase with the last cumulative amount
-        const lastAmount = cumulativeLogs.value[cumulativeLogs.value.length - 1][1];
-        const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
-        await updateDoc(statsRef, {
-            statEditable: lastAmount,
-        });
-
-        series.value = [{ data: cumulativeLogs.value }];
-    } catch (error) {
-        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        const userId = sessionUser.uid;
-        console.log('Error fetching logs or statEditable:', error);
-        const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
-        await updateDoc(statsRef, {
-            statEditable: 0,
-        });
-    }
-});
 
 
 
@@ -234,6 +260,8 @@ export default defineComponent({
         };
     }
 });
+
+
 </script>
 
 <style scoped>

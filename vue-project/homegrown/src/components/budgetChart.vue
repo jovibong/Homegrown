@@ -1,14 +1,15 @@
 <template>
     <div>
         <apexchart :options="chartOptions" :series="filteredSeries" type="donut" height="350"></apexchart>
-
+        
         <div class="buttons d-flex justify-content-center p-2">
-            <button @click="appendData" :disabled="totalExceedsLimit">Add Data</button>
-            <button @click="reset">Reset Data</button>
+            <button @click="appendData" :disabled="totalExceedsLimit || hasBlankInput" class="btn btn-secondary fw-bold mx-1">Add Data</button>
+            <button @click="reset" class="btn btn-secondary fw-bold mx-1" >Reset Data</button>
         </div>
 
         <div v-if="totalExceedsLimit" class="alert text-center">
-            <p class="my-auto">You are over by {{ overflowAmount }}. Please adjust the values to stay within amount left.</p>
+            <p class="my-auto">You are over by {{ overflowAmount }}. Please adjust the values to stay within amount
+                left.</p>
         </div>
 
         <table class="series-table">
@@ -27,7 +28,7 @@
                     </td>
                     <td>
                         <span v-if="index == 0">{{ series[index] }}</span>
-                        <input v-else type="number" v-model.number="series[index]" @input="updateChart" />
+                        <input v-else type="number" min=1 v-model.number="series[index]" @input="updateChart" />
                     </td>
                     <td>
                         <button v-if="index !== 0" @click="removeData(index)">Remove</button>
@@ -51,29 +52,27 @@ export default defineComponent({
     setup() {
         const left = ref(0); // Default to 0, will be overwritten by Firebase data
         const series = ref([left.value]); // First item is initially set to left's value
-        const customLabels = ref(['Amount left']);
+        const customLabels = ref(['Total Earned']);
 
         const chartOptions = {
             chart: { width: 380, type: 'donut' },
             dataLabels: { enabled: false },
             legend: {
                 position: 'right',
-                formatter: (seriesName, opts) => { return customLabels.value[opts.seriesIndex];}
+                formatter: (seriesName, opts) => { return customLabels.value[opts.seriesIndex]; }
             },
             tooltip: {
-            
                 y: {
-                        formatter: (val) => {
-                            return `${val}`;},
-                        title:{
-                            // Tooltip formatter to show custom category name and value
+                    formatter: (val) => {
+                        return `$${val}`;
+                    },
+                    title: {
                         formatter: (val, opts) => {
                             const category = customLabels.value[opts.seriesIndex];
                             return `${category}:`;
                         }
-                        }
-                        
-                    },
+                    }
+                }
             }
         };
 
@@ -104,13 +103,19 @@ export default defineComponent({
 
         const reset = () => {
             series.value = [left.value]; // Reset to the Firebase "Total earned" value
-            customLabels.value = ['Amount left'];
+            customLabels.value = ['Total Earned'];
             updateChart();
         };
 
         const updateChart = () => {
             series.value = [...series.value]; // Trigger reactivity for chart update
         };
+
+        // Check for blank inputs
+        const hasBlankInput = computed(() => {
+            return series.value.some(val => val === '' || val === null || val === undefined) ||
+                customLabels.value.some(label => label.trim() === '');
+        });
 
         onMounted(async () => {
             try {
@@ -141,30 +146,31 @@ export default defineComponent({
             appendData,
             removeData,
             reset,
-            updateChart
+            updateChart,
+            hasBlankInput
         };
     }
 });
-
 </script>
+
 
 <style scoped>
 .buttons {
     margin-top: 20px;
 }
 
-button {
+/* button {
     margin-right: 10px;
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
-}
+} */
 
-button:hover {
+/* button:hover {
     background-color: #45a049;
-}
+} */
 
 .series-table {
     margin-top: 20px;
