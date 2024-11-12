@@ -106,16 +106,17 @@ function determineType(value) {
 }
 
 watch(() => [title, statNonEditable, statEditable, descriptionNonEditable, descriptionEditable], (newValues) => {
-    console.log('this is modal');
-    console.log('Updated tile props:', newValues);
+    // console.log('this is modal');
+    // console.log('Updated tile props:', newValues);
 
     statType.value = determineType(statEditable);
     descType.value = determineType(descriptionEditable);
     InputStatEditable.value = statEditable;
     InputDescriptionEditable.value = formatDate(descriptionEditable);
 
-    console.log(statType.value);
-    console.log(descType.value);
+    // console.log(statType.value);
+    // console.log(descType.value);
+    return newValues;
 }, { immediate: true }); // Logs the values 
 
 
@@ -124,15 +125,15 @@ watch(() => [title, statNonEditable, statEditable, descriptionNonEditable, descr
 async function updateStats() {
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        console.log('session in progress');
-        console.log(sessionUser.uid);
+        // console.log('session in progress');
+        // console.log(sessionUser.uid);
 
         const userId = sessionUser.uid;
         // const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
         // const statsref = collection(userDocRef, 'stats', title); // Reference to the user's paymentlogs subcollection
         const statsref = doc(db, 'finance', userId, 'stats', title);
-        console.log(statType.value);
-        console.log('this is the date', InputDescriptionEditable.value);
+        // console.log(statType.value);
+        // console.log('this is the date', InputDescriptionEditable.value);
 
 
 
@@ -145,7 +146,7 @@ async function updateStats() {
                 statEditable: InputStatEditable.value,
                 descriptionEditable: Timestamp.fromDate(new Date(InputDescriptionEditable.value)),
             });
-            console.log("date updating data:");
+            // console.log("date updating data:");
 
 
         } else {
@@ -154,7 +155,7 @@ async function updateStats() {
                 descriptionEditable: InputDescriptionEditable.value,
             };
             await updateDoc(statsref, updatelog);
-            console.log("success updating data:");
+            // console.log("success updating data:");
 
 
         }

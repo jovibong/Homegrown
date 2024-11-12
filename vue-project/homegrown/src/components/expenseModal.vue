@@ -116,8 +116,8 @@ async function addLogs() {
 
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        console.log('session in progress');
-        console.log(sessionUser.uid);
+        // console.log('session in progress');
+        // console.log(sessionUser.uid);
 
         const userId = sessionUser.uid;
         const userDocRef = doc(db, 'finance', userId); // Reference to the user's document

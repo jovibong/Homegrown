@@ -107,8 +107,8 @@ export default defineComponent({
         onMounted(async () => {
             try {
                 const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-                console.log('session in progress');
-                console.log(sessionUser.uid);
+                // console.log('session in progress');
+                // console.log(sessionUser.uid);
 
                 const userId = sessionUser.uid;
                 const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
@@ -145,13 +145,13 @@ export default defineComponent({
                         }
                     });
 
-                    console.log('Category Totals:', totalByCategory.value);
+                    // console.log('Category Totals:', totalByCategory.value);
 
                     // Populate series and customLabels with the category totals
                     const categories = Object.keys(totalByCategory.value);
                     const values = Object.values(totalByCategory.value);
                     lastindex.value = categories.length;
-                    console.log(lastindex.value)
+                    // console.log(lastindex.value)
 
                     // Update the series and customLabels with the category names and totals
                     tableData.value = categories.map((category, index) => ({
