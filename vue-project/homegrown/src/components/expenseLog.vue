@@ -5,7 +5,6 @@
             <span> Add Logs</span>
         </button>
         <Teleport to="body">
-            <!-- use the modal component, pass in the prop -->
             <expense-modal :show="showModal" @close="showModal = false" :stat="stat" :description="description">
                 <template #header>
                     <div class="w-100">
@@ -27,14 +26,13 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="table-group-divider">
-                    <tr v-for="(log, index) in logs" :key="index">
-                        <td>
-                            <input type="checkbox" v-model="log.selected" @change="updateSelectedCount" />
-                        </td>
+                <!-- Show this tbody if logs exist -->
+                <tbody v-if="hasLogs" class="table-group-divider">
+                    <tr v-for="(log, index) in tableData" :key="index">
+                        <td><input type="checkbox" v-model="log.selected" @change="updateSelectedCount" /></td>
                         <th scope="row">{{ log.title }}</th>
-                        <td>{{ log.amount }}</td>
-                        <td><span :class="getBadgeClass(log.category)">{{ log.category }}</span></td>
+                        <td>${{ log.amount }}</td>
+                        <td>{{ log.category }}</td>
                         <td>{{ log.date }}</td>
                         <td class="text-nowrap">
                             <a href="#" class="text-decoration-none text-dark" @click.prevent="deleteLog(index)">
@@ -46,15 +44,101 @@
                         </td>
                     </tr>
                 </tbody>
+                <!-- Show this tbody if no logs exist -->
+                <tbody v-else>
+                    <tr>
+                        <td colspan="6" class=" fw-bold text-center">No Entries yet!</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
 </template>
 
+
+
+
+
 <script setup>
 import Modal from './expenseModal.vue'
-import {ref} from 'vue'
+import { onMounted, ref } from 'vue'
+// import { ref, watch } from 'vue'
+// import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+// import { getAuth } from 'firebase/auth';
+
 const showModal = ref(false)
+const hasLogs = ref(false)
+const tableData = ref([])
+
+function formatDate(timestamp) {
+    // Convert the Firebase Timestamp to a JavaScript Date
+    const date = timestamp.toDate();
+
+    // Extract day, month, and year
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    // Return formatted date as dd/mm/yyyy
+    return `${day}/${month}/${year}`;
+}
+
+onMounted(async () => {
+    // const auth = getAuth();
+    // const user = auth.currentUser;
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        console.log('session in progress');
+        console.log(sessionUser.uid);
+
+        // if (!user) {
+        //     console.log("No user is logged in");
+        //     return;
+        // }
+
+        const userId = sessionUser.uid;
+        const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+        const paymentLogsCollectionRef = collection(userDocRef, 'expenseLogs'); // Reference to the user's paymentlogs subcollection
+
+        // Check if the user document exists
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+        if (!userDocSnapshot.exists()) {
+            hasLogs.value = false;
+            return;
+        }
+        // can add sorting functionality easily using this later
+        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'desc'));
+
+        const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
+            const logs = [];
+            querySnapshot.forEach((doc) => {
+                logs.push({
+                    title: doc.data().title,
+                    amount: doc.data().amount,
+                    date: formatDate(doc.data().date),
+                    category: doc.data().category
+                });
+            });
+            tableData.value = logs; // Update tableData with fetched logs
+
+            // Check if there are any logs
+            hasLogs.value = tableData.value.length > 0;
+        });
+    } catch {
+        console.log('no session user');
+        tableData.value = [];
+        hasLogs.value = false;
+        return;
+    }
+
+
+
+
+})
 </script>
 
 <script>
@@ -65,38 +149,21 @@ export default {
     },
     data() {
         return {
-            logs: [
-                { title: "June Payment", amount: "$5000", category: "ON TIME", date: "15/06/2024", selected: false },
-                { title: "May Payment", amount: "$5000", category: "Early", date: "10/05/2024", selected: false },
-                { title: "April Payment", amount: "$5000", category: "LATE", date: "20/04/2024", selected: false },
-                { title: "April Bonus", amount: "$1111", category: "Bonus", date: "11/04/2024", selected: false },
+            tableData: [
+
             ],
             selectedCount: 0,
         };
     },
     methods: {
-        getBadgeClass(category) {
-            switch (category) {
-                case "ON TIME":
-                    return "badge rounded-pill text-bg-primary";
-                case "Early":
-                    return "badge rounded-pill text-bg-success";
-                case "LATE":
-                    return "badge rounded-pill text-bg-danger";
-                case "Bonus":
-                    return "badge rounded-pill text-bg-success";
-                default:
-                    return "badge rounded-pill text-bg-secondary";
-            }
-        },
         updateSelectedCount() {
-            this.selectedCount = this.logs.filter(log => log.selected).length;
+            this.selectedCount = this.tableData.filter(log => log.selected).length;
         },
         addLog() {
             // Logic to add a new log entry
         },
         deleteLog(index) {
-            this.logs.splice(index, 1);
+            this.tableData.splice(index, 1);
             this.updateSelectedCount();
         },
         editLog(index) {

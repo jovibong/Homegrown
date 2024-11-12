@@ -11,7 +11,7 @@
                     <option value="Amount">Amount</option>
                     <option value="Status">Status</option>
                     <option value="Date">Date</option>
-                    <option value="Image">Image</option>
+                    <option value="Image">Image</option> 
                 </select>
             </div>
         </div>
