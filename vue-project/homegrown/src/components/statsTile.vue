@@ -14,8 +14,7 @@ const showModal = ref(false)
 
 // Watch the props and log their values when they change
 watch(() => [props.title, props.statNonEditable, props.statEditable, props.descriptionNonEditable, props.descriptionEditable], (newValues) => {
-    console.log('this is tile')
-    console.log('Updated tile props:', newValues);
+    return newValues;
 }, { immediate: true }); // Logs the values immediately on first run
 
 </script>
@@ -125,3 +124,107 @@ button {
 
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+import { defineComponent, ref } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
+
+import { onMounted } from 'vue'
+// import { ref, watch } from 'vue'
+// import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "../firebase/initialize";
+// import { getAuth } from 'firebase/auth';
+
+const hasLogs = ref(false)
+const tableData = ref([])
+const totalByCategory = ref({})
+
+// function formatDate(timestamp) {
+//     // Convert the Firebase Timestamp to a JavaScript Date
+//     const date = timestamp.toDate();
+
+//     // Extract day, month, and year
+//     const day = String(date.getDate()).padStart(2, '0');
+//     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+//     const year = date.getFullYear();
+
+//     // Return formatted date as dd/mm/yyyy
+//     return `${day}/${month}/${year}`;
+// }
+
+onMounted(async () => {
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        console.log('session in progress');
+        console.log(sessionUser.uid);
+
+        const userId = sessionUser.uid;
+        const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+        const paymentLogsCollectionRef = collection(userDocRef, 'expenseLogs'); // Reference to the user's paymentlogs subcollection
+
+        // Check if the user document exists
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        const currentMonth = new Date().getMonth();
+
+        // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+        if (!userDocSnapshot.exists()) {
+            hasLogs.value = false;
+            return;
+        }
+
+        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'desc'));
+
+        const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
+            totalByCategory.value = {}; // Reset the category totals
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const logDate = data.date.toDate(); // Convert Firestore Timestamp to JS Date
+                const logMonth = logDate.getMonth(); // Get month of the log
+
+                // Only proceed if the month matches the current month
+                if (logMonth === currentMonth) {
+                    // Sum the amount by category
+                    if (!totalByCategory.value[data.category]) {
+                        totalByCategory.value[data.category] = 0;
+                    }
+                    totalByCategory.value[data.category] += data.amount;
+                }
+            });
+
+            console.log('Category Totals:', totalByCategory.value);
+
+            // Populate series and customLabels with the category totals
+            const categories = Object.keys(totalByCategory.value);
+            const values = Object.values(totalByCategory.value);
+
+            // Update the series and customLabels with the category names and totals
+            tableData.value = categories.map((category, index) => ({
+                category: category,
+                amount: values[index],
+            }));
+
+            // Set the series and custom labels
+            this.series = [...values]; // Add all category values as series data
+            this.customLabels = categories.map((category) => category); // Use category names as custom labels
+
+            // Check if there are any logs
+            hasLogs.value = tableData.value.length > 0;
+            return unsubscribe;
+        });
+    } catch (error) {
+        console.log('No session user or error fetching logs:', error);
+        tableData.value = [];
+        hasLogs.value = false;
+    }
+});

@@ -336,6 +336,7 @@ export default {
                             style: {
                                 color: "#fff",
                                 background: '#00E396'
+                                
                             }
                         }
                     }],
