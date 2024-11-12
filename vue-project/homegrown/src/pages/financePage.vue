@@ -38,10 +38,10 @@
                         </div>
 
                         <div class="col-12">
-                            <div class="text-center bento-tile text-light h-100 p-3"
-                                style="background-color: rgb(225, 100, 100);">
+                            <div class="text-center bento-tile text-dark h-100 p-3"
+                                style="background-color: rgb(255, 188, 188);">
                                 <div>
-                                    <h1 class=" display-5 fw-bold">Expense</h1>
+                                    <h1 class=" display-5 fw-bold mb-0">Expense</h1>
                                 </div>
                                 <expense-log></expense-log>
 
@@ -179,9 +179,11 @@
 
 
                         <div class="col-12">
-                            <div class="bento-tile h-100 p-3">
+                            <div class="bento-tile h-100 p-3" style=" background-color: rgb(188, 255, 188) ">
                                 <!-- start of table logs -->
-                                <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
+                                <div class="text-center">
+                                    <h1 class=" display-5 fw-bold mb-0">Payment</h1>
+                                </div>
                                 <payment-logs></payment-logs>
 
                             </div>

@@ -7,8 +7,8 @@
             <button @click="reset">Reset Data</button>
         </div>
 
-        <div v-if="totalExceedsLimit" class="alert">
-            <p>You are over by {{ overflowAmount }}. Please adjust the values to stay within amount left.</p>
+        <div v-if="totalExceedsLimit" class="alert text-center">
+            <p class="my-auto">You are over by {{ overflowAmount }}. Please adjust the values to stay within amount left.</p>
         </div>
 
         <table class="series-table">
@@ -51,17 +51,29 @@ export default defineComponent({
     setup() {
         const left = ref(0); // Default to 0, will be overwritten by Firebase data
         const series = ref([left.value]); // First item is initially set to left's value
-        const customLabels = ref(['Amount left', 'Savings']);
+        const customLabels = ref(['Amount left']);
 
         const chartOptions = {
             chart: { width: 380, type: 'donut' },
             dataLabels: { enabled: false },
             legend: {
                 position: 'right',
-                formatter: (seriesName, opts) => customLabels.value[opts.seriesIndex]
+                formatter: (seriesName, opts) => { return customLabels.value[opts.seriesIndex];}
             },
             tooltip: {
-                y: { formatter: (val) => `${val}`, title: (val, opts) => `${customLabels.value[opts.seriesIndex]}:` }
+            
+                y: {
+                        formatter: (val) => {
+                            return `${val}`;},
+                        title:{
+                            // Tooltip formatter to show custom category name and value
+                        formatter: (val, opts) => {
+                            const category = customLabels.value[opts.seriesIndex];
+                            return `${category}:`;
+                        }
+                        }
+                        
+                    },
             }
         };
 
@@ -110,7 +122,7 @@ export default defineComponent({
                 const goalSnap = await getDoc(goalRef);
 
                 if (goalSnap.exists()) {
-                    left.value = goalSnap.data().statEditable ; // Set left to "Total earned" or 500 if undefined
+                    left.value = goalSnap.data().statEditable; // Set left to "Total earned" or 500 if undefined
                     series.value[0] = left.value; // Initialize the first item in series with left's value
                     updateChart();
                 }

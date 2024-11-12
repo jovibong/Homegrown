@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="btn btn-outline-light btn-add-light w-100 mb-2" id="show-modal" @click="showModal = true">
+        <button class="btn btn-outline-dark btn-add w-100 my-4" id="show-modal" @click="showModal = true">
             <i class="fas fa-plus-circle fs-5"></i>
             <span> Add Logs</span>
         </button>
@@ -34,8 +34,8 @@
                         <td>{{ log.category }}</td>
                         <td>{{ log.date }}</td>
                         <td class="text-nowrap">
-                            <a href="#" class="text-decoration-none text-dark" @click.prevent="deleteLog(log.id, index)">
-                                <i class="fas fa-trash"></i>
+                            <a href="#" class="text-decoration-none " @click.prevent="deleteLog(log.id, index)">
+                                <i class="fas fa-trash trash"></i>
                             </a>
                         </td>
                     </tr>
@@ -184,5 +184,13 @@ export default {
 .logs-scroll {
     max-height: 300px;
     overflow-y: auto;
+}
+
+.trash{
+    color: black;
+}
+
+.trash:hover{
+    color: red;
 }
 </style>
