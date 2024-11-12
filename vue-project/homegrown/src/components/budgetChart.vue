@@ -49,7 +49,7 @@ export default defineComponent({
         apexchart: VueApexCharts
     },
     setup() {
-        const left = ref(1); // Default to 0, will be overwritten by Firebase data
+        const left = ref(0); // Default to 0, will be overwritten by Firebase data
         const series = ref([left.value]); // First item is initially set to left's value
         const customLabels = ref(['Amount left', 'Savings']);
 

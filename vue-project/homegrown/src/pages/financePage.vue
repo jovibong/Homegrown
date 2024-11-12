@@ -209,7 +209,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { doc, collection, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { doc, collection, getDoc, setDoc, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 const savings = ref(1);
@@ -350,7 +350,7 @@ onMounted(() => {
                             statNonEditable: '$',
                             statEditable: 0,
                             descriptionNonEditable: 'By: ',
-                            descriptionEditable: new Date().toISOString(), // current timestamp
+                            descriptionEditable: Timestamp.fromDate(new Date()), // current timestamp
                         }
                     }
 

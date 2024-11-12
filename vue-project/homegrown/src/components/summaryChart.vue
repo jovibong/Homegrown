@@ -56,7 +56,20 @@ export default defineComponent({
                 type: 'datetime',
 
             },
-            tooltip: { x: { format: 'dd MMM yyyy' } },
+
+            tooltip: {
+        x: { format: 'dd MMM yyyy' },
+        y: {
+            formatter: function(value) {
+                return `$${value.toFixed(2)}`;  // Format y value with dollar sign and 2 decimal places
+            },
+            title:{
+                formatter:()=>{
+                return 'Total Amount';
+                }
+            }
+        }
+    },
             fill: {
                 type: 'gradient',
                 gradient: {
@@ -109,7 +122,7 @@ export default defineComponent({
             return timeline;
         };
 
-        onMounted(async () => {
+       onMounted(async () => {
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
         const userId = sessionUser.uid;
@@ -119,7 +132,7 @@ export default defineComponent({
         const goalSnap = await getDoc(goalRef);
 
         if (goalSnap.exists()) {
-            const statEditable = goalSnap.data().statEditable; // Access the statEditable field
+            const statEditable = goalSnap.data().statEditable;
             chartOptions.value = {
                 ...chartOptions.value,
                 annotations: {
@@ -166,32 +179,27 @@ export default defineComponent({
         // Combine both logs and sort by timestamp
         const allLogs = [...paymentLogs, ...expenseLogs].sort((a, b) => a.timestamp - b.timestamp);
 
-        // Group logs by day (ignoring time) and keep the last entry of each day
-        const groupedLogs = {};
-        allLogs.forEach(log => {
-            const logDate = new Date(log.timestamp);
-            const day = `${logDate.getFullYear()}-${logDate.getMonth() + 1}-${logDate.getDate()}`;
-            
-            // Replace or add log for this day, keeping the last log of the day
-            groupedLogs[day] = log;
-        });
-
-        // Get the filtered logs (one log per day)
-        const filteredLogs = Object.values(groupedLogs).sort((a, b) => a.timestamp - b.timestamp);
-
-        // Calculate cumulative sum
+        // Calculate cumulative sum for each transaction and keep only the last entry of each day
         let cumulativeSum = 0;
-        cumulativeLogs.value = filteredLogs.map(log => {
-            // Add payment logs to cumulative sum
+        const dailyLogs = {}; // Store only the last entry per day
+
+        allLogs.forEach(log => {
             if (log.type === 'payment') {
                 cumulativeSum += log.amount;
-            }
-            // Subtract expense logs from cumulative sum
-            if (log.type === 'expense') {
+            } else if (log.type === 'expense') {
                 cumulativeSum -= log.amount;
             }
-            return [log.timestamp, cumulativeSum];
+
+            // Format date to YYYY-MM-DD to use as key for grouping by day
+            const logDate = new Date(log.timestamp);
+            const day = `${logDate.getFullYear()}-${logDate.getMonth() + 1}-${logDate.getDate()}`;
+
+            // Update the last entry for this day
+            dailyLogs[day] = [log.timestamp, cumulativeSum];
         });
+
+        // Store only the last entry for each day in cumulativeLogs
+        cumulativeLogs.value = Object.values(dailyLogs);
 
         // Update Firebase with the last cumulative amount
         const lastAmount = cumulativeLogs.value[cumulativeLogs.value.length - 1][1];
@@ -202,9 +210,16 @@ export default defineComponent({
 
         series.value = [{ data: cumulativeLogs.value }];
     } catch (error) {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        const userId = sessionUser.uid;
         console.log('Error fetching logs or statEditable:', error);
+        const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
+        await updateDoc(statsRef, {
+            statEditable: 0,
+        });
     }
 });
+
 
 
 
