@@ -102,11 +102,12 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
         <section class="my-5">
             <h2 class="text-primary fw-bold mb-3 display-4"> My Events </h2>
             <hr>
+            
             <loading-animation v-if="myEvent_loading"></loading-animation>
-            <div v-if="myEvents.length == 0" class="text-center text-muted mb-4 h5">
+            <div v-if="!myEvent_loading && myEvents.length == 0" class="text-center text-muted mb-4 h5">
                 You have yet to join an event!
             </div>
-            <div v-else>
+            <div v-if="!myEvent_loading">
                 <div class="scroll-container">
                     <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id" :title="event.title"
                         :image="event.imageURL" :description="event.description"></event-cards>
@@ -118,7 +119,7 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
         <section class="my-5">
             <h2 class="text-primary fw-bold mb-3 display-4"> Events By Category </h2>
 
-            <select v-model="selectedCategory" @change="getEventsByCategory" class="form-select">
+            <select v-model="selectedCategory" class="form-select">
                 <option value="All" selected>All</option>
                 <option value="Holidays">Holidays</option>
                 <option value="Festivals">Festivals</option>
@@ -128,9 +129,15 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
                 <option value="Others">Others</option>
             </select>
 
-            <div class="scroll-container">
+            <loading-animation v-if="allEvent_loading"></loading-animation> 
+
+            <div v-if="!allEvent_loading" class="scroll-container">
                 <event-cards v-for="event in eventsToDisplay" :key="event.id" :eventID="event.id" :title="event.title"
                     :image="event.imageURL" :description="event.description"></event-cards>
+            </div>
+
+            <div v-if="!allEvent_loading && eventsToDisplay.length == 0" class="text-center text-muted mb-4 h5">
+                No event in this category yet.
             </div>
 
         </section>
@@ -348,6 +355,14 @@ export default {
             this.selectedEventID = selectedID;
         }
 
+    },
+
+    watch: {
+        // Watch for changes to selectedCategory and filter forums accordingly
+        selectedCategory() {
+            this.allEvent_loading = true;
+            this.getEventsByCategory();
+        }
     },
 
 }
