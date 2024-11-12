@@ -4,8 +4,8 @@
         <div class="row mb-3">
         <label for="title" class="col-sm-2 col-form-label"> Event Name</label>
             <div class="col-sm-10">
-                <input id="title" v-model="eventTitle" type="text" class="form-control" required/>
-                <div v-if="titleError" class="text-danger">Event name is required and should not exceed 30 characters</div>
+                <input id="title" v-model="eventTitle" type="text" class="form-control"/>
+                <div v-show="titleError" class="text-danger">Event name is required and should not exceed 30 characters</div>
             </div>
         </div>
 
@@ -13,7 +13,7 @@
         <div class="row mb-3">
             <label for="eventCategory" class="col-sm-2 col-form-label">Event Category</label>
             <div class="col-sm-4">
-                <select id="eventCategory" v-model="eventCategory" class="form-select" required>
+                <select id="eventCategory" v-model="eventCategory" class="form-select" >
                     <option disabled value="">Select a category</option>
                     <option value="Holiday">Holiday</option>
                     <option value="Festivals">Festivals</option>
@@ -22,7 +22,7 @@
                     <option value="Meet-ups">Meet-ups</option>
                     <option value="Others">Others</option>
                 </select>
-                <div v-if="categoryError" class="text-danger">Category is required</div>
+                <div v-show="categoryError" class="text-danger">Category is required</div>
             </div>
         </div>
 
@@ -31,8 +31,8 @@
             <label for="description" class="col-sm-2 col-form-label">Description</label>
             <div class="col-sm-10">
                 <textarea rows="4" cols="50" id="description" v-model="eventDescription"
-                    class="form-control" required></textarea>
-                <div v-if="descError" class="text-danger">Description is required</div>
+                    class="form-control" ></textarea>
+                <div v-show="descError" class="text-danger">Description is required</div>
             </div>
         </div>
 
@@ -40,8 +40,8 @@
         <div class="row mb-3">
             <label for="image" class="col-sm-2 col-form-label">Image</label>
             <div class="col-sm-10">
-                <input id="image" type="file" class="form-control" @change="handleFileUpload" required/>
-                <div v-if="imageError" class="text-danger">Image is required</div>
+                <input id="image" type="file" class="form-control" @change="handleFileUpload" />
+                <div v-show="imageError" class="text-danger">Image is required</div>
             </div>
         </div>
 
@@ -49,14 +49,14 @@
         <div class="row mb-3">
             <label for="date" class="col-sm-2 col-form-label">Date</label>
             <div class="col-sm-4">
-                <input id="date" v-model="eventDate" type="date" class="form-control" required/>
-                <div v-if="dateError" class="text-danger">Date is required</div>
+                <input id="date" v-model="eventDate" type="date" class="form-control" />
+                <div v-show="dateError" class="text-danger">Date is required</div>
             </div>
 
             <label for="time" class="col-sm-2 col-form-label">Time</label>
             <div class="col-sm-4">
-                <input id="time" v-model="eventTime" type="time" class="form-control" required/>
-                <div v-if="timeError" class="text-danger">Time is required</div>
+                <input id="time" v-model="eventTime" type="time" class="form-control" />
+                <div v-show="timeError" class="text-danger">Time is required</div>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
         <div class="row mb-3">
             <label for="location" class="col-sm-2 col-form-label">Location</label>
             <div class="col-sm-10">
-                <input id="location" v-model="eventLocation" type="text" class="form-control" required/>
+                <input id="location" v-model="eventLocation" type="text" class="form-control" />
                 <div v-if="locationError" class="text-danger">Location is required</div>
             </div>
         </div>
@@ -87,6 +87,31 @@ export default {
         this.getUser();     
     },
 
+    watch: {
+        // Set watchers on each field to update error flags
+        eventTitle(value) {
+            this.titleError = !value || value.length > 30;
+        },
+        eventDescription(value) {
+            this.descError = !value;
+        },
+        eventCategory(value) {
+            this.categoryError = !value;
+        },
+        eventDate(value) {
+            this.dateError = !value;
+        },
+        eventTime(value) {
+            this.timeError = !value;
+        },
+        eventLocation(value) {
+            this.locationError = !value;
+        },
+        file(value) {
+            this.imageError = !value;
+        },
+    },
+
     data() {
         return {
             currentUser: "",
@@ -107,6 +132,7 @@ export default {
             dateError: false,
             timeError: false,
             locationError: false,
+            imageError: false,
 
             isFormloading: false
         }
@@ -224,8 +250,7 @@ export default {
 @import '../css/events.css';
 
 /* Disabled button styling */
-.submitBTN:disabled,
-.submitBTN.disabled {
+.submitBTN:disabled {
   background-color: #bdc3c7;  /* Gray background */
   color: #7f8c8d;             /* Gray text */
   cursor: not-allowed;        /* Change cursor to indicate disabled state */
