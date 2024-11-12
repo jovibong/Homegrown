@@ -18,19 +18,22 @@
 
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="https://www.giving.sg/res/GetOpportunityImage/697add88-9f52-405c-a265-620fd6bff968.jpg" class="d-block w-100" alt="...">
+                        <img src="https://www.giving.sg/res/GetOpportunityImage/697add88-9f52-405c-a265-620fd6bff968.jpg"
+                            class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
                         </div>
                     </div>
 
                     <div class="carousel-item">
-                        <img src="https://www.singaporetech.edu.sg/sites/default/files/digital_newsroom_uploads/groupphotoofsitintegratesandmigrantbrothers.jpg?10000" class="d-block w-100" alt="...">
+                        <img src="https://www.singaporetech.edu.sg/sites/default/files/digital_newsroom_uploads/groupphotoofsitintegratesandmigrantbrothers.jpg?10000"
+                            class="d-block w-100" alt="...">
                         <div class="carousel-caption d-none d-md-block">
                         </div>
                     </div>
                     <div class="carousel-item">
                         <img src="
-https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-HealthServe.jpg" class="d-block w-100" alt="...">
+https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-HealthServe.jpg" class="d-block w-100"
+                            alt="...">
                         <div class="carousel-caption d-none d-md-block">
                         </div>
                     </div>
@@ -60,19 +63,20 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
                 <div class="container text-center">
                     <div class="row align-items-center">
                         <div class="col-md-9 col-sm-12">
-                        <div class="search-container">
-                            <input type="text" class="searchBar" id="dropdownTextbox"
-                                :aria-expanded="(filteredEvents.length > 0).toString()" placeholder="Search for events"
-                                @keyup.enter="eventSearch" v-model="searchQuery" 
-                                autocomplete="off"/>
+                            <div class="search-container">
+                                <input type="text" class="searchBar" id="dropdownTextbox"
+                                    :aria-expanded="(filteredEvents.length > 0).toString()"
+                                    placeholder="Search for events" @keyup.enter="eventSearch" v-model="searchQuery"
+                                    autocomplete="off" />
 
-                            <!-- Dropdown for search results -->
-                            <ul v-show="searchQuery.length > 0 && filteredEvents.length > 0" class="dropdown-content"
-                                aria-labelledby="dropdownTextbox">
-                                <li v-for="event in filteredEvents" :key="event.id" @click="selectEvent(event.title, event.id)">{{ event.title }}
-                                </li>
-                            </ul>
-                        </div>
+                                <!-- Dropdown for search results -->
+                                <ul v-show="searchQuery.length > 0 && filteredEvents.length > 0"
+                                    class="dropdown-content" aria-labelledby="dropdownTextbox">
+                                    <li v-for="event in filteredEvents" :key="event.id"
+                                        @click="selectEvent(event.title, event.id)">{{ event.title }}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         <span class="text-muted h5 col-1"> | </span>
 
@@ -84,56 +88,55 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
 
 
                 <div class="mt-3">
-
-                    <keep-alive>
-                        <transition name="create">
-                            <create-event v-if="showCreate" class="createEventStyle"></create-event>
-                        </transition>
-                    </keep-alive>
-
+                    <!-- <loading-animation v-if="create_loading"></loading-animation>
+                    <div v-if="!create_loading"> -->
+                    <transition name="create">
+                        <create-event v-if="showCreate" class="createEventStyle"></create-event>
+                    </transition>
+                    <!-- </div> -->
                 </div>
 
-            </section>
+        </section>
 
-            <!-- Event Cards -->
-            <section class="my-5">
-                <h2 class="text-primary fw-bold mb-3 display-4"> My Events </h2>
-                <hr>
-                <loading-animation v-if="myEvent_loading"></loading-animation>
-                <div v-if="myEvents.length == 0" class="text-center text-muted mb-4 h5">
-                    You have yet to join an event!
+        <!-- Event Cards -->
+        <section class="my-5">
+            <h2 class="text-primary fw-bold mb-3 display-4"> My Events </h2>
+            <hr>
+            <loading-animation v-if="myEvent_loading"></loading-animation>
+            <div v-if="myEvents.length == 0" class="text-center text-muted mb-4 h5">
+                You have yet to join an event!
+            </div>
+            <div v-else>
+                <div class="scroll-container">
+                    <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id" :title="event.title"
+                        :image="event.imageURL" :description="event.description"></event-cards>
                 </div>
-                <div v-else>
-                    <div class="scroll-container">
-                        <event-cards v-for="event in myEvents" :key="event.id" :eventID="event.id"
-                            :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Event Cards - Category -->
-            <section class="my-5">
-                <h2 class="text-primary fw-bold mb-3 display-4"> Events By Category </h2>
+        <!-- Event Cards - Category -->
+        <section class="my-5">
+            <h2 class="text-primary fw-bold mb-3 display-4"> Events By Category </h2>
 
-                <select v-model="selectedCategory" @change="getEventsByCategory" class="form-select">
-                    <option value="All" selected>All</option>
-                    <option value="Holidays">Holidays</option>
-                    <option value="Festivals">Festivals</option>
-                    <option value="Outdoors">Outdoors</option>
-                    <option value="Cultural">Cultural</option>
-                    <option value="Meet-ups">Meet-ups</option>
-                    <option value="Others">Others</option>
-                </select>
-                
-                    <div class="scroll-container">
-                        <event-cards v-for="event in eventsToDisplay" :key="event.id" :eventID="event.id"
-                            :title="event.title" :image="event.imageURL" :description="event.description"></event-cards>
-                    </div>
-              
-            </section>
+            <select v-model="selectedCategory" @change="getEventsByCategory" class="form-select">
+                <option value="All" selected>All</option>
+                <option value="Holidays">Holidays</option>
+                <option value="Festivals">Festivals</option>
+                <option value="Outdoors">Outdoors</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Meet-ups">Meet-ups</option>
+                <option value="Others">Others</option>
+            </select>
 
-            <!-- All Events -->
-            <!-- <section class="my-5">
+            <div class="scroll-container">
+                <event-cards v-for="event in eventsToDisplay" :key="event.id" :eventID="event.id" :title="event.title"
+                    :image="event.imageURL" :description="event.description"></event-cards>
+            </div>
+
+        </section>
+
+        <!-- All Events -->
+        <!-- <section class="my-5">
                 <h2 class="text-primary fw-bold mb-3 display-4"> All Events </h2>
                 <hr>
                 <transition-group name="fade" tag="div" class="event-grid">
@@ -147,7 +150,7 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
 
             </section> -->
 
-        </div> <!-- for container -->
+    </div> <!-- for container -->
 
     </div>
 
@@ -175,6 +178,7 @@ export default {
             currentUser: "",
             myEvent_loading: true,
             allEvent_loading: true,
+            create_loading: true,
 
             pastEvents:[],
             myEvents:[],

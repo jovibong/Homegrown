@@ -137,12 +137,13 @@
 
         </div>
 
-        <button type="button" class="chatButton m-3" @click="joinGroup(group.id)" :disabled="loading || false"
-          :class="{ disabled: loading || false }"> {{ loading ? 'Joining...' : 'JOIN GROUP' }}
+        <button type="button" class="joinGroupButton m-3" @click="joinGroup(group.id)"
+          :disabled="isCurrentUserMember(group.members)">
+          {{ loading ? 'Joining...' : (isCurrentUserMember(group.members) ? 'Member' : 'JOIN GROUP') }}
         </button>
 
         <button type="button" class="chatButton" @click="addChat(group.members, group.name)"
-        :disabled="group.members.length <= 1"> 
+          :disabled="group.members.length <= 1">
           VIEW CHAT </button>
 
       </div>
@@ -232,7 +233,6 @@ export default {
       this.iconClass = "bi bi-calendar-minus"
       this.buttonText = "Leave Event"
     } 
-    
   },
 
   computed: {
@@ -247,6 +247,11 @@ export default {
   },
 
   methods: {
+    isCurrentUserMember(members) {
+      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+      return members.some(member => member.uid === sessionUser.uid);
+    },
+
     async getUserEvent() {
       const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
 
@@ -524,7 +529,7 @@ export default {
       const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
       const groupRef = doc(eventRef, "groups", groupID);
 
-      try{
+      try{  
         this.loading = true;
         const docSnap = await getDoc(groupRef);
         if (docSnap.exists()) {
@@ -542,25 +547,30 @@ export default {
             console.log(joinedMembers)
             window.location.reload();
         } else {
-          console.log("No such group!");
+          console.log("Group already joined!");
         }
       }
       }catch(error){
-        console.log(error)
+        console.log("Error finding group", error)
       }
     },
 
-    async checkMember(groupID) {
-      const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-      const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
-      const groupRef = doc(eventRef, "groups", groupID);
+    // async checkMember(groupID) {
+    //   try {
+    //   const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    //   const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
+    //   const groupRef = doc(eventRef, "groups", groupID);
 
-      const docSnap = await getDoc(groupRef);
-      console.log("Group data:", docSnap.data());
-      const joinedMembers = docSnap.data().members || []; // Ensure `joined` is an array
-      console.log(joinedMembers.includes(sessionUser.uid))
-      return joinedMembers.includes(sessionUser.uid)     
-    },
+    //   const docSnap = await getDoc(groupRef);
+    //   console.log("Group data:", docSnap.data());
+    //   const joinedMembers = docSnap.data().members || []; // Ensure `joined` is an array
+    //   console.log(joinedMembers.includes(sessionUser.uid))
+    //   this.$set(this.isMember, groupID, joinedMembers.includes(sessionUser.uid));
+    //   return joinedMembers.includes(sessionUser.uid)  
+    //   } catch (error) {
+    //     console.log("Checking membership", error)
+    //   }  
+    // },
 
     // For CHATS
     async checkAndCreateuser(userId, userName, profilePicture) {
@@ -767,8 +777,19 @@ export default {
   cursor: pointer;
 }
 
+.joinGroupButton {
+  background-color: #525fe1;
+  color: white;
+  font-size: 14px;
+  padding: 6px 12px;
+  font-family: 'Poppins';
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
 /* Disabled button styling */
-.chatButton:disabled,
+.joinGroupButton:disabled,
 .chatButton.disabled {
   background-color: #bdc3c7;  /* Gray background */
   color: #7f8c8d;             /* Gray text */
@@ -804,7 +825,7 @@ export default {
 
 .headerImage {
   width: 100%;
-  height: 300px;
+  height: 400px;
   object-fit: cover;
   object-position: center;
 }

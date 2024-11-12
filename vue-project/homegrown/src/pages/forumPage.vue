@@ -17,12 +17,18 @@
                 <div class="col-5 me-5">
                     <h2 class="text-primary fw-bold mb-3 display-5 mt-2"> Popular Categories</h2>
                     <div class="d-flex flex-column mb-3">
-                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5"
-                            @click="goToCategory('general')">General</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5"
-                            @click="goToCategory('learning')">Learning</button>
-                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h5"
-                            @click="goToCategory('events')">Events</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h2" id="generalCAT"
+                            @click="goToCategory('general')">
+                            <i class="bi bi-chat-dots p-2"></i>
+                            General</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h2" id="learningCAT"
+                            @click="goToCategory('learning')">
+                            <i class="bi bi-book p-2"></i>
+                            Learning</button>
+                        <button class="p-2 category shadow-sm bg-body-tertiary text-muted mb-4 h2" id="eventCAT"
+                            @click="goToCategory('events')">
+                            <i class="bi bi-calendar3 p-2"></i>
+                            Events</button>
                     </div>
                 </div>
 
@@ -30,21 +36,21 @@
                 <div class="col-5">
                     <h2 class="text-primary fw-bold mb-3 display-5 mt-2"> Top Discussions </h2>
                     <div class="d-flex flex-column mb-3">
+                        <router-link :to="{ name: 'forumDetail', params: { id: 'KfKX2aYOxSBzJpsa7X1m' } }">
+                            <button class="discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
+                                Best Travel Destinations for 2025
+                            </button>
+                        </router-link>
+
+                        <router-link :to="{ name: 'forumDetail', params: { id: 'WX0No5zz8p6JbWS9SNqu' } }">
+                            <button class="discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
+                                How to Improve Productivity at Work?
+                            </button>
+                        </router-link>
+
                         <router-link :to="{ name: 'forumDetail', params: { id: 'aXjcPZLpHYbY3esPZY3m' } }">
-                            <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
-                                Flex item 1
-                            </button>
-                        </router-link>
-
-                        <router-link :to="{ name: 'forumDetail', params: { id: 'forum2' } }">
-                            <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
-                                Flex item 2
-                            </button>
-                        </router-link>
-
-                        <router-link :to="{ name: 'forumDetail', params: { id: 'forum3' } }">
-                            <button class="p-2 discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
-                                Flex item 3
+                            <button class="discussion shadow-sm bg-body-tertiary text-muted mb-4 h5">
+                                Best Online Courses for Data Science
                             </button>
                         </router-link>
                     </div>
@@ -56,30 +62,39 @@
         <section id="forum">
             <!-- Filter Buttons -->
             <div class="filter-buttons d-flex">
-                <button :class="['filter-button', { 'active': selectedCategory === 'all' }]"
+                <button 
+                    :class="['filter-button all-filter', { 'active': selectedCategory === 'all' }]"
+                    :style="{ backgroundColor: selectedCategory === 'all' ? categoryColor : 'transparent', color: selectedCategory === 'all' ? 'white' : '' }"
                     @click="selectedCategory = 'all'">
                     All
                 </button>
 
-                <button :class="['filter-button', { 'active': selectedCategory === 'general' }]"
+                <button 
+                    :class="['filter-button general-filter', { 'active': selectedCategory === 'general' }]"
+                    :style="{ backgroundColor: selectedCategory === 'general' ? categoryColor : 'transparent', color: selectedCategory === 'general' ? 'white' : '' }"
                     @click="selectedCategory = 'general'">
                     <i class="bi bi-chat-dots"></i>
                     General
                 </button>
 
-                <button :class="['filter-button', { 'active': selectedCategory === 'learning' }]"
+                <button 
+                    :class="['filter-button learning-filter', { 'active': selectedCategory === 'learning' }]"
+                    :style="{ backgroundColor: selectedCategory === 'learning' ? categoryColor : 'transparent', color: selectedCategory === 'learning' ? 'white' : '' }"
                     @click="selectedCategory = 'learning'">
                     <i class="bi bi-book"></i>
                     Learning
                 </button>
 
-                <button :class="['filter-button', { 'active': selectedCategory === 'events' }]"
+                <button 
+                    :class="['filter-button events-filter', { 'active': selectedCategory === 'events' }]"
+                    :style="{ backgroundColor: selectedCategory === 'events' ? categoryColor : 'transparent', color: selectedCategory === 'events' ? 'white' : '' }"
                     @click="selectedCategory = 'events'">
                     <i class="bi bi-calendar3"></i>
                     Events
                 </button>
 
-                <button type="button" class="createButton me-5" data-bs-toggle="modal" data-bs-target="#createForum">
+                <button type="button" class="createButton ms-auto m-2" data-bs-toggle="modal"
+                    data-bs-target="#createForum">
                     POST
                 </button>
 
@@ -105,7 +120,6 @@
                                         <div class="col-sm-8">
                                             <textarea rows="4" cols="50" id="description" v-model="forumDesc"
                                                 class="form-control"></textarea>
-
                                         </div>
                                     </div>
 
@@ -128,7 +142,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" @click="addForum">Post</button>
+                                <button type="submit" class="btn btn-primary" @click="addForum" >Post</button>
                             </div>
                         </div>
                     </div>
@@ -136,27 +150,35 @@
             </div>
 
             <!-- Dynamic forum page-->
-            <div class="forum-container m-3">
+            <loading-animation v-if="forum_loading"></loading-animation>
+            <div v-if="!forum_loading" class="m-3 forum-container">
 
                 <div v-if="selectedForums.length === 0">
                     No forums yet. Post your own!
                 </div>
 
                 <div v-else>
-                    <div v-for="forum in selectedForums" :key="forum.id" class="indivForum m-3">
-                        <h2 class="title">{{ forum.title }}</h2>
-                        <p class="desc"> {{ forum.description }}</p>
+                    <div v-for="forum in selectedForums" :key="forum.id" class="indivForum m-3" :style="getForumStyles(forum.category)">
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="flex-grow-1 align-content-center"></div>
-                            <!-- This will push the button to the right -->
+                        <div class="left-section">
+                            <img :src="forum.postedBy.profilePic" class="profile-pic" id="forum-pfp" />
+                        </div>
 
-                            <router-link :to="{ name: 'forumDetail', params: { id: forum.id } }">
-                                <i class="bi bi-arrow-right-circle directButton"></i>
-                            </router-link>
 
+                        <div class="right-section">
+                            <div class="forum-text">
+                                <h2 class="title">{{ forum.title }}</h2>
+                                <p class="desc">{{ croppedDesc(forum.description) }}</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <router-link :to="{ name: 'forumDetail', params: { id: forum.id } }">
+                                    <i class="bi bi-arrow-right-circle directButton"></i>
+                                </router-link>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -169,8 +191,14 @@
 <script>
 import { collection, getDocs, addDoc, query, where, getDoc, doc } from "firebase/firestore";
 import { db } from '../firebase/initialize';
+import loadingAnimation from "../components/loadingAnimation.vue";
+
 
 export default{
+    components : {
+        loadingAnimation
+    },
+
     mounted(){
         this.getAllForums()
     },
@@ -179,6 +207,7 @@ export default{
         return {
             selectedCategory: "all",
             selectedForums: [],
+            forum_loading: true,
 
             forumTitle: '',
             forumDesc:'',
@@ -195,56 +224,125 @@ export default{
             }
         },
 
-        async getAllForums(){
+        getForumStyles(category) {
+            let bgColor = '';
+            let borderColor = '';
 
-            const querySnapshot = await getDocs(collection(db, "forums"));
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-                this.selectedForums.push({ 
-                    id: doc.id,
-                    title: doc.data().title,
-                    description: doc.data().description, 
-                    category: doc.data().category,
-                });
-            });
-        },
-
-        async getSelectedForums (){
-            this.selectedForums = [];
-
-            if (this.selectedCategory == "all"){
-                return this.getAllForums();
+            // Determine background color and border color based on category
+            switch (category) {
+                case 'general':
+                    bgColor = '#0061b5';  
+                    borderColor = '#0061b5';
+                    break;
+                case 'learning':
+                    bgColor = '#853a76'; 
+                    borderColor = '#853a76';  
+                    break;
+                case 'events':
+                    bgColor = '#009792'; 
+                    borderColor = '#009792';  
+                    break;
+                default:
+                    bgColor = '#CE2029';  // Default to red
+                    borderColor = '#CE2029';  // Default border color
             }
 
-            const q = query(collection(db, "forums"), where("category", "==", this.selectedCategory));
-
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-                this.selectedForums.push({ 
-                    id: doc.id,
-                    title: doc.data().title,
-                    description: doc.data().description, 
-                    category: doc.data().category,
-                });
-            });
-
-            console.log("show selected forums", this.selectedForums)
+            // Return the background and border style for the indivForum
+            return {
+                background: `linear-gradient(to right, ${bgColor} 30%, white 10%)`,
+                border: `2px solid ${borderColor}`  // Apply dynamic border color
+            };
         },
 
-        async fetchUserProfile() {
+        async getAllForums() {
             try {
-                const userDoc = await getDoc(doc(db, "profiles", this.userId));
+                const querySnapshot = await getDocs(collection(db, "forums"));
+
+                for (const doc of querySnapshot.docs) {
+
+                    const userInfo = await this.fetchUserProfile(doc.data().postedBy); // Fetch the user profile async
+                    console.log("initial data", doc.id, " => ", doc.data());
+
+                    // Add the forum data along with the user profile to the selectedForums array
+                    this.selectedForums.push({
+                        id: doc.id,
+                        title: doc.data().title,
+                        description: doc.data().description,
+                        category: doc.data().category,
+                        postedBy: {
+                            uid: doc.data().postedBy, // Store the user ID
+                            username: userInfo.username,  // Store the fetched username
+                            profilePic: userInfo.profilePic  // Store the fetched profile picture
+                        }
+                    });
+                    console.log("All Forums", this.selectedForums)
+                }
+            } catch (error) {
+                console.log("Error getting all forums", error)
+            } finally {
+                this.forum_loading = false;
+            }
+        },
+
+        async getSelectedForums() {
+            try {
+                this.selectedForums = []; // Clear the selected forums array
+
+                if (this.selectedCategory == "all") {
+                    return this.getAllForums(); // If 'all' category is selected, return all forums
+                }
+
+                // Query for forums in the selected category
+                const q = query(collection(db, "forums"), where("category", "==", this.selectedCategory));
+
+                const querySnapshot = await getDocs(q);
+
+                for (const doc of querySnapshot.docs) {
+                    const userInfo = await this.fetchUserProfile(doc.data().postedBy); // Fetch user profile async
+                    console.log(doc.id, " => ", doc.data());
+
+                    // Add the forum data along with the user profile to the selectedForums array
+                    this.selectedForums.push({
+                        id: doc.id,
+                        title: doc.data().title,
+                        description: doc.data().description,
+                        category: doc.data().category,
+                        postedBy: {
+                            uid: doc.data().postedBy, // Store the user ID
+                            username: userInfo.username,  // Store the fetched username
+                            profilePic: userInfo.profilePic  // Store the fetched profile picture
+                        }
+                    });
+                    console.log("Show selected forums", this.selectedForums);
+                }
+            } catch (error) {
+                console.log("Error fetching selected forums", error)
+            } finally {
+                this.forum_loading = false;
+            }
+        },
+
+
+        async fetchUserProfile(userID) {
+            console.log(userID)
+            try {
+                const userDoc = await getDoc(doc(db, "profiles", userID)); // Fetch the user document
                 if (userDoc.exists()) {
                     const data = userDoc.data();
-                    this.formData.name = data.name || "";
-                    this.formData.username = data.username || "";
-                    this.profileImageSrc = data.profileImageUrl || require('@/img/blankprofile.png');
+
+                    // Return the user profile information as an object
+                    return {
+                        name: data.name || "", // Provide a default empty string if name is missing
+                        username: data.username || "", // Default to empty string if username is missing
+                        profilePic: data.profileImageUrl || require('@/img/blankprofile.png'), // Default to a placeholder if no image
+                    };
+                } else {
+                    console.log("User not found");
+                    return null; // Return null if the document doesn't exist
                 }
             } catch (error) {
                 console.error("Error fetching user profile:", error);
+                return null; // Return null in case of an error
             }
         },
 
@@ -267,25 +365,36 @@ export default{
             } catch (error) {
                 console.error("Error Posting: ", error); // Handle errors
             }
+        },
+
+        croppedDesc(desc) {
+            const maxLength = 250; // Max length for the description
+            return desc.length > maxLength
+                ? desc.slice(0, maxLength) + '...'  // Crop and append ellipsis
+                : desc;  // Return original description if it's short enough
         }
     },
 
     watch: {
         // Watch for changes to selectedCategory and filter forums accordingly
         selectedCategory() {
+            this.forum_loading = true;
             this.getSelectedForums();
         }
     },
 
     computed: {
-    croppedDescription() {
-      const maxLength = 50; // Max length for the description
-      return this.description.length > maxLength
-        ? this.description.slice(0, maxLength) + '...'  // Crop and append ellipsis
-        : this.description;  // Return original description if it's short enough
-    }
-   },
-
+        // Dynamically returns the color for each category
+        categoryColor() {
+            const colors = {
+                all: '#CE2029', // Red
+                general: '#0061b5', // Blue
+                learning: '#853a76', // Purple
+                events: '#009792', // Teal
+            };
+            return colors[this.selectedCategory] || '#0061b5'; // Default to blue if category not found
+        }
+    }  
 }
 </script>
 
@@ -294,6 +403,9 @@ export default{
 
 <style scoped>
 @import '../css/events.css';
+#forum {
+    height: 100%;
+}
 
 .createButton {
   cursor: pointer;
@@ -305,12 +417,6 @@ export default{
   background-color: #525FE1;
 }
 
-.indivForum {
-    border: 2px solid #525FE1;
-    border-radius: 20px;
-    padding: 10px;
-}
-
 .directButton {
     font-size: 30px;
 }
@@ -319,6 +425,89 @@ export default{
     border-radius: 55px;
     width: 130px;
     margin: 2px;
+}
+
+.all-filter{
+    border: 2px solid #CE2029;
+}
+
+.general-filter {
+    border: 2px solid #0061b5;
+
+}
+
+.learning-filter {
+    border: 2px solid #853a76;
+
+}
+.events-filter {
+    border: 2px solid #009792;
+
+}
+
+.forum-container {
+    height: 100%;
+}
+
+.forum-text .title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.forum-text .desc {
+  font-size: 1rem;
+  color: #555;
+}
+
+
+.indivForum {
+    display: flex;
+    align-items: center; /* Vertically align content */
+    background: linear-gradient(to right, #CE2029 30%, white 10%);
+    border-radius: 8px;
+    width: 100%;  /* Ensure it takes up full width */
+}
+
+.left-section {
+    width: 30%;  /* 30% of the width */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* Center profile image */
+    padding: 10px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    border-radius: 5px;
+}
+
+.right-section {
+    width: 70%;  /* 70% of the width */
+    padding: 10px;
+    padding-left: 20px;  /* Space between sections */
+}
+
+.directButton {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #007bff;
+}
+
+.directButton:hover {
+    color: #0056b3;
+}
+
+.filter-button {
+    color: #333; /* Default text color */
+    transition: all 0.3s ease;
+}
+
+.filter-button.active {
+    color: white; /* Text color when active */
 }
 
 

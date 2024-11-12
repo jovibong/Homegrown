@@ -5,7 +5,7 @@
         <label for="title" class="col-sm-2 col-form-label"> Event Name</label>
             <div class="col-sm-10">
                 <input id="title" v-model="eventTitle" type="text" class="form-control" required/>
-                <div v-if="titleError" class="text-danger">Event name is required and should not exceed 60 characters</div>
+                <div v-if="titleError" class="text-danger">Event name is required and should not exceed 30 characters</div>
             </div>
         </div>
 
@@ -70,7 +70,9 @@
         </div>
 
         <div id="submitButton">
-            <button type="submit" class="btn btn-warning mt-3" :disabled="isFormInvalid"> Submit </button>
+            <button type="submit" class="btn btn-warning mt-3 submitBTN" 
+            :disabled="isFormInvalid || isFormloading"
+            > Submit </button>
         </div>
     </form>
 </template>
@@ -105,13 +107,14 @@ export default {
             dateError: false,
             timeError: false,
             locationError: false,
+
+            isFormloading: false
         }
     },
 
     computed: {
         isFormInvalid() {
             return this.titleError || this.categoryError || this.descError || this.locationError || this.dateError || this.timeError;
-
         }
     },
 
@@ -125,13 +128,14 @@ export default {
         validateForm() {
             this.titleError = !this.eventTitle || this.eventTitle.length > 30;
             this.descError = !this.eventDescription;
-            this.categoryErrorError = !this.eventCategory;
+            this.categoryError = !this.eventCategory;
             this.dateError = !this.eventDate
             this.timeError = !this.eventTime;
             this.locationError = !this.eventLocation;
         },
 
         async submitInput(e) {
+        this.isFormLoading = true;
         this.validateForm();
 
         if (this.isFormInvalid) {
@@ -163,6 +167,7 @@ export default {
             const docRef = await addDoc(collection(db, "events"), docData);
             console.log("Document written with ID: ", docRef.id);
             this.eventID = docRef.id;
+            this.isFormloading = false;
             this.$router.push({ name: 'eventDetail', params: { id: this.eventID } });
             console.log(this.eventID)
         },
@@ -217,6 +222,14 @@ export default {
 
 <style scoped>
 @import '../css/events.css';
+
+/* Disabled button styling */
+.submitBTN:disabled,
+.submitBTN.disabled {
+  background-color: #bdc3c7;  /* Gray background */
+  color: #7f8c8d;             /* Gray text */
+  cursor: not-allowed;        /* Change cursor to indicate disabled state */
+}
 
 
 </style>

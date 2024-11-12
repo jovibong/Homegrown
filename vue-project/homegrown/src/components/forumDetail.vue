@@ -7,12 +7,12 @@
     </div>
   </div>
 
-  <div class="container main-post">
-    <div class="text-primary fw-bold mb-3 display-4">
+  <div class="forum-text">
+    <div class="title mb-3 display-4 h2">
       {{ forumTitle }}
     </div>
 
-    <div class="text-muted mb-4 h5">
+    <div class="desc text-muted mb-4 h5">
       {{ forumDesc }}
     </div>
   </div>
@@ -21,6 +21,7 @@
 
   <div class="comments-header">
     <h3 class="text-muted"> Comments </h3>
+    <hr>
 
     <div class="dropdown ms-auto">
 
@@ -38,20 +39,30 @@
         <button type="submit" class="btn btn-primary"> Post </button>
       </form>
     </div>
-
-
-    <hr>
   </div>
 
-  <div class="allComments">
+  <hr>
+
+  <loading-animation v-if="comments_loading"></loading-animation>
+  <div v-if="!comments_loading">
     <div v-if="comments.length == 0" class="text-muted mb-4 h5 text-center"> No comments yet.
     </div>
 
     <div v-else>
-      <div v-for="comment in comments" :key="comment.name" class="indiv-comment text-muted mb-4 h5">
-        <div class="comment-text">
-          {{ comment.desc }}
+      <div v-for="comment in comments" :key="comment.name" class="indiv-comment text-muted h5 m-3">
+        <div class="left-section p-3">
+          <img :src="comment.poster.profilePic" class="profile-pic" />
         </div>
+
+        <div class="comment-content">
+          <div class="username">
+            <span class="username-text">{{ comment.poster.username }}</span> says..
+          </div>
+          <div class="comment-text">
+            {{ comment.desc }}
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -65,6 +76,8 @@
   import 'bootstrap/dist/css/bootstrap.css'
   import { doc, getDoc, collection, addDoc, getDocs } from "firebase/firestore";
   import { db } from "../firebase/initialize";
+  import loadingAnimation from "../components/loadingAnimation.vue";
+
 
   export default {
     data(){
@@ -74,8 +87,13 @@
         forumDesc: '',
         comments:[],
 
-        userComment: ''
+        userComment: '',
+        comments_loading: true
       }
+    },
+
+    components: {
+      loadingAnimation
     },
 
     mounted(){
@@ -87,50 +105,94 @@
         this.$router.go(-1);  // Goes back one step in the browser history
       },
 
-      async getForum (){
+      async fetchUserProfile(userID) {
+        console.log(userID)
+        try {
+          const userDoc = await getDoc(doc(db, "profiles", userID)); // Fetch the user document
+          if (userDoc.exists()) {
+            const data = userDoc.data();
 
-      try {
-        console.log("Firestore instance:", db); // Debugging: Check db initialization
-        const docRef = doc(db, "forums", this.forumID); // Create a reference to the specific event document
-        const docSnap = await getDoc(docRef); // Get the document snapshot
-
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-          this.forumTitle = docSnap.data().title;
-          this.forumDesc = docSnap.data().description
-          console.log(this.forumTitle)
-
-          this.getComments(this.forumID);
-        }
-      }catch (error){
-        console.log("error", error)
+            // Return the user profile information as an object
+            return {
+              name: data.name || "", // Provide a default empty string if name is missing
+              username: data.username || "", // Default to empty string if username is missing
+              profilePic: data.profileImageUrl || require('@/img/blankprofile.png'), // Default to a placeholder if no image
+            };
+          } else {
+            console.log("User not found", userDoc.data());
+            return null; // Return null if the document doesn't exist
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          return null; // Return null in case of an error
         }
       },
 
-      async getComments(forumID){
-        
+      async getForum() {
+        try {
+          console.log("Firestore instance:", db); // Debugging: Check db initialization
+          const docRef = doc(db, "forums", this.forumID); // Create a reference to the specific forum document
+          const docSnap = await getDoc(docRef); // Get the document snapshot
+
+          if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+            this.forumTitle = docSnap.data().title;
+            this.forumDesc = docSnap.data().description;
+
+            // Fetch user profile of the user who posted the forum
+            const userInfo = await this.fetchUserProfile(docSnap.data().postedBy); // Fetch the user profile
+            console.log("forum user", userInfo)
+            this.postedBy = {
+              uid: docSnap.data().postedBy,
+              username: userInfo.username,
+              profilePic: userInfo.profilePic
+            };
+
+            // Now fetch the comments
+            this.getComments(this.forumID);
+          }
+        } catch (error) {
+          console.log("Error:", error);
+        }
+      },
+
+
+      async getComments(forumID) {
         const forumRef = doc(db, "forums", forumID);
         const commentsRef = collection(forumRef, "comments");
+
         try {
-        // Get all documents in the "groups" subcollection
-        const querySnapshot = await getDocs(commentsRef);
+          // Get all documents in the "comments" subcollection
+          const querySnapshot = await getDocs(commentsRef);
 
-        // Loop through the documents and extract data
-        querySnapshot.forEach((doc) => {
+          // Loop through the documents and extract data
+          for (const doc of querySnapshot.docs) {
 
-          this.comments.push({
-            id: doc.id,
-            desc: doc.data().description,
-            user: doc.data().user
-          });
-        });
+            console.log("Fetching profile for user:", doc.data().poster);
+            console.log(typeof(doc.data().poster))
 
-        console.log("Comments retrieved:", this.comments);
-        return
-      } catch (error) {
-        console.error("Error fetching groups: ", error);
-      }
+            const userInfo = await this.fetchUserProfile(doc.data().poster); // Fetch user profile for each comment
 
+            console.log("userInfo fetched:", userInfo);
+            
+            // Push comment data along with user profile
+            this.comments.push({
+              id: doc.id,
+              desc: doc.data().description,
+              poster: {
+                uid: doc.data().poster,
+                username: userInfo.username,
+                profilePic: userInfo.profilePic
+              }
+            });
+          }
+
+          console.log("Comments retrieved:", this.comments);
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+        } finally {
+          this.comments_loading = false;
+        }
       },
 
       async addComment() {
@@ -140,7 +202,7 @@
 
         const commentData = {
         description: this.userComment,
-        user: sessionUser.uid,
+        poster: sessionUser.uid,
       };
 
         try{
@@ -160,10 +222,17 @@
 </script>
 
 <style scoped>
-.main-post {
- border: 2px solid blue;
- border-radius: 20px;
- margin-bottom: 10px;
+
+.forum-text {
+  padding: 10px;
+}
+
+.forum-text .title {
+  font-weight: bold;
+}
+
+.forum-text .desc {
+  color: #555;
 }
 
 .comments-header {
@@ -188,13 +257,54 @@
 
 
 .indiv-comment {
-border: 2px solid black;
-padding: 10px;
-margin: 10px;
+  display: flex;
+  align-items: center;
+  /* Vertically align content */
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px;
+  background-color: #f9f9f9;
+  border-radius:55px;
+  border: 2px solid #525fe1;
+}
+
+.left-section {
+    width: 100px;  /* 30% of the width */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* Center profile image */
+    margin-left: 10px;
+}
+
+.profile-pic {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius:50%;
+    padding: 10px;
+}
+
+.comment-content {
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  padding-left: 40px;
+}
+
+.username {
+  font-weight: bold; 
+  margin-bottom: 10px; /* Adds space between username and comment text */
+}
+
+
+.username-text {
+  font-weight: bold; /* Makes the username bold */
+  color: black; /* Change the color of the username */
 }
 
 .comment-text {
-  padding-left: 80px;
+  color: #6c757d; /* Optional: change color for comment text */
 }
+
 
 </style>

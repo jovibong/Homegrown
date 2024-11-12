@@ -123,10 +123,29 @@ html, body {
 
 .category,
 .discussion {
-  background: linear-gradient(to right, #7b4fdf 10%, white 10%);
+  background: linear-gradient(to right, #CE2029 10%, white 10%);
   border-radius: 10px;
   border: none;
   width: 100%;
   margin: 10px;
   height: 80px;
 }
+
+.discussion {
+  text-align: left;
+  padding-left: 12%;
+}
+
+#generalCAT{
+  background: linear-gradient(to right, #0061b5 10%, white 10%);
+}
+
+#learningCAT{
+  background: linear-gradient(to right, #853a76 10%, white 10%);
+}
+
+#eventCAT{
+  background: linear-gradient(to right, #009792 10%, white 10%);
+
+}
+
