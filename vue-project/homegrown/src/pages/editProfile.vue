@@ -9,7 +9,6 @@
         <!-- Content Section -->
         <div class="content-container">
             <div v-if="loading" class="spinner-container">
-                Loading...
                 <div class="spinner"></div>
             </div>
 
