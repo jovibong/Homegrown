@@ -161,13 +161,19 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="bento-tile p-3 h-100">
-                                <stats-tile :title="stats.latePayments.title"
-                                    :statNonEditable="stats.latePayments.statNonEditable"
-                                    :statEditable="stats.latePayments.statEditable"
-                                    :descriptionNonEditable="stats.latePayments.descriptionNonEditable"
-                                    :descriptionEditable="stats.latePayments.descriptionEditable"></stats-tile>
+
+                            <div class="bento-tile p-4 h-100">
+                                <div class="d-flex justify-content-start align-items-center mb-3">
+                                    <span class="fw-bold ps-2">{{ stats.latePayments.title }}</span>
+
+                                </div>
+                                <div>
+                                    <h1 class="text-center text-primary fw-bolder display-1"> {{ stats.latePayments.statEditable }}
+                                    </h1>
+                                </div>
+
                             </div>
+
                         </div>
 
 
