@@ -1,21 +1,6 @@
 <template>
-    <div class="row g-3 mx-auto px-0 mb-3 d-flex justify-content-between">
-        <!-- https://stackoverflow.com/questions/67559395/dropdown-menu-to-push-contents-below-when-opened -->
-        <div class="col-lg-6 col-sm-8 px-0 d-flex justify-content-start">
-            <div class="input-group">
-                <input type="text" class="form-control  border-right-0   border-dark" placeholder="Search here..."
-                    aria-label="Text input with dropdown button">
-                <select class="form-select  text-nowrap  border-dark fw-bold" aria-label="Default select example">
-                    <option value="None" selected> Filter by </option>
-                    <option value="Tilte">Tilte</option>
-                    <option value="Amount">Amount</option>
-                    <option value="Status">Status</option>
-                    <option value="Date">Date</option>
-                    <option value="Image">Image</option> 
-                </select>
-            </div>
-        </div>
-        <div class=" col-sm-3 d-flex justify-content-end px-0">
+
+        <div class="mb-2">
             <button class="btn btn-outline-dark btn-add w-100" id="show-modal" @click="showModal = true">
                 <i class='fas fa-plus-circle fs-5'></i>
                 <span> Add Logs</span>
@@ -32,7 +17,8 @@
                 </logs-modal>
             </Teleport> 
         </div>
-    </div>
+
+
 
     <!-- end of search bar -->
 
