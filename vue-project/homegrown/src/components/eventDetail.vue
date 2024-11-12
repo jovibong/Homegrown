@@ -143,7 +143,7 @@
         </button>
 
         <button type="button" class="chatButton" @click="addChat(group.members, group.name)"
-          :disabled="group.members.length == 1">
+          :disabled="group.members.length == 1 && !isCurrentUserMember(group.members)">
           VIEW CHAT </button>
 
       </div>

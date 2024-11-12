@@ -72,11 +72,12 @@
   
   
 <script>
-  import 'bootstrap/dist/js/bootstrap';
-  import 'bootstrap/dist/css/bootstrap.css'
+
   import { doc, getDoc, collection, addDoc, getDocs } from "firebase/firestore";
   import { db } from "../firebase/initialize";
   import loadingAnimation from "../components/loadingAnimation.vue";
+  // import 'bootstrap/dist/js/bootstrap';
+
 
 
   export default {
@@ -222,6 +223,7 @@
 </script>
 
 <style scoped>
+@import 'bootstrap/dist/css/bootstrap.css'; 
 
 .forum-text {
   padding: 10px;
