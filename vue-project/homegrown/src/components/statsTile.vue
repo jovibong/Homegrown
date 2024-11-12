@@ -14,8 +14,7 @@ const showModal = ref(false)
 
 // Watch the props and log their values when they change
 watch(() => [props.title, props.statNonEditable, props.statEditable, props.descriptionNonEditable, props.descriptionEditable], (newValues) => {
-    console.log('this is tile')
-    console.log('Updated tile props:', newValues);
+    return newValues;
 }, { immediate: true }); // Logs the values immediately on first run
 
 </script>
@@ -125,3 +124,7 @@ button {
 
 }
 </style>
+
+
+
+

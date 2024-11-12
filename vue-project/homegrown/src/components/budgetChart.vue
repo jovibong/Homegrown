@@ -1,40 +1,35 @@
 <template>
-    <div >
+    <div>
         <apexchart :options="chartOptions" :series="filteredSeries" type="donut" height="350"></apexchart>
 
         <div class="buttons d-flex justify-content-center p-2">
-            <button @click="appendData" :disabled="totalExceedsLimit">Add Data</button> <!-- Disable button if total exceeds 500 -->
+            <button @click="appendData" :disabled="totalExceedsLimit">Add Data</button>
             <button @click="reset">Reset Data</button>
         </div>
 
-        <!-- Display overflow message if the sum exceeds 500 -->
         <div v-if="totalExceedsLimit" class="alert">
             <p>You are over by {{ overflowAmount }}. Please adjust the values to stay within 500.</p>
         </div>
 
-        <!-- Table for editable labels and values -->
         <table class="series-table">
             <thead>
                 <tr>
-                    <th>Label</th>
-                    <th>Value</th>
-                    <th>Action</th> <!-- Add action column for remove buttons -->
+                    <th>Category</th>
+                    <th>SGD$</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(value, index) in series" :key="index">
                     <td>
-                        <!-- Show "Savings" as a fixed label for the first item -->
-                        <span v-if="index === 0">{{ customLabels[index] }}</span>
+                        <span v-if="index < lastindex">{{ customLabels[index] }}</span>
                         <input v-else type="text" v-model="customLabels[index]" @input="updateChart" />
                     </td>
                     <td>
-                        <!-- Make the first value non-editable -->
-                        <span v-if="index === 0">{{ series[index] }}</span>
+                        <span v-if="index < lastindex">{{ series[index] }}</span>
                         <input v-else type="number" v-model.number="series[index]" @input="updateChart" />
                     </td>
                     <td>
-                        <!-- Show remove button only for non-"Savings" rows -->
                         <button v-if="index !== 0" @click="removeData(index)">Remove</button>
                     </td>
                 </tr>
@@ -43,175 +38,154 @@
     </div>
 </template>
 
-<script setup>
-// const props = defineProps({
-//     savings: Number,
-
-// })
-</script>
-
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
+import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "../firebase/initialize";
 
 export default defineComponent({
     components: {
         apexchart: VueApexCharts
     },
-    data() {
-        return {
-            // Series data with the first item set to 500
-            series: [100,20],
-
-            // Custom category labels with the first item labeled as "Savings"
-            customLabels: ['Amount left','Savings'],
-
-            // Chart options
-            chartOptions: {
-                chart: {
-                    width: 380,
-                    type: 'donut',
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                legend: {
-                    position: 'right',
-                    offsetY: 0,
-                    height: 230,
-                    formatter: (seriesName, opts) => {
-                        return this.customLabels[opts.seriesIndex];
-                    }
-                },
-                tooltip: {
-                    y: {
-                        formatter: (val) => {
-                            return `${val}`;
-                        },
-                        title: {
-                            formatter: (val, opts) => {
-                                const category = this.customLabels[opts.seriesIndex];
-                                return `${category}:`;
-                            }
-                        }
-                    },
-                }
+    setup() {
+        const left = ref(500); // Set initial "Amount Left" to 500
+        const series = ref([left.value]); // First item is always 500
+        const customLabels = ref(['Amount left', 'Savings']);
+        const totalByCategory = ref({});
+        const tableData = ref([]);
+        const hasLogs = ref(false);
+        const lastindex = ref(2);
+        
+        const chartOptions = {
+            chart: { width: 380, type: 'donut' },
+            dataLabels: { enabled: false },
+            legend: {
+                position: 'right',
+                formatter: (seriesName, opts) => customLabels.value[opts.seriesIndex]
+            },
+            tooltip: {
+                y: { formatter: (val) => `${val}`, title: (val, opts) => `${customLabels.value[opts.seriesIndex]}:` }
             }
         };
-    },
-    computed: {
-        filteredSeries() {
-            return this.series;
-        },
 
-        // Calculate total of the series excluding the first item ("Savings")
-        totalSum() {
-            return this.series.reduce((acc, val) => acc + val, 0);
-        },
+        const filteredSeries = computed(() => series.value);
+        const totalSum = computed(() => series.value.reduce((acc, val) => acc + val, 0));
+        const totalExceedsLimit = computed(() => totalSum.value > 500);
+        const overflowAmount = computed(() => totalSum.value - 500);
 
-        // Check if the total sum exceeds 500
-        totalExceedsLimit() {
-            return this.totalSum > 500;
-        },
+        // Watch for changes to the series and adjust the "Amount Left" accordingly
+        watch(series, (newSeries) => {
+            const totalOtherValues = newSeries.slice(1).reduce((acc, val) => acc + val, 0);
+            series.value[0] = Math.max(0, 500 - totalOtherValues); // Ensure "Amount Left" is correctly adjusted
+        }, { deep: true });
 
-        // Calculate how much the total exceeds the limit
-        overflowAmount() {
-            return this.totalSum - 500;
-        }
-    },
-    watch: {
-        // Watch for changes in the series array and update "Savings" to keep total 500
-        series: {
-            handler(newSeries) {
-                const totalOtherValues = newSeries.slice(1).reduce((acc, val) => acc + val, 0);
-                this.series[0] = Math.max(0, 500 - totalOtherValues); // Adjust "Savings" value to keep total 500
-            },
-            deep: true
-        }
-    },
-    methods: {
-        appendData() {
-            this.series.push(0); // Start with 0 for new entries
-            this.customLabels.push(`Category ${this.customLabels.length + 1}`);
-        },
+        const appendData = () => {
+            series.value.push(0);
+            customLabels.value.push(`Category ${customLabels.value.length + 1}`);
+            updateChart();
+        };
 
-        removeData(index) {
-            // Remove data at the specified index (if it's not "Savings")
-            if (this.series.length > 1 && index !== 0) {
-                this.series.splice(index, 1);
-                this.customLabels.splice(index, 1);
+        const removeData = (index) => {
+            if (series.value.length > 1 && index !== 0) {
+                series.value.splice(index, 1);
+                customLabels.value.splice(index, 1);
+                updateChart();
             }
-        },
+        };
 
-        reset() {
-            this.series = [500];
-            this.customLabels = ['Savings'];
-            this.updateChart();
-        },
+        const reset = () => {
+            series.value = [500]; // Reset to 500 as the first value
+            customLabels.value = ['Amount left'];
+            updateChart();
+        };
 
-        updateChart() {
-            // Trigger reactivity for series updates
-            this.series = [...this.series];
-        },
+        const updateChart = () => {
+            series.value = [...series.value]; // Trigger reactivity for chart update
+        };
 
-        getMaxValue(index) {
-            // Ensure the max value is based on the first item in the series
-            return index === 0 ? 500 : this.series[0];
-        }
+        onMounted(async () => {
+            try {
+                const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+                // console.log('session in progress');
+                // console.log(sessionUser.uid);
+
+                const userId = sessionUser.uid;
+                const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
+                const paymentLogsCollectionRef = collection(userDocRef, 'expenseLogs'); // Reference to the user's paymentlogs subcollection
+
+                // Check if the user document exists
+                const userDocSnapshot = await getDoc(userDocRef);
+
+                const currentMonth = new Date().getMonth();
+
+                // If the user document doesn't exist, create it (you can optionally add some initial data to it)
+                if (!userDocSnapshot.exists()) {
+                    hasLogs.value = false;
+                    return;
+                }
+
+                const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'desc'));
+
+                const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
+                    totalByCategory.value = {}; // Reset the category totals
+
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const logDate = data.date.toDate(); // Convert Firestore Timestamp to JS Date
+                        const logMonth = logDate.getMonth(); // Get month of the log
+
+                        // Only proceed if the month matches the current month
+                        if (logMonth === currentMonth) {
+                            // Sum the amount by category
+                            if (!totalByCategory.value[data.category]) {
+                                totalByCategory.value[data.category] = 0;
+                            }
+                            totalByCategory.value[data.category] += data.amount;
+                        }
+                    });
+
+                    // console.log('Category Totals:', totalByCategory.value);
+
+                    // Populate series and customLabels with the category totals
+                    const categories = Object.keys(totalByCategory.value);
+                    const values = Object.values(totalByCategory.value);
+                    lastindex.value = categories.length;
+                    // console.log(lastindex.value)
+
+                    // Update the series and customLabels with the category names and totals
+                    tableData.value = categories.map((category, index) => ({
+                        category: category,
+                        amount: values[index],
+                    }));
+
+                    // Set the series and custom labels
+                    series.value = [500, ...values]; // Ensure the first value is always 500
+                    customLabels.value = ['Amount left', ...categories]; // Add "Amount left" to customLabels
+
+                    // Check if there are any logs
+                    hasLogs.value = tableData.value.length > 0;
+                    return unsubscribe;
+                });
+            } catch (error) {
+                console.log('No session user or error fetching logs:', error);
+                tableData.value = [];
+                hasLogs.value = false;
+            }
+        });
+
+        return {
+            series,
+            customLabels,
+            chartOptions,
+            filteredSeries,
+            totalExceedsLimit,
+            overflowAmount,
+            appendData,
+            removeData,
+            reset,
+            updateChart
+        };
     }
 });
 </script>
-
-<style scoped>
-.buttons {
-    margin-top: 20px;
-}
-
-button {
-    margin-right: 10px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-.series-table {
-    margin-top: 20px;
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.series-table th,
-.series-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-.series-table th {
-    background-color: #f4f4f4;
-}
-
-input[type="number"],
-input[type="text"] {
-    width: 100%;
-    padding: 4px;
-    text-align: center;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-}
-
-.alert {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #f5c6cb;
-    border-radius: 5px;
-}
-</style>
