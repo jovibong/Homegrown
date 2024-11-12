@@ -16,7 +16,7 @@
 <script>
 import { ref, onMounted, defineComponent } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { doc, getDoc, getDocs, collection, query, orderBy } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, orderBy, updateDoc } from 'firebase/firestore';
 import { db } from "../firebase/initialize";
 
 export default defineComponent({
@@ -54,7 +54,7 @@ export default defineComponent({
             markers: { size: 0, style: 'hollow' },
             xaxis: {
                 type: 'datetime',
-                
+
             },
             tooltip: { x: { format: 'dd MMM yyyy' } },
             fill: {
@@ -66,48 +66,48 @@ export default defineComponent({
                     stops: [0, 100]
                 }
             },
-            
+
         });
 
         const selection = ref('one_year');
         const chart = ref(null);
 
         const updateData = (timeline) => {
-    if (chart.value && cumulativeLogs.value.length > 0) {
-        // Get the min and max timestamps from the logs
-        const minTimestamp = cumulativeLogs.value[0][0];
-        const maxTimestamp = cumulativeLogs.value[cumulativeLogs.value.length - 1][0];
+            if (chart.value && cumulativeLogs.value.length > 0) {
+                // Get the min and max timestamps from the logs
+                const minTimestamp = cumulativeLogs.value[0][0];
+                const maxTimestamp = cumulativeLogs.value[cumulativeLogs.value.length - 1][0];
 
-        let startDate, endDate;
+                let startDate, endDate;
 
-        // Calculate the date range based on the timeline
-        switch (timeline) {
-            case 'one_week':
-                startDate = new Date(maxTimestamp).setDate(new Date(maxTimestamp).getDate() - 7);  // 1 week ago
-                endDate = maxTimestamp;  // Latest data point
-                break;
-            case 'one_month':
-                startDate = new Date(maxTimestamp).setMonth(new Date(maxTimestamp).getMonth() - 1);  // 1 month ago
-                endDate = maxTimestamp;  // Latest data point
-                break;
-            case 'one_year':
-                startDate = new Date(maxTimestamp).setFullYear(new Date(maxTimestamp).getFullYear() - 1);  // 1 year ago
-                endDate = maxTimestamp;  // Latest data point
-                break;
-            case 'all':
-                startDate = minTimestamp;  // Earliest data point
-                endDate = maxTimestamp;  // Latest data point
-                break;
-            default:
-                startDate = minTimestamp;
-                endDate = maxTimestamp;
-        }
+                // Calculate the date range based on the timeline
+                switch (timeline) {
+                    case 'one_week':
+                        startDate = new Date(maxTimestamp).setDate(new Date(maxTimestamp).getDate() - 7);  // 1 week ago
+                        endDate = maxTimestamp;  // Latest data point
+                        break;
+                    case 'one_month':
+                        startDate = new Date(maxTimestamp).setMonth(new Date(maxTimestamp).getMonth() - 1);  // 1 month ago
+                        endDate = maxTimestamp;  // Latest data point
+                        break;
+                    case 'one_year':
+                        startDate = new Date(maxTimestamp).setFullYear(new Date(maxTimestamp).getFullYear() - 1);  // 1 year ago
+                        endDate = maxTimestamp;  // Latest data point
+                        break;
+                    case 'all':
+                        startDate = minTimestamp;  // Earliest data point
+                        endDate = maxTimestamp;  // Latest data point
+                        break;
+                    default:
+                        startDate = minTimestamp;
+                        endDate = maxTimestamp;
+                }
 
-        // Zoom the chart to the calculated date range
-        chart.value.zoomX(startDate, endDate);
-    }
-    return timeline;
-};
+                // Zoom the chart to the calculated date range
+                chart.value.zoomX(startDate, endDate);
+            }
+            return timeline;
+        };
 
         onMounted(async () => {
             try {
@@ -157,6 +157,17 @@ export default defineComponent({
                     return [timestamp, cumulativeSum];
                 });
 
+                // Extract the last amount from the cumulative logs (series data)
+                const lastAmount = cumulativeLogs.value[cumulativeLogs.value.length - 1][1];  // The last value in the cumulative sum
+
+                // ----- Add Firebase update here -----
+                // Update Firebase with the last amount value (example update)
+                const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
+                await updateDoc(statsRef, {
+                    statEditable: lastAmount,  // Add this field or update as needed
+                });
+
+                
                 series.value = [{ data: cumulativeLogs.value }];
             } catch (error) {
                 console.log('Error fetching logs or statEditable:', error);
