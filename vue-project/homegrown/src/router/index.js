@@ -67,12 +67,6 @@ const routes = [
     },
 
     {
-        path: '/calender',
-        name: 'eventCalender',
-        component: () => import('../components/userCalender.vue')
-    },
-
-    {
         path: '/mentorshipPage',
         name: 'mentorshipPage',
         component: Mentorship

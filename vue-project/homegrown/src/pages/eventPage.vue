@@ -64,7 +64,7 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
                     <div class="row align-items-center">
                         <div class="col-md-9 col-sm-12">
                             <div class="search-container">
-                                <input type="text" class="searchBar" id="dropdownTextbox"
+                                <input type="text" class="searchBar mb-3" id="dropdownTextbox"
                                     :aria-expanded="(filteredEvents.length > 0).toString()"
                                     placeholder="Search for events" @keyup.enter="eventSearch" v-model="searchQuery"
                                     autocomplete="off" />
@@ -78,7 +78,7 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
                                 </ul>
                             </div>
                         </div>
-                        <span class="text-muted h5 col-1"> | </span>
+                        <span class="text-muted h5 col-1 m-3"> OR </span>
 
                         <button @click="allowCreate" style="height: 50px; width: 180px"
                             :class="showCreate ? 'btn btn-primary col-2' : 'btn btn-primary col-2'">
@@ -248,10 +248,13 @@ export default {
             this.selectedEvents = [];
             const eventCategory = this.selectedCategory;
             const q = query(collection(db, "events"), where("category", "==", eventCategory));
+            const today = new Date();  // Get today's date and time
 
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
+                const eventDate = doc.data().date.toDate(); 
+                if (eventDate > today){
                 console.log(doc.id, " => ", doc.data());
                 this.selectedEvents.push({ 
                     id: doc.id,
@@ -259,6 +262,7 @@ export default {
                     description: doc.data().description, 
                     imageURL: doc.data().imageURL,
                 });
+            }
             }); 
         } catch (error) {
             console.log("Error fetching events by category", error)
@@ -271,15 +275,20 @@ export default {
         async getAllEvents(){
             try {
             const querySnapshot = await getDocs(collection(db, "events"));
+            const today = new Date();  // Get today's date and time
+
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
+                const eventDate = doc.data().date.toDate(); 
+                if (eventDate > today){
                 this.allEvents.push({ 
                     id: doc.id,
                     title: doc.data().name,
                     description: doc.data().description, 
                     imageURL: doc.data().imageURL,
                 });
+                }
             });
             } catch (error ){
                 console.log("Error fetching all events", error)
@@ -287,7 +296,6 @@ export default {
                 this.allEvent_loading = false;
             }
 
-            // this.getPastEvents();
         },
 
         async getMyEvents(){
@@ -298,10 +306,14 @@ export default {
             console.log("user is",currentUser)
 
             const querySnapshot = await getDocs(collection(db, 'events'));
+            const today = new Date();  // Get today's date and time
+
 
             querySnapshot.docs
                 .filter(doc => doc.data().joined && doc.data().joined.includes(currentUser))
                 .forEach(doc => {
+                    const eventDate = doc.data().date.toDate(); 
+                    if (eventDate > today) {
                     console.log(doc.id, " => ", doc.data());
                     this.myEvents.push({
                         id: doc.id,
@@ -309,6 +321,7 @@ export default {
                         description: doc.data().description,
                         imageURL: doc.data().imageURL,
                     })
+                }
                 console.log("my event", this.myEvents)
             })  
         }catch(error) {
@@ -328,8 +341,8 @@ export default {
                 const eventDate = doc.data().date.toDate(); 
 
                 // Check if the event date is in the past
-                if (eventDate < today) {
-                    console.log("successful check of eventDate<today")
+                if (eventDate > today) {
+                    console.log("successful check of eventDate>today")
                     console.log(doc.id, " => ", doc.data());
 
                     // Push the event into the array if it's in the past
