@@ -81,11 +81,11 @@
                 <span class="dropdown-username">{{ user.displayName || 'User' }}</span>
               </div>
               <hr>
-              <router-link to="/editProfile" class="dropdown-item"><i class="bi bi-gear-fill"></i> Profile Settings</router-link>
-              <router-link v-if="userType === 'worker'" to="/workersCertification" class="dropdown-item">
+              <router-link to="/editProfile" class="dropdown-item" active-class="active-link"><i class="bi bi-gear-fill"></i> Profile Settings</router-link>
+              <router-link v-if="userType === 'worker'" to="/workersCertification" class="dropdown-item" active-class="active-link">
                 <i class="bi bi-award-fill"></i> Certifications
               </router-link>
-              <router-link v-else-if="userType === 'volunteer'" to="/volunteerAchievement" class="dropdown-item">
+              <router-link v-else-if="userType === 'volunteer'" to="/volunteerAchievement" class="dropdown-item" active-class="active-link">
                 <i class="bi bi-award-fill"></i> Achievements
               </router-link>
               <hr>
@@ -95,8 +95,8 @@
 
           <!-- Sign In/Up Buttons for Unauthenticated Users -->
           <nav v-else class="navbar d-flex flex-nowrap">
-            <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openLoginModal">Sign In</a>
-            <a class="btn btn-warning fw-bold glow-on-hover mx-1" @click="openSignUpModal">Sign Up</a>
+            <a class="btn btn-warning fw-bold glow-on-hover mx-1"  @click="openLoginModal">Sign In</a>
+            <a class="btn btn-warning fw-bold glow-on-hover mx-1"  @click="openSignUpModal">Sign Up</a>
           </nav>
         </div>
       </div>
@@ -441,21 +441,6 @@ export default {
   transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
 }
 
-/* Style for collapsed (X) icon */
-.collapsed-bar.top-bar {
-  transform: rotate(45deg) translate(5px, 5px);
-  background-color: red; /* Change to red when transformed */
-}
-
-.collapsed-bar.middle-bar {
-  opacity: 0; /* Hide middle bar for "X" effect */
-}
-
-.collapsed-bar.bottom-bar {
-  transform: rotate(-45deg) translate(5px, -5px);
-  background-color: red; /* Change to red when transformed */
-}
-
 /* General button styling */
 .btn {
   white-space: nowrap; /* Prevents text from wrapping */
@@ -539,4 +524,16 @@ export default {
   position: relative;
   overflow: visible; /* Ensure no clipping */
 }
+
+/* Styling for the active router link */
+.router-link-active {
+  color: #ffd700 !important; /* gold color for nav bar links */
+  font-weight: bold;
+}
+
+.active-link {
+  font-weight: bolder;
+  color: black !important; /* black color for profile dropdown links */
+}
+
 </style>
