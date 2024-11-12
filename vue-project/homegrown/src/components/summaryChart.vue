@@ -120,7 +120,7 @@ export default defineComponent({
 
                 if (goalSnap.exists()) {
                     const statEditable = goalSnap.data().statEditable; // Access the statEditable field
-                    console.log('Stat Editable:', statEditable);
+                    // console.log('Stat Editable:', statEditable);
 
                     // Update annotations with statEditable value
                     chartOptions.value = {

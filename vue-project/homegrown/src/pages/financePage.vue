@@ -226,10 +226,10 @@ const GoalDate = computed(() => {
     }
     var numMonths = Math.ceil(toEarn / savings.value);
 
-    var currentDate = new Date();
-    currentDate.setMonth(currentDate.getMonth() + numMonths);
-    const goalMonth = currentDate.getMonth() + 1;
-    const goalYear = currentDate.getFullYear();
+    var currentDate1 = new Date();
+    currentDate1.setMonth(currentDate1.getMonth() + numMonths);
+    const goalMonth = currentDate1.getMonth() + 1;
+    const goalYear = currentDate1.getFullYear();
     const goalDay = stats.value.payday.descriptionEditable;
 
     return `${goalDay}/${goalMonth}/${goalYear}`;
