@@ -18,7 +18,7 @@
             <table class="table table-striped text-center mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">Select</th>
+
                         <th scope="col">Title</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Category</th>
@@ -29,17 +29,13 @@
                 <!-- Show this tbody if logs exist -->
                 <tbody v-if="hasLogs" class="table-group-divider">
                     <tr v-for="(log, index) in tableData" :key="index">
-                        <td><input type="checkbox" v-model="log.selected" @change="updateSelectedCount" /></td>
                         <th scope="row">{{ log.title }}</th>
                         <td>${{ log.amount }}</td>
                         <td>{{ log.category }}</td>
                         <td>{{ log.date }}</td>
                         <td class="text-nowrap">
                             <a href="#" class="text-decoration-none text-dark" @click.prevent="deleteLog(log.id, index)">
-                                <i class="fas fa-trash"></i> |
-                            </a>
-                            <a href="#" class="text-decoration-none text-dark" @click.prevent="editLog(index)">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-trash"></i>
                             </a>
                         </td>
                     </tr>

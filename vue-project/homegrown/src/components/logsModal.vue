@@ -9,7 +9,7 @@
                 <div class="container ">
                     <!-- update validation func later -->
                     <form class="row g-3 needs-validation" novalidate @submit.prevent="addLogs()">
-                        
+
                         <div class="col-md-6">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
@@ -53,7 +53,7 @@
                             </div>
                         </div>
 
-                        
+
 
                         <div class="col-12 ">
                             <!-- <label for="validationCustom03" class="form-label mt-4">Payment Slip</label>
@@ -120,12 +120,23 @@ const status = ref('')
 const badgeClass = ref('')
 
 // Watchers for paymentType and date to set `status` and `badgeClass`
-watch([paymentType, date], () => {
+watch([paymentType, date], async () => {
     // Update status based on paymentType and date
     if (paymentType.value === 'bonus') {
         status.value = 'BONUS';
     } else if (paymentType.value === 'monthly pay') {
-        const paymentDay = 15;
+
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        const userId = sessionUser.uid;
+        const paymentDayRef = doc(db, 'finance', userId, 'stats', 'Payday');
+        const paymentDaySnap = await getDoc(paymentDayRef);
+
+
+        const descriptionEditable = paymentDaySnap.data().descriptionEditable;
+        // console.log('this is the day',descriptionEditable)
+
+        const paymentDay = descriptionEditable;
+
         const processDate = new Date(date.value);
         const day = processDate.getDate();
 
@@ -193,7 +204,7 @@ async function addLogs() {
         }
 
         console.log(date.value)
-        console.log( typeof(date.value))
+        console.log(typeof (date.value))
 
         // Add the log to the user's paymentlogs subcollection
         await addDoc(paymentLogsCollectionRef, {
@@ -204,6 +215,8 @@ async function addLogs() {
             image: image,
             badgeClass: badgeClass.value
         });
+
+        
 
         // Clear input fields after adding the log
         clearFields();

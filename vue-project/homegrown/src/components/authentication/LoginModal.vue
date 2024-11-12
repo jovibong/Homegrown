@@ -36,6 +36,10 @@
               <span class="fw-bold" id="home">Home</span><span class="text-warning fw-bold">Grown</span><br /><br />
             </div>
             <h2 class="mb-4">Welcome!</h2>
+
+            <!-- Error Message Display -->
+            <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+
             <form @submit.prevent="handleLogin">
               <div class="form-group mb-3">
                 <label for="email" class="bold-label">Email or Phone Number</label>
@@ -64,12 +68,12 @@
 <script>
 import { Modal } from "bootstrap";
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebase/initialize.js'; // Import Firebase auth instance
+import { auth } from '@/firebase/initialize.js';
 import { getDoc, doc } from 'firebase/firestore';
-import { db } from '@/firebase/initialize.js'; // Import Firestore instance
+import { db } from '@/firebase/initialize.js';
 
 export default {
-  emits: ['startLoading', 'stopLoading'],
+  emits: ['error'],
   name: "LoginModal",
   props: {
     visible: {
@@ -81,10 +85,11 @@ export default {
     return {
       email: "",
       password: "",
-      rememberMe: false, // checkbox for "Remember Me"
+      rememberMe: false,
       imageUrl: require('@/img/group_picture.jpg'),
       modalInstance: null,
-      user: null, // user data from login
+      user: null,
+      errorMessage: '' // Error message for displaying above the form
     };
   },
   watch: {
@@ -106,7 +111,7 @@ export default {
         });
       }
       this.modalInstance.show();
-      this.resetForm(); // Clear form each time modal opens
+      this.resetForm();
     },
     hideModal() {
       if (this.modalInstance) {
@@ -115,62 +120,45 @@ export default {
       this.$emit("update:visible", false);
     },
     resetForm() {
-      // Clear all input fields
       this.email = '';
       this.password = '';
+      this.errorMessage = ''; // Clear the error message as well
     },
     async handleLogin() {
       try {
-        // Firebase sign-in
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
         console.log("Logged in user:", user);
 
-        // Check the "Remember Me" preference and save accordingly
         if (this.rememberMe) {
-          localStorage.setItem('rememberMe', true);
-          localStorage.removeItem('user');
-          sessionStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('user', JSON.stringify(user));
         } else {
-          localStorage.removeItem('user');
           sessionStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('user', JSON.stringify(user));
         }
 
-        // Fetch userType from Firestore
         const docRef = doc(db, 'profiles', user.uid);
         const docSnap = await getDoc(docRef);
         let userType;
 
         if (docSnap.exists()) {
           userType = docSnap.data().userType;
-          console.log('UserType fetched:', userType);
-
-          // Redirect based on userType
           if (userType === 'worker') {
             this.$router.push({ name: 'homePage' });
           } else if (userType === 'volunteer') {
             this.$router.push({ name: 'volunteerHomePage' });
           } else {
-            console.warn('Unknown userType:', userType);
-            this.$router.push({ name: '/' }); // Default or error page if needed
+            this.$router.push({ name: '/' });
           }
         } else {
-          console.log('No such document!');
-          this.$router.push({ name: '/' }); // Redirect to a default or error page if no userType is found
+          this.$router.push({ name: '/' });
         }
 
-        // Emit login event to parent if needed
-        this.$emit('login', { user: user, rememberMe: this.rememberMe });
-
-        // Hide login modal
         this.hideModal();
       } catch (error) {
         console.error("Error logging in:", error.message);
-        alert("Login failed: " + error.message);
+        this.errorMessage = "Error logging in, please sign in again" || 'An error occurred during login.'; // Set error message here
       }
-},
+    },
     openSignup() {
       this.$emit("openSignup");
       this.hideModal();
@@ -189,11 +177,9 @@ export default {
 };
 </script>
 
-
 <style scoped>
-/* Enlarge modal size */
 .modal-dialog {
-    max-width: 600px; /* Adjust width as needed */
+    max-width: 600px;
 }
 
 .modal-content {
@@ -203,7 +189,6 @@ export default {
     overflow-y: auto;
 }
 
-/* Style for the header text */
 .modal-login h2 {
     color:#525FE1; 
     font-weight: bold;
@@ -215,17 +200,16 @@ export default {
 }
 
 .modal-login .text-warning {
-    color: #FFC107 !important; /* Navbar complementary color */
+    color: #FFC107 !important;
 }
 
-/* Adjust Sign In button styling */
 .modal-login .btn-primary {
-    background-color: #525FE1; /* Match to navbar color */
+    background-color: #525FE1;
     border: none;
 }
 
 .modal-login .btn-primary:hover {
-    background-color: #335E9A; /* Slightly darker shade for hover effect */
+    background-color: #335E9A;
 }
 
 .signup-link a {
@@ -236,6 +220,7 @@ export default {
 .bold-label {
     font-weight: bold;
 }
+
 .custom-close {
   position: absolute;
   top: 10px;
@@ -246,11 +231,16 @@ export default {
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
-  z-index: 1051; /* Ensure it stays on top */
+  z-index: 1051;
 }
 
 .custom-close:hover {
   color: darkred;
 }
-</style>
 
+.error-text {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+</style>

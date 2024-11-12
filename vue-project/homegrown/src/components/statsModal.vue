@@ -10,7 +10,7 @@
                     <!-- update validation func later -->
                     <form class="row g-3 needs-validation " novalidate @submit.prevent="addLogs()">
 
-                        <div class="col-12">
+                        <div class="col-12" v-if="title == 'Goal'">
                             <label for="validationCustomUsername" class="form-label mt-4"></label>
                             <div class="input-group has-validation">
                                 <span v-if="statNonEditable.length > 0" class="input-group-text"
@@ -134,10 +134,34 @@ async function updateStats() {
         const statsref = doc(db, 'finance', userId, 'stats', title);
         // console.log(statType.value);
         // console.log('this is the date', InputDescriptionEditable.value);
+        if (title == 'Payday') {
+            const pay = new Date();  // Get the current date
+            pay.setDate(InputDescriptionEditable.value);  // Set the day of the month
+            const current = new Date();
+
+            if (pay < current) {
+                const pay = new Date();  // Get the current date
+                pay.setMonth(pay.getMonth() + 1);  // Increase the month by 1
+                pay.setDate(InputDescriptionEditable.value)
+                const differenceInMs = pay - current;
+                // Convert milliseconds to days
+                const differenceInDays = differenceInMs / (1000 * 60 * 60 * 24);
+                InputStatEditable.value=differenceInDays;
+            // console.log(`The difference is ${differenceInDays} days.`)
+
+            }else{
+                const differenceInMs = pay - current ;
+                // Convert milliseconds to days
+                const differenceInDays = differenceInMs / (1000 * 60 * 60 * 24);
+                InputStatEditable.value=differenceInDays;
+
+            // console.log(`The difference is ${differenceInDays} days.`)
+
+            }
+        }
 
 
 
-        
 
         if (descType.value == 'date') {
             // console.log(  Timestamp.fromDate(new Date(InputDescriptionEditable.value)));

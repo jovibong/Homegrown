@@ -1,6 +1,6 @@
 <template>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <button class="btn btn-outline-dark btn-add w-100" id="show-modal" @click="showModal = true">
                 <i class='fas fa-plus-circle fs-5'></i>
                 <span> Add Logs</span>
@@ -26,31 +26,23 @@
         <table class="table table-striped text-center mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th scope="col">Select</th>
                     <th scope="col">Title</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date of Payment</th>
-                    <th scope="col">Image</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider" v-if="hasLogs">
                 <tr v-for="(row, index) in tableData" :key="index" :class="{ 'selected-row': isSelected(index) }">
-                    <td>
-                        <input type="checkbox" @change="toggleRowSelection(index)" :checked="isSelected(index)" />
-                    </td>
                     <th scope="row">{{ row.title }}</th>
                     <td>${{ row.amount }}</td>
                     <td>
                         <span class="badge rounded-pill" :class="row.badgeClass">{{ row.status }}</span>
                     </td>
                     <td>{{ row.date }}</td>
-                    <td><a href='#' class="text-dark">{{ row.image }}</a></td>
                     <td class="text-nowrap">
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-eye'></i>|</a>
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-trash'></i>|</a>
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-edit'></i></a>
+                        <a href='#' class="text-decoration-none trash " @click.prevent="deleteLog(row.id,)"><i class='fas fa-trash'></i></a>
                     </td>
                 </tr>
             </tbody>
@@ -70,7 +62,7 @@ import Modal from './logsModal.vue'
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { updateDoc,deleteDoc,doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 // import { getAuth } from 'firebase/auth';
 
@@ -121,8 +113,10 @@ onMounted(async () => {
 
         const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
             const logs = [];
+            let countLate = 0;
             querySnapshot.forEach((doc) => {
                 logs.push({
+                    id: doc.id, 
                     title: doc.data().title,
                     amount: doc.data().amount,
                     status: doc.data().statusPayment,
@@ -130,11 +124,16 @@ onMounted(async () => {
                     image: doc.data().image,
                     badgeClass: doc.data().badgeClass
                 });
+                if (doc.data().statusPayment === 'LATE') {
+                    countLate++;
+                }
             });
             tableData.value = logs; // Update tableData with fetched logs
 
             // Check if there are any logs
             hasLogs.value = tableData.value.length > 0;
+
+            updateLateCount(countLate);
         });
     } catch {
         console.log('no session user');
@@ -146,7 +145,41 @@ onMounted(async () => {
 
 
 
-})
+});
+
+
+function updateLateCount(countLate) {
+    const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    const userId = sessionUser.uid;
+
+    // Reference to the user's document in the 'finance' collection
+    const userDocRef = doc(db, 'finance', userId, 'stats', 'Late Payments');
+
+    updateDoc(userDocRef, { statEditable: countLate });
+}
+
+
+function deleteLog(logId) {
+    const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    console.log('session in progress');
+    console.log(sessionUser.uid);
+
+    // if (!user) {
+    //     console.log("No user is logged in");
+    //     return;
+    // }
+
+    const userId = sessionUser.uid;
+    const logRef = doc(db, 'finance', userId, 'paymentlogs', logId);
+
+    deleteDoc(logRef)
+        // .then(() => {
+        //     // Remove log from tableData on successful deletion
+        //     tableData.value.splice(index, 1);
+        //     hasLogs.value = tableData.value.length > 0;
+        // })
+        // .catch(error => console.error("Error deleting log: ", error));
+}
 </script>
 
 
@@ -197,5 +230,15 @@ export default {
 td,
 th {
     vertical-align: middle;
+}
+
+
+.trash{
+color: black;
+}
+
+
+.trash:hover{
+    color:red;
 }
 </style>
