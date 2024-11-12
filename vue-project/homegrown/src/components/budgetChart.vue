@@ -8,7 +8,7 @@
         </div>
 
         <div v-if="totalExceedsLimit" class="alert">
-            <p>You are over by {{ overflowAmount }}. Please adjust the values to stay within 500.</p>
+            <p>You are over by {{ overflowAmount }}. Please adjust the values to stay within amount left.</p>
         </div>
 
         <table class="series-table">
@@ -49,7 +49,7 @@ export default defineComponent({
         apexchart: VueApexCharts
     },
     setup() {
-        const left = ref(500); // Default to 500, will be overwritten by Firebase data
+        const left = ref(1); // Default to 0, will be overwritten by Firebase data
         const series = ref([left.value]); // First item is initially set to left's value
         const customLabels = ref(['Amount left', 'Savings']);
 
