@@ -1,6 +1,6 @@
 <template>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <button class="btn btn-outline-dark btn-add w-100" id="show-modal" @click="showModal = true">
                 <i class='fas fa-plus-circle fs-5'></i>
                 <span> Add Logs</span>
@@ -62,7 +62,7 @@ import Modal from './logsModal.vue'
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { deleteDoc,doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { updateDoc,deleteDoc,doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 // import { getAuth } from 'firebase/auth';
 
@@ -113,6 +113,7 @@ onMounted(async () => {
 
         const unsubscribe = onSnapshot(logsQuery, (querySnapshot) => {
             const logs = [];
+            let countLate = 0;
             querySnapshot.forEach((doc) => {
                 logs.push({
                     id: doc.id, 
@@ -123,11 +124,16 @@ onMounted(async () => {
                     image: doc.data().image,
                     badgeClass: doc.data().badgeClass
                 });
+                if (doc.data().statusPayment === 'LATE') {
+                    countLate++;
+                }
             });
             tableData.value = logs; // Update tableData with fetched logs
 
             // Check if there are any logs
             hasLogs.value = tableData.value.length > 0;
+
+            updateLateCount(countLate);
         });
     } catch {
         console.log('no session user');
@@ -140,6 +146,17 @@ onMounted(async () => {
 
 
 });
+
+
+function updateLateCount(countLate) {
+    const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    const userId = sessionUser.uid;
+
+    // Reference to the user's document in the 'finance' collection
+    const userDocRef = doc(db, 'finance', userId, 'stats', 'Late Payments');
+
+    updateDoc(userDocRef, { statEditable: countLate });
+}
 
 
 function deleteLog(logId) {
