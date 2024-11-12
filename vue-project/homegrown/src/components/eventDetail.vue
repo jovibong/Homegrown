@@ -413,6 +413,8 @@ export default {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
+
+        if (doc.id !== this.eventID) { 
         console.log(doc.id, " => ", doc.data());
         this.relatedEvents.push({
           id: doc.id,
@@ -420,6 +422,7 @@ export default {
           description: doc.data().description,
           imageURL: doc.data().imageURL,
         });
+      }
         console.log("related events", this.relatedEvents);
       });
 
