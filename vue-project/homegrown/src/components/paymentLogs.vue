@@ -31,7 +31,6 @@
                     <th scope="col">Status</th>
                     <th scope="col">Date of Payment</th>
                     <th scope="col">Actions</th>
-                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody class="table-group-divider" v-if="hasLogs">
@@ -42,9 +41,8 @@
                         <span class="badge rounded-pill" :class="row.badgeClass">{{ row.status }}</span>
                     </td>
                     <td>{{ row.date }}</td>
-                    <td><a href='#' class="text-dark">{{ row.image }}</a></td>
                     <td class="text-nowrap">
-                        <a href='#' class="text-decoration-none text-dark"><i class='fas fa-trash'></i></a>
+                        <a href='#' class="text-decoration-none trash " @click.prevent="deleteLog(row.id,)"><i class='fas fa-trash'></i></a>
                     </td>
                 </tr>
             </tbody>
@@ -64,7 +62,7 @@ import Modal from './logsModal.vue'
 import { onMounted, ref } from 'vue'
 // import { ref, watch } from 'vue'
 // import { doc, collection, addDoc, Timestamp, getDoc } from 'firebase/firestore';
-import { doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { deleteDoc,doc, getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 // import { getAuth } from 'firebase/auth';
 
@@ -117,6 +115,7 @@ onMounted(async () => {
             const logs = [];
             querySnapshot.forEach((doc) => {
                 logs.push({
+                    id: doc.id, 
                     title: doc.data().title,
                     amount: doc.data().amount,
                     status: doc.data().statusPayment,
@@ -140,7 +139,30 @@ onMounted(async () => {
 
 
 
-})
+});
+
+
+function deleteLog(logId) {
+    const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+    console.log('session in progress');
+    console.log(sessionUser.uid);
+
+    // if (!user) {
+    //     console.log("No user is logged in");
+    //     return;
+    // }
+
+    const userId = sessionUser.uid;
+    const logRef = doc(db, 'finance', userId, 'paymentlogs', logId);
+
+    deleteDoc(logRef)
+        // .then(() => {
+        //     // Remove log from tableData on successful deletion
+        //     tableData.value.splice(index, 1);
+        //     hasLogs.value = tableData.value.length > 0;
+        // })
+        // .catch(error => console.error("Error deleting log: ", error));
+}
 </script>
 
 
@@ -191,5 +213,15 @@ export default {
 td,
 th {
     vertical-align: middle;
+}
+
+
+.trash{
+color: black;
+}
+
+
+.trash:hover{
+    color:red;
 }
 </style>
