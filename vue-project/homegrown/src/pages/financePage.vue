@@ -111,6 +111,9 @@
                                 <h3 class="text-center  fw-bolder "> Monthly Savings</h3>
                                 <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
                                 </h1>
+                                <div class="d-flex justify-content-center my-4">
+                                    <button class="btn btn-outline-primary" @click="savingsChange()">Help Me!</button>
+                                </div>
 
                                 <input type="range" class="form-range" min="1"
                                     :max="stats.totalEarned.descriptionEditable" id="customRange2" v-model="savings">
@@ -119,7 +122,7 @@
 
                         <div class="col-12 ">
                             <div class="p-3 bento-tile">
-                                
+
                                 <budget-chart :savings="savings"></budget-chart>
                             </div>
                         </div>
@@ -239,20 +242,49 @@ const GoalDate = computed(() => {
 });
 
 function toggleBackgroundColor() {
-    const acieveByParts = stats.value.goal.descriptionEditable.split('/'); // Split DD-MM-YYYY
-
-// Create a new Date object in YYYY-MM-DD format
-const acieveBy = new Date(`${acieveByParts[2]}-${acieveByParts[1]}-${acieveByParts[0]}`);
+    const achieveByParts = stats.value.goal.descriptionEditable.split('/');
+    const achieveBy = new Date(`${achieveByParts[2]}-${achieveByParts[1]}-${achieveByParts[0]}`);
     const goalDateParts = GoalDate.value.split('/');
     const goal = new Date(`${goalDateParts[2]}-${goalDateParts[1]}-${goalDateParts[0]}`); // YYYY-MM-DD
 
-    console.log('this is ahhhhhh');
-    console.log(acieveBy);
-    if (acieveBy > goal) {
+    // console.log('this is ahhhhhh');
+    // console.log(achieveBy);
+    if (achieveBy > goal) {
         return { backgroundColor: 'rgb(188, 225, 188)' };
     } else {
         return { backgroundColor: 'rgb(255, 188, 188)' };
     }
+}
+
+function savingsChange() {
+    var toEarn = stats.value.goal.statEditable - stats.value.totalEarned.statEditable;
+    if(toEarn<=0){
+        savings.value=1;
+        return;
+    }
+    var achieveByParts = stats.value.goal.descriptionEditable.split('/');
+    var achieveBy = new Date(`${achieveByParts[2]}-${achieveByParts[1]}-${achieveByParts[0]}`);
+
+    var now = new Date();
+
+    var diff = achieveBy - now;
+    var monthsDifference = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
+    console.log('tttttttttttt',monthsDifference)
+    // assume if same day, they update alrdy so wont get pay. 
+    if(stats.value.payday.descriptionEditable <= now.getDate() ){
+        monthsDifference--;
+    }
+
+    var perMonth = Math.ceil(toEarn/monthsDifference);
+
+    if( perMonth > stats.value.totalEarned.descriptionEditable){
+        savings.value = stats.value.totalEarned.descriptionEditable;
+    }else{
+        savings.value = perMonth;
+    }
+
+
+    
 }
 
 const stats = ref({
