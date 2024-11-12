@@ -5,7 +5,12 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link :to="userType === 'volunteer' ? `mentorshipCourse` : 'individualCoursePage'"
+            <router-link
+              :to="
+                userType === 'volunteer'
+                  ? `mentorshipCourse`
+                  : 'individualCoursePage'
+              "
               class="btn btn-warning text-dark d-flex align-items-center"
             >
               <i class="bi bi-arrow-bar-left me-1"></i>
@@ -34,12 +39,24 @@
         <!--Lesson Description-->
         <p v-html="lesson.description"></p>
       </div>
-      <div v-if="lesson.link" class="container-fluid d-flex justify-content-center fade-in-bottom">
-         <iframe  width="640" height="340" :src="getVideoLink(lesson.link)"
-                title="YouTube video player" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen class="rounded-5">
-              </iframe>
+      <div
+        v-if="lesson.link"
+        class="container-fluid d-flex justify-content-center fade-in-bottom"
+      >
+        <img
+          :src="getThumbnailUrl(lesson.link)"
+          width="640"
+          height="340"
+          class="rounded-5"
+        />
+        <a
+          :href="lesson.link"
+          target="_blank"
+          class="position-absolute top-50 start-50 translate-middle text-white"
+          @click="watchvideo"
+        >
+          <i class="bi bi-play-circle-fill display-2"></i>
+        </a>
       </div>
       <div
         v-if="video_watched"
@@ -128,9 +145,10 @@ export default {
     };
   },
   async mounted() {
-    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+    const userObject =
+      JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
-    if(userObject){
+    if (userObject) {
       this.user = userObject.uid;
 
       const docRef = doc(db, "profiles", this.user);
@@ -151,9 +169,13 @@ export default {
     }
   },
   methods: {
-    getVideoLink(url){
-      console.log("url",url);
-       return url.replace("www.youtube.com/watch?", "www.youtube.com/embed/watch?");
+    getThumbnailUrl(url) {
+      // Use URL and URLSearchParams to reliably extract the video ID
+      const urlObj = new URL(url);
+      const videoId = urlObj.searchParams.get("v");
+
+      // Return the YouTube thumbnail URL
+      return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
     },
     waitForLessonData() {
       return new Promise((resolve) => {
