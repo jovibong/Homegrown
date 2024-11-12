@@ -249,7 +249,7 @@ export default{
 
             // Return the background and border style for the indivForum
             return {
-                background: `linear-gradient(to right, ${bgColor} 30%, white 10%)`,
+                background: `linear-gradient(to right, ${bgColor} 20%, white 10%)`,
                 border: `2px solid ${borderColor}`  // Apply dynamic border color
             };
         },
@@ -463,13 +463,13 @@ export default{
 .indivForum {
     display: flex;
     align-items: center; /* Vertically align content */
-    background: linear-gradient(to right, #CE2029 30%, white 10%);
+    background: linear-gradient(to right, #CE2029 20%, white 10%);
     border-radius: 8px;
     width: 100%;  /* Ensure it takes up full width */
 }
 
 .left-section {
-    width: 30%;  /* 30% of the width */
+    width: 20%;  /* 30% of the width */
     height: 100%;
     display: flex;
     justify-content: center;
@@ -486,7 +486,7 @@ export default{
 }
 
 .right-section {
-    width: 70%;  /* 70% of the width */
+    width: 80%;  /* 70% of the width */
     padding: 10px;
     padding-left: 20px;  /* Space between sections */
 }
