@@ -34,6 +34,11 @@
                             <div id="chart" class="bento-tile p-3">
                                 <!-- summart chart here -->
                                 <summary-chart />
+                                <div class="d-flex justify-content-center mt-4">
+                                    <p class="text-muted">Note: Add expense logs and payment logs to get real time
+                                        updates.</p>
+
+                                </div>
                             </div>
                         </div>
 
@@ -44,6 +49,7 @@
                                     <h1 class=" display-5 fw-bold mb-0">Expense</h1>
                                 </div>
                                 <expense-log></expense-log>
+
 
                             </div>
                         </div>
@@ -250,8 +256,8 @@ function toggleBackgroundColor() {
 
 function savingsChange() {
     var toEarn = stats.value.goal.statEditable - stats.value.totalEarned.statEditable;
-    if(toEarn<=0){
-        savings.value=1;
+    if (toEarn <= 0) {
+        savings.value = 1;
         return;
     }
     var achieveByParts = stats.value.goal.descriptionEditable.split('/');
@@ -261,22 +267,22 @@ function savingsChange() {
 
     var diff = achieveBy - now;
     var monthsDifference = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
-    console.log('tttttttttttt',monthsDifference)
+    console.log('tttttttttttt', monthsDifference)
     // assume if same day, they update alrdy so wont get pay. 
-    if(stats.value.payday.descriptionEditable <= now.getDate() ){
+    if (stats.value.payday.descriptionEditable <= now.getDate()) {
         monthsDifference--;
     }
 
-    var perMonth = Math.ceil(toEarn/monthsDifference);
+    var perMonth = Math.ceil(toEarn / monthsDifference);
 
-    if( perMonth > stats.value.totalEarned.descriptionEditable){
+    if (perMonth > stats.value.totalEarned.descriptionEditable) {
         savings.value = stats.value.totalEarned.descriptionEditable;
-    }else{
+    } else {
         savings.value = perMonth;
     }
 
 
-    
+
 }
 
 const stats = ref({
