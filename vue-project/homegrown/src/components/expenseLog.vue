@@ -10,7 +10,7 @@
                 <template #header>
                     <div class="w-100">
                         <h2>Add Expense</h2>
-                        <hr>
+                        <hr> 
                     </div>
                 </template>
             </expense-modal>
