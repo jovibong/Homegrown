@@ -110,69 +110,103 @@ export default defineComponent({
         };
 
         onMounted(async () => {
-            try {
-                const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-                const userId = sessionUser.uid;
+    try {
+        const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+        const userId = sessionUser.uid;
 
-                // Access the user's finance collection and specific stats document
-                const goalRef = doc(db, 'finance', userId, 'stats', 'Goal');
-                const goalSnap = await getDoc(goalRef);
+        // Access the user's finance collection and specific stats document
+        const goalRef = doc(db, 'finance', userId, 'stats', 'Goal');
+        const goalSnap = await getDoc(goalRef);
 
-                if (goalSnap.exists()) {
-                    const statEditable = goalSnap.data().statEditable; // Access the statEditable field
-                    console.log('Stat Editable:', statEditable);
-
-                    // Update annotations with statEditable value
-                    chartOptions.value = {
-                        ...chartOptions.value, // Keep the previous chart options
-                        annotations: {
-                            yaxis: [{
-                                y: statEditable, // Bind the statEditable value to the annotation y-axis
-                                borderColor: '#999',
-                                label: {
-                                    show: true,
-                                    text: 'GOAL',
-                                    style: {
-                                        color: "#fff",
-                                        background: '#00E396'
-                                    }
-                                }
-                            }]
+        if (goalSnap.exists()) {
+            const statEditable = goalSnap.data().statEditable; // Access the statEditable field
+            chartOptions.value = {
+                ...chartOptions.value,
+                annotations: {
+                    yaxis: [{
+                        y: statEditable,
+                        borderColor: '#999',
+                        label: {
+                            show: true,
+                            text: 'GOAL',
+                            style: {
+                                color: "#fff",
+                                background: '#00E396'
+                            }
                         }
-                    };
-                } else {
-                    console.log('No such document!');
+                    }]
                 }
+            };
+        } else {
+            console.log('No such document!');
+        }
 
-                // Fetch payment logs as before
-                const paymentLogsCollectionRef = collection(db, 'finance', userId, 'paymentlogs');
-                const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'asc'));
-                const querySnapshot = await getDocs(logsQuery);
+        // Fetch payment logs
+        const paymentLogsCollectionRef = collection(db, 'finance', userId, 'paymentlogs');
+        const logsQuery = query(paymentLogsCollectionRef, orderBy('date', 'asc'));
+        const querySnapshot = await getDocs(logsQuery);
 
-                let cumulativeSum = 0;
-                cumulativeLogs.value = querySnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    const timestamp = data.date.toMillis();
-                    cumulativeSum += data.amount;
-                    return [timestamp, cumulativeSum];
-                });
-
-                // Extract the last amount from the cumulative logs (series data)
-                const lastAmount = cumulativeLogs.value[cumulativeLogs.value.length - 1][1];  // The last value in the cumulative sum
-
-                // ----- Add Firebase update here -----
-                // Update Firebase with the last amount value (example update)
-                const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
-                await updateDoc(statsRef, {
-                    statEditable: lastAmount,  // Add this field or update as needed
-                });
-
-                
-                series.value = [{ data: cumulativeLogs.value }];
-            } catch (error) {
-                console.log('Error fetching logs or statEditable:', error);
-            }
+        const paymentLogs = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            const timestamp = data.date.toMillis();
+            return { timestamp, amount: data.amount, type: 'payment' };
         });
+
+        // Fetch expense logs
+        const expenseLogsCollectionRef = collection(db, 'finance', userId, 'expenseLogs');
+        const expenseQuery = query(expenseLogsCollectionRef, orderBy('date', 'asc'));
+        const expenseSnapshot = await getDocs(expenseQuery);
+
+        const expenseLogs = expenseSnapshot.docs.map(doc => {
+            const data = doc.data();
+            const timestamp = data.date.toMillis();
+            return { timestamp, amount: data.amount, type: 'expense' };
+        });
+
+        // Combine both logs and sort by timestamp
+        const allLogs = [...paymentLogs, ...expenseLogs].sort((a, b) => a.timestamp - b.timestamp);
+
+        // Group logs by day (ignoring time) and keep the last entry of each day
+        const groupedLogs = {};
+        allLogs.forEach(log => {
+            const logDate = new Date(log.timestamp);
+            const day = `${logDate.getFullYear()}-${logDate.getMonth() + 1}-${logDate.getDate()}`;
+            
+            // Replace or add log for this day, keeping the last log of the day
+            groupedLogs[day] = log;
+        });
+
+        // Get the filtered logs (one log per day)
+        const filteredLogs = Object.values(groupedLogs).sort((a, b) => a.timestamp - b.timestamp);
+
+        // Calculate cumulative sum
+        let cumulativeSum = 0;
+        cumulativeLogs.value = filteredLogs.map(log => {
+            // Add payment logs to cumulative sum
+            if (log.type === 'payment') {
+                cumulativeSum += log.amount;
+            }
+            // Subtract expense logs from cumulative sum
+            if (log.type === 'expense') {
+                cumulativeSum -= log.amount;
+            }
+            return [log.timestamp, cumulativeSum];
+        });
+
+        // Update Firebase with the last cumulative amount
+        const lastAmount = cumulativeLogs.value[cumulativeLogs.value.length - 1][1];
+        const statsRef = doc(db, 'finance', userId, 'stats', 'Total earned');
+        await updateDoc(statsRef, {
+            statEditable: lastAmount,
+        });
+
+        series.value = [{ data: cumulativeLogs.value }];
+    } catch (error) {
+        console.log('Error fetching logs or statEditable:', error);
+    }
+});
+
+
 
 
 
