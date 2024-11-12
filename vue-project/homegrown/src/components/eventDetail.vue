@@ -153,6 +153,9 @@
     <div class="my-5 ">
       <h2 class="text-primary fw-bold mb-3 display-4"> Related Events </h2>
       <hr>
+      <div v-if="relatedEvents.length == 0" class="text-center text-muted mb-4 h5">
+                There is currently no related events in this category
+            </div>
 
       <div class="scroll-container">
         <event-cards v-for="event in relatedEvents" :key="event.id" :eventID="event.id" :title="event.title"
@@ -220,7 +223,7 @@ export default {
     console.log('Event ID:', this.eventID); // Check if eventID is valid
 
     await this.getUserEvent();
-    
+
 
     this.getEventDetails(this.eventID); // Call the function to get event details
     this.getGroups(this.eventID); // get event groups
@@ -231,7 +234,7 @@ export default {
     } else {
       this.iconClass = "bi bi-calendar-minus"
       this.buttonText = "Leave Event"
-    } 
+    }
   },
 
   computed: {
@@ -411,18 +414,23 @@ export default {
       const q = query(collection(db, "events"), where("category", "==", this.eventCategory));
 
       const querySnapshot = await getDocs(q);
+      const today = new Date();  // Get today's date and time
+
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
 
-        if (doc.id !== this.eventID) { 
-        console.log(doc.id, " => ", doc.data());
-        this.relatedEvents.push({
-          id: doc.id,
-          title: doc.data().name,
-          description: doc.data().description,
-          imageURL: doc.data().imageURL,
-        });
-      }
+        if (doc.id !== this.eventID) {
+          console.log(doc.id, " => ", doc.data());
+          const eventDate = doc.data().date.toDate();
+          if (eventDate > today) {
+            this.relatedEvents.push({
+              id: doc.id,
+              title: doc.data().name,
+              description: doc.data().description,
+              imageURL: doc.data().imageURL,
+            });
+          }
+        }
         console.log("related events", this.relatedEvents);
       });
 
@@ -526,12 +534,12 @@ export default {
       }
     },
 
-    async joinGroup(groupID){
+    async joinGroup(groupID) {
       const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
       const eventRef = doc(db, "events", this.eventID); // Reference to the specific event document
       const groupRef = doc(eventRef, "groups", groupID);
 
-      try{  
+      try {
         this.loading = true;
         const docSnap = await getDoc(groupRef);
         if (docSnap.exists()) {
@@ -545,14 +553,14 @@ export default {
             });
 
             this.loading = false;
-        
+
             console.log(joinedMembers)
             window.location.reload();
-        } else {
-          console.log("Group already joined!");
+          } else {
+            console.log("Group already joined!");
+          }
         }
-      }
-      }catch(error){
+      } catch (error) {
         console.log("Error finding group", error)
       }
     },
@@ -706,7 +714,7 @@ export default {
       },
       immediate: true // load data on initial render as well
     }
-}
+  }
 }
 
 
@@ -793,9 +801,12 @@ export default {
 /* Disabled button styling */
 .joinGroupButton:disabled,
 .chatButton:disabled {
-  background-color: #bdc3c7;  /* Gray background */
-  color: #7f8c8d;             /* Gray text */
-  cursor: not-allowed;        /* Change cursor to indicate disabled state */
+  background-color: #bdc3c7;
+  /* Gray background */
+  color: #7f8c8d;
+  /* Gray text */
+  cursor: not-allowed;
+  /* Change cursor to indicate disabled state */
 }
 
 .createButton {
@@ -858,7 +869,7 @@ export default {
 }
 
 .category-details {
-  border: 3px solid  #023047;
+  border: 3px solid #023047;
   border-radius: 8px;
   margin-right: 10px;
   height: 70px;
