@@ -44,7 +44,7 @@
                                     <h1 class=" display-5 fw-bold">Expense</h1>
                                 </div>
                                 <expense-log></expense-log>
-                                
+
                             </div>
                         </div>
 
@@ -111,7 +111,7 @@
                                 <h3 class="text-center  fw-bolder "> Monthly Savings</h3>
                                 <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
                                 </h1>
-                                
+
                                 <input type="range" class="form-range" min="1"
                                     :max="stats.totalEarned.descriptionEditable" id="customRange2" v-model="savings">
                             </div>
@@ -168,7 +168,8 @@
 
                                 </div>
                                 <div>
-                                    <h1 class="text-center text-primary fw-bolder display-1"> {{ stats.latePayments.statEditable }}
+                                    <h1 class="text-center text-primary fw-bolder display-1"> {{
+                                        stats.latePayments.statEditable }}
                                     </h1>
                                 </div>
 
@@ -214,6 +215,15 @@ import { db } from "../firebase/initialize";
 const savings = ref(1);
 const GoalDate = computed(() => {
     var toEarn = stats.value.goal.statEditable - stats.value.totalEarned.statEditable;
+    if (toEarn <= 0) {
+        var currentDate = new Date();
+        var day = String(currentDate.getDate()).padStart(2, '0');  // Add leading zero if needed
+        var month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Months are 0-indexed
+        var year = currentDate.getFullYear();
+
+        var formattedDate = `${day}/${month}/${year}`;
+        return formattedDate;
+    }
     var numMonths = Math.ceil(toEarn / savings.value);
 
     var currentDate = new Date();
@@ -329,7 +339,7 @@ import StatsTile from '../components/statsTile.vue';
 import SummaryChart from '../components/summaryChart.vue';
 import paymentLogs from '../components/paymentLogs.vue';
 import budgetChart from '@/components/budgetChart.vue';
-import expenseLog from '@/components/expenseLog.vue'; 
+import expenseLog from '@/components/expenseLog.vue';
 export default {
 
     props: {
