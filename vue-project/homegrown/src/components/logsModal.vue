@@ -226,8 +226,8 @@ async function addLogs() {
 
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        console.log('session in progress');
-        console.log(sessionUser.uid);
+        // console.log('session in progress');
+        // console.log(sessionUser.uid);
 
         const userId = sessionUser.uid;
         const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
@@ -241,8 +241,8 @@ async function addLogs() {
             await setDoc(userDocRef, { userId: userId });
         }
 
-        console.log(date.value)
-        console.log(typeof (date.value))
+        // console.log(date.value)
+        // console.log(typeof (date.value))
 
         // Add the log to the user's paymentlogs subcollection
         await addDoc(paymentLogsCollectionRef, {

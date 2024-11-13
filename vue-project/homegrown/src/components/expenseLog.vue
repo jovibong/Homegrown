@@ -86,8 +86,8 @@ onMounted(async () => {
     // const user = auth.currentUser;
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-        console.log('session in progress');
-        console.log(sessionUser.uid);
+        // console.log('session in progress');
+        // console.log(sessionUser.uid);
 
         // if (!user) {
         //     console.log("No user is logged in");
@@ -139,8 +139,8 @@ onMounted(async () => {
 
 function deleteLog(logId, index) {
     const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-    console.log('session in progress');
-    console.log(sessionUser.uid);
+    // console.log('session in progress');
+    // console.log(sessionUser.uid);
 
     // if (!user) {
     //     console.log("No user is logged in");
