@@ -15,7 +15,7 @@
             </p>
             <div class="mt-4 d-flex align-items-center">
               <router-link to='/coursesPage' class="btn btn-warning btn-secondary btn-lg me-3 text-dark">UPSKILL NOW</router-link>
-              <a href="#" class="d-flex align-items-center text-primary">
+              <a href="https://www.youtube.com/embed/cdiq_QcHF8I" class="d-flex align-items-center text-primary">
                 <span class="ms-4">
                   <i class="bi bi-play-circle-fill me-2 fs-3"></i>
                 </span>
@@ -123,7 +123,7 @@
             Popular Past Events</h2>
           <div class="row">
             <div class="col-12 col-lg-4 mb-4">
-              <div class="card">
+              <div class="card h-100">
                 <img src="../img/cultural.jpg" class="card-img-top" alt="Event 1" />
                 <div class="card-body">
                   <h5 class="card-title">Cultural Exchange</h5>
@@ -132,7 +132,7 @@
               </div>
             </div>
             <div class="col-12 col-lg-4 mb-4">
-              <div class="card">
+              <div class="card h-100">
                 <img src="../img/heritagewalk.jpg" class="card-img-top" alt="Event 2" />
                 <div class="card-body">
                   <h5 class="card-title">Heritage Walk</h5>
@@ -141,7 +141,7 @@
               </div>
             </div>
             <div class="col-12 col-lg-4 mb-4">
-              <div class="card">
+              <div class="card h-100">
                 <img src="../img/volunteering.jpeg" class="card-img-top" alt="Event 3" />
                 <div class="card-body">
                   <h5 class="card-title">Volunteering Fair</h5>

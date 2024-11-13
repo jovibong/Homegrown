@@ -62,9 +62,9 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
 
                 <div class="container text-center">
                     <div class="row align-items-center">
-                        <div class="col-md-9 col-sm-12">
+                        <div class="col-md-8 col-sm-12 d-flex justify-content-center">
                             <div class="search-container">
-                                <input type="text" class="searchBar mb-3" id="dropdownTextbox"
+                                <input type="text" class="searchBar" id="dropdownTextbox"
                                     :aria-expanded="(filteredEvents.length > 0).toString()"
                                     placeholder="Search for events" @keyup.enter="eventSearch" v-model="searchQuery"
                                     autocomplete="off" />
@@ -78,11 +78,15 @@ https://cf.org.sg/wp-content/uploads/2023/08/community-foundation-singapore-Heal
                                 </ul>
                             </div>
                         </div>
-                        <span class="text-muted h5 col-1 m-3"> OR </span>
 
-                        <button @click="allowCreate" style="height: 50px; width: 180px"
+                        <div class="col-md-4 col-sm-12 d-flex flex-column flex-md-row align-items-center justify-content-center">
+                        <span class="text-muted h5 my-3 my-md-0 me-md-5"> OR </span>
+
+                        <button @click="allowCreate" style="height: 50px; width: 180px;"
                             :class="showCreate ? 'btn btn-primary col-2' : 'btn btn-primary col-2'">
                             Create Event </button>
+
+                        </div>
                     </div>
                 </div>
 
