@@ -12,6 +12,8 @@
 ## Events Page
 When creating new events, or posting comments, or creating new forums, please wait for awhile to see the results.
 
+For Forum, wait for everything to load before interacting with the page
+
 ## Chats / Courses page
 When adding events or clicking into the page, please wait for the loading animation to be completed to 
 see the results.
