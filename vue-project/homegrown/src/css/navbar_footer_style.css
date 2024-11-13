@@ -22,12 +22,14 @@
     margin-bottom: -3px;
 }
 
+
+
 /* nav active */
 /* CHECK IF WORKING ONCE PAGES ARE LINKED!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 .navbar-nav li a:active {
     font-weight: bold;
     color: rgba(255, 207, 89, 1);
-    font-size: 20px;
+    /* font-size: 20px; */
 }
 /* end of nav links states */
 /* end of navbar */
