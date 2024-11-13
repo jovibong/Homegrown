@@ -97,7 +97,6 @@
       },
 
       async fetchUserProfile(userID) {
-        console.log(userID)
         try {
           const userDoc = await getDoc(doc(db, "profiles", userID)); // Fetch the user document
           if (userDoc.exists()) {
@@ -121,18 +120,18 @@
 
       async getForum() {
         try {
-          console.log("Firestore instance:", db); // Debugging: Check db initialization
+          // console.log("Firestore instance:", db); // Debugging: Check db initialization
           const docRef = doc(db, "forums", this.forumID); // Create a reference to the specific forum document
           const docSnap = await getDoc(docRef); // Get the document snapshot
 
           if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
+            // console.log("Document data:", docSnap.data());
             this.forumTitle = docSnap.data().title;
             this.forumDesc = docSnap.data().description;
 
             // Fetch user profile of the user who posted the forum
             const userInfo = await this.fetchUserProfile(docSnap.data().postedBy); // Fetch the user profile
-            console.log("forum user", userInfo)
+            // console.log("forum user", userInfo)
             this.postedBy = {
               uid: docSnap.data().postedBy,
               username: userInfo.username,
@@ -159,12 +158,11 @@
           // Loop through the documents and extract data
           for (const doc of querySnapshot.docs) {
 
-            console.log("Fetching profile for user:", doc.data().poster);
-            console.log(typeof(doc.data().poster))
+            // console.log("Fetching profile for user:", doc.data().poster);
 
             const userInfo = await this.fetchUserProfile(doc.data().poster); // Fetch user profile for each comment
 
-            console.log("userInfo fetched:", userInfo);
+            // console.log("userInfo fetched:", userInfo);
             
             // Push comment data along with user profile
             this.comments.push({
@@ -178,7 +176,7 @@
             });
           }
 
-          console.log("Comments retrieved:", this.comments);
+          // console.log("Comments retrieved:", this.comments);
         } catch (error) {
           console.error("Error fetching comments:", error);
         } finally {

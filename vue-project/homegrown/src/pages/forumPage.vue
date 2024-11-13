@@ -261,7 +261,7 @@ export default{
                 for (const doc of querySnapshot.docs) {
 
                     const userInfo = await this.fetchUserProfile(doc.data().postedBy); // Fetch the user profile async
-                    console.log("initial data", doc.id, " => ", doc.data());
+                    // console.log("initial data", doc.id, " => ", doc.data());
 
                     // Add the forum data along with the user profile to the selectedForums array
                     this.selectedForums.push({
@@ -275,7 +275,7 @@ export default{
                             profilePic: userInfo.profilePic  // Store the fetched profile picture
                         }
                     });
-                    console.log("All Forums", this.selectedForums)
+                    // console.log("All Forums", this.selectedForums)
                 }
             } catch (error) {
                 console.log("Error getting all forums", error)
@@ -299,7 +299,6 @@ export default{
 
                 for (const doc of querySnapshot.docs) {
                     const userInfo = await this.fetchUserProfile(doc.data().postedBy); // Fetch user profile async
-                    console.log(doc.id, " => ", doc.data());
 
                     // Add the forum data along with the user profile to the selectedForums array
                     this.selectedForums.push({
@@ -313,7 +312,6 @@ export default{
                             profilePic: userInfo.profilePic  // Store the fetched profile picture
                         }
                     });
-                    console.log("Show selected forums", this.selectedForums);
                 }
             } catch (error) {
                 console.log("Error fetching selected forums", error)
@@ -324,7 +322,6 @@ export default{
 
 
         async fetchUserProfile(userID) {
-            console.log(userID)
             try {
                 const userDoc = await getDoc(doc(db, "profiles", userID)); // Fetch the user document
                 if (userDoc.exists()) {

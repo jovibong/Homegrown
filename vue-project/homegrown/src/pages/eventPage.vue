@@ -255,7 +255,7 @@ export default {
                 // doc.data() is never undefined for query doc snapshots
                 const eventDate = doc.data().date.toDate(); 
                 if (eventDate > today){
-                console.log(doc.id, " => ", doc.data());
+                // console.log(doc.id, " => ", doc.data());
                 this.selectedEvents.push({ 
                     id: doc.id,
                     title: doc.data().name,
@@ -279,7 +279,7 @@ export default {
 
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
+                // console.log(doc.id, " => ", doc.data());
                 const eventDate = doc.data().date.toDate(); 
                 if (eventDate > today){
                 this.allEvents.push({ 
@@ -303,7 +303,7 @@ export default {
             const sessionUser = await(JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user')));
             const currentUser = sessionUser.uid
 
-            console.log("user is",currentUser)
+            // console.log("user is",currentUser)
 
             const querySnapshot = await getDocs(collection(db, 'events'));
             const today = new Date();  // Get today's date and time
@@ -314,7 +314,7 @@ export default {
                 .forEach(doc => {
                     const eventDate = doc.data().date.toDate(); 
                     if (eventDate > today) {
-                    console.log(doc.id, " => ", doc.data());
+                    // console.log(doc.id, " => ", doc.data());
                     this.myEvents.push({
                         id: doc.id,
                         title: doc.data().name,
@@ -322,7 +322,7 @@ export default {
                         imageURL: doc.data().imageURL,
                     })
                 }
-                console.log("my event", this.myEvents)
+                // console.log("my event", this.myEvents)
             })  
         }catch(error) {
             console.log("Error fetching my events", error)
@@ -342,8 +342,8 @@ export default {
 
                 // Check if the event date is in the past
                 if (eventDate > today) {
-                    console.log("successful check of eventDate>today")
-                    console.log(doc.id, " => ", doc.data());
+                    // console.log("successful check of eventDate>today")
+                    // console.log(doc.id, " => ", doc.data());
 
                     // Push the event into the array if it's in the past
                     this.pastEvents.push({
@@ -352,7 +352,7 @@ export default {
                 }
             });
 
-            console.log("Past Events", this.pastEvents)
+            // console.log("Past Events", this.pastEvents)
         },
 
         allowCreate(){

@@ -233,7 +233,7 @@ export default {
       this.isSignUpModalVisible = true;
     },
     handleLogin() {
-      console.log("User has logged in!");
+      // console.log("User has logged in!");
       this.isLoginModalVisible = false;
     },
     handleSignup(userData) {
@@ -243,7 +243,7 @@ export default {
     logout() {
     signOut(auth)
         .then(() => {
-            console.log("User signed out");
+            // console.log("User signed out");
             this.user = null;
             this.userType = null; // Reset user type
 
@@ -286,12 +286,12 @@ export default {
     toggleNavbar() {
       // Toggle the open/closed state of the navbar
       this.isNavbarOpen = !this.isNavbarOpen;
-      console.log("Navbar toggled");
+      // console.log("Navbar toggled");
     },
     closeNavbar() {
       // Close the navbar (set state to false)
       this.isNavbarOpen = false;
-      console.log("Navbar closed");
+      // console.log("Navbar closed");
     },
     handleProfileImageUpdate(newImageUrl) {
             if (this.user) {

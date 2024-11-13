@@ -159,8 +159,8 @@ export default {
         fetchLessons: async function () {
             try {
                 const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-                console.log('session in progress');
-                console.log(sessionUser.uid);
+                // console.log('session in progress');
+                // console.log(sessionUser.uid);
 
                 const userId = sessionUser.uid;
                 const userDocRef = doc(db, 'mentors', userId); // Reference to the user's document

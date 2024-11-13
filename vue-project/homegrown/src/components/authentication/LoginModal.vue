@@ -128,7 +128,7 @@ export default {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
-        console.log("Logged in user:", user);
+        // console.log("Logged in user:", user);
 
         if (this.rememberMe) {
           localStorage.setItem('user', JSON.stringify(user));
@@ -155,7 +155,7 @@ export default {
 
         this.hideModal();
       } catch (error) {
-        console.error("Error logging in:", error.message);
+        // console.error("Error logging in:", error.message);
         this.errorMessage = "Error logging in, please sign in again" || 'An error occurred during login.'; // Set error message here
       }
     },

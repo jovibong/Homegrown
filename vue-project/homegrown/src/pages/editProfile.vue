@@ -154,7 +154,7 @@ export default {
                     this.profileImageSrc = data.profileImageUrl || require('@/img/blankprofile.png');
                 }
             } catch (error) {
-                console.error("Error fetching user profile:", error);
+                // console.error("Error fetching user profile:", error);
             }
         },
         triggerFileInput() {
@@ -171,12 +171,12 @@ export default {
                 // Get the download URL for the uploaded file
                 const downloadURL = await getDownloadURL(fileRef);
                 
-                console.log('File uploaded successfully:', downloadURL);
+                // console.log('File uploaded successfully:', downloadURL);
                 
                 // Return the download URL
                 return downloadURL;
             } catch (error) {
-                console.error('Error uploading file:', error);
+                // console.error('Error uploading file:', error);
                 throw error; // Re-throw the error to handle it in your application
             }
         },
@@ -189,9 +189,9 @@ export default {
                     // Delete existing image if needed
                     try {
                         await deleteObject(imageRef);
-                        console.log("Previous image deleted successfully.");
+                        // console.log("Previous image deleted successfully.");
                     } catch (error) {
-                        console.warn("No existing image to delete or error deleting image:", error);
+                        // console.warn("No existing image to delete or error deleting image:", error);
                     }
 
                     // Upload the new image
@@ -207,7 +207,7 @@ export default {
                     alert("Profile image updated successfully!");
                     window.location.reload();
                 } catch (error) {
-                    console.error("Error uploading image:", error);
+                    // console.error("Error uploading image:", error);
                     this.errorMessage = "There was an error uploading your profile image.";
                 }
             }
@@ -230,7 +230,7 @@ export default {
                 alert(`${field} updated successfully!`);
                 window.location.reload();
             } catch (error) {
-                console.error(`Error updating ${field}:`, error);
+                // console.error(`Error updating ${field}:`, error);
                this.errorMessage = "Passwords do not match.";
             }
         },
@@ -251,7 +251,7 @@ export default {
                 // Show the re-authentication modal
                 this.showReauthModal = true;
             } else {
-                console.error("Error updating password:", error);
+                // console.error("Error updating password:", error);
                 this.errorMessage = "There was an error updating your password.";
             }
         }
@@ -264,7 +264,7 @@ export default {
             alert("Re-authentication successful. You can now change your password.");
             this.showReauthModal = false; // Hide the modal after successful re-authentication
         } catch (error) {
-            console.error("Re-authentication failed:", error);
+            // console.error("Re-authentication failed:", error);
             this.errorMessage = "Re-authentication failed: "
         }
     },
