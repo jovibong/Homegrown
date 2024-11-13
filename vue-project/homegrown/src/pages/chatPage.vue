@@ -60,7 +60,7 @@
                 v-for="(chat, index) in filteredChats"
                 :key="index"
                 class="row container-fluid d-flex align-items-center mb-3 py-2 fade-in-left"
-                @click="goToChat(index)"
+                @click="goToChat(chat)"
                 style="cursor: pointer"
               >
                 <div class="col-lg-2 col-1">
@@ -344,10 +344,9 @@ export default {
     closeImagePopup() {
       this.showImagePopup = false;
     },
-    goToChat(index) {
-      const selectedChat = this.chat_arr[index];
-      if (selectedChat && selectedChat.id) {
-        this.selected_chat_obj = selectedChat;
+    goToChat(chat) {
+      if (chat && chat.id) {
+        this.selected_chat_obj = chat;
        // console.log(this.selected_chat_obj);
       } else {
         console.error("Error: Selected chat does not have a valid chat_id.");
