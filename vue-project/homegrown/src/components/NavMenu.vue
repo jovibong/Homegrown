@@ -161,14 +161,12 @@ import { auth, db } from '@/firebase/initialize.js';
 import LoginModal from './authentication/LoginModal.vue';
 import SignupModal from './authentication/SignupModal.vue';
 import { doc, getDoc } from 'firebase/firestore';
-import EditProfile from '../pages/editProfile.vue';
 
 
 export default {
   components: {
     LoginModal,
     SignupModal,
-    EditProfile
   },
   data() {
     return {
