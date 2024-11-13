@@ -179,11 +179,9 @@ export default defineComponent({
                         max.value = max.value -total;
                         updateChart();
                     });
-                    console.log(unsubscribe2)
+                    return(unsubscribe2,unsubscribe)
 
 
-
-                    console.log(unsubscribe);
                 });
 
 
