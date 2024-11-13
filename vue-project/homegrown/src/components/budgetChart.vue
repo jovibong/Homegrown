@@ -1,6 +1,15 @@
 <template>
     <div>
+
+        <h1 class="text-center text-primary fw-bolder display-1"> Budget Left
+                                    </h1>
+
+        <div class="d-flex justify-content-center mb-4">
+            <p class="text-muted">Note: calculated based on montly pay and expense for this month.</p>
+
+        </div>
         <apexchart :options="chartOptions" :series="filteredSeries" type="donut" height="350"></apexchart>
+
 
         <div class="buttons d-flex justify-content-center p-2">
             <button @click="appendData" :disabled="totalExceedsLimit || hasBlankInput"
@@ -55,7 +64,7 @@ export default defineComponent({
     setup() {
         const left = ref(0); // Default to 0, will be overwritten by Firebase data
         const series = ref([left.value]); // First item is initially set to left's value
-        const customLabels = ref(['Total Earned']);
+        const customLabels = ref(['Budget Left']);
         const max = ref(0);
 
 
@@ -118,7 +127,7 @@ export default defineComponent({
 
         const reset = () => {
             series.value = [left.value]; // Reset to the Firebase "Total earned" value
-            customLabels.value = ['Total Earned'];
+            customLabels.value = ['Budget Left'];
             updateChart();
         };
 
@@ -148,32 +157,33 @@ export default defineComponent({
                     }
 
                     const userDocRef = doc(db, 'finance', userId); // Reference to the user's document
-                const expenseRef = collection(userDocRef, 'expenseLogs'); // Reference to the user's paymentlogs subcollection
-                const userExpenseQuery = query(
-                    expenseRef,
+                    const expenseRef = collection(userDocRef, 'expenseLogs'); // Reference to the user's paymentlogs subcollection
+                    const userExpenseQuery = query(
+                        expenseRef,
 
-                    where('date', '>=', startOfMonthTimestamp), // Filter for start of the current month
-                    where('date', '<=', endOfMonthTimestamp),   // Filter for end of the current month
-                    orderBy('date') // Optional: order expenses by date
-                );
+                        where('date', '>=', startOfMonthTimestamp), // Filter for start of the current month
+                        where('date', '<=', endOfMonthTimestamp),   // Filter for end of the current month
+                        orderBy('date') // Optional: order expenses by date
+                    );
 
-                const unsubscribe2 = onSnapshot(userExpenseQuery, (expenseSnap) => {
-                    let total = 0;
+                    const unsubscribe2 = onSnapshot(userExpenseQuery, (expenseSnap) => {
+                        let total = 0;
 
-                    expenseSnap.forEach((doc) => {
-                        const expenseData = doc.data();
-                        total += expenseData.amount; // Assuming 'amount' field stores the expense amount
+                        expenseSnap.forEach((doc) => {
+                            const expenseData = doc.data();
+                            total += expenseData.amount; // Assuming 'amount' field stores the expense amount
+                        });
+
+                        left.value = left.value - total; // Update the total expenses
+                        series.value[0] = left.value;
+                        max.value = max.value -total;
+                        updateChart();
                     });
-
-                    left.value = left.value - total; // Update the total expenses
-                    series.value[0] = left.value;
-                    updateChart();
-                });
-                console.log(unsubscribe2)
+                    console.log(unsubscribe2)
 
 
 
-                console.log(unsubscribe);
+                    console.log(unsubscribe);
                 });
 
 
