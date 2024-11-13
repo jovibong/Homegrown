@@ -2,7 +2,7 @@
 
     <div class="finance ">
 
-        <div class="layout animated-background" id="financeApp">
+        <div class="layout animated-background " id="financeApp">
 
             <!-- start Summary tab nav -->
             <input name="nav" type="radio" id="Summary" checked="checked" />
@@ -21,7 +21,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="bento-tile  h-100 p-3">
+                            <div class="bento-tile  h-100 p-3 ">
                                 <stats-tile :title="stats.totalEarned.title"
                                     :statNonEditable="stats.totalEarned.statNonEditable"
                                     :statEditable="stats.totalEarned.statEditable"
@@ -34,16 +34,22 @@
                             <div id="chart" class="bento-tile p-3">
                                 <!-- summart chart here -->
                                 <summary-chart />
+                                <div class="d-flex justify-content-center mt-4">
+                                    <p class="text-muted">Note: Add expense logs and payment logs to get real time
+                                        updates.</p>
+
+                                </div>
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <div class="text-center bento-tile text-light h-100 p-3"
-                                style="background-color: rgb(225, 100, 100);">
+                            <div class="text-center bento-tile text-dark h-100 p-3"
+                                >
                                 <div>
-                                    <h1 class=" display-5 fw-bold">Expense</h1>
+                                    <h1 class=" display-5 fw-bold mb-0 text-primary">Expense</h1>
                                 </div>
                                 <expense-log></expense-log>
+
 
                             </div>
                         </div>
@@ -55,13 +61,10 @@
 
 
             </div>
-            <label class="nav" for="Summary">
-                <span>
-                    <svg width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round">
-                    </svg>
+            <label class="nav pb-2" for="Summary">
+                <span class="text-center">
                     <i class="fa fa-university text-primary"></i>
-                    <p class="d-inline"> Summary</p>
+                    <p class=""> Summary</p>
                 </span>
             </label>
             <!-- end Summary tab nav -->
@@ -82,11 +85,14 @@
                         </div>
 
                         <div class="col-xl-4 col-md-6">
-                            <div class="bento-tile p-3 h-100">
+                            <div class="bento-tile p-3 h-100 ">
+
                                 <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
                                     :statEditable="stats.goal.statEditable"
                                     :descriptionNonEditable="stats.goal.descriptionNonEditable"
                                     :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
+
+
                             </div>
                         </div>
                         <div class="col-xl-4 col-md-6">
@@ -109,16 +115,21 @@
                         <div class="col-xl-4 col-md-12">
                             <div class="p-3 bento-tile h-100 my-auto">
                                 <h3 class="text-center  fw-bolder "> Monthly Savings</h3>
-                                <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
+                                <h1 class="text-center text-primary fw-bolder display-5"> $ {{ savings }}
                                 </h1>
 
-                                <input type="range" class="form-range" min="1"
-                                    :max="stats.totalEarned.descriptionEditable" id="customRange2" v-model="savings">
+                                <div class="d-flex align-items-center">
+                                    <input type="range" class="form-range" min="1"
+                                        :max="stats.totalEarned.descriptionEditable" id="customRange2"
+                                        v-model="savings">
+                                    <button class="btn btn-outline-primary text-nowrap ms-2" @click="savingsChange()">Auto</button>
+                                </div>
                             </div>
                         </div>
 
                         <div class="col-12 ">
                             <div class="p-3 bento-tile">
+
                                 <budget-chart :savings="savings"></budget-chart>
                             </div>
                         </div>
@@ -126,13 +137,10 @@
                 </div>
 
             </div>
-            <label class="nav" for="BudgetPlanner">
-                <span>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                    </svg>
+            <label class="nav pb-2" for="BudgetPlanner">
+                <span class="text-center">
                     <i class="fa fa-trophy text-primary"></i>
-                    <p class="d-inline"> Budget Planner</p>
+                    <p class="text-center p-auto"> Budget Planner</p>
                 </span>
             </label>
             <!-- end BudgetPlanner tab nav -->
@@ -179,9 +187,11 @@
 
 
                         <div class="col-12">
-                            <div class="bento-tile h-100 p-3">
+                            <div class="bento-tile h-100 p-3" >
                                 <!-- start of table logs -->
-                                <!-- https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_filters_table&stacked=h -->
+                                <div class="text-center">
+                                    <h1 class=" display-5 fw-bold mb-0 text-primary">Payment</h1>
+                                </div>
                                 <payment-logs></payment-logs>
 
                             </div>
@@ -189,13 +199,11 @@
                     </div>
                 </div>
             </div>
-            <label class="nav" for="PaymentTracker">
-                <span>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                    </svg>
+            <label class="nav pb-2" for="PaymentTracker">
+                <span class="text-center">
+
                     <i class="fa fa-list-alt text-primary"></i>
-                    <p class="d-inline"> Payment Tracker</p>
+                    <p class=""> Payment Tracker</p>
                 </span>
             </label>
             <!-- start PaymentTracker tab nav -->
@@ -209,7 +217,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { doc, collection, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { doc, collection, getDoc, setDoc, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 
 const savings = ref(1);
@@ -236,17 +244,57 @@ const GoalDate = computed(() => {
 });
 
 function toggleBackgroundColor() {
-    const acieveBy = new Date(stats.value.goal.descriptionEditable);
+    const achieveByParts = stats.value.goal.descriptionEditable.split('/');
+    const achieveBy = new Date(`${achieveByParts[2]}-${achieveByParts[1]}-${achieveByParts[0]}`);
     const goalDateParts = GoalDate.value.split('/');
     const goal = new Date(`${goalDateParts[2]}-${goalDateParts[1]}-${goalDateParts[0]}`); // YYYY-MM-DD
 
-    console.log('this is ahhhhhh');
-    console.log(goal);
-    if (acieveBy > goal) {
+    // console.log('this is ahhhhhh');
+    // console.log(achieveBy);
+    if (achieveBy > goal) {
         return { backgroundColor: 'rgb(188, 225, 188)' };
     } else {
         return { backgroundColor: 'rgb(255, 188, 188)' };
     }
+}
+
+function savingsChange() {
+    var toEarn = stats.value.goal.statEditable - stats.value.totalEarned.statEditable;
+    if (toEarn <= 0) {
+        savings.value = 1;
+        return;
+    }
+    var achieveByParts = stats.value.goal.descriptionEditable.split('/');
+    var achieveBy = new Date(`${achieveByParts[2]}-${achieveByParts[1]}-${achieveByParts[0]}`);
+
+    var now = new Date();
+
+    var diff = achieveBy - now;
+    var monthsDifference = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
+    // assume if same day, they update alrdy so wont get pay. 
+    if (stats.value.payday.descriptionEditable <= now.getDate()) {
+        monthsDifference--;
+    }
+
+
+    if (stats.value.payday.descriptionEditable <= achieveBy) {
+        monthsDifference--;
+    }
+
+    console.log('tttttttttttt', toEarn / monthsDifference)
+    
+
+
+    var perMonth = Math.ceil(toEarn / monthsDifference);
+
+    if (perMonth > stats.value.totalEarned.descriptionEditable) {
+        savings.value = stats.value.totalEarned.descriptionEditable;
+    } else {
+        savings.value = perMonth;
+    }
+
+
+
 }
 
 const stats = ref({
@@ -350,7 +398,7 @@ onMounted(() => {
                             statNonEditable: '$',
                             statEditable: 0,
                             descriptionNonEditable: 'By: ',
-                            descriptionEditable: new Date().toISOString(), // current timestamp
+                            descriptionEditable: Timestamp.fromDate(new Date()), // current timestamp
                         }
                     }
 

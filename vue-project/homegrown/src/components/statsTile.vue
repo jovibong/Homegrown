@@ -44,9 +44,9 @@ watch(() => [props.title, props.statNonEditable, props.statEditable, props.descr
             </Teleport>
         </div>
         <div>
-            <h1 class="text-center text-primary fw-bolder display-5">{{ statNonEditable }}<span class="edit">{{
-                statEditable
-            }}</span>
+            <h1 class="text-center text-primary fw-bolder display-5">{{ statNonEditable }}
+                <span v-if="title!='Total earned'" class="edit">{{statEditable}}</span>
+                <span v-else>{{statEditable}}</span>
             </h1>
         </div>
         <div>

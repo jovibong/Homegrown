@@ -141,9 +141,11 @@
             </div>
           </div>
           <div class="mt-3 text-end">
-            <router-link to="/eventPage" class="text-primary">
+            <button class="btn btn-secondary">
+            <router-link to="/eventPage" class="text-primary text-decoration-none">
               See more events
             </router-link>
+          </button>
           </div>
         </div>
       </div>

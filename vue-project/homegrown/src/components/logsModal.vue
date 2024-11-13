@@ -3,26 +3,25 @@
         <div v-if="show" class="modal-mask">
             <div class="modal-container p-5 w-1">
                 <div class="modal-header">
-                    <slot name="header">this is header default </slot>
+                    <slot name="header">This is header default</slot>
                 </div>
 
-                <div class="container ">
-                    <!-- update validation func later -->
-                    <form class="row g-3 needs-validation" novalidate @submit.prevent="addLogs()">
-
+                <div class="container">
+                    <form class="row g-3 needs-validation" novalidate @submit.prevent="handleSubmit">
                         <div class="col-md-6">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
-                                required v-model="title" >
-                            <div class="invalid-feedback">
+                                required v-model="title" @blur="validateTitle">
+                            <div v-if="titleError" class="text-danger">
                                 Please enter a title.
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <label for="validationCustom05" class="form-label mt-4">Payment Date</label>
-                            <input type="date" class="form-control" id="validationCustom05" required v-model="date">
-                            <div class="invalid-feedback">
+                            <input type="date" class="form-control" id="validationCustom05" required v-model="date"
+                                @blur="validateDate">
+                            <div v-if="dateError" class="text-danger">
                                 Please provide a date.
                             </div>
                             <span id="dateHelpBlock" class="form-text text-muted">According to slip/transaction</span>
@@ -30,13 +29,14 @@
 
                         <div class="col-md-6">
                             <label for="validationCustom04" class="form-label mt-4">Payment Type</label>
-                            <select class="form-select" id="validationCustom04" required v-model="paymentType">
+                            <select class="form-select" id="validationCustom04" required v-model="paymentType"
+                                @blur="validatePaymentType">
                                 <option selected disabled value="">Select...</option>
                                 <option value="bonus">Bonus</option>
                                 <option value="monthly pay">Monthly Pay</option>
                             </select>
-                            <div class="invalid-feedback">
-                                Please select one.
+                            <div v-if="paymentTypeError" class="text-danger">
+                                Please select a payment type.
                             </div>
                         </div>
 
@@ -44,51 +44,34 @@
                             <label for="validationCustomUsername" class="form-label mt-4">Amount</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">SGD$</span>
-                                <input type="number" class="form-control" id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
-                                    v-model="amount">
-                                <div class="invalid-feedback">
-                                    Please enter a valid number.
+                                <input type="number" min=0 class="form-control" id="validationCustomUsername"
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter amount" required
+                                    v-model="amount" @blur="validateAmount">
+                                <div v-if="amountError" class="text-danger">
+                                    Please enter a valid amount.
                                 </div>
                             </div>
                         </div>
 
-
-
-                        <div class="col-12 ">
-                            <!-- <label for="validationCustom03" class="form-label mt-4">Payment Slip</label>
-                            <div class="input-group has-validation">
-                                <input type="file" class="form-control" id="validationCustom03" required>
-                            </div>
-                            <div class="invalid-feedback">
-                                Please provide an image of payment slip.
-                            </div> -->
-                            <hr>
-                        </div>
-
-
-
                         <div class="col-12">
                             <div class="form-check">
-                                <input class="form-check-input border-1 border-dark" type="checkbox" value=""
-                                    id="invalidCheck" required>
+                                <input class="form-check-input border-1 border-dark" type="checkbox" id="invalidCheck"
+                                    v-model="checkboxSelected" @blur="validateCheckbox">
                                 <label class="form-check-label" for="invalidCheck">
-                                    I have checked that the infromation is accurate to the best of my abillity
+                                    I have checked that the information is accurate to the best of my ability
                                 </label>
-                                <div class="invalid-feedback">
+                                <div v-if="checkboxError" class="text-danger">
                                     You must agree before submitting.
                                 </div>
                             </div>
                         </div>
                     </form>
-
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-danger m-3" type="button" @click="$emit('close')">Cancel</button>
-                    <!-- add addlogs fucntion here -->
-                    <button class="btn btn-success" type="submit" @click="() => { $emit('close'); addLogs(); }">Add
-                        log</button>
+                    <button class="btn btn-danger m-3" type="button"
+                        @click="{ $emit('close'), clearFields(); }">Cancel</button>
+                    <button class="btn btn-success" type="submit" @click="handleSubmit">Add log</button>
                 </div>
             </div>
         </div>
@@ -105,6 +88,14 @@ import { db } from "../firebase/initialize";
 const { show } = defineProps({
     show: Boolean,
 });
+const emit = defineEmits(['close']);
+
+const checkboxSelected = ref(false);
+const titleError = ref(false);
+const amountError = ref(false);
+const paymentTypeError = ref(false);
+const dateError = ref(false);
+const checkboxError = ref(false);
 
 // create log
 // title
@@ -166,9 +157,34 @@ watch([paymentType, date], async () => {
     }
 });
 
-// need to figure out for image
-// const image = ref('')
-const image = 'needToFill.png'
+
+function validateTitle() {
+    titleError.value = !title.value;
+}
+
+function validateAmount() {
+    amountError.value = !amount.value;
+}
+
+function validatePaymentType() {
+    paymentTypeError.value = !paymentType.value;
+}
+
+function validateDate() {
+    dateError.value = !date.value;
+}
+
+function validateCheckbox() {
+    checkboxError.value = !checkboxSelected.value;
+}
+
+function resetErrors() {
+    titleError.value = false;
+    amountError.value = false;
+    paymentTypeError.value = false;
+    dateError.value = false;
+    checkboxError.value = false;
+}
 
 
 // Function to clear all input fields
@@ -179,6 +195,28 @@ function clearFields() {
     date.value = '';
     status.value = ''; // Reset status
     badgeClass.value = ''; // Reset badgeClass
+    checkboxSelected.value = false;
+
+    resetErrors();
+}
+
+
+async function handleSubmit() {
+    resetErrors()
+
+    validateTitle();
+    validateAmount();
+    validatePaymentType();
+    validateDate();
+    validateCheckbox();
+
+    if (titleError.value || amountError.value || paymentTypeError.value || dateError.value || checkboxError.value) {
+        return;
+    }
+
+    await addLogs();
+    clearFields();
+    emit('close');
 }
 
 // to add log to firebase
@@ -212,7 +250,6 @@ async function addLogs() {
             amount: amount.value,
             statusPayment: status.value,
             date: Timestamp.fromDate(new Date(date.value)),
-            image: image,
             badgeClass: badgeClass.value
         });
 
