@@ -250,11 +250,12 @@ export default {
             sessionStorage.removeItem('user'); // Remove user data from session storage
             localStorage.removeItem('user'); // Remove user data from local storge
 
-
             this.$router.push('/').then(() => {
                 // Replace the current history entry with the landing page URL
                 window.history.replaceState(null, '', '/');
             });
+
+            window.location.reload(); // Reload the page to clear any cached data
 
             // Optional: Add an event listener to prevent using the back button
             window.addEventListener('popstate', () => {

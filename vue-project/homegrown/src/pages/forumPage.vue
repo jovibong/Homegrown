@@ -355,7 +355,7 @@ export default{
 
             try {
                 const docRef = await addDoc(collection(db, "forums"), newForumData);
-                console.log("Document written with ID: ", docRef.id);
+                // console.log("Document written with ID: ", docRef.id);
                 this.forumID = docRef.id;
                 window.location.reload();
 
