@@ -52,7 +52,7 @@
     text-decoration: none;
     transition: 0.25s ease-in-out;
     background-color: white;
-    color: #212529;
+    color: #212529 !important;
 }
 /* end of about and company list */
 
