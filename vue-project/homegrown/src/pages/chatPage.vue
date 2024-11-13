@@ -348,7 +348,7 @@ export default {
       const selectedChat = this.chat_arr[index];
       if (selectedChat && selectedChat.id) {
         this.selected_chat_obj = selectedChat;
-        console.log(this.selected_chat_obj);
+       // console.log(this.selected_chat_obj);
       } else {
         console.error("Error: Selected chat does not have a valid chat_id.");
       }
@@ -364,7 +364,7 @@ export default {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(this.users_arr);
+       /// console.log(this.users_arr);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -542,7 +542,7 @@ export default {
 
           // Set the new document in Firestore
           await setDoc(userDocRef, newUser);
-          console.log("User document created successfully:", newUser);
+         // console.log("User document created successfully:", newUser);
         }
       } catch (error) {
         console.error("Error checking or creating user document:", error);
@@ -674,7 +674,7 @@ export default {
         userObject.profile_picture
       );
       this.user = userObject.uid;
-      console.log(this.user);
+      //console.log(this.user);
     }
     if (this.user) {
       this.fetchUsers();
