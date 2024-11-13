@@ -176,7 +176,7 @@ export default {
                 // Return the download URL
                 return downloadURL;
             } catch (error) {
-                // console.error('Error uploading file:', error);
+                console.error('Error uploading file:', error);
                 throw error; // Re-throw the error to handle it in your application
             }
         },
