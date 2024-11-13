@@ -247,7 +247,10 @@ export default {
             this.user = null;
             this.userType = null; // Reset user type
 
-            // Redirect to the landing page
+            this.sessionStorage.removeItem('user'); // Remove user data from session storage
+            this.localStorage.removeItem('user'); // Remove user data from local storage
+
+            
             this.$router.push('/').then(() => {
                 // Replace the current history entry with the landing page URL
                 window.history.replaceState(null, '', '/');
