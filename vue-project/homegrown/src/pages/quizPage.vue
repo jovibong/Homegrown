@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="questions_loading">
     <section id="Title" class="container pt-3 pb-0 fade-in-top">
       <div class="container mb-4">
         <div class="row">
@@ -163,6 +163,7 @@ export default {
       is_correct: false,
       answers: [],
       userType: "",
+      questions_loading: true,
     };
   },
   methods: {
@@ -223,7 +224,8 @@ export default {
       } catch (error) {
        // console.error("Error fetching questions:", error);
       } finally {
-        this.num_questions = this.questions.length
+        this.num_questions = this.questions.length;
+        this.questions_loading = false;
       }
     },
     async waitForLessonData() {
