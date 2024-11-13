@@ -379,7 +379,7 @@ export default {
         console.error("Error fetching reviews and user details:", error);
       } finally {
         this.loading = false;
-        console.log("This page has loaded");
+      //  console.log("This page has loaded");
       }
     },
 
@@ -427,7 +427,7 @@ export default {
         // Retrieve available mentors from the course document
         const availableMentors = course.available_mentors || [];
         if (availableMentors.length === 0) {
-          console.log("No mentors available for this course.");
+        //  console.log("No mentors available for this course.");
           return;
         } else {
           this.mentor_available = true;
@@ -441,7 +441,7 @@ export default {
             if (mentorSnap.exists()) {
               return { id: mentorId, ...mentorSnap.data() }; // Combine mentor ID with mentor data
             } else {
-              console.warn(`Mentor ${mentorId} not found.`);
+             // console.warn(`Mentor ${mentorId} not found.`);
               return null; // Return null if mentor document doesn't exist
             }
           })
@@ -450,7 +450,7 @@ export default {
         // Filter out any null values (in case some mentor documents weren't found)
         this.mentors = mentorsData.filter((mentor) => mentor !== null);
 
-        console.log("Available Mentors:", this.mentors);
+       // console.log("Available Mentors:", this.mentors);
       } catch (error) {
         console.error("Error fetching available mentors:", error);
       }
@@ -533,9 +533,9 @@ export default {
           }
         }
 
-        console.log(
-          `Course ${this.course.id} added to user ${this.user}'s ongoing_courses with mentor ${mentorId}, percentage_completed initialized to 0, and progress data set.`
-        );
+        // console.log(
+        //   `Course ${this.course.id} added to user ${this.user}'s ongoing_courses with mentor ${mentorId}, percentage_completed initialized to 0, and progress data set.`
+        // );
       } catch (error) {
         console.error("Error adding course to ongoing_courses:", error);
       } finally {
@@ -564,7 +564,7 @@ export default {
         this.course_added = true;
       }
     } else {
-      console.log("No course data found in sessionStorage");
+     // console.log("No course data found in sessionStorage");
       return;
     }
     await this.getAllAvailableMentors(this.course);

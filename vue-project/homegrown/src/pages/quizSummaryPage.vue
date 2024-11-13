@@ -244,7 +244,7 @@ export default {
           completed: true,
         });
 
-        console.log("Quiz answers submitted successfully and marked as completed.");
+       // console.log("Quiz answers submitted successfully and marked as completed.");
 
         // Calculate and update percentage completed
         await this.updatePercentageCompleted();
@@ -252,10 +252,10 @@ export default {
         if (!this.is_last_quiz) {
           await this.loadNextLesson();
         } else {
-          console.log("This was the last quiz in the course.");
+         // console.log("This was the last quiz in the course.");
         }
       } catch (error) {
-        console.error("Error submitting quiz answers:", error);
+      //  console.error("Error submitting quiz answers:", error);
       }
     },
     async loadNextLesson() {
@@ -278,12 +278,12 @@ export default {
             id: sortedItems[0].id,
             ...firstLessonItem,
           }));
-          console.log("Updated to next lesson and first lesson item.");
+         // console.log("Updated to next lesson and first lesson item.");
         } else {
-          console.log("No more lessons available.");
+        //  console.log("No more lessons available.");
         }
       } catch (error) {
-        console.error("Error loading next lesson:", error);
+      //  console.error("Error loading next lesson:", error);
       }
     },
    async updatePercentageCompleted() {
@@ -326,9 +326,9 @@ export default {
     );
     await updateDoc(courseRef, { percentage_completed: percentageCompleted });
 
-    console.log(`Updated percentage completed: ${percentageCompleted}%`);
+    //console.log(`Updated percentage completed: ${percentageCompleted}%`);
   } catch (error) {
-    console.error("Error updating percentage completed:", error);
+    //console.error("Error updating percentage completed:", error);
   }
 },
 
@@ -354,7 +354,7 @@ export default {
           this.is_last_quiz = isLastItem;
         }
       } catch (error) {
-        console.error("Error checking if last quiz:", error);
+       // console.error("Error checking if last quiz:", error);
       }
     },
     getClass(question, option_key, key) {

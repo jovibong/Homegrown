@@ -219,9 +219,9 @@ export default {
             id: doc.id,
           };
         });
-        console.log("Questions fetched:", this.questions);
+       // console.log("Questions fetched:", this.questions);
       } catch (error) {
-        console.error("Error fetching questions:", error);
+       // console.error("Error fetching questions:", error);
       } finally {
         this.num_questions = this.questions.length
       }

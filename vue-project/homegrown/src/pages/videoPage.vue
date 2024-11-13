@@ -215,7 +215,7 @@ export default {
         await updateDoc(lessonItemRef, {
           completed: true,
         });
-        console.log("Lesson item marked as completed.");
+       // console.log("Lesson item marked as completed.");
 
         // Calculate and update percentage completed
         await this.updatePercentageCompleted();
@@ -237,15 +237,13 @@ export default {
               "selectedLessonItem",
               JSON.stringify(nextLessonItem)
             );
-            console.log(
-              "Next lesson item (quiz) stored in sessionStorage:",
-              nextLessonItem
-            );
+            // console.log(
+            //   "Next lesson item (quiz) stored in sessionStorage:",
+            //   nextLessonItem
+            // );
           } else {
             console.warn("Quiz lesson item not found.");
           }
-        } else {
-          console.log("Current lesson item is the quiz; no next item to set.");
         }
       } catch (error) {
         console.error(
@@ -297,7 +295,7 @@ export default {
           percentage_completed: percentageCompleted,
         });
 
-        console.log(`Updated percentage completed: ${percentageCompleted}%`);
+       // console.log(`Updated percentage completed: ${percentageCompleted}%`);
       } catch (error) {
         console.error("Error updating percentage completed:", error);
       }

@@ -147,7 +147,7 @@ export default {
         const userOngoingCourseIds = ongoingCoursesSnap.docs.map(
           (doc) => doc.id
         );
-        console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
+       // console.log("User Ongoing Courses IDs:", userOngoingCourseIds);
 
         // Fetch all courses from Firestore
         const coursesSnap = await getDocs(collection(db, "courses"));
@@ -156,14 +156,14 @@ export default {
           ...doc.data(),
         }));
 
-        console.log("All Courses Fetched from Firestore:", allCourses);
+      //  console.log("All Courses Fetched from Firestore:", allCourses);
 
         // Filter courses to get only the ongoing ones
         const ongoing = allCourses.filter(
           (course) => !userOngoingCourseIds.includes(course.id)
         );
 
-        console.log("Filtered Ongoing Courses:", ongoing);
+      //  console.log("Filtered Ongoing Courses:", ongoing);
 
         this.ongoing_courses = ongoing;
       } catch (error) {
