@@ -10,15 +10,8 @@
                     <form class="row g-3 needs-validation" novalidate @submit.prevent="handleSubmit">
                         <div class="col-md-6">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
-                            <input 
-                                type="text" 
-                                class="form-control" 
-                                id="validationCustom01" 
-                                placeholder="Enter title"
-                                required 
-                                v-model="title"
-                                @blur="validateTitle"
-                            >
+                            <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
+                                required v-model="title" @blur="validateTitle">
                             <div v-if="titleError" class="text-danger">
                                 Please enter a title.
                             </div>
@@ -26,14 +19,8 @@
 
                         <div class="col-md-6">
                             <label for="validationCustom05" class="form-label mt-4">Payment Date</label>
-                            <input 
-                                type="date" 
-                                class="form-control" 
-                                id="validationCustom05" 
-                                required 
-                                v-model="date"
-                                @blur="validateDate"
-                            >
+                            <input type="date" class="form-control" id="validationCustom05" required v-model="date"
+                                @blur="validateDate">
                             <div v-if="dateError" class="text-danger">
                                 Please provide a date.
                             </div>
@@ -42,13 +29,8 @@
 
                         <div class="col-md-6">
                             <label for="validationCustom04" class="form-label mt-4">Payment Type</label>
-                            <select 
-                                class="form-select" 
-                                id="validationCustom04" 
-                                required 
-                                v-model="paymentType"
-                                @blur="validatePaymentType"
-                            >
+                            <select class="form-select" id="validationCustom04" required v-model="paymentType"
+                                @blur="validatePaymentType">
                                 <option selected disabled value="">Select...</option>
                                 <option value="bonus">Bonus</option>
                                 <option value="monthly pay">Monthly Pay</option>
@@ -62,17 +44,9 @@
                             <label for="validationCustomUsername" class="form-label mt-4">Amount</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">SGD$</span>
-                                <input 
-                                    type="number" 
-                                    min=0
-                                    class="form-control" 
-                                    id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" 
-                                    placeholder="Enter amount" 
-                                    required 
-                                    v-model="amount"
-                                    @blur="validateAmount"
-                                >
+                                <input type="number" min=0 class="form-control" id="validationCustomUsername"
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter amount" required
+                                    v-model="amount" @blur="validateAmount">
                                 <div v-if="amountError" class="text-danger">
                                     Please enter a valid amount.
                                 </div>
@@ -81,13 +55,8 @@
 
                         <div class="col-12">
                             <div class="form-check">
-                                <input 
-                                    class="form-check-input border-1 border-dark" 
-                                    type="checkbox" 
-                                    id="invalidCheck" 
-                                    v-model="checkboxSelected"
-                                    @blur="validateCheckbox"
-                                >
+                                <input class="form-check-input border-1 border-dark" type="checkbox" id="invalidCheck"
+                                    v-model="checkboxSelected" @blur="validateCheckbox">
                                 <label class="form-check-label" for="invalidCheck">
                                     I have checked that the information is accurate to the best of my ability
                                 </label>
@@ -100,7 +69,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-danger m-3" type="button" @click="{$emit('close'),clearFields();}">Cancel</button>
+                    <button class="btn btn-danger m-3" type="button"
+                        @click="{ $emit('close'), clearFields(); }">Cancel</button>
                     <button class="btn btn-success" type="submit" @click="handleSubmit">Add log</button>
                 </div>
             </div>
@@ -225,6 +195,8 @@ function clearFields() {
     date.value = '';
     status.value = ''; // Reset status
     badgeClass.value = ''; // Reset badgeClass
+    checkboxSelected.value = false;
+
     resetErrors();
 }
 
