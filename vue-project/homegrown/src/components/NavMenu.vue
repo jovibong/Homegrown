@@ -166,7 +166,7 @@ import { doc, getDoc } from 'firebase/firestore';
 export default {
   components: {
     LoginModal,
-    SignupModal
+    SignupModal,
   },
   data() {
     return {
