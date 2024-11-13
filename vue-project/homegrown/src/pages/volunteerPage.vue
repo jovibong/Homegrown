@@ -219,7 +219,7 @@ export default {
             try {
                 const user = JSON.parse(sessionStorage.getItem('user')) || JSON.parse(localStorage.getItem('user'));
                 const uid = await user.uid;
-                console.log(uid)
+                // console.log(uid)
 
                 const querySnapshot = await getDocs(collection(db, 'events'));
                 const currentDate = new Date();
@@ -267,10 +267,10 @@ export default {
                 if (docSnap.exists()) {
                     // Check if 'hourGoal' field exists in the document
                     if ('hourGoal' in docSnap.data()) {
-                        console.log('hourGoal exists:', docSnap.data().hourGoal);
+                        // console.log('hourGoal exists:', docSnap.data().hourGoal);
                         this.yearlyGoal = parseInt(docSnap.data().hourGoal)
                     } else {
-                        console.log('hourGoal does not exist.');
+                        // console.log('hourGoal does not exist.');
                         await updateDoc(mentorDocRef, {
                             hourGoal: 0
                         });
@@ -333,8 +333,8 @@ export default {
 
                 this.pastMentorships = past;
                 this.currentMentorships = ongoing;
-                console.log(ongoing)
-                console.log(past)
+                // console.log(ongoing)
+                // console.log(past)
             }
             catch (error) {
                 console.error("Error fetching Mentorships:", error);
@@ -353,7 +353,7 @@ export default {
                 await updateDoc(mentorRef, {
                     hourGoal: this.newGoal
                 });
-                console.log('Goal updated successfully');
+                // console.log('Goal updated successfully');
                 this.yearlyGoal = parseInt(this.newGoal);
                 this.newGoal = null;
                 const modal = Modal.getInstance(document.getElementById('goalModal'));

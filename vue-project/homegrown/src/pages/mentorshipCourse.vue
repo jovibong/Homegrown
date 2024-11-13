@@ -166,10 +166,10 @@ export default {
         const id = JSON.parse(selectedCourse);
 
         if (selectedCourse) {
-          console.log("Course retrieved from sessionStorage:", id);
+          // console.log("Course retrieved from sessionStorage:", id);
           sessionStorage.setItem("selectedCourseId", JSON.stringify(id));
         } else {
-          console.log("No course data found in sessionStorage");
+          // console.log("No course data found in sessionStorage");
         }
 
         const courseRef = doc(db, "courses", id);
@@ -215,7 +215,7 @@ export default {
         );
 
         this.lessons = lessonsData;
-        console.log(lessonsData);
+        // console.log(lessonsData);
       } catch (error) {
         console.error("Error fetching lesson:", error);
       } finally {
@@ -223,7 +223,7 @@ export default {
       }
     },
     handleLessonItemClick(item, lessonId) {
-      console.log("this course_id", this.course);
+      // console.log("this course_id", this.course);
       sessionStorage.setItem("selectedLessonItem", JSON.stringify(item));
       sessionStorage.setItem("selectedLessonId", JSON.stringify(lessonId));
       sessionStorage.setItem("selectedCourse", JSON.stringify(this.course));
@@ -251,7 +251,7 @@ export default {
         const menteeDoc = await getDoc(menteeRef);
         const menteesList = menteeDoc.data().mentees;
         this.mentees = menteesList;
-        console.log(menteesList)
+        // console.log(menteesList)
         this.menteesList = menteesList
 
         const menteePromises = menteesList.map(async (userId) => {
@@ -262,7 +262,7 @@ export default {
         });
 
         this.mentees = await Promise.all(menteePromises);
-        console.log(await Promise.all(menteePromises))
+        // console.log(await Promise.all(menteePromises))
       } catch (error) {
         console.error("Error fetching mentees:", error);
       } finally {
@@ -360,8 +360,8 @@ export default {
     async addChat(chatterId1, chatterId2) {
       try {
         for (const uid of this.menteesList) {
-          console.log(uid)
-          console.log(uid);
+          // console.log(uid)
+          // console.log(uid);
           const docRef = doc(db, "users", uid);
           try {
             await updateDoc(docRef, { noti_count: 0 });
@@ -376,10 +376,10 @@ export default {
           const userDoc = await this.getUserDocument(chatterId);
 
           if (!userDoc.data) {
-            console.log(`User ${chatterId} not found in profiles, users, or mentors, creating a new one.`);
+            // console.log(`User ${chatterId} not found in profiles, users, or mentors, creating a new one.`);
             await this.checkAndCreateuser(chatterId, "New User", "https://thispersondoesnotexist.com/");
           } else {
-            console.log(`User ${chatterId} found in ${userDoc.collection} collection.`);
+            // console.log(`User ${chatterId} found in ${userDoc.collection} collection.`);
           }
         }
 
@@ -406,7 +406,7 @@ export default {
 
         // If an existing chat is found, navigate to it and return
         if (existingChat) {
-          console.log("Chat already exists with ID:", existingChat.id);
+          // console.log("Chat already exists with ID:", existingChat.id);
           this.$router.push({ name: "chatPage", params: { chatId: existingChat.id } });
           return;
         }
@@ -420,7 +420,7 @@ export default {
         });
 
         const chatId = newChatRef.id;
-        console.log("New chat created with ID:", chatId);
+        // console.log("New chat created with ID:", chatId);
 
         // Step 4: Add chat ID to each chatter's `chats` array
         for (const chatterId of [chatterId1, chatterId2]) {
@@ -436,10 +436,10 @@ export default {
               chats: [chatId],
             });
           }
-          console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
+          // console.log(`Chat ID ${chatId} added to chatter ${chatterId}`);
         }
 
-        console.log("Chat successfully created and added to both chatters.");
+        // console.log("Chat successfully created and added to both chatters.");
         this.$router.push({ name: "chatPage", params: { chatId } });
 
       } catch (error) {
