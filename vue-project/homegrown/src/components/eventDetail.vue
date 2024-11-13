@@ -110,7 +110,7 @@
     </div>
 
     <div v-if="loading" class="loading-overlay">
-      <div class="spinner">Loading...</div> 
+      <div class="spinner">Loading...</div>
     </div>
     <!-- to display dynamically the list of created groups -->
     <div v-if="!groups_loading && groups.length == 0" class="text-muted mb-4 h5 text-center">
@@ -121,12 +121,12 @@
       <div v-for="group in groups" :key="group.id" class="eventGroup">
         <div class="group-info">
           <div class="profile-images">
-            <div v-for="member in group.members" :key="member.id">
+            <div v-for="member in group.members.slice(0, 3)" :key="member.id">
               <img :src="member.profilePic" class="profile-pic" />
             </div>
 
-            <div v-if="extraCount > 0" class="extra-count">
-              +{{ extraCount }}
+            <div v-if="group.members.length > 3" class="extra-count">
+              +{{ group.members.length - 3 }}
             </div>
           </div>
 
@@ -154,8 +154,8 @@
       <h2 class="text-primary fw-bold mb-3 display-4"> Related Events </h2>
       <hr>
       <div v-if="relatedEvents.length == 0" class="text-center text-muted mb-4 h5">
-                There is currently no related events in this category
-            </div>
+        There is currently no related events in this category
+      </div>
 
       <div class="scroll-container">
         <event-cards v-for="event in relatedEvents" :key="event.id" :eventID="event.id" :title="event.title"
@@ -221,34 +221,33 @@ export default {
 
   async mounted() {
     // console.log('Event ID:', this.eventID); // Check if eventID is valid
-
-    await this.getUserEvent();
-
-
-    this.getEventDetails(this.eventID); // Call the function to get event details
-    this.getGroups(this.eventID); // get event groups
-
-
-    if (this.joinedEvent == false) {
-      this.buttonText = "Join Event"
-    } else {
-      this.iconClass = "bi bi-calendar-minus"
-      this.buttonText = "Leave Event"
-    }
+    await this.initializeData(this.eventID);
   },
 
-  computed: {
-    visibleMembers() {
-      // Display only the first three members
-      return this.groups.slice(0, 3);
-    },
-    extraCount() {
-      // Calculate the remaining members beyond the first three
-      return this.groups.length > 3 ? this.groups.length - 3 : 0;
-    }
-  },
 
   methods: {
+
+    async initializeData(eventID) {
+        await this.getUserEvent();
+        await this.getEventDetails(eventID);
+        this.relatedEvents = [];
+        this.getRelatedEvents(); // Assumes this is not async
+        this.groups = [];
+        await this.getGroups(eventID); // Make sure this is awaited if async
+        this.updateButtonState();
+        this.event_loading = false; // Hide loading state
+    },
+
+    updateButtonState() {
+        if (this.joinedEvent == false) {
+            this.buttonText = "Join Event";
+            this.iconClass = "bi bi-calendar-plus";
+        } else {
+            this.buttonText = "Leave Event";
+            this.iconClass = "bi bi-calendar-minus";
+        }
+    },
+
     isCurrentUserMember(members) {
       const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
       return members.some(member => member.uid === sessionUser.uid);
@@ -415,6 +414,7 @@ export default {
 
       const querySnapshot = await getDocs(q);
       const today = new Date();  // Get today's date and time
+      this.relatedEvents = [];
 
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
@@ -707,12 +707,17 @@ export default {
 
   watch: {
     '$route.params.id': {
-      handler(newID) {
-        this.getEventDetails(newID); // call a method to fetch the new event details
-      },
-      immediate: true // load data on initial render as well
+        async handler(newID) {
+            if (newID !== this.eventID) {
+                this.eventID = newID;
+                this.relatedEvents = [];
+                this.groups = [];
+                await this.initializeData(newID);
+            }
+        },
+        immediate: true
     }
-  }
+}
 }
 
 
