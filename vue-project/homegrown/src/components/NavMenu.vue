@@ -233,17 +233,17 @@ export default {
       this.isSignUpModalVisible = true;
     },
     handleLogin() {
-      console.log("User has logged in!");
+      // console.log("User has logged in!");
       this.isLoginModalVisible = false;
     },
     handleSignup(userData) {
-      console.log("User has signed up!", userData);
+      // console.log("User has signed up!", userData);
       this.isSignUpModalVisible = false;
     },
     logout() {
     signOut(auth)
         .then(() => {
-            console.log("User signed out");
+            // console.log("User signed out");
             this.user = null;
             this.userType = null; // Reset user type
 
@@ -261,7 +261,7 @@ export default {
             });
         })
         .catch((error) => {
-            console.error("Error signing out:", error);
+            // console.error("Error signing out:", error);
             this.$emit('stopLoading'); // Hide any loading spinners on error
         });
   },
@@ -286,12 +286,12 @@ export default {
     toggleNavbar() {
       // Toggle the open/closed state of the navbar
       this.isNavbarOpen = !this.isNavbarOpen;
-      console.log("Navbar toggled");
+      // console.log("Navbar toggled");
     },
     closeNavbar() {
       // Close the navbar (set state to false)
       this.isNavbarOpen = false;
-      console.log("Navbar closed");
+      // console.log("Navbar closed");
     },
     handleProfileImageUpdate(newImageUrl) {
             if (this.user) {
