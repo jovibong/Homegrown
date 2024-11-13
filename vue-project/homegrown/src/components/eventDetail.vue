@@ -220,7 +220,7 @@ export default {
   },
 
   async mounted() {
-    console.log('Event ID:', this.eventID); // Check if eventID is valid
+    // console.log('Event ID:', this.eventID); // Check if eventID is valid
 
     await this.getUserEvent();
 
@@ -261,7 +261,7 @@ export default {
         const eventDocRef = doc(db, "events", this.eventID); // Replace 'this.eventID' with the actual event ID
         const eventDocSnap = await getDoc(eventDocRef);
 
-        console.log(this.joinedEvent)
+        // console.log(this.joinedEvent)
         if (eventDocSnap.exists()) {
           const data = eventDocSnap.data();
 
@@ -276,7 +276,7 @@ export default {
           this.joinedEvent = false;
         }
 
-        console.log(this.joinedEvent); // Log final value
+        // console.log(this.joinedEvent); // Log final value
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -284,12 +284,12 @@ export default {
 
     async getEventDetails(eventID) {
       try {
-        console.log("Firestore instance:", db); // Debugging: Check db initialization
+        // console.log("Firestore instance:", db); // Debugging: Check db initialization
         const docRef = doc(db, "events", eventID); // Create a reference to the specific event document
         const docSnap = await getDoc(docRef); // Get the document snapshot
 
         if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
+          // console.log("Document data:", docSnap.data());
           this.eventTitle = docSnap.data().name;
           this.eventCategory = docSnap.data().category;
           this.location = docSnap.data().location;
@@ -305,7 +305,7 @@ export default {
           // Get the time (e.g., 18:00:00)
           this.eventTime = this.eventTiming.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-          console.log(this.eventDay, this.eventDate, this.eventTime)
+          // console.log(this.eventDay, this.eventDate, this.eventTime)
 
           this.relatedEvents = [];
           this.getRelatedEvents();
@@ -345,7 +345,7 @@ export default {
     },
 
     async fetchUserProfile(userID) {
-      console.log(userID)
+      // console.log(userID)
       try {
         const userDoc = await getDoc(doc(db, "profiles", userID)); // Fetch the user document
         if (userDoc.exists()) {
@@ -400,7 +400,7 @@ export default {
           });
         });
 
-        console.log("Groups retrieved:", this.groups);
+        // console.log("Groups retrieved:", this.groups);
         return
       } catch (error) {
         console.error("Error fetching groups: ", error);
@@ -410,7 +410,7 @@ export default {
     },
 
     async getRelatedEvents() {
-      console.log(this.eventCategory);
+      // console.log(this.eventCategory);
       const q = query(collection(db, "events"), where("category", "==", this.eventCategory));
 
       const querySnapshot = await getDocs(q);
@@ -420,7 +420,7 @@ export default {
         // doc.data() is never undefined for query doc snapshots
 
         if (doc.id !== this.eventID) {
-          console.log(doc.id, " => ", doc.data());
+          // console.log(doc.id, " => ", doc.data());
           const eventDate = doc.data().date.toDate();
           if (eventDate > today) {
             this.relatedEvents.push({
@@ -431,7 +431,7 @@ export default {
             });
           }
         }
-        console.log("related events", this.relatedEvents);
+        // console.log("related events", this.relatedEvents);
       });
 
     },
@@ -447,8 +447,6 @@ export default {
         if (docSnap.exists()) {
           const eventData = docSnap.data();
           const joined = eventData.joined || []; // Ensure `joined` is an array
-          console.log(docSnap.id)
-          console.log(joined);
 
           // Only add the user ID if it's not already in the array
           if (!joined.includes(sessionUser.uid)) {
@@ -489,7 +487,7 @@ export default {
               joined: arrayRemove(sessionUser.uid)
             });
 
-            console.log("User removed the event.");
+            console.log("User removed from event.");
           } else {
             console.log("User not in event.");
           }
@@ -543,7 +541,7 @@ export default {
         this.loading = true;
         const docSnap = await getDoc(groupRef);
         if (docSnap.exists()) {
-          console.log("Group data:", docSnap.data());
+          // console.log("Group data:", docSnap.data());
           const joinedMembers = docSnap.data().members || []; // Ensure `joined` is an array
           if (!joinedMembers.includes(sessionUser.uid)) {
 
@@ -554,7 +552,7 @@ export default {
 
             this.loading = false;
 
-            console.log(joinedMembers)
+            // console.log(joinedMembers)
             window.location.reload();
           } else {
             console.log("Group already joined!");
@@ -624,9 +622,9 @@ export default {
 
     async addChat(members, groupChatName) { //chatterIds is an array of Ids (string) and groupChatName is a string (leave as null for default gc name)
       try {
-        console.log(members)
+        // console.log(members)
         const chatterIds = members.map(member => member.uid);
-        console.log(chatterIds);
+        // console.log(chatterIds);
 
         this.add_chat_button_disabled = true;
 
