@@ -1,11 +1,13 @@
 <template>
-  <div v-if="questions_loading">
+<div>
+  <loading-animation v-if="questions_loading" class="mt-5"></loading-animation>
+  <div v-else>
     <section id="Title" class="container pt-3 pb-0 fade-in-top">
       <div class="container mb-4">
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link t="individualCoursePage"
+            <router-link to="individualCoursePage"
               class="btn btn-warning text-dark d-flex align-items-center"
             >
               <i class="bi bi-arrow-left me-1"></i>
@@ -141,13 +143,18 @@
       </button>
     </section>
   </div>
+  </div>
 </template>
 
 <script>
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/initialize"; // Adjust the path as needed
+import loadingAnimation from "../components/loadingAnimation.vue";
 
 export default {
+   components: {
+    loadingAnimation,
+  },
   data() {
     return {
       questions: [],
