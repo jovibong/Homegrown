@@ -271,11 +271,19 @@ function savingsChange() {
 
     var diff = achieveBy - now;
     var monthsDifference = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
-    console.log('tttttttttttt', monthsDifference)
     // assume if same day, they update alrdy so wont get pay. 
     if (stats.value.payday.descriptionEditable <= now.getDate()) {
         monthsDifference--;
     }
+
+
+    if (stats.value.payday.descriptionEditable <= achieveBy) {
+        monthsDifference--;
+    }
+
+    console.log('tttttttttttt', toEarn / monthsDifference)
+    
+
 
     var perMonth = Math.ceil(toEarn / monthsDifference);
 
