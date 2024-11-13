@@ -17,7 +17,7 @@
                                     id="inputGroupPrepend">{{
                                         statNonEditable }}</span>
                                 <input :type="statType" class="form-control text-center" id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter " required
                                     v-model="InputStatEditable">
                                 <div class="invalid-feedback">
                                     Please enter a valid number.
@@ -25,14 +25,28 @@
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-12" v-if="title != 'Goal'">
                             <label for="validationCustomUsername" class="form-label mt-4"></label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">{{ descriptionNonEditable
                                     }}</span>
                                 <input :type="descType" class="form-control  text-center" id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter " required
                                     v-model="InputDescriptionEditable">
+                                <div class="invalid-feedback">
+                                    Please enter a valid number.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12" v-if="title == 'Goal'">
+                            <label for="validationCustomUsername" class="form-label mt-4"></label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text" id="inputGroupPrepend">{{ descriptionNonEditable
+                                    }}</span>
+                                <input type="date" class="form-control  text-center" id="validationCustomUsername"
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter " required
+                                    v-model="InputDescriptionEditable" :min="minDate">
                                 <div class="invalid-feedback">
                                     Please enter a valid number.
                                 </div>
@@ -61,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { updateDoc, doc, Timestamp } from "firebase/firestore";
 import { db } from "../firebase/initialize";
 import { Date } from 'core-js';
@@ -91,6 +105,7 @@ const statType = ref('');
 const descType = ref('');
 const InputStatEditable = ref(null);
 const InputDescriptionEditable = ref('');
+const minDate = ref('');
 
 
 function determineType(value) {
@@ -193,7 +208,12 @@ async function updateStats() {
 
 }
 
-
+onMounted(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    minDate.value = tomorrow.toISOString().split("T")[0];
+});
 
 </script>
 

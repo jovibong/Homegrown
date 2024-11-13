@@ -18,8 +18,8 @@
         </div>
 
         <div v-if="totalExceedsLimit" class="alert text-center">
-            <p class="my-auto ">You are over by ${{ overflowAmount }}. Please adjust the values to stay within ${{ max
-                }}.</p>
+            <p class="my-auto ">You are over your monthly pay by ${{ overflowAmount }}. 
+                </p>
         </div>
 
         <table class="series-table">

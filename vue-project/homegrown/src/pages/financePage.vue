@@ -258,6 +258,26 @@ function toggleBackgroundColor() {
     }
 }
 
+function countSpecificDayBetweenDates(startDate, endDate, day) {
+    let count = 0;
+
+    // Set the initial date to the startDate with the specified day
+    let currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), day);
+
+    // Loop through each month until we pass the end date
+    while (currentDate <= endDate) {
+        // Only count if the current date is within the range (to handle day overflow cases)
+        if (currentDate >= startDate && currentDate <= endDate) {
+            count++;
+        }
+
+        // Move to the next month with the same specified day
+        currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+
+    return count;
+}
+
 function savingsChange() {
     var toEarn = stats.value.goal.statEditable - stats.value.totalEarned.statEditable;
     if (toEarn <= 0) {
@@ -269,23 +289,38 @@ function savingsChange() {
 
     var now = new Date();
 
-    var diff = achieveBy - now;
-    var monthsDifference = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
-    // assume if same day, they update alrdy so wont get pay. 
-    if (stats.value.payday.descriptionEditable <= now.getDate()) {
-        monthsDifference--;
-    }
+    var numDays = countSpecificDayBetweenDates(now,achieveBy,stats.value.payday.descriptionEditable);
+
+    var perMonth = Math.ceil(toEarn/numDays) ;
 
 
-    if (stats.value.payday.descriptionEditable <= achieveBy) {
-        monthsDifference--;
-    }
+    // var monthsDifference = Math.ceil(diff / (1000 * 60 * 60 * 24 * 30));
+    // console.log('aaaaaaa',monthsDifference);
 
-    console.log('tttttttttttt', toEarn / monthsDifference)
+    // // assume if same day, they update alrdy so wont get pay. 
+    // if(monthsDifference){
+
+    // }
+
+    // if (stats.value.payday.descriptionEditable <= now.getDate()) {
+    //     monthsDifference--;
+    // }
+
+
+    // if (stats.value.payday.descriptionEditable <= achieveBy) {
+    //     monthsDifference--;
+    // }
+
+    // console.log('tttttttttttt', toEarn / monthsDifference)
     
 
 
-    var perMonth = Math.ceil(toEarn / monthsDifference);
+    // var perMs = toEarn / diff;
+
+    // var monthDiff = ; // Approximate milliseconds in a month
+    // var perMonth = perMs * msInMonth;
+    // console.log('this is',perMonth)
+
 
     if (perMonth > stats.value.totalEarned.descriptionEditable) {
         savings.value = stats.value.totalEarned.descriptionEditable;
