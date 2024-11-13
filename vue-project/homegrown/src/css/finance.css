@@ -3,6 +3,8 @@
 }
 
 
+
+
 .animated-background {
     background: linear-gradient(270deg, #f0eabf, #c7d6ef);
     background-size: 400% 400%;
@@ -116,12 +118,12 @@ input[type="radio"]:checked+.page {
     background-color: white;
     border-radius: 12px;
     box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .bento-tile:hover {
     transform: scale(1.025);
-    transition: 0.5s ease-in-out;
-    outline: 5px solid lightblue;
+    box-shadow: 8px 16px 16px hsl(0deg 0% 0% / 0.25), 0px 10px 20px hsl(0deg 0% 0% / 0.2);
 }
 
 

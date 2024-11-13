@@ -17,31 +17,22 @@
     </div>
   </div>
 
-
-
   <div class="comments-header">
     <h3 class="text-muted"> Comments </h3>
-    <hr>
-
-    <div class="dropdown ms-auto">
-
-      <button type="button" class="btn btn-primary ms-auto dropdown-toggle" data-bs-toggle="dropdown"
-        aria-expanded="false" data-bs-auto-close="outside">
-        Add Comment
-      </button>
-
-      <form class="dropdown-menu p-4" @submit.prevent="addComment">
-        <div class="mb-3">
-          <label for="comment" class="form-label">Comment</label>
-          <textarea rows="4" cols="50" id="comment" v-model="userComment" class="form-control" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary"> Post </button>
-      </form>
-    </div>
   </div>
 
   <hr>
+
+  <div class="d-flex justify-content-center align-items-stretch comment-container">
+
+    <textarea class="commentBar" placeholder="Comment here" v-model="userComment"
+      autocomplete="off"> </textarea>
+
+      <i @click="addComment" 
+      class="bi bi-plus-circle d-flex align-content-center submitBTN text-warning"
+      ></i>
+  </div>
+
 
   <loading-animation v-if="comments_loading"></loading-animation>
   <div v-if="!comments_loading">
@@ -72,11 +63,11 @@
   
   
 <script>
-  import 'bootstrap/dist/js/bootstrap';
-  import 'bootstrap/dist/css/bootstrap.css'
+
   import { doc, getDoc, collection, addDoc, getDocs } from "firebase/firestore";
   import { db } from "../firebase/initialize";
   import loadingAnimation from "../components/loadingAnimation.vue";
+
 
 
   export default {
@@ -88,7 +79,7 @@
         comments:[],
 
         userComment: '',
-        comments_loading: true
+        comments_loading: true,
       }
     },
 
@@ -240,19 +231,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-left: 10px;
 }
 
 #comment {
   width:200px;
-}
-
-.add-comment-btn {
-  background-color: #525fe1;
-  color: white;
-  font-size: 14px;
-  padding: 6px 12px;
-  border: none;
-  cursor: pointer;
 }
 
 
@@ -306,5 +289,27 @@
   color: #6c757d; /* Optional: change color for comment text */
 }
 
+.commentBar {
+  width: 80%;
+  height: 50px;
+  border-radius: 20px;
+  margin: 10px;
+  margin-right: 10px; /* Adds some space between the textarea and button */
+  background-color: #f9f9f9;
+  border: 2px solid #525fe1;
+  padding: 10px
+}
 
+.submitBTN {
+  align-self: center;
+  font-size: 38px;
+  flex-shrink: 0; /* Prevents button from shrinking */
+}
+
+/* Disabled button styling */
+.submitBTN:disabled {
+  background-color: #bdc3c7; /* Gray background */
+  color: #7f8c8d; /* Gray text */
+  cursor: not-allowed;
+}
 </style>

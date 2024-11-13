@@ -1,6 +1,6 @@
 <template>
 
-        <div class="mb-3">
+        <div class="my-4">
             <button class="btn btn-outline-dark btn-add w-100" id="show-modal" @click="showModal = true">
                 <i class='fas fa-plus-circle fs-5'></i>
                 <span> Add Logs</span>

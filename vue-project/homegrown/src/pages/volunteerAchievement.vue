@@ -1,5 +1,11 @@
 <template>
   <div class="page-wrapper">
+
+    <!-- Loading Spinner -->
+    <div v-if="loading" class="loading-spinner">
+      <i class="bi  spinner-icon"></i>
+    </div>
+
     <!-- Certification Content -->
     <div class="certifications-page">
       <h2 class="title text-primary fw-bold text-center mb-3 display-4">Your Achievements</h2>
@@ -14,7 +20,7 @@
           <div class="cert-image-container">
             <img :src="cert.imageUrl" alt="Certification Image" class="cert-image" />
             <div class="rank-number">
-              <i class="bi bi-trophy-fill"></i> <!-- Trophy icon for rank -->
+              <i class="bi"></i> <!-- Trophy icon for rank -->
               <span>{{ index + 1 }}</span>
             </div>
           </div>
@@ -24,11 +30,11 @@
             <h3 class="cert-title">{{ cert.title }}</h3>
             <p class="cert-grade">
               <i class="bi bi-star-fill"></i> <!-- Star icon for score -->
-              Hours Obtained: {{ cert.hours }}%
+              Hours Obtained: <strong>{{ cert.hours }} hours</strong>
             </p>
             <div class="badge completed">
               <i class="bi bi-award"></i> <!-- Award icon for "Completed" -->
-              Completed
+              Ongoing
             </div>
           </div>
         </div>
@@ -51,12 +57,13 @@ export default {
   data() {
     return {
       achievements: [
-        { id: 1, title: 'Introduction to Python', hours: 7, status: 'completed', imageUrl: '../img/python.jpg' },
-        { id: 2, title: 'Web Development with HTML & CSS', hours: 2, status: 'completed', imageUrl: '../img/Web Development with HTML & CSS.jpeg' },
-        { id: 3, title: 'Data Analysis with Excel', hours: 3, status: 'completed', imageUrl: '../img/excel.jpg' },
+        { id: 1, title: 'Introduction to Python', hours: 7, status: 'completed', imageUrl: require('../img/python.jpg') },
+        { id: 2, title: 'Web Development with HTML & CSS', hours: 2, status: 'completed', imageUrl: require('../img/Web Development with HTML & CSS.jpeg') },
+        { id: 3, title: 'Data Analysis with Excel', hours: 3, status: 'completed', imageUrl: require('../img/excel.jpg') },
       ],
       user: null, // To store user data from Firebase
       isLorettaLiew: false, // Flag to check if the user's name is "Loretta Liew"
+      loading: true, // Loading state for spinner
     };
   },
   computed: {
@@ -70,15 +77,20 @@ export default {
         this.user = user;
 
         // Fetch user profile from Firestore
+        //show spinner while loading
+        this.loading = true;
+
         const userDoc = await getDoc(doc(db, 'profiles', user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
 
           // Check if the name is "Loretta Liew"
           this.isLorettaLiew = userData.name === 'Loretta Liew';
+          this.loading = false; // Hide spinner if user not logged in
         }
       } else {
         this.isLorettaLiew = false; // If user is not logged in, do not show achievements
+        this.loading = false; // Hide spinner if user not logged in
       }
     });
   }
@@ -122,13 +134,14 @@ export default {
   overflow: hidden;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 350px; /* Slightly greater height */
+  height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align content to start */
   padding: 20px;
 }
+
 
 .cert-card:hover {
   transform: translateY(-5px);
@@ -179,16 +192,38 @@ export default {
   justify-content: center;
 }
 
+/* Restrict text overflow in title */
 .cert-title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #333333;
   margin: 10px 0;
+  white-space: normal; /* Allow wrapping */
+  text-align: center;
 }
 
+/* Certification grade text with ellipsis for overflow */
 .cert-grade {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #666666;
+  text-align: center;
+  white-space: normal; /* Allow wrapping */
+  line-height: 1.2; /* Set line height for readability */
+}
+
+.cert-content {
+  text-align: center;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Add gap for spacing between elements */
+  width: 100%;
+}
+
+.cert-content > * {
+  margin: 5px 0;
 }
 
 .cert-grade i {
@@ -202,8 +237,8 @@ export default {
   color: #ffffff;
   padding: 8px 12px;
   border-radius: 4px;
-  font-size: 1rem;
-  margin-top: 12px;
+  font-size: 0.9rem;
+  margin-top: 8px;
 }
 
 .badge.completed i {
@@ -236,5 +271,26 @@ export default {
   text-align: center;
   padding: 10px 0;
   font-size: 1rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.spinner-icon {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3B71CA;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

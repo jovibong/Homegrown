@@ -6,32 +6,32 @@
                     <slot name="header">this is header default </slot>
                 </div>
 
-                <div class="container ">
-                    <!-- update validation func later -->
+                <div class="container">
                     <form class="row g-3 needs-validation" novalidate @submit.prevent="addLogs()">
-                        
+
                         <div class="col-12">
                             <label for="validationCustom01" class="form-label mt-4">Title</label>
                             <input type="text" class="form-control" id="validationCustom01" placeholder="Enter title"
-                                required v-model="title">
-                            <div class="invalid-feedback">
+                                required v-model="title" @blur="validateTitle">
+                            <div v-if="titleError" class="invalid-feedback" style="display: block;">
                                 Please enter a title.
                             </div>
-                        </div> 
+                        </div>
 
                         <div class="col-md-6">
-                            <label for="validationCustom01" class="form-label mt-4">Category</label>
+                            <label for="validationCustom06" class="form-label mt-4">Category</label>
                             <input type="text" class="form-control" id="validationCustom06" placeholder="Enter Category"
-                                required v-model="category">
-                            <div class="invalid-feedback">
-                                Please enter a title.
+                                required v-model="category" @blur="validateCategory">
+                            <div v-if="categoryError" class="invalid-feedback" style="display: block;">
+                                Please enter a category.
                             </div>
-                        </div> 
+                        </div>
 
                         <div class="col-md-6">
                             <label for="validationCustom05" class="form-label mt-4">Expense Date</label>
-                            <input type="date" class="form-control" id="validationCustom05" required v-model="date">
-                            <div class="invalid-feedback">
+                            <input type="date" class="form-control" id="validationCustom05" required v-model="date"
+                                @blur="validateDate">
+                            <div v-if="dateError" class="invalid-feedback" style="display: block;">
                                 Please provide a date.
                             </div>
                         </div>
@@ -41,35 +41,24 @@
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">SGD$</span>
                                 <input type="number" class="form-control" id="validationCustomUsername"
-                                    aria-describedby="inputGroupPrepend" placeholder="Enter pay" required
-                                    v-model="amount">
-                                <div class="invalid-feedback">
+                                    aria-describedby="inputGroupPrepend" placeholder="Enter amount" required
+                                    v-model="amount" @blur="validateAmount">
+                                <div v-if="amountError" class="invalid-feedback" style="display: block;">
                                     Please enter a valid number.
                                 </div>
                             </div>
                         </div>
 
-                        
-
-                        <div class="col-12 ">
-                            <!-- <label for="validationCustom03" class="form-label mt-4">Payment Slip</label>
-                            <div class="input-group has-validation">
-                                <input type="file" class="form-control" id="validationCustom03" required>
-                            </div>
-                            <div class="invalid-feedback">
-                                Please provide an image of payment slip.
-                            </div> -->
+                        <div class="col-12">
                             <hr>
                         </div>
                     </form>
-
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-danger m-3" type="button" @click="$emit('close')">Cancel</button>
-                    <!-- add addlogs fucntion here -->
-                    <button class="btn btn-success" type="submit" @click="() => { $emit('close'); addLogs(); }">Add
-                        log</button>
+                    <button class="btn btn-danger m-3" type="button"
+                        @click="{ $emit('close'), clearFields(); }">Cancel</button>
+                    <button class="btn btn-success" type="submit" @click="addLogs">Add log</button>
                 </div>
             </div>
         </div>
@@ -86,6 +75,33 @@ import { db } from "../firebase/initialize";
 const { show } = defineProps({
     show: Boolean,
 });
+
+const emit = defineEmits(['close']);
+
+
+// Error states
+const titleError = ref(false);
+const amountError = ref(false);
+const dateError = ref(false);
+const categoryError = ref(false);
+
+// Validation functions
+function validateTitle() {
+    titleError.value = !title.value;
+}
+
+function validateAmount() {
+    amountError.value = !amount.value || isNaN(amount.value);
+}
+
+function validateDate() {
+    dateError.value = !date.value;
+}
+
+function validateCategory() {
+    categoryError.value = !category.value;
+}
+
 
 // create log
 // title
@@ -107,12 +123,26 @@ function clearFields() {
     amount.value = '';
     category.value = '';
     date.value = '';
+    titleError.value = false;
+    amountError.value = false;
+    dateError.value = false;
+    categoryError.value = false;
 }
 
 // to add log to firebase
 async function addLogs() {
     // const auth = getAuth();
     // const user = auth.currentUser;
+    // Run validation
+    validateTitle();
+    validateAmount();
+    validateDate();
+    validateCategory();
+
+    // If any field has an error, do not proceed
+    if (titleError.value || amountError.value || dateError.value || categoryError.value) {
+        return;
+    }
 
     try {
         const sessionUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
@@ -141,6 +171,7 @@ async function addLogs() {
 
         // Clear input fields after adding the log
         clearFields();
+        emit('close');
     } catch {
         console.log('no session user');
         return;
