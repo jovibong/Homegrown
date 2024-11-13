@@ -2,7 +2,7 @@
 
     <div class="finance ">
 
-        <div class="layout animated-background" id="financeApp">
+        <div class="layout animated-background " id="financeApp">
 
             <!-- start Summary tab nav -->
             <input name="nav" type="radio" id="Summary" checked="checked" />
@@ -21,7 +21,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="bento-tile  h-100 p-3">
+                            <div class="bento-tile  h-100 p-3 ">
                                 <stats-tile :title="stats.totalEarned.title"
                                     :statNonEditable="stats.totalEarned.statNonEditable"
                                     :statEditable="stats.totalEarned.statEditable"
@@ -85,11 +85,14 @@
                         </div>
 
                         <div class="col-xl-4 col-md-6">
-                            <div class="bento-tile p-3 h-100">
+                            <div class="bento-tile p-3 h-100 ">
+
                                 <stats-tile :title="stats.goal.title" :statNonEditable="stats.goal.statNonEditable"
                                     :statEditable="stats.goal.statEditable"
                                     :descriptionNonEditable="stats.goal.descriptionNonEditable"
                                     :descriptionEditable="stats.goal.descriptionEditable"></stats-tile>
+
+
                             </div>
                         </div>
                         <div class="col-xl-4 col-md-6">
@@ -114,12 +117,13 @@
                                 <h3 class="text-center  fw-bolder "> Monthly Savings</h3>
                                 <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
                                 </h1>
-                                <div class="d-flex justify-content-center my-4">
-                                    <button class="btn btn-outline-primary" @click="savingsChange()">Help Me!</button>
-                                </div>
 
-                                <input type="range" class="form-range" min="1"
-                                    :max="stats.totalEarned.descriptionEditable" id="customRange2" v-model="savings">
+                                <div class="d-flex align-items-center">
+                                    <input type="range" class="form-range" min="1"
+                                        :max="stats.totalEarned.descriptionEditable" id="customRange2"
+                                        v-model="savings">
+                                    <button class="btn btn-outline-primary text-nowrap ms-2" @click="savingsChange()">Auto</button>
+                                </div>
                             </div>
                         </div>
 
