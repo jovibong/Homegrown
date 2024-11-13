@@ -1,7 +1,23 @@
 # homegrown
 
+## Dummy Accounts
+### Worker Account
+<b>Username</b>: worker@gmail.com
+<b>Password</b>: 123456
+
+### Volunteer Account
+<b>Username</b>: volunteer@gmail.com
+<b>Password</b>: 123456
+
 ## Events Page
 When creating new events, or posting comments, or creating new forums, please wait for awhile to see the results.
+
+## Chats / Courses page
+When adding events or clicking into the page, please wait for the loading animation to be completed to 
+see the results.
+
+## Login Issues
+In the event where the page data does not follow the account, when logging out, ensure that the page is hard refreshed to clear cache in local and session storage.
 
 ## Project setup
 ```
