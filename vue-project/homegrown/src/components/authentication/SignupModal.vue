@@ -185,7 +185,7 @@ export default {
         sessionStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('user', JSON.stringify(user));
 
-        console.log("Signed up user:", user);
+        // console.log("Signed up user:", user);
         this.$emit("signup", user);
 
         if (this.userType === 'worker') {
@@ -198,7 +198,7 @@ export default {
 
         this.hideModal();
       } catch (error) {
-        console.error("Error signing up:", error.message);
+        // console.error("Error signing up:", error.message);
         this.errorMessage = "Signup failed: " + error.message;
       }
     },
