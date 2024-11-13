@@ -131,27 +131,25 @@
                 :key="item.id"
                 class="col-12"
               >
-                <router-link :to="item.link" class="text-decoration-none">
-                  <div
-                    class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
-                  >
-                    <div class="me-3">
-                      <div
-                        class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
-                        style="width: 60px; height: 60px"
-                      >
-                        <i :class="item.icon" class="h2 pt-2"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <p class="text-primary mb-1">
-                        {{ formatType(item.typeof) }}
-                      </p>
-                      <p class="fw-bold mb-1">{{ item.name }}</p>
-                      <p class="text-muted">{{ item.duration }}</p>
+                <div
+                  class="d-flex align-items-center p-3 mb-3 bg-secondary rounded hover-animate hover-less"
+                >
+                  <div class="me-3">
+                    <div
+                      class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-secondary"
+                      style="width: 60px; height: 60px"
+                    >
+                      <i :class="item.icon" class="h2 pt-2"></i>
                     </div>
                   </div>
-                </router-link>
+                  <div>
+                    <p class="text-primary mb-1">
+                      {{ formatType(item.typeof) }}
+                    </p>
+                    <p class="fw-bold mb-1">{{ item.name }}</p>
+                    <p class="text-muted">{{ item.duration }}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -185,17 +183,20 @@
                 :class="['carousel-item', key === 0 ? 'active' : '']"
               >
                 <div class="row">
-                  <div class="col-lg-3 col-md-5 d-flex justify-content-md-end justify-content-center">
+                  <div
+                    class="col-lg-3 col-md-5 d-flex justify-content-md-end justify-content-center"
+                  >
                     <img
                       :src="mentor.img"
                       alt="Mentor Img"
                       class="rounded-circle border border-primary me-md-5"
-                      style="height:100px;
-                      width:100px"
+                      style="height: 100px; width: 100px"
                     />
                   </div>
                   <!-- Mentor Information -->
-                  <div class="col-lg-9 col-md-7 text-md-start text-center d-flex align-items-center d-lg-inline-block">
+                  <div
+                    class="col-lg-9 col-md-7 text-md-start text-center d-flex align-items-center d-lg-inline-block"
+                  >
                     <h5 class="fw-bold h4">
                       {{ mentor.name }}
                     </h5>
@@ -544,9 +545,10 @@ export default {
     },
   },
   async mounted() {
-    const userObject = JSON.parse(sessionStorage.getItem("user")) ||
+    const userObject =
+      JSON.parse(sessionStorage.getItem("user")) ||
       JSON.parse(localStorage.getItem("user"));
-    if(userObject){
+    if (userObject) {
       this.user = userObject.uid;
     }
     const storedCourse = sessionStorage.getItem("selectedCourse");
