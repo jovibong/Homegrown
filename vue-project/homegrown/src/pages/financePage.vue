@@ -115,7 +115,7 @@
                         <div class="col-xl-4 col-md-12">
                             <div class="p-3 bento-tile h-100 my-auto">
                                 <h3 class="text-center  fw-bolder "> Monthly Savings</h3>
-                                <h1 class="text-center text-primary fw-bolder display-5"> ${{ savings }}
+                                <h1 class="text-center text-primary fw-bolder display-5"> $ {{ savings }}
                                 </h1>
 
                                 <div class="d-flex align-items-center">
