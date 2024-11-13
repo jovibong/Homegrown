@@ -23,7 +23,8 @@ see the results.
 ## Finance Page
 Use dummy worker account for populated data. When creating new
 account, values are set to 0, allowing the user to edit
-their relevant data (saved when edited).
+their relevant data (saved when edited). Negative goal amount is
+allowed if coming out of debt
 
 ## Login Issues
 In the event where the page data does not follow the account, when logging out, ensure that the page is hard refreshed to clear cache in local and session storage.
