@@ -237,7 +237,7 @@ export default {
       this.isLoginModalVisible = false;
     },
     handleSignup(userData) {
-      // console.log("User has signed up!", userData);
+      console.log("User has signed up!", userData);
       this.isSignUpModalVisible = false;
     },
     logout() {
@@ -261,7 +261,7 @@ export default {
             });
         })
         .catch((error) => {
-            // console.error("Error signing out:", error);
+            console.error("Error signing out:", error);
             this.$emit('stopLoading'); // Hide any loading spinners on error
         });
   },
