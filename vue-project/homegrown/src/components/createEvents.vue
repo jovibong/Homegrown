@@ -2,7 +2,7 @@
     <form @submit.prevent="submitInput">
         <!-- Event Name -->
         <div class="row mb-3">
-        <label for="title" class="col-sm-2 col-form-label"> Event Name</label>
+        <label for="title" class="col-sm-2 col-form-label"> <b>Event Name</b></label>
             <div class="col-sm-10">
                 <input id="title" v-model="eventTitle" type="text" class="form-control"/>
                 <div v-show="titleError" class="text-danger">Event name is required and should not exceed 30 characters</div>
@@ -11,7 +11,7 @@
 
         <!-- Event Category -->
         <div class="row mb-3">
-            <label for="eventCategory" class="col-sm-2 col-form-label">Event Category</label>
+            <label for="eventCategory" class="col-sm-2 col-form-label"><b>Event Category</b></label>
             <div class="col-sm-4">
                 <select id="eventCategory" v-model="eventCategory" class="form-select" >
                     <option disabled value="">Select a category</option>
@@ -28,7 +28,7 @@
 
         <!-- Description -->
         <div class="row mb-3">
-            <label for="description" class="col-sm-2 col-form-label">Description</label>
+            <label for="description" class="col-sm-2 col-form-label"><b>Description</b></label>
             <div class="col-sm-10">
                 <textarea rows="4" cols="50" id="description" v-model="eventDescription"
                     class="form-control" ></textarea>
@@ -38,7 +38,7 @@
 
         <!-- Image Upload -->
         <div class="row mb-3">
-            <label for="image" class="col-sm-2 col-form-label">Image</label>
+            <label for="image" class="col-sm-2 col-form-label"><b>Image</b></label>
             <div class="col-sm-10">
                 <input id="image" type="file" class="form-control" @change="handleFileUpload" />
                 <div v-show="imageError" class="text-danger">Image is required</div>
@@ -47,13 +47,13 @@
 
         <!-- Date and Time -->
         <div class="row mb-3">
-            <label for="date" class="col-sm-2 col-form-label">Date</label>
+            <label for="date" class="col-sm-2 col-form-label"><b>Date</b></label>
             <div class="col-sm-4">
                 <input id="date" v-model="eventDate" type="date" class="form-control" />
                 <div v-show="dateError" class="text-danger">Date is required</div>
             </div>
 
-            <label for="time" class="col-sm-2 col-form-label">Time</label>
+            <label for="time" class="col-sm-2 col-form-label"><b>Time</b></label>
             <div class="col-sm-4">
                 <input id="time" v-model="eventTime" type="time" class="form-control" />
                 <div v-show="timeError" class="text-danger">Time is required</div>
@@ -62,7 +62,7 @@
 
         <!-- Location -->
         <div class="row mb-3">
-            <label for="location" class="col-sm-2 col-form-label">Location</label>
+            <label for="location" class="col-sm-2 col-form-label"><b>Location</b></label>
             <div class="col-sm-10">
                 <input id="location" v-model="eventLocation" type="text" class="form-control" />
                 <div v-if="locationError" class="text-danger">Location is required</div>

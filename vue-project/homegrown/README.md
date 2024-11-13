@@ -12,7 +12,9 @@
 ## Events Page
 When creating new events, or posting comments, or creating new forums, please wait for awhile to see the results.
 
-For Forum, wait for everything to load before interacting with the page
+When using search bar, please click into search bar (i.e. it is focused on) and press "Enter" on keyboard to search
+
+For Forum, wait for everything to load before interacting with the page (until there is no loading animation)
 
 ## Chats / Courses page
 When adding events or clicking into the page, please wait for the loading animation to be completed to 
