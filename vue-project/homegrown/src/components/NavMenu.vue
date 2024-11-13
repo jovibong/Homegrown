@@ -424,12 +424,16 @@ export default {
 
 /* Navbar Toggler Icon */
 .navbar-toggler {
-  border: none !important;         /* Remove border */
-  background-color: transparent !important;  /* Make background transparent */
-  box-shadow: none !important;     /* Remove any box shadow */
-  outline: none !important;        /* Remove focus outline */
-  padding: 0 !important;     /* Reset padding if needed */
-  align-items: center !important; /* Center vertically */  
+  border: none !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  transition: 0.3s ease;
+  z-index: 11;  
 }
 
 .toggler-icon {
@@ -456,19 +460,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px; /* Add space between the hamburger and profile button */
-}
-
-.navbar-toggler {
-  border: none !important;
-  background-color: transparent !important;
-  padding: 0 !important;
-  display: flex;
-  align-items: center; /* Center the icon vertically */
-  justify-content: center;
-  width: 30px; /* Adjust width to keep it aligned next to the profile button */
-  height: 30px;
-  transition: 0.3s ease;
-  z-index: 11; /* Bring it above other elements if needed */
 }
 
 .navbar-toggler .toggler-icon {
@@ -523,6 +514,7 @@ export default {
 .container-fluid {
   position: relative;
   overflow: visible; /* Ensure no clipping */
+  max-width: 100%; /* Adjust if needed */
 }
 
 /* Styling for the active router link */
