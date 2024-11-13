@@ -243,14 +243,14 @@ export default {
     logout() {
     signOut(auth)
         .then(() => {
-            // console.log("User signed out");
-            this.user = null;
-            this.userType = null; // Reset user type
 
-            this.sessionStorage.removeItem('user'); // Remove user data from session storage
-            this.localStorage.removeItem('user'); // Remove user data from local storage
+            //console.log(sessionStorage);
+            //console.log(localStorage);
 
-            
+            sessionStorage.removeItem('user'); // Remove user data from session storage
+            localStorage.removeItem('user'); // Remove user data from local storge
+
+
             this.$router.push('/').then(() => {
                 // Replace the current history entry with the landing page URL
                 window.history.replaceState(null, '', '/');
