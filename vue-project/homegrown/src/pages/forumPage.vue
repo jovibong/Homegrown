@@ -415,6 +415,7 @@ export default{
   border-radius: 5px;
   border: none;
   background-color: #525FE1;
+  color: white;
 }
 
 .directButton {
