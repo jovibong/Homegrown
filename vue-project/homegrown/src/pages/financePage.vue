@@ -44,9 +44,9 @@
 
                         <div class="col-12">
                             <div class="text-center bento-tile text-dark h-100 p-3"
-                                style="background-color: rgb(255, 188, 188);">
+                                >
                                 <div>
-                                    <h1 class=" display-5 fw-bold mb-0">Expense</h1>
+                                    <h1 class=" display-5 fw-bold mb-0 text-primary">Expense</h1>
                                 </div>
                                 <expense-log></expense-log>
 
@@ -187,10 +187,10 @@
 
 
                         <div class="col-12">
-                            <div class="bento-tile h-100 p-3" style=" background-color: rgb(188, 255, 188) ">
+                            <div class="bento-tile h-100 p-3" >
                                 <!-- start of table logs -->
                                 <div class="text-center">
-                                    <h1 class=" display-5 fw-bold mb-0">Payment</h1>
+                                    <h1 class=" display-5 fw-bold mb-0 text-primary">Payment</h1>
                                 </div>
                                 <payment-logs></payment-logs>
 
