@@ -256,22 +256,37 @@ export default {
     },
     async updatePercentageCompleted() {
       try {
-        // Reference to the lesson items collection within the user's ongoing course
-        const lessonItemsRef = collection(
+        // Reference to the lessons collection within the user's ongoing course
+        const lessonsRef = collection(
           db,
-          `users/${this.user}/ongoing_courses/${this.course.id}/progress/${this.storedLessonId}/lesson_items`
+          `users/${this.user}/ongoing_courses/${this.course.id}/progress`
         );
 
-        const lessonItemsSnap = await getDocs(lessonItemsRef);
-        const totalItems = lessonItemsSnap.size;
-        const completedItems = lessonItemsSnap.docs.filter(
-          (doc) => doc.data().completed === true
-        ).length;
+        const lessonsSnap = await getDocs(lessonsRef);
+
+        let totalItems = 0;
+        let completedItems = 0;
+
+        // Loop through each lesson and aggregate progress
+        for (const lessonDoc of lessonsSnap.docs) {
+          const lessonId = lessonDoc.id;
+
+          // Reference to the lesson items collection within each lesson
+          const lessonItemsRef = collection(
+            db,
+            `users/${this.user}/ongoing_courses/${this.course.id}/progress/${lessonId}/lesson_items`
+          );
+
+          const lessonItemsSnap = await getDocs(lessonItemsRef);
+          totalItems += lessonItemsSnap.size;
+          completedItems += lessonItemsSnap.docs.filter(
+            (doc) => doc.data().completed === true
+          ).length;
+        }
 
         // Calculate the percentage completed
-        const percentageCompleted = Math.round(
-          (completedItems / totalItems) * 100
-        );
+        const percentageCompleted =
+          totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
         // Update the course document with the new percentage completed
         const courseRef = doc(

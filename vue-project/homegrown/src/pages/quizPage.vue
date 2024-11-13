@@ -5,7 +5,7 @@
         <div class="row">
           <!-- Back Button -->
           <div class="col-2 d-flex align-items-center">
-            <router-link :to="userType === 'worker' ? 'individualCoursePage' : 'mentorshipCourse'"
+            <router-link t="individualCoursePage"
               class="btn btn-warning text-dark d-flex align-items-center"
             >
               <i class="bi bi-arrow-left me-1"></i>
